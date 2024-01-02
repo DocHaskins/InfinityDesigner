@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 
 public class ModelImporterWindow : EditorWindow
 {
@@ -54,28 +55,30 @@ public class ModelImporterWindow : EditorWindow
             }
         }
 
-        foreach (var fbxFile in fbxFiles)
+        string modelsPath = "Assets/Models";
+        Directory.CreateDirectory(modelsPath); // Create the Models directory
+
+        // Process textures to create materials
+        foreach (var textureEntry in textureFiles)
         {
-            string modelName = GetBaseName(fbxFile);
-            string modelPath = "Assets/Models/" + modelName;
-            Directory.CreateDirectory(Path.Combine(Application.dataPath, "Models", modelName)); // Create the directory
+            var baseName = textureEntry.Key;
+            var textures = textureEntry.Value;
 
-            string newFbxPath = modelPath + "/" + Path.GetFileName(fbxFile);
-            AssetDatabase.MoveAsset(fbxFile, newFbxPath);
-            Debug.Log($"Moved FBX: {newFbxPath}");
-
-            if (textureFiles.TryGetValue(modelName, out List<string> modelTextures))
+            // Check if a diffuse texture exists
+            var diffuseTexture = textures.FirstOrDefault(t => t.Contains("_dif"));
+            if (diffuseTexture != null)
             {
                 Material newMaterial = new Material(Shader.Find("HDRP/Lit"));
-                AssignTexturesToMaterial(newMaterial, modelTextures);
+                AssignTexturesToMaterial(newMaterial, textures, baseName);  // Adjusted the order of parameters here
 
-                string materialPath = modelPath + "/" + modelName + ".mat";
+                string materialPath = Path.Combine(modelsPath, baseName + ".mat");
                 AssetDatabase.CreateAsset(newMaterial, materialPath);
                 Debug.Log($"Created Material: {materialPath}");
 
-                foreach (var textureFile in modelTextures)
+                // Move textures to the Models directory
+                foreach (var textureFile in textures)
                 {
-                    string newTexturePath = modelPath + "/" + Path.GetFileName(textureFile);
+                    string newTexturePath = Path.Combine(modelsPath, Path.GetFileName(textureFile));
                     AssetDatabase.MoveAsset(textureFile, newTexturePath);
                     Debug.Log($"Moved Texture: {newTexturePath}");
                 }
@@ -106,7 +109,7 @@ public class ModelImporterWindow : EditorWindow
         return lastUnderscoreIndex > -1 ? baseName.Substring(0, lastUnderscoreIndex) : baseName;
     }
 
-    private void AssignTexturesToMaterial(Material material, List<string> textureFiles)
+    private void AssignTexturesToMaterial(Material material, List<string> textureFiles, string baseName)
     {
         Shader hdrpShader = Shader.Find("HDRP/Lit");
         if (hdrpShader == null)
@@ -116,48 +119,38 @@ public class ModelImporterWindow : EditorWindow
         }
         material.shader = hdrpShader;
 
-        foreach (var textureFile in textureFiles)
-        {
-            Texture2D texture = LoadTexture(textureFile);
-            if (texture == null)
-            {
-                Debug.LogError($"Failed to load texture: {textureFile}");
-                continue;
-            }
+        // Define the texture types and their corresponding shader properties
+        var textureTypes = new Dictionary<string, string>
+    {
+        {"_dif", "_BaseColorMap"},
+        {"_nrm", "_NormalMap"},
+        {"_rgh", "_RoughnessMap"},
+        {"_spc", "_SpecularColorMap"},
+        {"_ocl", "_OcclusionMap"}
+    };
 
-            // Assign textures based on the type detected in the file name
-            if (textureFile.Contains("_dif"))
+        // Iterate through each texture type
+        foreach (var textureType in textureTypes)
+        {
+            // Find the texture path that matches the texture type
+            string texturePath = textureFiles.FirstOrDefault(t => t.Contains(baseName + textureType.Key));
+            if (!string.IsNullOrEmpty(texturePath))
             {
-                material.SetTexture("_BaseColorMap", texture); // Base Color Map
-                Debug.Log($"Assigned diffuse '{texture.name}' to material '{material.name}'");
+                Texture2D texture = LoadTexture(texturePath);
+                if (texture != null)
+                {
+                    material.SetTexture(textureType.Value, texture);
+                    Debug.Log($"Assigned '{textureType.Key}' texture '{texture.name}' to material '{material.name}'");
+                }
             }
-            else if (textureFile.Contains("_nrm"))
-            {
-                material.SetTexture("_NormalMap", texture); // Normal Map
-                Debug.Log($"Assigned normal '{texture.name}' to material '{material.name}'");
-            }
-            else if (textureFile.Contains("_rgh"))
-            {
-                // Roughness is part of the MaskMap in HDRP, need additional logic if separate roughness texture is used
-                Debug.LogWarning("Separate roughness texture detected. HDRP uses the MaskMap for roughness.");
-            }
-            else if (textureFile.Contains("_spc"))
-            {
-                material.SetTexture("_SpecularColorMap", texture); // Specular Color Map
-                Debug.Log($"Assigned specular '{texture.name}' to material '{material.name}'");
-            }
-            else if (textureFile.Contains("_ocl"))
-            {
-                // Occlusion is also part of the MaskMap in HDRP
-                Debug.LogWarning("Separate occlusion texture detected. HDRP uses the MaskMap for occlusion.");
-            }
-            // Add additional texture types as needed, and consider how they map to HDRP's MaskMap if separate
         }
     }
 
     private Texture2D LoadTexture(string path)
     {
-        string relativePath = "Assets" + path.Replace(Application.dataPath, "");
+        // Remove any duplicate file extensions
+        string relativePath = RemoveDuplicateExtensions(path.Replace(Application.dataPath, "Assets"));
+
         Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(relativePath);
 
         if (texture == null)
@@ -170,5 +163,21 @@ public class ModelImporterWindow : EditorWindow
         }
 
         return texture;
+    }
+
+    private string RemoveDuplicateExtensions(string path)
+    {
+        string extension = Path.GetExtension(path);
+        string filenameWithoutExtension = Path.GetFileNameWithoutExtension(path);
+
+        // Check if the file name without extension still ends with the same extension
+        while (Path.GetExtension(filenameWithoutExtension) == extension)
+        {
+            filenameWithoutExtension = Path.GetFileNameWithoutExtension(filenameWithoutExtension);
+        }
+
+        // Reconstruct the path with the correct extension
+        string directory = Path.GetDirectoryName(path);
+        return Path.Combine(directory, filenameWithoutExtension + extension);
     }
 }
