@@ -79,8 +79,7 @@ public class ModelLoader : MonoBehaviour
             Debug.Log("Processing slot: " + slot.name + " with " + slot.models.Count + " models.");
             foreach (var modelInfo in slot.models)
             {
-                // Path should start from the folder directly under Resources and exclude the file extension
-                string modelPath = "Models/" + Path.GetFileNameWithoutExtension(modelInfo.name);
+                string modelPath = "Models/" + Path.GetFileNameWithoutExtension(modelInfo.name.Replace(".msh", ".fbx"));
                 Debug.Log("Attempting to load model: " + modelInfo.name + " from path: " + modelPath);
 
                 GameObject modelPrefab = Resources.Load<GameObject>(modelPath);
@@ -100,38 +99,55 @@ public class ModelLoader : MonoBehaviour
 
     private void ApplyMaterials(GameObject modelInstance, ModelData.ModelInfo modelInfo)
     {
-        Renderer renderer = modelInstance.GetComponent<Renderer>();
-        if (renderer == null)
+        // Find all SkinnedMeshRenderer components in the children of the modelInstance
+        SkinnedMeshRenderer[] skinnedRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>();
+
+        if (skinnedRenderers.Length == 0)
         {
-            Debug.LogError("Renderer component is missing for model: " + modelInfo.name);
+            Debug.LogError("No SkinnedMeshRenderer components found for model: " + modelInfo.name);
             return;
         }
 
-        if (modelInfo.materialsData == null)
+        if (modelInfo.materialsData == null || modelInfo.materialsData.Count == 0)
         {
-            Debug.LogError("Materials data is null for model: " + modelInfo.name);
+            Debug.LogError("Materials data is null or empty for model: " + modelInfo.name);
             return;
         }
 
-        Debug.Log("Applying " + modelInfo.materialsData.Count + " materials to model: " + modelInfo.name);
-        Material[] materials = new Material[modelInfo.materialsData.Count];
+        Debug.Log("Applying materials to model: " + modelInfo.name);
 
+        // Iterate through all the materials data and apply them to the corresponding SkinnedMeshRenderer
         for (int i = 0; i < modelInfo.materialsData.Count; i++)
         {
-            string matPath = "Models/" + Path.GetFileNameWithoutExtension(modelInfo.materialsData[i].name);
-            Debug.Log("Attempting to apply material: " + modelInfo.materialsData[i].name + " from path: " + matPath);
+            var materialData = modelInfo.materialsData[i];
+            string matPath = "Models/" + materialData.name.Replace(".mat", "");
 
             Material mat = Resources.Load<Material>(matPath);
-            if (mat != null)
+            if (mat == null)
             {
-                materials[i] = mat;
-                Debug.Log("Applied material: " + matPath);
+                Debug.LogError("Material not found in Resources: " + matPath);
+                continue;
+            }
+
+            if (materialData.number - 1 < skinnedRenderers.Length)
+            {
+                var renderer = skinnedRenderers[materialData.number - 1];
+                Material[] materialsArray = renderer.sharedMaterials; // Use sharedMaterials instead of materials
+                if (materialsArray.Length > 0)
+                {
+                    materialsArray[0] = mat; // Replace the material at the primary index (0) with the new one
+                    renderer.sharedMaterials = materialsArray; // Assign the updated materials array back to the renderer using sharedMaterials
+                    Debug.Log("Applied material: " + mat.name + " to " + renderer.gameObject.name);
+                }
+                else
+                {
+                    Debug.LogError("No materials found on renderer for model: " + modelInfo.name);
+                }
             }
             else
             {
-                Debug.LogError("Material not found in Resources: " + matPath);
+                Debug.LogError("Material number " + materialData.number + " exceeds the number of SkinnedMeshRenderers for model: " + modelInfo.name);
             }
         }
-        renderer.materials = materials;
     }
 }
