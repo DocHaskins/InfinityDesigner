@@ -93,103 +93,99 @@ public class ModelLoader : MonoBehaviour
     {
         Debug.Log($"Applying materials to model '{modelInfo.name}'.");
 
+        var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>();
+
         foreach (var materialResource in modelInfo.materialsResources)
         {
-            foreach (var resource in materialResource.resources)
+            if (materialResource.number - 1 < skinnedMeshRenderers.Length)
             {
-                string matPath = "Models/" + Path.GetFileNameWithoutExtension(resource.name);
-                Material originalMat = Resources.Load<Material>(matPath);
-
-                if (originalMat != null)
-                {
-                    var childRenderers = new List<SkinnedMeshRenderer>();
-                    FindChildRenderersByName(modelInstance.transform, resource.name, childRenderers);
-
-                    if (childRenderers.Count > 0)
-                    {
-                        foreach (var childRenderer in childRenderers)
-                        {
-                            Material clonedMaterial = new Material(originalMat);
-                            Material[] rendererMaterials = new Material[childRenderer.sharedMaterials.Length];
-                            rendererMaterials[0] = clonedMaterial;
-                            for (int i = 1; i < rendererMaterials.Length; i++)
-                            {
-                                rendererMaterials[i] = childRenderer.sharedMaterials[i]; // Copy other materials if any
-                            }
-                            childRenderer.sharedMaterials = rendererMaterials;
-
-                            //foreach (var rttiValue in resource.rttiValues)
-                            //{
-                            //    string texturePath = "Models/" + rttiValue.val_str;
-                            //    Texture2D texture = Resources.Load<Texture2D>(texturePath);
-                            //    if (texture != null)
-                            //    {
-                            //        ApplyTextureToMaterial(clonedMaterial, rttiValue.name, texture);
-                            //    }
-                            //    else
-                            //    {
-                            //        Debug.LogError($"Texture '{texturePath}' not found in Resources for material '{resource.name}'");
-                            //    }
-                            //}
-
-                            if (ShouldDisableRenderer(childRenderer.gameObject.name))
-                            {
-                                childRenderer.enabled = false;
-                                Debug.Log($"Disabled SkinnedMeshRenderer on '{childRenderer.gameObject.name}' due to name match.");
-                            }
-                            Debug.Log($"Material '{resource.name}' applied to '{childRenderer.gameObject.name}'");
-                        }
-                    }
-                    else
-                    {
-                        Debug.LogError($"No child SkinnedMeshRenderer with the name '{resource.name}' found in '{modelInstance.name}'");
-                    }
-                }
-                else
-                {
-                    Debug.LogError($"Material not found: '{matPath}' for model '{modelInfo.name}'");
-                }
+                var renderer = skinnedMeshRenderers[materialResource.number - 1];
+                ApplyMaterialToRenderer(renderer, materialResource.resources[0]);
+            }
+            else
+            {
+                Debug.LogError($"Renderer index out of bounds for material number {materialResource.number} in model '{modelInfo.name}'");
             }
         }
     }
 
-    private void FindChildRenderersByName(Transform parent, string name, List<SkinnedMeshRenderer> renderers)
+    private void ApplyMaterialToRenderer(SkinnedMeshRenderer renderer, ModelData.Resource resource)
     {
-        foreach (Transform child in parent)
+        // Skip materials starting with "sm_"
+        if (resource.name.StartsWith("sm_"))
         {
-            var renderer = child.GetComponent<SkinnedMeshRenderer>();
-            if (renderer != null && child.gameObject.name.Contains(name))
+            Debug.Log($"Skipped material '{resource.name}' as it starts with 'sm_'");
+            return;
+        }
+
+        // Updated path to load materials from "resources/materials" folder
+        string matPath = "materials/" + Path.GetFileNameWithoutExtension(resource.name);
+        Material originalMat = Resources.Load<Material>(matPath);
+
+        if (originalMat != null)
+        {
+            Material clonedMaterial = new Material(originalMat);
+            Material[] rendererMaterials = renderer.sharedMaterials;
+            rendererMaterials[0] = clonedMaterial; // Assuming you want to replace the first material
+            renderer.sharedMaterials = rendererMaterials;
+
+            foreach (var rttiValue in resource.rttiValues)
             {
-                renderers.Add(renderer);
+                ApplyTextureToMaterial(clonedMaterial, rttiValue.name, rttiValue.val_str);
             }
-            FindChildRenderersByName(child, name, renderers); // Recursively find in all children
+
+            Debug.Log($"Material '{resource.name}' applied to '{renderer.gameObject.name}'");
+
+            // Check if the renderer should be disabled based on its name
+            if (ShouldDisableRenderer(renderer.gameObject.name))
+            {
+                renderer.enabled = false;
+                Debug.Log($"SkinnedMeshRenderer disabled on '{renderer.gameObject.name}'");
+            }
+        }
+        else
+        {
+            Debug.LogError($"Material not found: '{matPath}' for renderer '{renderer.gameObject.name}'");
         }
     }
 
-    private void ApplyTextureToMaterial(Material material, string rttiValueName, Texture2D texture)
+    private void ApplyTextureToMaterial(Material material, string rttiValueName, string textureName)
     {
-        switch (rttiValueName)
+        // Updated path to load textures from "resources/materials" folder
+        string texturePath = "textures/" + Path.GetFileNameWithoutExtension(textureName);
+        Texture2D texture = Resources.Load<Texture2D>(texturePath);
+
+        if (texture != null)
         {
-            case "msk_1_tex":
-                material.SetTexture("_CoatMaskMap", texture);
-                material.SetFloat("_CoatMask", 1.0f);
-                Debug.Log($"Assigned texture '{texture.name}' to '_CoatMaskMap'");
-                break;
-            case "dif_1_tex":
-                material.SetTexture("_BaseColorMap", texture);
-                Debug.Log($"Assigned texture '{texture.name}' to '_BaseColorMap'");
-                break;
-            case "nrm_1_tex":
-                material.SetTexture("_NormalMap", texture);
-                Debug.Log($"Assigned texture '{texture.name}' to '_NormalMap'");
-                break;
-                // Add other cases as needed
+            switch (rttiValueName)
+            {
+                case "msk_1_tex":
+                    material.SetTexture("_CoatMaskMap", texture);
+                    material.SetFloat("_CoatMask", 1.0f);
+                    Debug.Log($"Assigned texture '{texture.name}' to '_CoatMaskMap'");
+                    break;
+                case "dif_1_tex":
+                    material.SetTexture("_BaseColorMap", texture);
+                    Debug.Log($"Assigned texture '{texture.name}' to '_BaseColorMap'");
+                    break;
+                case "nrm_1_tex":
+                    material.SetTexture("_NormalMap", texture);
+                    Debug.Log($"Assigned texture '{texture.name}' to '_NormalMap'");
+                    break;
+                    // Add other cases as needed
+            }
+        }
+        else
+        {
+            Debug.LogError($"Texture '{texturePath}' not found in Resources for material '{rttiValueName}'");
         }
     }
 
     private bool ShouldDisableRenderer(string gameObjectName)
     {
-        return gameObjectName.Contains("sh_eye_shadow") || gameObjectName.Contains("sh_wet_eye");
+        return gameObjectName.Contains("sh_eye_shadow") ||
+               gameObjectName.Contains("sh_wet_eye") ||
+               gameObjectName.Contains("_null");
     }
 
     public void UnloadModel()
