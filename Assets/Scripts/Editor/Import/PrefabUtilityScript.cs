@@ -1,0 +1,121 @@
+using UnityEditor;
+using UnityEngine;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using System;
+
+public class PrefabUtilityScript : EditorWindow
+{
+    private static string modelsDirectory = "Assets/Resources/Models";
+    private static string meshReferencesDirectory = "Assets/StreamingAssets/Mesh references";
+    private int maxPrefabCount = 100;
+
+    [Serializable]
+    public class MeshReferenceData
+    {
+        public List<MaterialData> materialsData;
+    }
+
+    [Serializable]
+    public class MaterialData
+    {
+        public int number;
+        public string name;
+    }
+
+    [MenuItem("Tools/Prefab Creator")]
+    public static void ShowWindow()
+    {
+        GetWindow<PrefabUtilityScript>("Prefab Creator");
+    }
+
+    void OnGUI()
+    {
+        GUILayout.Label("Set the maximum number of prefabs to process:");
+        maxPrefabCount = EditorGUILayout.IntField("Max Prefab Count", maxPrefabCount);
+
+        if (GUILayout.Button("Create and Update Prefabs"))
+        {
+            CreateAndUpdatePrefabs(maxPrefabCount);
+        }
+    }
+
+    private static void CreateAndUpdatePrefabs(int maxCount)
+    {
+        var fbxFiles = Directory.GetFiles(modelsDirectory, "*.fbx", SearchOption.AllDirectories)
+                                .Take(maxCount)
+                                .ToList();
+
+        foreach (var fbxFilePath in fbxFiles)
+        {
+            string assetPath = fbxFilePath.Replace("\\", "/").Replace(Application.dataPath, "Assets");
+            GameObject fbxAsset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+
+            string prefabPath = Path.ChangeExtension(assetPath, ".prefab");
+            GameObject prefabAsset = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+
+            if (prefabAsset == null)
+            {
+                prefabAsset = PrefabUtility.SaveAsPrefabAsset(fbxAsset, prefabPath);
+                Debug.Log($"Prefab created: {prefabPath}");
+            }
+
+            AssignMaterialsToPrefab(prefabAsset, Path.GetFileNameWithoutExtension(fbxFilePath));
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"Processed and updated up to {maxCount} prefabs with materials.");
+    }
+
+    private static void AssignMaterialsToPrefab(GameObject prefab, string meshName)
+    {
+        string jsonPath = Path.Combine(meshReferencesDirectory, meshName + ".json");
+        if (!File.Exists(jsonPath))
+        {
+            Debug.LogError($"Mesh reference JSON not found: {jsonPath}");
+            return;
+        }
+
+        string jsonContent = File.ReadAllText(jsonPath);
+        var meshReferenceData = JsonUtility.FromJson<MeshReferenceData>(jsonContent);
+        UpdateMaterials(prefab, meshReferenceData.materialsData);
+    }
+
+    private static void UpdateMaterials(GameObject prefab, List<MaterialData> materialsList)
+    {
+        var skinnedMeshRenderers = prefab.GetComponentsInChildren<SkinnedMeshRenderer>();
+
+        foreach (var renderer in skinnedMeshRenderers)
+        {
+            Material[] materialsToUpdate = renderer.sharedMaterials;
+
+            for (int i = 0; i < materialsToUpdate.Length; i++)
+            {
+                if (i < materialsList.Count)
+                {
+                    var materialData = materialsList[i];
+                    string materialPath = Path.Combine(modelsDirectory, materialData.name);
+                    Material newMat = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+
+                    if (newMat != null)
+                    {
+                        materialsToUpdate[i] = newMat;
+                        Debug.Log($"Assigned material '{materialData.name}' to '{renderer.gameObject.name}' in prefab '{prefab.name}' at index {i}");
+                    }
+                    else
+                    {
+                        Debug.LogError($"Material '{materialData.name}' not found at '{materialPath}'");
+                    }
+                }
+            }
+
+            renderer.sharedMaterials = materialsToUpdate;
+        }
+
+        EditorUtility.SetDirty(prefab);
+        AssetDatabase.SaveAssets();
+        Debug.Log($"Prefab '{prefab.name}' updated with new materials.");
+    }
+}

@@ -53,7 +53,7 @@ public class ModelImporterWindow : EditorWindow
 
     private void CreateAndBindMaterials(int limit = 100)
     {
-        string modelsPath = "Assets/Models";
+        string modelsPath = "Assets/Resources/Models";
         var allFiles = Directory.GetFiles(modelsPath, "*.*", SearchOption.AllDirectories);
         var textureFiles = new Dictionary<string, List<string>>();
         int createdMaterialsCount = 0;
@@ -312,7 +312,6 @@ public class ModelImporterWindow : EditorWindow
 
     private void AssignTexturesToMaterial(Material material, List<string> textureFiles, string baseName)
     {
-        // Find the HDRP Lit shader
         Shader hdrpShader = Shader.Find("HDRP/Lit");
         if (hdrpShader == null)
         {
@@ -321,36 +320,53 @@ public class ModelImporterWindow : EditorWindow
         }
         material.shader = hdrpShader;
 
-        // Define the texture types and their corresponding shader properties for HDRP
-        var textureTypes = new Dictionary<string, string>
-    {
-        {"_dif", "_BaseColorMap"},
-        {"_nrm", "_NormalMap"},
-        // The "_rgh" texture will be assigned to "_MaskMap" in HDRP
-        {"_rgh", "_MaskMap"},
-        {"_ems", "_EmissiveColorMap"},
-        // Assuming "_spc" is for Specular which is not directly used in HDRP, but you can use "_SpecularColorMap"
-        // Assuming "_ocl" is for Occlusion which can be part of the MaskMap in HDRP
-    };
+        bool hasDiffuseTexture = false;
+        bool hasClippingTexture = false;
 
-        // Iterate through each texture type and assign textures to material
-        foreach (var textureType in textureTypes)
+        foreach (var textureFile in textureFiles)
         {
-            string texturePath = textureFiles.FirstOrDefault(t => t.Contains(baseName + textureType.Key));
-            if (!string.IsNullOrEmpty(texturePath))
+            Texture2D texture = LoadTexture(textureFile);
+
+            if (textureFile.Contains(baseName + "_dif"))
             {
-                Texture2D texture = LoadTexture(texturePath);
-                if (texture != null)
-                {
-                    material.SetTexture(textureType.Value, texture);
-                    Debug.Log($"Assigned '{textureType.Key}' texture '{texture.name}' to material '{material.name}'");
-                }
+                material.SetTexture("_BaseColorMap", texture);
+                Debug.Log($"Assigned diffuse texture '{texture.name}' to material '{material.name}'");
+                hasDiffuseTexture = true;
+            }
+            else if (textureFile.Contains(baseName + "_nrm"))
+            {
+                material.SetTexture("_NormalMap", texture);
+                Debug.Log($"Assigned normal texture '{texture.name}' to material '{material.name}'");
+            }
+            else if (textureFile.Contains(baseName + "_rgh"))
+            {
+                material.SetTexture("_MaskMap", texture);
+                Debug.Log($"Assigned roughness texture '{texture.name}' to material '{material.name}'");
+            }
+            else if (textureFile.Contains(baseName + "_ems"))
+            {
+                material.SetTexture("_EmissiveColorMap", texture);
+                Debug.Log($"Assigned emissive texture '{texture.name}' to material '{material.name}'");
+            }
+            else if (textureFile.Contains(baseName + "_clp"))
+            {
+                material.SetTexture("_BaseColorMap", texture);
+                Debug.Log($"Assigned diffuse texture '{texture.name}' to material '{material.name}'");
+                hasClippingTexture = true;
             }
         }
 
-        // Assign default values for Metallic, Smoothness, and AO remapping.
-        // These values are typically set in the range [0, 1], but you need to confirm what the default values are for your project.
-        // The values below are examples and may need adjustment.
+        if (hasDiffuseTexture && hasClippingTexture)
+        {
+            material.SetFloat("_SurfaceType", 1); // Set Surface Type to Transparent
+            material.SetFloat("_AlphaCutoffEnable", 1); // Enable Alpha Clipping
+            material.SetFloat("_AlphaCutoff", 0.6f); // Set Alpha Cutoff value
+            material.EnableKeyword("_BACK_THEN_FRONT_RENDERING"); // Enable Back then Front Rendering
+            material.SetFloat("_ReceivesSSRTransparent", 1); // Enable Receive SSR Transparent
+            Debug.Log($"Configured material '{material.name}' for transparency with alpha clipping, back then front rendering, and SSR.");
+        }
+
+        // Set default remapping values
         material.SetFloat("_MetallicRemapMin", 0.0f);
         material.SetFloat("_MetallicRemapMax", 0.4f);
         material.SetFloat("_SmoothnessRemapMin", 0.0f);

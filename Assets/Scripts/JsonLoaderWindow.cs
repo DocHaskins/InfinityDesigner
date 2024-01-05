@@ -59,5 +59,27 @@ public class JsonLoaderWindow : EditorWindow
                 loader.LoadModelFromJson();
             }
         }
+
+        if (GUILayout.Button("Unload"))
+        {
+            // Find the ModelLoaderObject and call the UnloadModel method
+            GameObject loaderObject = GameObject.Find("ModelLoaderObject");
+            if (loaderObject != null)
+            {
+                ModelLoader loader = loaderObject.GetComponent<ModelLoader>();
+                if (loader != null)
+                {
+                    loader.UnloadModel();
+                }
+                else
+                {
+                    Debug.LogError("ModelLoader component not found on ModelLoaderObject.");
+                }
+            }
+            else
+            {
+                Debug.LogError("ModelLoaderObject not found in the scene.");
+            }
+        }
     }
 }

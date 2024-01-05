@@ -1,10 +1,12 @@
+using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
-using UnityEngine;
 
 public class ModelLoader : MonoBehaviour
 {
     public string jsonFileName;
+    private List<GameObject> loadedModels = new List<GameObject>();
+    private GameObject loadedSkeleton;
 
     void Start()
     {
@@ -23,23 +25,13 @@ public class ModelLoader : MonoBehaviour
         }
 
         string jsonData = File.ReadAllText(path);
-        Debug.Log("JSON Data: " + jsonData); // Log the raw JSON data
         ModelData modelData = JsonUtility.FromJson<ModelData>(jsonData);
 
         if (modelData != null)
         {
-            Debug.Log("Successfully deserialized JSON data.");
-            Debug.Log("Skeleton Name: " + modelData.skeletonName); // Check if the skeleton name is correctly deserialized
-
             var slots = modelData.GetSlots();
             if (slots != null && slots.Count > 0)
             {
-                Debug.Log("Slots count: " + slots.Count); // Check the number of slots
-                foreach (var slot in slots)
-                {
-                    Debug.Log("Slot: " + slot.Key + ", Models Count: " + slot.Value.models.Count); // Log each slot's details
-                }
-
                 LoadSkeleton(modelData.skeletonName);
                 LoadModels(slots);
             }
@@ -56,18 +48,15 @@ public class ModelLoader : MonoBehaviour
 
     private void LoadSkeleton(string skeletonName)
     {
-        // Remove .msh and .fbx extension for Resources.Load
-        string resourcePath = "Models/" + Path.GetFileNameWithoutExtension(skeletonName.Replace(".msh", ".fbx"));
-        Debug.Log("Loading skeleton from: " + resourcePath);
+        string resourcePath = "Models/" + skeletonName.Replace(".msh", "");
         GameObject skeletonPrefab = Resources.Load<GameObject>(resourcePath);
         if (skeletonPrefab != null)
         {
-            Instantiate(skeletonPrefab, Vector3.zero, Quaternion.identity);
-            Debug.Log("Successfully instantiated skeleton: " + skeletonName);
+            loadedSkeleton = Instantiate(skeletonPrefab, Vector3.zero, Quaternion.identity);
         }
         else
         {
-            Debug.LogError("Skeleton FBX not found in Resources: " + resourcePath);
+            Debug.LogError("Skeleton prefab not found in Resources: " + resourcePath);
         }
     }
 
@@ -76,22 +65,19 @@ public class ModelLoader : MonoBehaviour
         foreach (var slotPair in slotDictionary)
         {
             var slot = slotPair.Value;
-            Debug.Log("Processing slot: " + slot.name + " with " + slot.models.Count + " models.");
             foreach (var modelInfo in slot.models)
             {
-                string modelPath = "Models/" + Path.GetFileNameWithoutExtension(modelInfo.name.Replace(".msh", ".fbx"));
-                Debug.Log("Attempting to load model: " + modelInfo.name + " from path: " + modelPath);
-
-                GameObject modelPrefab = Resources.Load<GameObject>(modelPath);
+                string prefabPath = "Models/" + modelInfo.name.Replace(".msh", "");
+                GameObject modelPrefab = Resources.Load<GameObject>(prefabPath);
                 if (modelPrefab != null)
                 {
                     GameObject modelInstance = Instantiate(modelPrefab, Vector3.zero, Quaternion.identity);
-                    Debug.Log("Successfully instantiated model: " + modelInfo.name);
                     ApplyMaterials(modelInstance, modelInfo);
+                    loadedModels.Add(modelInstance);
                 }
                 else
                 {
-                    Debug.LogError("Model FBX not found in Resources: " + modelPath);
+                    Debug.LogError("Model prefab not found in Resources: " + prefabPath);
                 }
             }
         }
@@ -99,55 +85,130 @@ public class ModelLoader : MonoBehaviour
 
     private void ApplyMaterials(GameObject modelInstance, ModelData.ModelInfo modelInfo)
     {
-        // Find all SkinnedMeshRenderer components in the children of the modelInstance
         SkinnedMeshRenderer[] skinnedRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>();
 
         if (skinnedRenderers.Length == 0)
         {
-            Debug.LogError("No SkinnedMeshRenderer components found for model: " + modelInfo.name);
+            Debug.LogError($"No SkinnedMeshRenderer components found for model: {modelInfo.name}");
             return;
         }
 
-        if (modelInfo.materialsData == null || modelInfo.materialsData.Count == 0)
+        foreach (var materialResource in modelInfo.materialsResources)
         {
-            Debug.LogError("Materials data is null or empty for model: " + modelInfo.name);
-            return;
-        }
-
-        Debug.Log("Applying materials to model: " + modelInfo.name);
-
-        // Iterate through all the materials data and apply them to the corresponding SkinnedMeshRenderer
-        for (int i = 0; i < modelInfo.materialsData.Count; i++)
-        {
-            var materialData = modelInfo.materialsData[i];
-            string matPath = "Models/" + materialData.name.Replace(".mat", "");
-
-            Material mat = Resources.Load<Material>(matPath);
-            if (mat == null)
+            foreach (var resource in materialResource.resources)
             {
-                Debug.LogError("Material not found in Resources: " + matPath);
-                continue;
-            }
+                string matPath = "Models/" + Path.GetFileNameWithoutExtension(resource.name);
+                Material mat = Resources.Load<Material>(matPath);
 
-            if (materialData.number - 1 < skinnedRenderers.Length)
-            {
-                var renderer = skinnedRenderers[materialData.number - 1];
-                Material[] materialsArray = renderer.sharedMaterials; // Use sharedMaterials instead of materials
-                if (materialsArray.Length > 0)
+                if (mat != null)
                 {
-                    materialsArray[0] = mat; // Replace the material at the primary index (0) with the new one
-                    renderer.sharedMaterials = materialsArray; // Assign the updated materials array back to the renderer using sharedMaterials
-                    Debug.Log("Applied material: " + mat.name + " to " + renderer.gameObject.name);
+                    int rendererIndex = materialResource.number - 1;
+                    if (rendererIndex >= 0 && rendererIndex < skinnedRenderers.Length)
+                    {
+                        var skinnedRenderer = skinnedRenderers[rendererIndex];
+                        var rendererMaterials = skinnedRenderer.sharedMaterials;
+
+                        if (rendererMaterials.Length > 0)
+                        {
+                            // Clone the material to avoid changing the shared material
+                            Material clonedMaterial = new Material(mat);
+                            rendererMaterials[0] = clonedMaterial;
+                            skinnedRenderer.sharedMaterials = rendererMaterials;
+
+                            foreach (var rttiValue in resource.rttiValues)
+                            {
+                                string texturePath = "Models/" + rttiValue.val_str;
+                                Texture2D texture = Resources.Load<Texture2D>(texturePath);
+
+                                if (texture != null)
+                                {
+                                    ApplyTextureToMaterial(clonedMaterial, rttiValue.name, texture);
+                                }
+                                else
+                                {
+                                    Debug.LogError($"Texture '{texturePath}' not found in Resources for material '{resource.name}'");
+                                }
+                            }
+
+                            // Check if SkinnedMeshRenderer needs to be disabled
+                            if (ShouldDisableRenderer(skinnedRenderer.gameObject.name))
+                            {
+                                skinnedRenderer.enabled = false;
+                                Debug.Log($"Disabled SkinnedMeshRenderer on '{skinnedRenderer.gameObject.name}' due to name match.");
+                            }
+
+                            Debug.Log($"Successfully applied material '{clonedMaterial.name}' to renderer '{skinnedRenderer.name}'");
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"Renderer '{skinnedRenderer.name}' does not have any materials to update.");
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogError($"Renderer index {rendererIndex} is out of bounds for model: {modelInfo.name}");
+                    }
                 }
                 else
                 {
-                    Debug.LogError("No materials found on renderer for model: " + modelInfo.name);
+                    Debug.LogError($"Material '{matPath}' not found in Resources for model: {modelInfo.name}");
                 }
             }
-            else
+        }
+    }
+
+    private void ApplyTextureToMaterial(Material material, string rttiValueName, Texture2D texture)
+    {
+        switch (rttiValueName)
+        {
+            case "msk_1_tex":
+                material.SetTexture("_CoatMaskMap", texture);
+                material.SetFloat("_CoatMask", 1.0f);
+                Debug.Log($"Assigned texture '{texture.name}' to '_CoatMaskMap'");
+                break;
+            case "dif_1_tex":
+                material.SetTexture("_BaseColorMap", texture);
+                Debug.Log($"Assigned texture '{texture.name}' to '_BaseColorMap'");
+                break;
+            case "nrm_1_tex":
+                material.SetTexture("_NormalMap", texture);
+                Debug.Log($"Assigned texture '{texture.name}' to '_NormalMap'");
+                break;
+                // Add other cases as needed
+        }
+    }
+
+    private bool ShouldDisableRenderer(string gameObjectName)
+    {
+        return gameObjectName.Contains("sh_eye_shadow") || gameObjectName.Contains("sh_wet_eye");
+    }
+
+    public void UnloadModel()
+    {
+        if (loadedSkeleton != null)
+        {
+            DestroyObject(loadedSkeleton);
+            loadedSkeleton = null;
+        }
+
+        foreach (var model in loadedModels)
+        {
+            if (model != null)
             {
-                Debug.LogError("Material number " + materialData.number + " exceeds the number of SkinnedMeshRenderers for model: " + modelInfo.name);
+                DestroyObject(model);
             }
         }
+        loadedModels.Clear();
+
+        DestroyObject(this.gameObject);
+    }
+
+    private void DestroyObject(GameObject obj)
+    {
+#if UNITY_EDITOR
+        DestroyImmediate(obj);
+#else
+        Destroy(obj);
+#endif
     }
 }
