@@ -6,6 +6,7 @@ using UnityEngine;
 public class ModelData
 {
     public string skeletonName;
+    public ModelProperties modelProperties;
     public List<SlotDataPair> slotPairs;
 
     public Dictionary<string, SlotData> GetSlots()
@@ -16,6 +17,14 @@ public class ModelData
             slots.Add(pair.key, pair.slotData);
         }
         return slots;
+    }
+
+    [Serializable]
+    public class ModelProperties
+    {
+        public string @class;
+        public string race;
+        public string sex;
     }
 
     [Serializable]

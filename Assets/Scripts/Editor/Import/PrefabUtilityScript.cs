@@ -8,6 +8,7 @@ using System;
 public class PrefabUtilityScript : EditorWindow
 {
     private static string modelsDirectory = "Assets/Resources/Models";
+    private static string prefabsDirectory = "Assets/Resources/Prefabs"; // Prefabs directory
     private static string meshReferencesDirectory = "Assets/StreamingAssets/Mesh references";
     private int maxPrefabCount = 100;
 
@@ -52,11 +53,16 @@ public class PrefabUtilityScript : EditorWindow
             string assetPath = fbxFilePath.Replace("\\", "/").Replace(Application.dataPath, "Assets");
             GameObject fbxAsset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
 
-            string prefabPath = Path.ChangeExtension(assetPath, ".prefab");
+            // Modify the prefabPath to store prefabs in the prefabsDirectory
+            string prefabName = Path.GetFileNameWithoutExtension(assetPath) + ".prefab";
+            string prefabPath = Path.Combine(prefabsDirectory, prefabName);
+            prefabPath = prefabPath.Replace("\\", "/"); // Ensure the path uses forward slashes
+
             GameObject prefabAsset = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
 
             if (prefabAsset == null)
             {
+                // Create the prefab in the new directory
                 prefabAsset = PrefabUtility.SaveAsPrefabAsset(fbxAsset, prefabPath);
                 Debug.Log($"Prefab created: {prefabPath}");
             }

@@ -1,13 +1,22 @@
+using System;
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 public class JsonLoaderWindow : EditorWindow
 {
     private string selectedJson;
     private List<string> jsonFiles = new List<string>();
+    private List<string> filteredJsonFiles = new List<string>();
     private int selectedIndex = 0;
+    private string selectedClass = "All";
+    private string selectedSex = "All";
+    private string selectedRace = "All";
+    private HashSet<string> classes = new HashSet<string>();
+    private HashSet<string> sexes = new HashSet<string>();
+    private HashSet<string> races = new HashSet<string>();
 
     [MenuItem("Tools/Json Loader")]
     public static void ShowWindow()
@@ -18,9 +27,11 @@ public class JsonLoaderWindow : EditorWindow
     void OnEnable()
     {
         jsonFiles.Clear();
-        string jsonsFolderPath = Path.Combine(Application.streamingAssetsPath, "Jsons");
+        classes.Clear();
+        sexes.Clear();
+        races.Clear();
 
-        // Check if the Jsons directory exists
+        string jsonsFolderPath = Path.Combine(Application.streamingAssetsPath, "Jsons");
         if (!Directory.Exists(jsonsFolderPath))
         {
             Debug.LogError("Jsons folder not found in StreamingAssets: " + jsonsFolderPath);
@@ -30,22 +41,58 @@ public class JsonLoaderWindow : EditorWindow
         foreach (var file in Directory.GetFiles(jsonsFolderPath, "*.json"))
         {
             jsonFiles.Add(Path.GetFileName(file));
+
+            string jsonPath = Path.Combine(jsonsFolderPath, file);
+            string jsonData = File.ReadAllText(jsonPath);
+            ModelData modelData = JsonUtility.FromJson<ModelData>(jsonData);
+            if (modelData.modelProperties != null)
+            {
+                classes.Add(modelData.modelProperties.@class ?? "Unknown");
+                sexes.Add(modelData.modelProperties.sex ?? "Unknown");
+                races.Add(modelData.modelProperties.race ?? "Unknown");
+            }
         }
 
-        if (jsonFiles.Count > 0)
+        classes.Add("All");
+        sexes.Add("All");
+        races.Add("All");
+
+        UpdateFilteredJsonFiles();
+    }
+
+    void UpdateFilteredJsonFiles()
+    {
+        filteredJsonFiles = jsonFiles.Where(file =>
         {
-            selectedJson = jsonFiles[0];
-        }
+            string jsonPath = Path.Combine(Application.streamingAssetsPath, "Jsons", file);
+            string jsonData = File.ReadAllText(jsonPath);
+            ModelData modelData = JsonUtility.FromJson<ModelData>(jsonData);
+
+            bool classMatch = selectedClass == "All" || modelData.modelProperties?.@class == selectedClass;
+            bool sexMatch = selectedSex == "All" || modelData.modelProperties?.sex == selectedSex;
+            bool raceMatch = selectedRace == "All" || modelData.modelProperties?.race == selectedRace;
+
+            return classMatch && sexMatch && raceMatch;
+        }).ToList();
     }
 
     void OnGUI()
     {
         GUILayout.Label("Load JSON File", EditorStyles.boldLabel);
 
-        selectedIndex = EditorGUILayout.Popup("Select JSON File", selectedIndex, jsonFiles.ToArray());
-        if (jsonFiles.Count > 0)
+        // Dropdown for Class
+        selectedClass = DropdownField("Filter by Class", selectedClass, classes);
+        // Dropdown for Sex
+        selectedSex = DropdownField("Filter by Sex", selectedSex, sexes);
+        // Dropdown for Race
+        selectedRace = DropdownField("Filter by Race", selectedRace, races);
+
+        UpdateFilteredJsonFiles();
+
+        selectedIndex = EditorGUILayout.Popup("Select JSON File", selectedIndex, filteredJsonFiles.ToArray());
+        if (filteredJsonFiles.Count > 0)
         {
-            selectedJson = jsonFiles[selectedIndex];
+            selectedJson = filteredJsonFiles[selectedIndex];
         }
 
         if (GUILayout.Button("Load"))
@@ -81,5 +128,12 @@ public class JsonLoaderWindow : EditorWindow
                 Debug.LogError("ModelLoaderObject not found in the scene.");
             }
         }
+    }
+    private string DropdownField(string label, string selectedValue, HashSet<string> options)
+    {
+        string[] optionArray = options.ToArray();
+        int index = Array.IndexOf(optionArray, selectedValue);
+        index = EditorGUILayout.Popup(label, index, optionArray);
+        return optionArray[index];
     }
 }

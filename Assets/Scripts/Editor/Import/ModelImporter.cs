@@ -9,6 +9,7 @@ using System;
 public class ModelImporterWindow : EditorWindow
 {
     private int materialCreationLimit = 100; // Default value
+    private int fbxProcessingLimit = 10;
 
     [MenuItem("Tools/Model Importer")]
     public static void ShowWindow()
@@ -42,6 +43,11 @@ public class ModelImporterWindow : EditorWindow
         {
             CreateAndBindMaterials(materialCreationLimit);
         }
+
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("FBX Processing Limit:", GUILayout.Width(150));
+        fbxProcessingLimit = EditorGUILayout.IntField(fbxProcessingLimit);
+        GUILayout.EndHorizontal();
 
         if (GUILayout.Button("Assign Materials to FBX"))
         {
@@ -112,102 +118,88 @@ public class ModelImporterWindow : EditorWindow
         Debug.Log($"{createdMaterialsCount} materials were created and binding complete.");
     }
 
+    private string meshReferencesDirectory = "Assets/StreamingAssets/Mesh references";
+    private static string modelsDirectory = "Assets/Resources/Models";
+
     private void AssignMaterialsToFbx()
     {
-        string modelsPath = "Assets/Models";
-        var materialPaths = Directory.GetFiles(modelsPath, "*.mat", SearchOption.AllDirectories);
+        var fbxPaths = Directory.GetFiles(modelsDirectory, "*.fbx", SearchOption.AllDirectories);
+        int processedFbxCount = 0;
 
-        // Log the found material paths for debugging
-        foreach (var matPath in materialPaths)
-        {
-            Debug.Log($"Found material at path: {matPath}");
-        }
-
-        // Create a dictionary to map the material name to its path
-        var materialNameToPath = materialPaths.ToDictionary(
-            path => Path.GetFileNameWithoutExtension(path),
-            path => path
-        );
-
-        var fbxPaths = Directory.GetFiles(modelsPath, "*.fbx", SearchOption.AllDirectories);
         foreach (var fbxPath in fbxPaths)
         {
+            if (processedFbxCount >= fbxProcessingLimit)
+            {
+                Debug.Log($"FBX processing limit of {fbxProcessingLimit} reached. Stopping further processing.");
+                break;
+            }
+
             Debug.Log($"Processing FBX at path: {fbxPath}");
+            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fbxPath);
+            string jsonPath = Path.Combine(meshReferencesDirectory, fileNameWithoutExtension + ".json");
+
+            if (!File.Exists(jsonPath))
+            {
+                Debug.LogError($"Mesh reference JSON not found: {jsonPath}");
+                continue;
+            }
+
+            string jsonContent = File.ReadAllText(jsonPath);
+            var modelData = JsonUtility.FromJson<ModelData>(jsonContent);
 
             AssetDatabase.ImportAsset(fbxPath, ImportAssetOptions.ForceUpdate);
             var importer = AssetImporter.GetAtPath(fbxPath) as ModelImporter;
 
-            if (importer != null)
+            if (importer != null && modelData != null)
             {
-                // Set material location to external before applying the changes
-                importer.materialLocation = ModelImporterMaterialLocation.External;
-                importer.SaveAndReimport(); // Apply the changes immediately
-
+                // Change import mode to embedded materials
+                importer.materialImportMode = ModelImporterMaterialImportMode.ImportViaMaterialDescription;
                 SerializedObject serializedObject = new SerializedObject(importer);
                 SerializedProperty materialsProperty = serializedObject.FindProperty("m_ExternalObjects");
 
-                Debug.Log($"Number of material slots in '{fbxPath}': {materialsProperty.arraySize}");
-
-                for (int i = 0; i < materialsProperty.arraySize; i++)
+                foreach (var slotPair in modelData.slotPairs)
                 {
-                    SerializedProperty materialProperty = materialsProperty.GetArrayElementAtIndex(i);
-                    string materialName = materialProperty.FindPropertyRelative("first.name").stringValue;
-
-                    Debug.Log($"Original material slot name: '{materialName}'");
-
-                    // Process the material name to match with the created materials
-                    string processedMaterialName = ProcessMaterialName(materialName);
-                    Debug.Log($"Processed material name for matching: '{processedMaterialName}'");
-
-                    if (materialNameToPath.TryGetValue(processedMaterialName, out var materialPath))
+                    foreach (var modelInfo in slotPair.slotData.models)
                     {
-                        Material material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
-                        if (material != null)
+                        foreach (var materialResource in modelInfo.materialsResources)
                         {
-                            materialProperty.FindPropertyRelative("second").objectReferenceValue = material;
-                            Debug.Log($"Assigned material '{processedMaterialName}' to '{fbxPath}' at slot index {i}");
+                            int materialIndex = materialResource.number - 1;
+
+                            foreach (var resource in materialResource.resources)
+                            {
+                                string materialPath = Path.Combine(modelsDirectory, resource.name);
+                                Material material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+
+                                if (material != null && materialIndex >= 0 && materialIndex < materialsProperty.arraySize)
+                                {
+                                    SerializedProperty materialProperty = materialsProperty.GetArrayElementAtIndex(materialIndex);
+                                    materialProperty.FindPropertyRelative("second").objectReferenceValue = material;
+                                    Debug.Log($"Loaded material '{material.name}' from path: {materialPath}");
+                                }
+                                else
+                                {
+                                    Debug.LogError($"Failed to load material from path: {materialPath} or index out of bounds. Material null: {material == null}");
+                                }
+                            }
                         }
-                        else
-                        {
-                            Debug.LogError($"Material asset not found at path: {materialPath}");
-                        }
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"No matching material found for name: '{processedMaterialName}'");
                     }
                 }
+
                 serializedObject.ApplyModifiedProperties();
-                Debug.Log($"Updated materials for: {serializedObject.targetObject}");
+                importer.SaveAndReimport(); // Apply the changes immediately
+                Debug.Log($"Updated materials for FBX: {fbxPath}");
             }
             else
             {
-                Debug.LogError($"Importer for the FBX file at '{fbxPath}' could not be found.");
+                Debug.LogError($"Importer for the FBX file at '{fbxPath}' could not be found or modelData is null.");
             }
+            processedFbxCount++;
         }
 
+        Debug.Log($"Processed {processedFbxCount} FBX files out of {fbxPaths.Length} available.");
         AssetDatabase.SaveAssets();
-        Debug.Log("Material assignment complete.");
+        Debug.Log("FBX material assignment complete.");
     }
-    private string ProcessMaterialName(string originalName)
-    {
-        // Use regex to replace the unwanted parts of the material name
-        // Corrected regex pattern with double backslashes for C# string literals
-        string pattern = @"sm_\d+_|\_\d+_.+$"; // This is the corrected pattern
-        try
-        {
-            string processedName = Regex.Replace(originalName, pattern, "");
-            Debug.LogError($"Processing the file names: Original {originalName}, New {processedName}");
-            return processedName;
-        }
-        catch (ArgumentException ex)
-        {
-            // Log the error message and the pattern that caused the error
-            Debug.LogError($"Regex error in pattern: {pattern}\nError Message: {ex.Message}");
-            return originalName; // Return the original name if there was a problem
-        }
-    }
-
 
     private void ImportModelsAndTextures(string dirPath)
     {
