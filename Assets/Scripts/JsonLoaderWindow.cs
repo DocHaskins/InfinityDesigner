@@ -14,6 +14,7 @@ public class JsonLoaderWindow : EditorWindow
     private string selectedClass = "All";
     private string selectedSex = "All";
     private string selectedRace = "All";
+    private string searchTerm = "";
     private HashSet<string> classes = new HashSet<string>();
     private HashSet<string> sexes = new HashSet<string>();
     private HashSet<string> races = new HashSet<string>();
@@ -25,6 +26,12 @@ public class JsonLoaderWindow : EditorWindow
     }
 
     void OnEnable()
+    {
+        // Initialize the JSON data only once when the window is enabled
+        LoadJsonData();
+    }
+
+    void LoadJsonData()
     {
         jsonFiles.Clear();
         classes.Clear();
@@ -71,14 +78,22 @@ public class JsonLoaderWindow : EditorWindow
             bool classMatch = selectedClass == "All" || modelData.modelProperties?.@class == selectedClass;
             bool sexMatch = selectedSex == "All" || modelData.modelProperties?.sex == selectedSex;
             bool raceMatch = selectedRace == "All" || modelData.modelProperties?.race == selectedRace;
+            bool searchMatch = string.IsNullOrEmpty(searchTerm) || file.ToLower().Contains(searchTerm.ToLower());
 
-            return classMatch && sexMatch && raceMatch;
+            return classMatch && sexMatch && raceMatch && searchMatch;
         }).ToList();
     }
 
     void OnGUI()
     {
         GUILayout.Label("Load JSON File", EditorStyles.boldLabel);
+
+        // "Update" button to reload and filter JSON data
+        if (GUILayout.Button("Update JSON Data"))
+        {
+            LoadJsonData();
+            UpdateFilteredJsonFiles();
+        }
 
         // Dropdown for Class
         selectedClass = DropdownField("Filter by Class", selectedClass, classes);
@@ -87,7 +102,15 @@ public class JsonLoaderWindow : EditorWindow
         // Dropdown for Race
         selectedRace = DropdownField("Filter by Race", selectedRace, races);
 
-        UpdateFilteredJsonFiles();
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("Search:", GUILayout.Width(50));
+        searchTerm = GUILayout.TextField(searchTerm);
+        GUILayout.EndHorizontal();
+
+        if (GUILayout.Button("Search"))
+        {
+            UpdateFilteredJsonFiles();
+        }
 
         selectedIndex = EditorGUILayout.Popup("Select JSON File", selectedIndex, filteredJsonFiles.ToArray());
         if (filteredJsonFiles.Count > 0)

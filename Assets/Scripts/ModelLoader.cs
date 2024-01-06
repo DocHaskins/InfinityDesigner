@@ -151,7 +151,6 @@ public class ModelLoader : MonoBehaviour
 
     private void ApplyTextureToMaterial(Material material, string rttiValueName, string textureName)
     {
-        // Updated path to load textures from "resources/materials" folder
         string texturePath = "textures/" + Path.GetFileNameWithoutExtension(textureName);
         Texture2D texture = Resources.Load<Texture2D>(texturePath);
 
@@ -165,12 +164,21 @@ public class ModelLoader : MonoBehaviour
                     Debug.Log($"Assigned texture '{texture.name}' to '_CoatMaskMap'");
                     break;
                 case "dif_1_tex":
+                case "dif_0_tex": // Add this case for dif_0_tex
                     material.SetTexture("_BaseColorMap", texture);
                     Debug.Log($"Assigned texture '{texture.name}' to '_BaseColorMap'");
                     break;
                 case "nrm_1_tex":
+                case "nrm_0_tex": // Add this case for nrm_0_tex
                     material.SetTexture("_NormalMap", texture);
                     Debug.Log($"Assigned texture '{texture.name}' to '_NormalMap'");
+                    break;
+                case "ems_0_tex":
+                case "ems_1_tex": // Add this case for ems_1_tex
+                    material.SetTexture("_EmissiveColorMap", texture);
+                    material.SetColor("_EmissiveColor", Color.white * 2); // You might want to adjust this value
+                    material.EnableKeyword("_EMISSION");
+                    Debug.Log($"Assigned texture '{texture.name}' to '_EmissiveColorMap' and enabled emission");
                     break;
                     // Add other cases as needed
             }
