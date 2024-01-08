@@ -86,7 +86,13 @@ public class JsonLoaderWindow : EditorWindow
                 return false;
             }
 
-            if (!enableCustomContent && info.FileName.StartsWith("ialr_"))
+            if (!enableCustomContent && info.FileName.StartsWith("ialr_", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            if (!enableCustomContent && (info.FileName.EndsWith("_clown", StringComparison.OrdinalIgnoreCase) ||
+                                         info.FileName.EndsWith("_vampire", StringComparison.OrdinalIgnoreCase)))
             {
                 return false;
             }

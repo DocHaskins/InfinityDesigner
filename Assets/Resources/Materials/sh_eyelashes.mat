@@ -43,6 +43,8 @@ Material:
   disabledShaderPasses:
   - MOTIONVECTORS
   - RayTracingPrepass
+  - TransparentDepthPostpass
+  - TransparentDepthPrepass
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -150,11 +152,11 @@ Material:
     - _ATDistance: 1
     - _AddPrecomputedVelocity: 0
     - _AlbedoAffectEmissive: 0
-    - _AlphaCutoff: 0
+    - _AlphaCutoff: 0.485
     - _AlphaCutoffEnable: 1
-    - _AlphaCutoffPostpass: 0.654
-    - _AlphaCutoffPrepass: 0.791
-    - _AlphaCutoffShadow: 0.517
+    - _AlphaCutoffPostpass: 0.299
+    - _AlphaCutoffPrepass: 1
+    - _AlphaCutoffShadow: 0.325
     - _AlphaDstBlend: 10
     - _AlphaRemapMax: 1
     - _AlphaRemapMin: 0
@@ -164,7 +166,7 @@ Material:
     - _CoatMask: 0
     - _CullMode: 2
     - _CullModeForward: 2
-    - _Cutoff: 0
+    - _Cutoff: 0.485
     - _DepthOffsetEnable: 0
     - _DetailAlbedoScale: 1
     - _DetailNormalScale: 1
@@ -218,7 +220,7 @@ Material:
     - _ReceivesSSR: 1
     - _ReceivesSSRTransparent: 0
     - _RefractionModel: 0
-    - _Smoothness: 0.5
+    - _Smoothness: 0
     - _SmoothnessRemapMax: 0.25
     - _SmoothnessRemapMin: 0
     - _SpecularAAScreenSpaceVariance: 0.1
@@ -243,8 +245,8 @@ Material:
     - _TransmissionMask: 1
     - _TransparentBackfaceEnable: 1
     - _TransparentCullMode: 2
-    - _TransparentDepthPostpassEnable: 1
-    - _TransparentDepthPrepassEnable: 1
+    - _TransparentDepthPostpassEnable: 0
+    - _TransparentDepthPrepassEnable: 0
     - _TransparentSortPriority: 0
     - _TransparentWritingMotionVec: 0
     - _TransparentZWrite: 0

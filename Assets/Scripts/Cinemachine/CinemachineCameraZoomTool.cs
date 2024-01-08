@@ -106,31 +106,39 @@ public class CinemachineCameraZoomTool : MonoBehaviour
 
         public void UpdateTargetPoints()
         {
-            targets.Clear();
-            foreach (var pointName in pointNames)
+            // Check if the application is in play mode
+            if (Application.isPlaying)
             {
-                var targetObject = GameObject.Find(pointName);
-                if (targetObject != null)
+                targets.Clear();
+                foreach (var pointName in pointNames)
                 {
-                    targets.Add(targetObject.transform);
+                    var targetObject = GameObject.Find(pointName);
+                    if (targetObject != null)
+                    {
+                        targets.Add(targetObject.transform);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("Target not found in the scene: " + pointName);
+                    }
                 }
-                else
-                {
-                    Debug.LogWarning("Target not found in the scene: " + pointName);
-                }
-            }
 
-            // Reset the current target index and update the camera target
-            currentTargetIndex = 0;
-            UpdateCameraTarget();
+                // Reset the current target index and update the camera target
+                currentTargetIndex = 0;
+                UpdateCameraTarget();
+            }
         }
 
         private void UpdateCameraTarget()
         {
-            if (targets.Count > 0 && currentTargetIndex < targets.Count)
+            // Check if the application is in play mode and if freelook is not null
+            if (Application.isPlaying && freelook != null)
             {
-                freelook.Follow = targets[currentTargetIndex];
-                freelook.LookAt = targets[currentTargetIndex];
+                if (targets.Count > 0 && currentTargetIndex < targets.Count)
+                {
+                    freelook.Follow = targets[currentTargetIndex];
+                    freelook.LookAt = targets[currentTargetIndex];
+                }
             }
         }
     }

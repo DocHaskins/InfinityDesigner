@@ -327,6 +327,88 @@ public class ModelImporterWindow : EditorWindow
 
     private void AssignTexturesToMaterial(Material material, List<string> textureFiles, string baseName)
     {
+        string[] specialNames = new string[] {
+        "sh_biter_", "sh_man_", "sh_scan_man_", "multihead007_npc_carl_",
+        "sh_wmn_", "sh_scan_wmn_", "sh_dlc_opera_wmn_", "nnpc_wmn_worker",
+        "sh_scan_kid_", "sh_scan_girl_", "sh_scan_boy_", "sh_chld_"
+    };
+
+        bool useCustomShader = textureFiles.Any(file => specialNames.Any(name => Path.GetFileName(file).StartsWith(name)));
+
+        if (useCustomShader)
+        {
+            // Carry over settings if the material is already HDRP/Lit
+            if (material.shader.name == "HDRP/Lit")
+            {
+                // Store current settings that need to be retained
+                var baseColorMap = material.GetTexture("_BaseColorMap");
+                var normalMap = material.GetTexture("_NormalMap");
+                var maskMap = material.GetTexture("_MaskMap");
+
+                // Switch to the custom shader
+                material.shader = Shader.Find("Shader Graphs/Skin");
+
+                // Reapply the retained settings
+                material.SetTexture("_BaseColorMap", baseColorMap);
+                material.SetTexture("_NormalMap", normalMap);
+                material.SetTexture("_MaskMap", maskMap);
+
+                // Other custom settings for the shader
+                material.SetFloat("_Modifier", 0);
+                material.SetFloat("_Blend", 0.9f);
+                material.SetFloat("_AO_Multiply", 1.0f);
+            }
+            else
+            {
+                // Set the custom shader for materials not originally using HDRP/Lit
+                material.shader = Shader.Find("Shader Graphs/Skin");
+                material.SetFloat("_Modifier", 0);
+            }
+        }
+        else
+        {
+            // Ensure the material uses HDRP/Lit shader if not using custom shader
+            if (material.shader.name != "HDRP/Lit")
+            {
+                material.shader = Shader.Find("HDRP/Lit");
+            }
+        }
+
+        // Apply textures to the material
+        foreach (var textureFile in textureFiles)
+        {
+            Texture2D texture = LoadTexture(textureFile);
+
+            if (textureFile.Contains(baseName + "_dif"))
+            {
+                material.SetTexture("_BaseColorMap", texture);
+                Debug.Log($"Assigned diffuse texture '{texture.name}' to material '{material.name}'");
+            }
+            else if (textureFile.Contains(baseName + "_nrm"))
+            {
+                material.SetTexture("_NormalMap", texture);
+                Debug.Log($"Assigned normal texture '{texture.name}' to material '{material.name}'");
+            }
+            else if (textureFile.Contains(baseName + "_ocl"))
+            {
+                material.SetTexture("_OclMap", texture); // Assuming "_ocl" maps to "_OclMap"
+                Debug.Log($"Assigned occlusion texture '{texture.name}' to material '{material.name}'");
+            }
+            else if (textureFile.Contains(baseName + "_msk") && useCustomShader)
+            {
+                material.SetTexture("_MaskMap", texture);
+                Debug.Log($"Assigned mask texture '{texture.name}' to material '{material.name}'");
+            }
+        }
+
+        // Additional properties for the custom shader
+        if (useCustomShader)
+        {
+            material.SetFloat("_Blend", 0.9f);
+            material.SetFloat("_AO_Multiply", 1.0f);
+            // Set other properties as needed
+        }
+
         Shader hdrpShader = Shader.Find("HDRP/Lit");
         if (hdrpShader == null)
         {

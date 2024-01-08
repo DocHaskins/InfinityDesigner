@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
+using System;
 
 public class ModelLoader : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class ModelLoader : MonoBehaviour
     public void LoadModelFromJson()
     {
         string path = Path.Combine(Application.streamingAssetsPath, "Jsons", jsonFileName);
-        Debug.Log("Loading JSON from path: " + path);
+        //Debug.Log("Loading JSON from path: " + path);
 
         if (!File.Exists(path))
         {
@@ -89,7 +90,7 @@ public class ModelLoader : MonoBehaviour
                 string prefabPath = modelInfo.name.Replace(".msh", "");
                 GameObject modelPrefab = Resources.Load<GameObject>("Prefabs/" + prefabPath);
 
-                Debug.Log($"Attempting to load prefab from Resources path: Prefabs/{prefabPath}");
+                //Debug.Log($"Attempting to load prefab from Resources path: Prefabs/{prefabPath}");
 
                 if (modelPrefab != null)
                 {
@@ -117,7 +118,7 @@ public class ModelLoader : MonoBehaviour
                         Debug.Log($"Adjusted position for hair prefab: {prefabPath}");
                     }
 
-                    Debug.Log($"Prefab loaded and instantiated: {prefabPath}");
+                    //Debug.Log($"Prefab loaded and instantiated: {prefabPath}");
                 }
                 else
                 {
@@ -129,7 +130,7 @@ public class ModelLoader : MonoBehaviour
 
     private void ApplyMaterials(GameObject modelInstance, ModelData.ModelInfo modelInfo)
     {
-        Debug.Log($"Applying materials to model '{modelInfo.name}'.");
+        //Debug.Log($"Applying materials to model '{modelInfo.name}'.");
 
         var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>();
 
@@ -156,6 +157,13 @@ public class ModelLoader : MonoBehaviour
             return;
         }
 
+        if (resource.name.Equals("null.mat", StringComparison.OrdinalIgnoreCase))
+        {
+            renderer.enabled = false;
+            Debug.Log($"Disabled SkinnedMeshRenderer on '{renderer.gameObject.name}' due to null.mat");
+            return;
+        }
+
         // Updated path to load materials from "resources/materials" folder
         string matPath = "materials/" + Path.GetFileNameWithoutExtension(resource.name);
         Material originalMat = Resources.Load<Material>(matPath);
@@ -172,13 +180,13 @@ public class ModelLoader : MonoBehaviour
                 ApplyTextureToMaterial(clonedMaterial, rttiValue.name, rttiValue.val_str);
             }
 
-            Debug.Log($"Material '{resource.name}' applied to '{renderer.gameObject.name}'");
+            //Debug.Log($"Material '{resource.name}' applied to '{renderer.gameObject.name}'");
 
             // Check if the renderer should be disabled based on its name
             if (ShouldDisableRenderer(renderer.gameObject.name))
             {
                 renderer.enabled = false;
-                Debug.Log($"SkinnedMeshRenderer disabled on '{renderer.gameObject.name}'");
+                //Debug.Log($"SkinnedMeshRenderer disabled on '{renderer.gameObject.name}'");
             }
         }
         else
