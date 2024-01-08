@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 namespace Cinemachine 
 {
@@ -12,6 +13,8 @@ public class CinemachineCameraZoomTool : MonoBehaviour
 
         private CinemachineFreeLook freelook;
         public CinemachineFreeLook.Orbit[] originalOrbits = new CinemachineFreeLook.Orbit[0];
+        public List<Transform> targets = new List<Transform>();
+        private int currentTargetIndex = 0;
 
         [Tooltip("The minimum scale for the orbits")]
         [Range(0.01f, 1f)]
@@ -44,6 +47,7 @@ public class CinemachineCameraZoomTool : MonoBehaviour
                     freelook.m_Orbits[i].m_Radius = originalOrbits[i].m_Radius * scale;
                 }
             }
+            UpdateCameraTarget();
         }
 
         void Update()
@@ -74,6 +78,59 @@ public class CinemachineCameraZoomTool : MonoBehaviour
                     freelook.m_XAxis.m_InputAxisValue = 0;
                     freelook.m_YAxis.m_InputAxisValue = 0;
                 }
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                CycleTarget(1);
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                CycleTarget(-1);
+            }
+        }
+        private void CycleTarget(int direction)
+        {
+            if (targets.Count == 0) return;
+
+            currentTargetIndex += direction;
+            if (currentTargetIndex >= targets.Count) currentTargetIndex = 0;
+            if (currentTargetIndex < 0) currentTargetIndex = targets.Count - 1;
+
+            UpdateCameraTarget();
+        }
+
+        private readonly List<string> pointNames = new List<string>
+    {
+        "neck", "spine3", "legs", "r_hand", "l_hand", "l_foot", "r_foot"
+    };
+
+        public void UpdateTargetPoints()
+        {
+            targets.Clear();
+            foreach (var pointName in pointNames)
+            {
+                var targetObject = GameObject.Find(pointName);
+                if (targetObject != null)
+                {
+                    targets.Add(targetObject.transform);
+                }
+                else
+                {
+                    Debug.LogWarning("Target not found in the scene: " + pointName);
+                }
+            }
+
+            // Reset the current target index and update the camera target
+            currentTargetIndex = 0;
+            UpdateCameraTarget();
+        }
+
+        private void UpdateCameraTarget()
+        {
+            if (targets.Count > 0 && currentTargetIndex < targets.Count)
+            {
+                freelook.Follow = targets[currentTargetIndex];
+                freelook.LookAt = targets[currentTargetIndex];
             }
         }
     }

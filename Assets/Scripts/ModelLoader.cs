@@ -52,7 +52,25 @@ public class ModelLoader : MonoBehaviour
         GameObject skeletonPrefab = Resources.Load<GameObject>(resourcePath);
         if (skeletonPrefab != null)
         {
-            loadedSkeleton = Instantiate(skeletonPrefab, Vector3.zero, Quaternion.identity);
+            loadedSkeleton = Instantiate(skeletonPrefab, Vector3.zero, Quaternion.Euler(-90, 0, 0));
+
+            // Find the 'pelvis' child in the loaded skeleton
+            Transform pelvis = loadedSkeleton.transform.Find("pelvis");
+            if (pelvis != null)
+            {
+                // Create a new GameObject named 'Legs'
+                GameObject legs = new GameObject("legs");
+
+                // Set 'Legs' as a child of 'pelvis'
+                legs.transform.SetParent(pelvis);
+
+                // Set the local position of 'Legs' with the specified offset
+                legs.transform.localPosition = new Vector3(0, 0, -0.005f);
+            }
+            else
+            {
+                Debug.LogError("Pelvis not found in the skeleton prefab: " + skeletonName);
+            }
         }
         else
         {

@@ -4,6 +4,7 @@ using UnityEditor;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Cinemachine;
 
 public class JsonLoaderWindow : EditorWindow
 {
@@ -127,6 +128,12 @@ public class JsonLoaderWindow : EditorWindow
                 ModelLoader loader = loaderObject.AddComponent<ModelLoader>();
                 loader.jsonFileName = selectedJson;
                 loader.LoadModelFromJson();
+
+                var cameraTool = FindObjectOfType<CinemachineCameraZoomTool>();
+                if (cameraTool != null)
+                {
+                    cameraTool.UpdateTargetPoints();
+                }
             }
         }
 
