@@ -57,24 +57,54 @@ public class ModelImporterWindow : EditorWindow
         
     }
 
-    private void CreateAndBindMaterials(int limit = 100)
+    private Dictionary<string, Material> LoadMaterialsFromFolder(string folderPath)
     {
-        string modelsPath = "Assets/Resources/Models";
-        var allFiles = Directory.GetFiles(modelsPath, "*.*", SearchOption.AllDirectories);
-        var textureFiles = new Dictionary<string, List<string>>();
-        int createdMaterialsCount = 0;
+        var materialFiles = Directory.GetFiles(folderPath, "*.mat", SearchOption.AllDirectories);
+        var materials = new Dictionary<string, Material>();
 
-        // Organize textures by base names
-        foreach (var file in allFiles)
+        foreach (var file in materialFiles)
         {
-            if (IsTextureFile(file))
+            var material = AssetDatabase.LoadAssetAtPath<Material>(file);
+            if (material != null)
             {
-                var baseName = GetBaseName(file);
-                if (!textureFiles.ContainsKey(baseName))
-                    textureFiles[baseName] = new List<string>();
-                textureFiles[baseName].Add(file);
+                var baseName = Path.GetFileNameWithoutExtension(file);
+                materials[baseName] = material;
             }
         }
+
+        return materials;
+    }
+
+    private Dictionary<string, List<string>> LoadTexturesFromFolder(string folderPath)
+    {
+        var textureFiles = Directory.GetFiles(folderPath, "*.*", SearchOption.AllDirectories)
+                                    .Where(file => IsTextureFile(file))
+                                    .ToList();
+        var textures = new Dictionary<string, List<string>>();
+
+        foreach (var file in textureFiles)
+        {
+            var baseName = GetBaseName(file);
+            if (!textures.ContainsKey(baseName))
+                textures[baseName] = new List<string>();
+            textures[baseName].Add(file);
+        }
+
+        return textures;
+    }
+
+    private void CreateAndBindMaterials(int limit = 100)
+    {
+        string texturesPath = "Assets/Resources/Textures";
+        string materialsPath = "Assets/Resources/Materials";
+
+        // Load existing materials
+        var existingMaterials = LoadMaterialsFromFolder(materialsPath);
+
+        // Load textures from the Textures folder
+        var textureFiles = LoadTexturesFromFolder(texturesPath);
+
+        int createdMaterialsCount = 0;
 
         // Process each set of textures up to the limit
         foreach (var entry in textureFiles)
@@ -88,26 +118,19 @@ public class ModelImporterWindow : EditorWindow
             var baseName = entry.Key;
             var textures = entry.Value;
 
-            string materialPath = Path.Combine(modelsPath, baseName + ".mat");
             Material material;
-
-            // Check for existing material and create if not exists
-            if (!File.Exists(materialPath))
+            if (!existingMaterials.TryGetValue(baseName, out material))
             {
+                // Create new material if it doesn't exist
                 material = new Material(Shader.Find("HDRP/Lit"));
+                string materialPath = Path.Combine(materialsPath, baseName + ".mat");
                 AssetDatabase.CreateAsset(material, materialPath);
                 Debug.Log($"Created HDRP Material: {materialPath}");
                 createdMaterialsCount++;
             }
             else
             {
-                material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
-                if (material == null)
-                {
-                    Debug.LogError($"Failed to load existing material at path: {materialPath}");
-                    continue;
-                }
-                Debug.Log($"Found existing material: {materialPath}");
+                Debug.Log($"Found existing material: {material.name}");
             }
 
             // Assign textures to material
@@ -356,6 +379,17 @@ public class ModelImporterWindow : EditorWindow
             material.EnableKeyword("_BACK_THEN_FRONT_RENDERING"); // Enable Back then Front Rendering
             material.SetFloat("_ReceivesSSRTransparent", 1); // Enable Receive SSR Transparent
             Debug.Log($"Configured material '{material.name}' for transparency with alpha clipping, back then front rendering, and SSR.");
+        }
+
+        if (!hasDiffuseTexture)
+        {
+            string opcTexturePath = textureFiles.FirstOrDefault(f => f.EndsWith(baseName + "_opc.png"));
+            if (!string.IsNullOrEmpty(opcTexturePath))
+            {
+                Texture2D opcTexture = LoadTexture(opcTexturePath);
+                material.SetTexture("_BaseColorMap", opcTexture);
+                Debug.Log($"Assigned OPC texture '{opcTexture.name}' to material '{material.name}'");
+            }
         }
 
         // Set default remapping values

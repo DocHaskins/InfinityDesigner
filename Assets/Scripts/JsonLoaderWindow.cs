@@ -9,6 +9,7 @@ using Cinemachine;
 public class JsonLoaderWindow : EditorWindow
 {
     private string selectedJson;
+    private List<MinimalModelData> minimalModelInfos = new List<MinimalModelData>();
     private List<string> jsonFiles = new List<string>();
     private List<string> filteredJsonFiles = new List<string>();
     private int selectedIndex = 0;
@@ -16,6 +17,7 @@ public class JsonLoaderWindow : EditorWindow
     private string selectedSex = "All";
     private string selectedRace = "All";
     private string searchTerm = "";
+    private bool enableCustomContent = false;
     private HashSet<string> classes = new HashSet<string>();
     private HashSet<string> sexes = new HashSet<string>();
     private HashSet<string> races = new HashSet<string>();
@@ -35,6 +37,7 @@ public class JsonLoaderWindow : EditorWindow
     void LoadJsonData()
     {
         jsonFiles.Clear();
+        minimalModelInfos.Clear();
         classes.Clear();
         sexes.Clear();
         races.Clear();
@@ -48,13 +51,18 @@ public class JsonLoaderWindow : EditorWindow
 
         foreach (var file in Directory.GetFiles(jsonsFolderPath, "*.json"))
         {
-            jsonFiles.Add(Path.GetFileName(file));
-
             string jsonPath = Path.Combine(jsonsFolderPath, file);
             string jsonData = File.ReadAllText(jsonPath);
             ModelData modelData = JsonUtility.FromJson<ModelData>(jsonData);
+
             if (modelData.modelProperties != null)
             {
+                minimalModelInfos.Add(new MinimalModelData
+                {
+                    FileName = Path.GetFileName(file),
+                    Properties = modelData.modelProperties
+                });
+
                 classes.Add(modelData.modelProperties.@class ?? "Unknown");
                 sexes.Add(modelData.modelProperties.sex ?? "Unknown");
                 races.Add(modelData.modelProperties.race ?? "Unknown");
@@ -70,51 +78,93 @@ public class JsonLoaderWindow : EditorWindow
 
     void UpdateFilteredJsonFiles()
     {
-        filteredJsonFiles = jsonFiles.Where(file =>
+        filteredJsonFiles = minimalModelInfos.Where(info =>
         {
-            string jsonPath = Path.Combine(Application.streamingAssetsPath, "Jsons", file);
-            string jsonData = File.ReadAllText(jsonPath);
-            ModelData modelData = JsonUtility.FromJson<ModelData>(jsonData);
+            // Exclude files that start with "db_"
+            if (info.FileName.StartsWith("db_", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
 
-            bool classMatch = selectedClass == "All" || modelData.modelProperties?.@class == selectedClass;
-            bool sexMatch = selectedSex == "All" || modelData.modelProperties?.sex == selectedSex;
-            bool raceMatch = selectedRace == "All" || modelData.modelProperties?.race == selectedRace;
-            bool searchMatch = string.IsNullOrEmpty(searchTerm) || file.ToLower().Contains(searchTerm.ToLower());
+            if (!enableCustomContent && info.FileName.StartsWith("ialr_"))
+            {
+                return false;
+            }
+
+            bool classMatch = selectedClass == "All" || info.Properties.@class == selectedClass;
+            bool sexMatch = selectedSex == "All" || info.Properties.sex == selectedSex;
+            bool raceMatch = selectedRace == "All" || info.Properties.race == selectedRace;
+            bool searchMatch = string.IsNullOrEmpty(searchTerm) || info.FileName.ToLower().Contains(searchTerm.ToLower());
 
             return classMatch && sexMatch && raceMatch && searchMatch;
-        }).ToList();
+        })
+        .Select(info => info.FileName)
+        .ToList();
     }
 
     void OnGUI()
     {
         GUILayout.Label("Load JSON File", EditorStyles.boldLabel);
 
-        // "Update" button to reload and filter JSON data
         if (GUILayout.Button("Update JSON Data"))
         {
             LoadJsonData();
-            UpdateFilteredJsonFiles();
+        }
+
+        bool filtersChanged = false;
+
+        // Toggle for Custom Content
+        bool prevEnableCustomContent = enableCustomContent;
+        enableCustomContent = EditorGUILayout.Toggle("Enable Custom Content", enableCustomContent);
+        if (prevEnableCustomContent != enableCustomContent)
+        {
+            filtersChanged = true;
+        }
+
+        // Search field
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("Search:", GUILayout.Width(50));
+        string prevSearchTerm = searchTerm;
+        searchTerm = GUILayout.TextField(searchTerm);
+        GUILayout.EndHorizontal();
+        if (prevSearchTerm != searchTerm)
+        {
+            filtersChanged = true;
         }
 
         // Dropdown for Class
+        string prevSelectedClass = selectedClass;
         selectedClass = DropdownField("Filter by Class", selectedClass, classes);
-        // Dropdown for Sex
-        selectedSex = DropdownField("Filter by Sex", selectedSex, sexes);
-        // Dropdown for Race
-        selectedRace = DropdownField("Filter by Race", selectedRace, races);
-
-        GUILayout.BeginHorizontal();
-        GUILayout.Label("Search:", GUILayout.Width(50));
-        searchTerm = GUILayout.TextField(searchTerm);
-        GUILayout.EndHorizontal();
-
-        if (GUILayout.Button("Search"))
+        if (prevSelectedClass != selectedClass)
         {
-            UpdateFilteredJsonFiles();
+            filtersChanged = true;
         }
 
+        // Dropdown for Sex
+        string prevSelectedSex = selectedSex;
+        selectedSex = DropdownField("Filter by Sex", selectedSex, sexes);
+        if (prevSelectedSex != selectedSex)
+        {
+            filtersChanged = true;
+        }
+
+        // Dropdown for Race
+        string prevSelectedRace = selectedRace;
+        selectedRace = DropdownField("Filter by Race", selectedRace, races);
+        if (prevSelectedRace != selectedRace)
+        {
+            filtersChanged = true;
+        }
+
+        if (filtersChanged)
+        {
+            UpdateFilteredJsonFiles();
+            selectedIndex = 0; // Reset the selectedIndex when the list changes
+        }
+
+        // Dropdown to select JSON file
         selectedIndex = EditorGUILayout.Popup("Select JSON File", selectedIndex, filteredJsonFiles.ToArray());
-        if (filteredJsonFiles.Count > 0)
+        if (selectedIndex >= 0 && selectedIndex < filteredJsonFiles.Count)
         {
             selectedJson = filteredJsonFiles[selectedIndex];
         }
