@@ -1,0 +1,609 @@
+{
+    "skeletonName": "woman_sc_skeleton.msh",
+    "modelProperties": {
+        "class": "npc",
+        "production_state": "prototype",
+        "race": "caucasian",
+        "sex": "female",
+        "size": "normal",
+        "type": "character",
+        "weight": "normal"
+    },
+    "slotPairs": [
+        {
+            "key": "HEAD",
+            "slotData": {
+                "slotUid": 100,
+                "name": "HEAD",
+                "models": [
+                    {
+                        "name": "sh_npc_thalia.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "sh_npc_thalia.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "sh_eye.mat"
+                            },
+                            {
+                                "number": 3,
+                                "name": "sh_mouth_interior.mat"
+                            },
+                            {
+                                "number": 4,
+                                "name": "sh_eyelashes.mat"
+                            },
+                            {
+                                "number": 5,
+                                "name": "sh_eye_shadow.mat"
+                            },
+                            {
+                                "number": 6,
+                                "name": "sh_wet_eye.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "sh_npc_thalia.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "dif_1_tex",
+                                                "type": 7,
+                                                "val_str": "chr_black_dif.png"
+                                            },
+                                            {
+                                                "name": "msk_1_tex",
+                                                "type": 7,
+                                                "val_str": "sh_wmn_hair_system_b_fringe_a_msk.png"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "sh_eye_blue2.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 3,
+                                "resources": [
+                                    {
+                                        "name": "sh_mouth_interior.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 4,
+                                "resources": [
+                                    {
+                                        "name": "sh_eyelashes.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 5,
+                                "resources": [
+                                    {
+                                        "name": "sh_eye_shadow.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 6,
+                                "resources": [
+                                    {
+                                        "name": "sh_wet_eye.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "HEAD_PART_1",
+            "slotData": {
+                "slotUid": 101,
+                "name": "HEAD_PART_1",
+                "models": [
+                    {
+                        "name": "sh_wmn_hair_system_b_base_c.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "npc_hair_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "npc_hair_a_dark_brown.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "dif_0_val",
+                                                "type": 4,
+                                                "val_vec3": "+2.43137270e-01 +2.07843155e-01 +2.00000018e-01"
+                                            },
+                                            {
+                                                "name": "spc_0_val",
+                                                "type": 4,
+                                                "val_vec3": "+6.03921592e-01 +5.21568656e-01 +4.58823562e-01"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "HEAD_PART_2",
+            "slotData": {
+                "slotUid": 102,
+                "name": "HEAD_PART_2",
+                "models": [
+                    {
+                        "name": "sh_wmn_hair_system_b_base_c_bottom_a.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "npc_hair_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "npc_hair_a_dark_brown.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "dif_0_val",
+                                                "type": 4,
+                                                "val_vec3": "+2.98039228e-01 +2.70588249e-01 +2.62745112e-01"
+                                            },
+                                            {
+                                                "name": "spc_0_val",
+                                                "type": 4,
+                                                "val_vec3": "+6.03921592e-01 +5.21568656e-01 +4.58823562e-01"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "HEAD_PART_3",
+            "slotData": {
+                "slotUid": 103,
+                "name": "HEAD_PART_3",
+                "models": [
+                    {
+                        "name": "sh_wmn_hair_system_b_fringe_a.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "npc_hair_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "npc_hair_a_dark_brown.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "dif_0_val",
+                                                "type": 4,
+                                                "val_vec3": "+2.47058839e-01 +2.19607860e-01 +2.07843155e-01"
+                                            },
+                                            {
+                                                "name": "spc_0_val",
+                                                "type": 4,
+                                                "val_vec3": "+6.03921592e-01 +5.21568656e-01 +4.58823562e-01"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "HEAD_PART_4",
+            "slotData": {
+                "slotUid": 104,
+                "name": "HEAD_PART_4",
+                "models": [
+                    {
+                        "name": "sh_wmn_hair_system_b_base_c_ponytail_a.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "npc_hair_a.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "npc_hairband_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "npc_hair_a_dark_brown.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "dif_0_val",
+                                                "type": 4,
+                                                "val_vec3": "+2.90196091e-01 +2.54901975e-01 +2.43137270e-01"
+                                            },
+                                            {
+                                                "name": "spc_0_val",
+                                                "type": 4,
+                                                "val_vec3": "+6.03921592e-01 +5.21568656e-01 +4.58823562e-01"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "npc_hairband_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "dif_0_val",
+                                                "type": 4,
+                                                "val_vec3": "+2.03921586e-01 +1.56862751e-01 +1.56862751e-01"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "HEAD_PART_5",
+            "slotData": {
+                "slotUid": 105,
+                "name": "HEAD_PART_5",
+                "models": [
+                    {
+                        "name": "chr_earing_b.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "chr_earing_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "chr_earing_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "ARMS",
+            "slotData": {
+                "slotUid": 400,
+                "name": "ARMS",
+                "models": [
+                    {
+                        "name": "npc_wmn_torso_g_sleeves_medium.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "npc_wmn_torso_g_sleeves_medium.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "npc_wmn_torso_g_sleeves_medium.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "HANDS",
+            "slotData": {
+                "slotUid": 500,
+                "name": "HANDS",
+                "models": [
+                    {
+                        "name": "wmn_hands_c.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "wmn_hands_white_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "wmn_hands_white_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "HANDS_PART_2",
+            "slotData": {
+                "slotUid": 502,
+                "name": "HANDS_PART_2",
+                "models": [
+                    {
+                        "name": "wmn_tpp_biomarker_a.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "tpp_biomarker.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "tpp_biomarker.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "TORSO",
+            "slotData": {
+                "slotUid": 600,
+                "name": "TORSO",
+                "models": [
+                    {
+                        "name": "npc_wmn_torso_g_unbuttoned_necklace_a.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "npc_wmn_torso_d_front_b_necklace_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "npc_wmn_torso_d_front_b_necklace_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "TORSO_PART_1",
+            "slotData": {
+                "slotUid": 601,
+                "name": "TORSO_PART_1",
+                "models": [
+                    {
+                        "name": "npc_wmn_torso_g_unbuttoned.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "npc_wmn_torso_g_unbuttoned.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "npc_wmn_torso_g_unbuttoned.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "TORSO_PART_2",
+            "slotData": {
+                "slotUid": 602,
+                "name": "TORSO_PART_2",
+                "models": [
+                    {
+                        "name": "npc_wmn_torso_g_unbuttoned_decal_logo_b.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "chr_decal_logo_yourself_b.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "chr_decal_logo_yourself_b.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "LEGS",
+            "slotData": {
+                "slotUid": 700,
+                "name": "LEGS",
+                "models": [
+                    {
+                        "name": "wmn_sc_runner_legs_c.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "npc_wmn_pants_b_shoes_f.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "wmn_sc_runner_legs_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "npc_wmn_pants_b_shoes_f.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "dif_0_val",
+                                                "type": 4,
+                                                "val_vec3": "+6.78431392e-01 +6.78431392e-01 +6.78431392e-01"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "wmn_sc_runner_legs_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}

@@ -1,0 +1,542 @@
+{
+    "skeletonName": "player_fpp_phx_skeleton.msh",
+    "modelProperties": {
+        "class": "player",
+        "production_state": "prototype",
+        "race": "caucasian",
+        "sex": "male",
+        "size": "normal",
+        "type": "character",
+        "weight": "normal"
+    },
+    "slotPairs": [
+        {
+            "key": "LEGS_PART_1",
+            "slotData": {
+                "slotUid": 101,
+                "name": "LEGS_PART_1",
+                "models": [
+                    {
+                        "name": "player_lubu_shoes_a_tpp.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "player_lubu_shoes_a_tpp.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "player_lubu_shoes_a_fpp.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "TORSO_PART_2",
+            "slotData": {
+                "slotUid": 102,
+                "name": "TORSO_PART_2",
+                "models": [
+                    {
+                        "name": "player_ninja_torso_a_lubu_addons_tpp.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "player_lubu_torso_a_addons_a_tpp.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "chr_belt_f.mat"
+                            },
+                            {
+                                "number": 3,
+                                "name": "player_lubu_classic_shoulderpad_a_tpp.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "player_lubu_torso_a_addons_a_fpp.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "chr_belt_f_fpp.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 3,
+                                "resources": [
+                                    {
+                                        "name": "null.mat",
+                                        "selected": true,
+                                        "layoutId": 1,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "TORSO",
+            "slotData": {
+                "slotUid": 105,
+                "name": "TORSO",
+                "models": [
+                    {
+                        "name": "player_ninja_torso_a_tpp.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "player_ninja_torso_a_b_tpp.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "player_ninja_torso_a_tpp.mat"
+                            },
+                            {
+                                "number": 3,
+                                "name": "zipper_a.mat"
+                            },
+                            {
+                                "number": 4,
+                                "name": "player_ninja_torso_a_torn_tpp.mat"
+                            },
+                            {
+                                "number": 5,
+                                "name": "player_ninja_rope_a_tpp.mat"
+                            },
+                            {
+                                "number": 6,
+                                "name": "player_ninja_sleeves_a_tpp.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "player_lubu_torso_a_b_fpp.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "player_lubu_torso_a_fpp.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 3,
+                                "resources": [
+                                    {
+                                        "name": "player_range_torso_c_zipper_fpp.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 4,
+                                "resources": [
+                                    {
+                                        "name": "player_ninja_torso_a_torn_fpp.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 5,
+                                "resources": [
+                                    {
+                                        "name": "player_ninja_rope_a_fpp.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 6,
+                                "resources": [
+                                    {
+                                        "name": "player_lubu_sleeves_a_fpp.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "TORSO_PART_1",
+            "slotData": {
+                "slotUid": 106,
+                "name": "TORSO_PART_1",
+                "models": [
+                    {
+                        "name": "player_ninja_torso_a_equipment_a_tpp.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "player_ninja_torso_a_cloth_a_tpp.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "player_ninja_torso_a_tpp.mat"
+                            },
+                            {
+                                "number": 3,
+                                "name": "player_ninja_fringe_a_tpp.mat"
+                            },
+                            {
+                                "number": 4,
+                                "name": "player_ninja_fringe_b_tpp.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "player_lubu_torso_a_cloth_a_fpp.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "player_ninja_torso_a_fpp.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 3,
+                                "resources": [
+                                    {
+                                        "name": "player_ninja_fringe_a_fpp.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 4,
+                                "resources": [
+                                    {
+                                        "name": "player_ninja_fringe_b_fpp.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "HANDS_PART_1",
+            "slotData": {
+                "slotUid": 108,
+                "name": "HANDS_PART_1",
+                "models": [
+                    {
+                        "name": "player_lubu_bracers_a_fpp.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "player_lubu_classic_bracers_a_fpp.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "player_melee_bracers_c_tpp.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "player_lubu_classic_bracers_a_fpp.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "player_lubu_bracers_a_fpp.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "LEGS",
+            "slotData": {
+                "slotUid": 109,
+                "name": "LEGS",
+                "models": [
+                    {
+                        "name": "player_outfit_figurine_pants_a_tpp.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "player_outfit_figurine_pants_a_tpp.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "player_halloween_clown_addons_a_tpp.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "player_lubu_pants_a_fpp.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "null.mat",
+                                        "selected": true,
+                                        "layoutId": 1,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "LEGS_PART_2",
+            "slotData": {
+                "slotUid": 110,
+                "name": "LEGS_PART_2",
+                "models": [
+                    {
+                        "name": "player_lubu_leg_armor_a_tpp.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "player_lubu_leg_armor_a_tpp.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "player_lubu_leg_armor_a_fpp.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "HANDS_PART_2",
+            "slotData": {
+                "slotUid": 117,
+                "name": "HANDS_PART_2",
+                "models": [
+                    {
+                        "name": "player_biomarker.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "player_biomarker_fpp_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "player_biomarker_fpp_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "PLAYER_GLOVES",
+            "slotData": {
+                "slotUid": 810,
+                "name": "PLAYER_GLOVES",
+                "models": [
+                    {
+                        "name": "player_samurai_gloves_a_fpp.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "player_ninja_glove_a_left_fpp.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "player_ninja_bracer_a_left_torn_fpp.mat"
+                            },
+                            {
+                                "number": 3,
+                                "name": "player_hands_fpp_a.mat"
+                            },
+                            {
+                                "number": 4,
+                                "name": "player_samurai_glove_a_right_fpp.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "player_ninja_glove_a_left_fpp.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "player_ninja_bracer_a_left_torn_fpp.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 3,
+                                "resources": [
+                                    {
+                                        "name": "player_hands_fpp_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 4,
+                                "resources": [
+                                    {
+                                        "name": "player_samurai_glove_a_right_fpp.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}

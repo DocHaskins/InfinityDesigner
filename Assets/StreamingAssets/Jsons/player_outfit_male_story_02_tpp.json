@@ -1,0 +1,724 @@
+{
+    "skeletonName": "player_skeleton.msh",
+    "modelProperties": {
+        "class": "player",
+        "production_state": "prototype",
+        "race": "caucasian",
+        "sex": "male",
+        "size": "normal",
+        "type": "character",
+        "weight": "normal"
+    },
+    "slotPairs": [
+        {
+            "key": "HEAD",
+            "slotData": {
+                "slotUid": 100,
+                "name": "HEAD",
+                "models": [
+                    {
+                        "name": "sh_npc_hakon.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "sh_npc_hakon.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "sh_eye.mat"
+                            },
+                            {
+                                "number": 3,
+                                "name": "sh_mouth_interior.mat"
+                            },
+                            {
+                                "number": 4,
+                                "name": "sh_eyelashes.mat"
+                            },
+                            {
+                                "number": 5,
+                                "name": "sh_eye_shadow.mat"
+                            },
+                            {
+                                "number": 6,
+                                "name": "sh_wet_eye.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "sh_npc_hakon.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "dif_0_tex",
+                                                "type": 7,
+                                                "val_str": "sh_man_bdt_b_camouflage_dif.png"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "sh_eye.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 3,
+                                "resources": [
+                                    {
+                                        "name": "sh_mouth_interior.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 4,
+                                "resources": [
+                                    {
+                                        "name": "sh_eyelashes.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 5,
+                                "resources": [
+                                    {
+                                        "name": "sh_eye_shadow.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 6,
+                                "resources": [
+                                    {
+                                        "name": "sh_wet_eye.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "LEGS_PART_1",
+            "slotData": {
+                "slotUid": 101,
+                "name": "LEGS_PART_1",
+                "models": [
+                    {
+                        "name": "player_default_shoes_tpp.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "player_default_shoes_tpp.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "player_default_shoes_tpp.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "HEAD_PART_1",
+            "slotData": {
+                "slotUid": 102,
+                "name": "HEAD_PART_1",
+                "models": [
+                    {
+                        "name": "npc_hakon_hair_b.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "npc_hakon_haircut.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "npc_hakon_haircut.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "ARMS",
+            "slotData": {
+                "slotUid": 103,
+                "name": "ARMS",
+                "models": [
+                    {
+                        "name": "player_forearm_left_long_tpp.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "player_hands_tpp_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "player_hands_tpp_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "TORSO",
+            "slotData": {
+                "slotUid": 105,
+                "name": "TORSO",
+                "models": [
+                    {
+                        "name": "abdul.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "npc_hakon_adds.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "chr_tape_b_silver.mat"
+                            },
+                            {
+                                "number": 3,
+                                "name": "npc_hakon_torso.mat"
+                            },
+                            {
+                                "number": 4,
+                                "name": "npc_hakon_threads.mat"
+                            },
+                            {
+                                "number": 5,
+                                "name": "zipper_a.mat"
+                            },
+                            {
+                                "number": 6,
+                                "name": "npc_hakon_scarf.mat"
+                            },
+                            {
+                                "number": 7,
+                                "name": "tpp_biomarker.mat"
+                            },
+                            {
+                                "number": 8,
+                                "name": "npc_hakon_glowstick_a.mat"
+                            },
+                            {
+                                "number": 9,
+                                "name": "npc_hakon_glowstick_glow_a.mat"
+                            },
+                            {
+                                "number": 10,
+                                "name": "npc_hakon_hand_r.mat"
+                            },
+                            {
+                                "number": 11,
+                                "name": "npc_hakon_hand_l.mat"
+                            },
+                            {
+                                "number": 12,
+                                "name": "npc_hakon_glove.mat"
+                            },
+                            {
+                                "number": 13,
+                                "name": "npc_hakon_rags.mat"
+                            },
+                            {
+                                "number": 14,
+                                "name": "npc_hakon_bracer.mat"
+                            },
+                            {
+                                "number": 15,
+                                "name": "npc_hakon_sleeves_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "npc_hakon_adds.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "chr_tape_b_silver.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 3,
+                                "resources": [
+                                    {
+                                        "name": "npc_hakon_torso.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 4,
+                                "resources": [
+                                    {
+                                        "name": "npc_hakon_threads.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 5,
+                                "resources": [
+                                    {
+                                        "name": "zipper_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 6,
+                                "resources": [
+                                    {
+                                        "name": "npc_hakon_scarf.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 7,
+                                "resources": [
+                                    {
+                                        "name": "tpp_biomarker.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 8,
+                                "resources": [
+                                    {
+                                        "name": "npc_hakon_glowstick_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 9,
+                                "resources": [
+                                    {
+                                        "name": "npc_hakon_glowstick_glow_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 10,
+                                "resources": [
+                                    {
+                                        "name": "npc_hakon_hand_r.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 11,
+                                "resources": [
+                                    {
+                                        "name": "npc_hakon_hand_l.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 12,
+                                "resources": [
+                                    {
+                                        "name": "npc_hakon_glove.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 13,
+                                "resources": [
+                                    {
+                                        "name": "npc_hakon_rags.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 14,
+                                "resources": [
+                                    {
+                                        "name": "npc_hakon_bracer.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 15,
+                                "resources": [
+                                    {
+                                        "name": "npc_hakon_sleeves_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "HANDS_PART_1",
+            "slotData": {
+                "slotUid": 106,
+                "name": "HANDS_PART_1",
+                "models": [
+                    {
+                        "name": "man_tpp_biomarker_b.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "tpp_biomarker.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "tpp_biomarker.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "LEGS",
+            "slotData": {
+                "slotUid": 109,
+                "name": "LEGS",
+                "models": [
+                    {
+                        "name": "man_sc_ov_legs_a.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "man_sc_ov_legs_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "abdul_pants.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "ARMS_PART_1",
+            "slotData": {
+                "slotUid": 112,
+                "name": "ARMS_PART_1",
+                "models": [
+                    {
+                        "name": "player_forearm_right_long_tpp.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "player_hands_tpp_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "player_hands_tpp_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "HANDS_PART_4",
+            "slotData": {
+                "slotUid": 113,
+                "name": "HANDS_PART_4",
+                "models": [
+                    {
+                        "name": "player_default_bracelet_tpp.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "player_default_bracelet_tpp.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "player_default_bracelet_tpp.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "HEAD_PART_2",
+            "slotData": {
+                "slotUid": 117,
+                "name": "HEAD_PART_2",
+                "models": [
+                    {
+                        "name": "sh_npc_hakon_beard.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "npc_hakon_moustache.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "npc_hakon_moustache.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "HEADCOVER",
+            "slotData": {
+                "slotUid": 200,
+                "name": "HEADCOVER",
+                "models": [
+                    {
+                        "name": "npc_hakon_hair_b.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "npc_hakon_haircut.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "npc_hakon_haircut.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "PLAYER_GLOVES",
+            "slotData": {
+                "slotUid": 810,
+                "name": "PLAYER_GLOVES",
+                "models": [
+                    {
+                        "name": "player_hands_tpp_a.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "player_hands_tpp_a.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "player_hands_tpp_a_b.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "player_hands_tpp_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "player_hands_tpp_a_b.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}

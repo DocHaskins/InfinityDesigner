@@ -1,0 +1,367 @@
+{
+    "skeletonName": "man_basic_skeleton.msh",
+    "modelProperties": {
+        "class": "viral",
+        "class_variant": "tier_1",
+        "production_state": "prototype",
+        "race": "caucasian",
+        "sex": "male",
+        "size": "normal",
+        "type": "character",
+        "weight": "normal"
+    },
+    "slotPairs": [
+        {
+            "key": "HEAD",
+            "slotData": {
+                "slotUid": 100,
+                "name": "HEAD",
+                "models": [
+                    {
+                        "name": "sh_man_viral_a.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "sh_man_viral_a.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "sh_eye.mat"
+                            },
+                            {
+                                "number": 3,
+                                "name": "sh_mouth_interior.mat"
+                            },
+                            {
+                                "number": 4,
+                                "name": "sh_eyelashes.mat"
+                            },
+                            {
+                                "number": 5,
+                                "name": "sh_eye_shadow.mat"
+                            },
+                            {
+                                "number": 6,
+                                "name": "sh_wet_eye.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "zmb_swamp_viral_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "dif_0_tex",
+                                                "type": 7,
+                                                "val_str": "ter_base_chemicals_a_dif.png"
+                                            },
+                                            {
+                                                "name": "nrm_0_tex",
+                                                "type": 7,
+                                                "val_str": "ter_base_chemicals_a_nrm.png"
+                                            },
+                                            {
+                                                "name": "rgh_0_tex",
+                                                "type": 7,
+                                                "val_str": "ter_base_chemicals_a_rgh.png"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "zmb_swamp_viral_eye_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 3,
+                                "resources": [
+                                    {
+                                        "name": "sh_mouth_interior_zmb.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 4,
+                                "resources": [
+                                    {
+                                        "name": "sh_eyelashes.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 5,
+                                "resources": [
+                                    {
+                                        "name": "sh_eye_shadow.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 6,
+                                "resources": [
+                                    {
+                                        "name": "sh_wet_eye.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "TORSO",
+            "slotData": {
+                "slotUid": 105,
+                "name": "TORSO",
+                "models": [
+                    {
+                        "name": "viral_torso_a.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "viral_torso_a.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "viral_tshirt_a.mat"
+                            },
+                            {
+                                "number": 3,
+                                "name": "viral_bandage_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "zmb_swamp_viral_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "dif_0_tex",
+                                                "type": 7,
+                                                "val_str": "ter_base_chemicals_a_dif.png"
+                                            },
+                                            {
+                                                "name": "nrm_0_tex",
+                                                "type": 7,
+                                                "val_str": "ter_base_chemicals_a_nrm.png"
+                                            },
+                                            {
+                                                "name": "rgh_0_tex",
+                                                "type": 7,
+                                                "val_str": "ter_base_chemicals_a_rgh.png"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "viral_tshirt_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "dif_0_tex",
+                                                "type": 7,
+                                                "val_str": "ter_base_chemicals_a_dif.png"
+                                            },
+                                            {
+                                                "name": "nrm_0_tex",
+                                                "type": 7,
+                                                "val_str": "ter_base_chemicals_a_nrm.png"
+                                            },
+                                            {
+                                                "name": "rgh_0_tex",
+                                                "type": 7,
+                                                "val_str": "ter_base_chemicals_a_rgh.png"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 3,
+                                "resources": [
+                                    {
+                                        "name": "viral_bandage_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "dif_0_tex",
+                                                "type": 7,
+                                                "val_str": "ter_base_chemicals_a_dif.png"
+                                            },
+                                            {
+                                                "name": "nrm_0_tex",
+                                                "type": 7,
+                                                "val_str": "ter_base_chemicals_a_nrm.png"
+                                            },
+                                            {
+                                                "name": "rgh_0_tex",
+                                                "type": 7,
+                                                "val_str": "ter_base_chemicals_a_rgh.png"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "LEGS",
+            "slotData": {
+                "slotUid": 109,
+                "name": "LEGS",
+                "models": [
+                    {
+                        "name": "viral_legs_h.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "viral_legs_h.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "viral_legs_h_torn.mat"
+                            },
+                            {
+                                "number": 3,
+                                "name": "viral_legs_c.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "viral_legs_h.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "dif_0_tex",
+                                                "type": 7,
+                                                "val_str": "ter_base_chemicals_a_dif.png"
+                                            },
+                                            {
+                                                "name": "nrm_0_tex",
+                                                "type": 7,
+                                                "val_str": "ter_base_chemicals_a_nrm.png"
+                                            },
+                                            {
+                                                "name": "rgh_0_tex",
+                                                "type": 7,
+                                                "val_str": "ter_base_chemicals_a_rgh.png"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "viral_legs_h_torn.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "dif_0_tex",
+                                                "type": 7,
+                                                "val_str": "ter_base_chemicals_a_dif.png"
+                                            },
+                                            {
+                                                "name": "nrm_0_tex",
+                                                "type": 7,
+                                                "val_str": "ter_base_chemicals_a_nrm.png"
+                                            },
+                                            {
+                                                "name": "rgh_0_tex",
+                                                "type": 7,
+                                                "val_str": "ter_base_chemicals_a_rgh.png"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 3,
+                                "resources": [
+                                    {
+                                        "name": "zmb_swamp_viral_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "dif_0_tex",
+                                                "type": 7,
+                                                "val_str": "ter_base_chemicals_a_dif.png"
+                                            },
+                                            {
+                                                "name": "nrm_0_tex",
+                                                "type": 7,
+                                                "val_str": "ter_base_chemicals_a_nrm.png"
+                                            },
+                                            {
+                                                "name": "rgh_0_tex",
+                                                "type": 7,
+                                                "val_str": "ter_base_chemicals_a_rgh.png"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}

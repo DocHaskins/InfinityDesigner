@@ -1,0 +1,694 @@
+{
+    "skeletonName": "man_srv_medium_skeleton.msh",
+    "modelProperties": {
+        "class": "survivor",
+        "production_state": "prototype",
+        "race": "caucasian",
+        "sex": "male",
+        "size": "normal",
+        "type": "character",
+        "weight": "normal"
+    },
+    "slotPairs": [
+        {
+            "key": "HEAD",
+            "slotData": {
+                "slotUid": 100,
+                "name": "HEAD",
+                "models": [
+                    {
+                        "name": "sh_scan_man_020.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "sh_scan_man_020.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "sh_eye.mat"
+                            },
+                            {
+                                "number": 3,
+                                "name": "sh_mouth_interior.mat"
+                            },
+                            {
+                                "number": 4,
+                                "name": "sh_eyelashes.mat"
+                            },
+                            {
+                                "number": 5,
+                                "name": "sh_eye_shadow.mat"
+                            },
+                            {
+                                "number": 6,
+                                "name": "sh_wet_eye.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "sh_man_bdt_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "dif_0_tex",
+                                                "type": 7,
+                                                "val_str": "sh_man_bdt_a_tan_dif.png"
+                                            },
+                                            {
+                                                "name": "msk_1_add_tex",
+                                                "type": 7,
+                                                "val_str": "sh_man_facial_hair_b_msk.png"
+                                            },
+                                            {
+                                                "name": "msk_1_tex",
+                                                "type": 7,
+                                                "val_str": "sh_man_hair_system_b_base_i_addon_c_msk.png"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "sh_eye.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 3,
+                                "resources": [
+                                    {
+                                        "name": "sh_mouth_interior.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 4,
+                                "resources": [
+                                    {
+                                        "name": "sh_eyelashes.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 5,
+                                "resources": [
+                                    {
+                                        "name": "sh_eye_shadow.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 6,
+                                "resources": [
+                                    {
+                                        "name": "sh_wet_eye.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "HEAD_PART_1",
+            "slotData": {
+                "slotUid": 101,
+                "name": "HEAD_PART_1",
+                "models": [
+                    {
+                        "name": "sh_man_hair_system_b_base_i.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "sh_man_hair_system_b_dark.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "sh_man_hair_system_b_dark.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "HEAD_PART_2",
+            "slotData": {
+                "slotUid": 102,
+                "name": "HEAD_PART_2",
+                "models": [
+                    {
+                        "name": "sh_man_facial_hair_d_0.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "man_facial_hair_black.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "man_facial_hair_black.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "dif",
+                                                "type": 4,
+                                                "val_vec3": "+3.84313762e-01 +2.90196091e-01 +2.27450997e-01"
+                                            },
+                                            {
+                                                "name": "dif_0_val",
+                                                "type": 4,
+                                                "val_vec3": "+3.64705890e-01 +3.25490206e-01 +3.13725501e-01"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "ARMS",
+            "slotData": {
+                "slotUid": 103,
+                "name": "ARMS",
+                "models": [
+                    {
+                        "name": "man_bdt_torso_c_sleeve_b.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "man_bdt_torso_c_sleeve_b.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "man_bdt_torso_c_sleeve_b.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "grd_0_tex",
+                                                "type": 7,
+                                                "val_str": "man_bdt_torso_c_nomad_gra.png"
+                                            },
+                                            {
+                                                "name": "msk_1_tex",
+                                                "type": 7,
+                                                "val_str": "man_bdt_paint_clean_msk.png"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "HANDS",
+            "slotData": {
+                "slotUid": 104,
+                "name": "HANDS",
+                "models": [
+                    {
+                        "name": "man_bdt_gloves_c.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "man_bdt_gloves_c.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "man_hands_white_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "man_bdt_gloves_c.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "man_hands_tan_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "TORSO",
+            "slotData": {
+                "slotUid": 105,
+                "name": "TORSO",
+                "models": [
+                    {
+                        "name": "man_bdt_torso_c_bottom_a.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "man_bdt_torso_c_bottom_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "man_bdt_torso_c_bottom_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "grd_0_tex",
+                                                "type": 7,
+                                                "val_str": "man_bdt_torso_c_nomad_gra.png"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "TORSO_PART_1",
+            "slotData": {
+                "slotUid": 106,
+                "name": "TORSO_PART_1",
+                "models": [
+                    {
+                        "name": "man_bdt_torso_c_belt_d.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "man_bdt_belt_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "man_bdt_belt_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "dif_0_val",
+                                                "type": 4,
+                                                "val_vec3": "+6.78431392e-01 +7.56862819e-01 +7.13725507e-01"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "TORSO_PART_2",
+            "slotData": {
+                "slotUid": 107,
+                "name": "TORSO_PART_2",
+                "models": [
+                    {
+                        "name": "man_bdt_torso_c_fronttop_a.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "man_bdt_torso_c_fronttop_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "man_bdt_torso_c_fronttop_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "grd_0_tex",
+                                                "type": 7,
+                                                "val_str": "man_bdt_torso_c_nomad_gra.png"
+                                            },
+                                            {
+                                                "name": "msk_1_tex",
+                                                "type": 7,
+                                                "val_str": "man_bdt_paint_clean_msk.png"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "TORSO_PART_3",
+            "slotData": {
+                "slotUid": 108,
+                "name": "TORSO_PART_3",
+                "models": [
+                    {
+                        "name": "man_bdt_torso_c_back_a.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "man_bdt_torso_c_back_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "man_bdt_torso_c_back_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "grd_0_tex",
+                                                "type": 7,
+                                                "val_str": "man_bdt_torso_c_nomad_gra.png"
+                                            },
+                                            {
+                                                "name": "msk_1_tex",
+                                                "type": 7,
+                                                "val_str": "man_bdt_paint_clean_msk.png"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "LEGS",
+            "slotData": {
+                "slotUid": 109,
+                "name": "LEGS",
+                "models": [
+                    {
+                        "name": "man_srv_legs_b.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "man_srv_legs_b.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "man_srv_legs_b_boots.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "man_srv_legs_b.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "man_srv_legs_b_boots.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "HEAD_PART_4",
+            "slotData": {
+                "slotUid": 110,
+                "name": "HEAD_PART_4",
+                "models": [
+                    {
+                        "name": "sh_man_hair_system_b_sides_a.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "sh_man_hair_system_b_dark.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "sh_man_hair_system_b_dark.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "TORSO_PART_5",
+            "slotData": {
+                "slotUid": 111,
+                "name": "TORSO_PART_5",
+                "models": [
+                    {
+                        "name": "man_bdt_torso_c_shawl_a.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "wmn_hub_bdt_shawl_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "wmn_hub_bdt_shawl_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "det_0_a_opacity_factor",
+                                                "type": 2,
+                                                "val_float": 0.8600000143051147
+                                            },
+                                            {
+                                                "name": "det_0_clr_a_tex",
+                                                "type": 7,
+                                                "val_str": "srf_fabric_d_ch_dtt.png"
+                                            },
+                                            {
+                                                "name": "det_0_dif_a_tex",
+                                                "type": 7,
+                                                "val_str": "srf_fabric_nomad_pattern_a_dif.png"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "LEGS_PART_1",
+            "slotData": {
+                "slotUid": 112,
+                "name": "LEGS_PART_1",
+                "models": [
+                    {
+                        "name": "man_bdt_torso_c_rag_a.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "wmn_srv_torso_d_bottom_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "wmn_srv_torso_d_bottom_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "TORSO_PART_6",
+            "slotData": {
+                "slotUid": 113,
+                "name": "TORSO_PART_6",
+                "models": [
+                    {
+                        "name": "man_bdt_torso_c_shawl_a_belts_a.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "man_bdt_belt_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "man_bdt_belt_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "HEAD_PART_3",
+            "slotData": {
+                "slotUid": 114,
+                "name": "HEAD_PART_3",
+                "models": [
+                    {
+                        "name": "sh_man_hair_system_b_base_i_addon_c.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "sh_man_hair_system_b_dark.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "sh_man_hair_system_b_dark.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}

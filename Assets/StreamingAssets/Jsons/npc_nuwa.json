@@ -1,0 +1,581 @@
+{
+    "skeletonName": "woman_light_skeleton.msh",
+    "modelProperties": {
+        "class": "npc",
+        "production_state": "prototype",
+        "race": "asian",
+        "sex": "female",
+        "size": "normal",
+        "type": "character",
+        "weight": "normal"
+    },
+    "slotPairs": [
+        {
+            "key": "HEAD",
+            "slotData": {
+                "slotUid": 100,
+                "name": "HEAD",
+                "models": [
+                    {
+                        "name": "sh_npc_nuwa.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "sh_npc_nuwa.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "sh_eye.mat"
+                            },
+                            {
+                                "number": 3,
+                                "name": "sh_mouth_interior.mat"
+                            },
+                            {
+                                "number": 4,
+                                "name": "sh_eyelashes.mat"
+                            },
+                            {
+                                "number": 5,
+                                "name": "sh_eye_shadow.mat"
+                            },
+                            {
+                                "number": 6,
+                                "name": "sh_wet_eye.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "sh_npc_nuwa.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "msk_1_tex",
+                                                "type": 7,
+                                                "val_str": "sh_wmn_hair_system_b_fringe_a_msk.png"
+                                            },
+                                            {
+                                                "name": "dif_1_tex",
+                                                "type": 7,
+                                                "val_str": "chr_black_dif.png"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "sh_eye_african.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 3,
+                                "resources": [
+                                    {
+                                        "name": "sh_mouth_interior.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 4,
+                                "resources": [
+                                    {
+                                        "name": "sh_eyelashes.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 5,
+                                "resources": [
+                                    {
+                                        "name": "sh_eye_shadow.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 6,
+                                "resources": [
+                                    {
+                                        "name": "sh_wet_eye.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "TORSO_PART_2",
+            "slotData": {
+                "slotUid": 107,
+                "name": "TORSO_PART_2",
+                "models": [
+                    {
+                        "name": "npc_nuwa_scarf_a.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "npc_nuwa_scarf_a.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "npc_nuwa_scarf_a_threads.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "npc_nuwa_scarf_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "npc_nuwa_scarf_a_threads.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "TORSO_PART_1",
+            "slotData": {
+                "slotUid": 108,
+                "name": "TORSO_PART_1",
+                "models": [
+                    {
+                        "name": "npc_nuwa_torso_a.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "npc_nuwa_arms_armor_a.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "npc_nuwa_torso_armor_a.mat"
+                            },
+                            {
+                                "number": 3,
+                                "name": "npc_nuwa_torso_armor_a_leather.mat"
+                            },
+                            {
+                                "number": 4,
+                                "name": "npc_nuwa_shirt_a.mat"
+                            },
+                            {
+                                "number": 5,
+                                "name": "npc_nuwa_torso_addons_a.mat"
+                            },
+                            {
+                                "number": 6,
+                                "name": "npc_nuwa_bracers_a.mat"
+                            },
+                            {
+                                "number": 7,
+                                "name": "npc_nuwa_torso_addons_a_metal.mat"
+                            },
+                            {
+                                "number": 8,
+                                "name": "man_wrestler_arm_wrapper_b_white.mat"
+                            },
+                            {
+                                "number": 9,
+                                "name": "wmn_hands_white_a.mat"
+                            },
+                            {
+                                "number": 10,
+                                "name": "npc_nuwa_volatile_jaw.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "npc_nuwa_arms_armor_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "npc_nuwa_torso_armor_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 3,
+                                "resources": [
+                                    {
+                                        "name": "npc_nuwa_torso_armor_a_leather.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 4,
+                                "resources": [
+                                    {
+                                        "name": "npc_nuwa_shirt_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 5,
+                                "resources": [
+                                    {
+                                        "name": "npc_nuwa_torso_addons_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 6,
+                                "resources": [
+                                    {
+                                        "name": "npc_nuwa_bracers_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 7,
+                                "resources": [
+                                    {
+                                        "name": "npc_nuwa_torso_addons_a_metal.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 8,
+                                "resources": [
+                                    {
+                                        "name": "man_wrestler_arm_wrapper_b_white_wmn.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "dif_0_val",
+                                                "type": 4,
+                                                "val_vec3": "+9.45097983e-01 +9.45097983e-01 +8.78431022e-01"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 9,
+                                "resources": [
+                                    {
+                                        "name": "wmn_hands_white_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": [
+                                            {
+                                                "name": "dif_0_val",
+                                                "type": 4,
+                                                "val_vec3": "+9.45098102e-01 +9.45098102e-01 +8.78431439e-01"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 10,
+                                "resources": [
+                                    {
+                                        "name": "npc_nuwa_volatile_jaw.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "LEGS",
+            "slotData": {
+                "slotUid": 109,
+                "name": "LEGS",
+                "models": [
+                    {
+                        "name": "npc_nuwa_legs_a.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "npc_nuwa_pants_a.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "chr_pouch_b.mat"
+                            },
+                            {
+                                "number": 3,
+                                "name": "chr_belt_d.mat"
+                            },
+                            {
+                                "number": 4,
+                                "name": "npc_nuwa_torso_addons_a_metal.mat"
+                            },
+                            {
+                                "number": 5,
+                                "name": "npc_nuwa_pants_a_pad_a.mat"
+                            },
+                            {
+                                "number": 6,
+                                "name": "npc_nuwa_shoes_a_socks_a.mat"
+                            },
+                            {
+                                "number": 7,
+                                "name": "npc_nuwa_shoes_a.mat"
+                            },
+                            {
+                                "number": 8,
+                                "name": "npc_nuwa_torso_addons_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "npc_nuwa_pants_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "chr_pouch_b.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 3,
+                                "resources": [
+                                    {
+                                        "name": "chr_belt_d.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 4,
+                                "resources": [
+                                    {
+                                        "name": "npc_nuwa_torso_addons_a_metal.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 5,
+                                "resources": [
+                                    {
+                                        "name": "npc_nuwa_pants_a_pad_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 6,
+                                "resources": [
+                                    {
+                                        "name": "npc_nuwa_shoes_a_socks_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 7,
+                                "resources": [
+                                    {
+                                        "name": "npc_nuwa_shoes_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 8,
+                                "resources": [
+                                    {
+                                        "name": "npc_nuwa_torso_addons_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "TORSO_PART_3",
+            "slotData": {
+                "slotUid": 112,
+                "name": "TORSO_PART_3",
+                "models": [
+                    {
+                        "name": "npc_nuwa_scarf_a_hood_a.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "npc_nuwa_scarf_a_hood_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "npc_nuwa_scarf_a_hood_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "HEAD_PART_2",
+            "slotData": {
+                "slotUid": 116,
+                "name": "HEAD_PART_2",
+                "models": [
+                    {
+                        "name": "npc_nuwa_hair_a.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "npc_hair_a.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "npc_hair_a_dark.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}

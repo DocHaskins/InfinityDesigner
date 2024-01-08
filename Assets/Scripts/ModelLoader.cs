@@ -97,6 +97,26 @@ public class ModelLoader : MonoBehaviour
                     ApplyMaterials(modelInstance, modelInfo);
                     loadedModels.Add(modelInstance);
 
+                    // Check if the prefab name contains "sh_man_facial_hair_" and adjust Z position
+                    if (prefabPath.Contains("sh_man_facial_hair_"))
+                    {
+                        Vector3 localPosition = modelInstance.transform.localPosition;
+                        localPosition.z += 0.01f;
+                        modelInstance.transform.localPosition = localPosition;
+
+                        Debug.Log($"Adjusted position for facial hair prefab: {prefabPath}");
+                    }
+
+                    if (prefabPath.Contains("sh_man_hair_system_"))
+                    {
+                        Vector3 localPosition = modelInstance.transform.localPosition;
+                        //localPosition.y += 0.009f;
+                        localPosition.z += 0.009f;
+                        modelInstance.transform.localPosition = localPosition;
+
+                        Debug.Log($"Adjusted position for hair prefab: {prefabPath}");
+                    }
+
                     Debug.Log($"Prefab loaded and instantiated: {prefabPath}");
                 }
                 else
