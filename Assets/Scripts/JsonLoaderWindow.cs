@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Cinemachine;
+using System.Diagnostics;
 
 public class JsonLoaderWindow : EditorWindow
 {
@@ -45,7 +46,7 @@ public class JsonLoaderWindow : EditorWindow
         string jsonsFolderPath = Path.Combine(Application.streamingAssetsPath, "Jsons");
         if (!Directory.Exists(jsonsFolderPath))
         {
-            Debug.LogError("Jsons folder not found in StreamingAssets: " + jsonsFolderPath);
+            UnityEngine.Debug.LogError("Jsons folder not found in StreamingAssets: " + jsonsFolderPath);
             return;
         }
 
@@ -206,15 +207,20 @@ public class JsonLoaderWindow : EditorWindow
                 }
                 else
                 {
-                    Debug.LogError("ModelLoader component not found on ModelLoaderObject.");
+                    UnityEngine.Debug.LogError("ModelLoader component not found on ModelLoaderObject.");
                 }
             }
             else
             {
-                Debug.LogError("ModelLoaderObject not found in the scene.");
+                UnityEngine.Debug.LogError("ModelLoaderObject not found in the scene.");
             }
         }
+        if (GUILayout.Button("Open json"))
+        {
+            OpenSelectedJsonFile();
+        }
     }
+
     private string DropdownField(string label, string selectedValue, HashSet<string> options)
     {
         string[] optionArray = options.ToArray();
@@ -222,4 +228,26 @@ public class JsonLoaderWindow : EditorWindow
         index = EditorGUILayout.Popup(label, index, optionArray);
         return optionArray[index];
     }
+
+    private void OpenSelectedJsonFile()
+    {
+        if (!string.IsNullOrEmpty(selectedJson))
+        {
+            string jsonFilePath = Path.Combine(Application.streamingAssetsPath, "Jsons", selectedJson);
+            if (File.Exists(jsonFilePath))
+            {
+                // Open the file with the default application
+                Process.Start(jsonFilePath);
+            }
+            else
+            {
+                UnityEngine.Debug.LogError("Json file not found: " + jsonFilePath);
+            }
+        }
+        else
+        {
+            UnityEngine.Debug.LogError("No json file selected.");
+        }
+    }
+
 }

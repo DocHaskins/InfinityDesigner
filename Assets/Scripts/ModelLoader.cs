@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 using System;
+using System.Linq;
 
 public class ModelLoader : MonoBehaviour
 {
@@ -130,8 +131,6 @@ public class ModelLoader : MonoBehaviour
 
     private void ApplyMaterials(GameObject modelInstance, ModelData.ModelInfo modelInfo)
     {
-        //Debug.Log($"Applying materials to model '{modelInfo.name}'.");
-
         var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>();
 
         foreach (var materialResource in modelInfo.materialsResources)
@@ -150,7 +149,6 @@ public class ModelLoader : MonoBehaviour
 
     private void ApplyMaterialToRenderer(SkinnedMeshRenderer renderer, ModelData.Resource resource)
     {
-        // Skip materials starting with "sm_"
         if (resource.name.StartsWith("sm_"))
         {
             Debug.Log($"Skipped material '{resource.name}' as it starts with 'sm_'");
@@ -164,29 +162,43 @@ public class ModelLoader : MonoBehaviour
             return;
         }
 
-        // Updated path to load materials from "resources/materials" folder
         string matPath = "materials/" + Path.GetFileNameWithoutExtension(resource.name);
         Material originalMat = Resources.Load<Material>(matPath);
 
         if (originalMat != null)
         {
             Material clonedMaterial = new Material(originalMat);
-            Material[] rendererMaterials = renderer.sharedMaterials;
-            rendererMaterials[0] = clonedMaterial; // Assuming you want to replace the first material
-            renderer.sharedMaterials = rendererMaterials;
+            bool useCustomShader = ShouldUseCustomShader(resource.name);
+            bool useHairShader = ShouldUseHairShader(resource.name);
+            if (useCustomShader)
+            {
+                clonedMaterial.shader = Shader.Find("Shader Graphs/Skin");
+            }
+            else if (useHairShader)
+            {
+                clonedMaterial.shader = Shader.Find("HDRP/Hair");
+            }
+            else
+            {
+                clonedMaterial.shader = Shader.Find("HDRP/Lit");
+            }
 
             foreach (var rttiValue in resource.rttiValues)
             {
-                ApplyTextureToMaterial(clonedMaterial, rttiValue.name, rttiValue.val_str);
+                ApplyTextureToMaterial(clonedMaterial, rttiValue.name, rttiValue.val_str, useCustomShader);
             }
 
-            //Debug.Log($"Material '{resource.name}' applied to '{renderer.gameObject.name}'");
-
-            // Check if the renderer should be disabled based on its name
+            // Check if the renderer should be disabled
             if (ShouldDisableRenderer(renderer.gameObject.name))
             {
                 renderer.enabled = false;
-                //Debug.Log($"SkinnedMeshRenderer disabled on '{renderer.gameObject.name}'");
+            }
+            else
+            {
+                // Apply the cloned material to the renderer
+                Material[] rendererMaterials = renderer.sharedMaterials;
+                rendererMaterials[0] = clonedMaterial;
+                renderer.sharedMaterials = rendererMaterials;
             }
         }
         else
@@ -195,38 +207,88 @@ public class ModelLoader : MonoBehaviour
         }
     }
 
-    private void ApplyTextureToMaterial(Material material, string rttiValueName, string textureName)
+    private bool ShouldUseCustomShader(string resourceName)
+    {
+        // Define names that should use the custom shader
+        string[] specialNames = {
+        "sh_biter_", "sh_man_", "sh_scan_man_", "multihead007_npc_carl_",
+        "sh_wmn_", "sh_scan_wmn_", "sh_dlc_opera_wmn_", "nnpc_wmn_worker",
+        "sh_scan_kid_", "sh_scan_girl_", "sh_scan_boy_", "sh_chld_"
+    };
+
+        if (resourceName.Contains("hair"))
+        {
+            return false;
+        }
+
+        return specialNames.Any(name => resourceName.StartsWith(name));
+    }
+    private bool ShouldUseHairShader(string resourceName)
+    {
+        string[] hairNames = {
+        "sh_man_hair_", "chr_npc_hair_", "chr_hair_", "man_facial_hair_",
+        "man_hair_", "npc_aiden_hair", "npc_hair_", "sh_wmn_hair_",
+        "sh_wmn_zmb_hair", "wmn_hair_", "viral_hair_", "wmn_viral_hair_",
+        "zmb_bolter_a_hair_", "zmb_banshee_hairs_"
+    };
+        return hairNames.Any(name => resourceName.StartsWith(name));
+    }
+
+    private void ApplyTextureToMaterial(Material material, string rttiValueName, string textureName, bool useCustomShader)
     {
         string texturePath = "textures/" + Path.GetFileNameWithoutExtension(textureName);
         Texture2D texture = Resources.Load<Texture2D>(texturePath);
 
         if (texture != null)
         {
-            switch (rttiValueName)
+            if (useCustomShader)
             {
-                case "msk_1_tex":
-                    material.SetTexture("_CoatMaskMap", texture);
-                    material.SetFloat("_CoatMask", 1.0f);
-                    Debug.Log($"Assigned texture '{texture.name}' to '_CoatMaskMap'");
-                    break;
-                case "dif_1_tex":
-                case "dif_0_tex": // Add this case for dif_0_tex
-                    material.SetTexture("_BaseColorMap", texture);
-                    Debug.Log($"Assigned texture '{texture.name}' to '_BaseColorMap'");
-                    break;
-                case "nrm_1_tex":
-                case "nrm_0_tex": // Add this case for nrm_0_tex
-                    material.SetTexture("_NormalMap", texture);
-                    Debug.Log($"Assigned texture '{texture.name}' to '_NormalMap'");
-                    break;
-                case "ems_0_tex":
-                case "ems_1_tex": // Add this case for ems_1_tex
-                    material.SetTexture("_EmissiveColorMap", texture);
-                    material.SetColor("_EmissiveColor", Color.white * 2); // You might want to adjust this value
-                    material.EnableKeyword("_EMISSION");
-                    Debug.Log($"Assigned texture '{texture.name}' to '_EmissiveColorMap' and enabled emission");
-                    break;
-                    // Add other cases as needed
+                switch (rttiValueName)
+                {
+                    case "msk_1_tex":
+                        material.SetTexture("_mask", texture);
+                        break;
+                    case "dif_1_tex":
+                    case "dif_0_tex":
+                        material.SetTexture("_dif", texture);
+                        if (textureName.StartsWith("chr_"))
+                        {
+                            // Set the _modifier texture and enable the modifier
+                            material.SetTexture("_modifier", texture);
+                            material.SetFloat("_Modifier", 1);
+                        }
+                        break;
+                    case "nrm_1_tex":
+                    case "nrm_0_tex":
+                        material.SetTexture("_nrm", texture);
+                        break;
+                        // Add other cases for custom shader
+                }
+            }
+            else
+            {
+                switch (rttiValueName)
+                {
+                    case "msk_1_tex":
+                        material.SetTexture("_CoatMaskMap", texture);
+                        material.SetFloat("_CoatMask", 1.0f);
+                        break;
+                    case "dif_1_tex":
+                    case "dif_0_tex":
+                        material.SetTexture("_BaseColorMap", texture);
+                        break;
+                    case "nrm_1_tex":
+                    case "nrm_0_tex":
+                        material.SetTexture("_NormalMap", texture);
+                        break;
+                    case "ems_0_tex":
+                    case "ems_1_tex":
+                        material.SetTexture("_EmissiveColorMap", texture);
+                        material.SetColor("_EmissiveColor", Color.white * 2);
+                        material.EnableKeyword("_EMISSION");
+                        break;
+                        // Add other cases for HDRP/Lit shader
+                }
             }
         }
         else

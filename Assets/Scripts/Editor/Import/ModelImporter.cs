@@ -317,14 +317,6 @@ public class ModelImporterWindow : EditorWindow
         return extension == ".png" || extension == ".jpg" || extension == ".dds";
     }
 
-    private string GetMaterialNameFromFile(string fileName)
-    {
-        // Extract the material name from the filename
-        var baseName = Path.GetFileNameWithoutExtension(fileName);
-        var lastUnderscoreIndex = baseName.LastIndexOf('_');
-        return lastUnderscoreIndex > -1 ? baseName.Substring(0, lastUnderscoreIndex) : baseName;
-    }
-
     private void AssignTexturesToMaterial(Material material, List<string> textureFiles, string baseName)
     {
         string[] specialNames = new string[] {
@@ -334,153 +326,80 @@ public class ModelImporterWindow : EditorWindow
     };
 
         bool useCustomShader = textureFiles.Any(file => specialNames.Any(name => Path.GetFileName(file).StartsWith(name)));
+        material.shader = useCustomShader ? Shader.Find("Shader Graphs/Skin") : Shader.Find("HDRP/Lit");
 
         if (useCustomShader)
         {
-            // Carry over settings if the material is already HDRP/Lit
-            if (material.shader.name == "HDRP/Lit")
-            {
-                // Store current settings that need to be retained
-                var baseColorMap = material.GetTexture("_BaseColorMap");
-                var normalMap = material.GetTexture("_NormalMap");
-                var maskMap = material.GetTexture("_MaskMap");
-
-                // Switch to the custom shader
-                material.shader = Shader.Find("Shader Graphs/Skin");
-
-                // Reapply the retained settings
-                material.SetTexture("_BaseColorMap", baseColorMap);
-                material.SetTexture("_NormalMap", normalMap);
-                material.SetTexture("_MaskMap", maskMap);
-
-                // Other custom settings for the shader
-                material.SetFloat("_Modifier", 0);
-                material.SetFloat("_Blend", 0.9f);
-                material.SetFloat("_AO_Multiply", 1.0f);
-            }
-            else
-            {
-                // Set the custom shader for materials not originally using HDRP/Lit
-                material.shader = Shader.Find("Shader Graphs/Skin");
-                material.SetFloat("_Modifier", 0);
-            }
-        }
-        else
-        {
-            // Ensure the material uses HDRP/Lit shader if not using custom shader
-            if (material.shader.name != "HDRP/Lit")
-            {
-                material.shader = Shader.Find("HDRP/Lit");
-            }
+            material.SetFloat("_Modifier", 0);
+            material.SetFloat("_Blend", 0.9f);
+            material.SetFloat("_AO_Multiply", 1.0f);
         }
 
-        // Apply textures to the material
         foreach (var textureFile in textureFiles)
         {
             Texture2D texture = LoadTexture(textureFile);
 
             if (textureFile.Contains(baseName + "_dif"))
             {
-                material.SetTexture("_BaseColorMap", texture);
-                Debug.Log($"Assigned diffuse texture '{texture.name}' to material '{material.name}'");
+                if (useCustomShader)
+                {
+                    material.SetTexture("_dif", texture);
+                }
+                else
+                {
+                    material.SetTexture("_BaseColorMap", texture);
+                }
             }
             else if (textureFile.Contains(baseName + "_nrm"))
             {
-                material.SetTexture("_NormalMap", texture);
-                Debug.Log($"Assigned normal texture '{texture.name}' to material '{material.name}'");
+                if (useCustomShader)
+                {
+                    material.SetTexture("_nrm", texture);
+                }
+                else
+                {
+                    material.SetTexture("_NormalMap", texture);
+                }
             }
-            else if (textureFile.Contains(baseName + "_ocl"))
+            else if (textureFile.Contains(baseName + "_ocl") && useCustomShader)
             {
-                material.SetTexture("_OclMap", texture); // Assuming "_ocl" maps to "_OclMap"
-                Debug.Log($"Assigned occlusion texture '{texture.name}' to material '{material.name}'");
+                material.SetTexture("_ocl", texture);
             }
             else if (textureFile.Contains(baseName + "_msk") && useCustomShader)
             {
-                material.SetTexture("_MaskMap", texture);
-                Debug.Log($"Assigned mask texture '{texture.name}' to material '{material.name}'");
+                material.SetTexture("_mask", texture);
             }
-        }
-
-        // Additional properties for the custom shader
-        if (useCustomShader)
-        {
-            material.SetFloat("_Blend", 0.9f);
-            material.SetFloat("_AO_Multiply", 1.0f);
-            // Set other properties as needed
-        }
-
-        Shader hdrpShader = Shader.Find("HDRP/Lit");
-        if (hdrpShader == null)
-        {
-            Debug.LogError("HDRP/Lit shader not found. Make sure HDRP is correctly set up in your project.");
-            return;
-        }
-        material.shader = hdrpShader;
-
-        bool hasDiffuseTexture = false;
-        bool hasClippingTexture = false;
-
-        foreach (var textureFile in textureFiles)
-        {
-            Texture2D texture = LoadTexture(textureFile);
-
-            if (textureFile.Contains(baseName + "_dif"))
-            {
-                material.SetTexture("_BaseColorMap", texture);
-                Debug.Log($"Assigned diffuse texture '{texture.name}' to material '{material.name}'");
-                hasDiffuseTexture = true;
-            }
-            else if (textureFile.Contains(baseName + "_nrm"))
-            {
-                material.SetTexture("_NormalMap", texture);
-                Debug.Log($"Assigned normal texture '{texture.name}' to material '{material.name}'");
-            }
-            else if (textureFile.Contains(baseName + "_rgh"))
+            else if (textureFile.Contains(baseName + "_rgh") && !useCustomShader)
             {
                 material.SetTexture("_MaskMap", texture);
-                Debug.Log($"Assigned roughness texture '{texture.name}' to material '{material.name}'");
             }
-            else if (textureFile.Contains(baseName + "_ems"))
+            else if (textureFile.Contains(baseName + "_ems") && !useCustomShader)
             {
                 material.SetTexture("_EmissiveColorMap", texture);
-                Debug.Log($"Assigned emissive texture '{texture.name}' to material '{material.name}'");
-            }
-            else if (textureFile.Contains(baseName + "_clp"))
-            {
-                material.SetTexture("_BaseColorMap", texture);
-                Debug.Log($"Assigned diffuse texture '{texture.name}' to material '{material.name}'");
-                hasClippingTexture = true;
             }
         }
 
-        if (hasDiffuseTexture && hasClippingTexture)
+        // Configure additional properties for non-custom shader
+        if (!useCustomShader)
         {
-            material.SetFloat("_SurfaceType", 1); // Set Surface Type to Transparent
-            material.SetFloat("_AlphaCutoffEnable", 1); // Enable Alpha Clipping
-            material.SetFloat("_AlphaCutoff", 0.6f); // Set Alpha Cutoff value
-            material.EnableKeyword("_BACK_THEN_FRONT_RENDERING"); // Enable Back then Front Rendering
-            material.SetFloat("_ReceivesSSRTransparent", 1); // Enable Receive SSR Transparent
-            Debug.Log($"Configured material '{material.name}' for transparency with alpha clipping, back then front rendering, and SSR.");
-        }
-
-        if (!hasDiffuseTexture)
-        {
-            string opcTexturePath = textureFiles.FirstOrDefault(f => f.EndsWith(baseName + "_opc.png"));
-            if (!string.IsNullOrEmpty(opcTexturePath))
+            bool hasClippingTexture = textureFiles.Any(file => file.Contains(baseName + "_clp"));
+            if (hasClippingTexture)
             {
-                Texture2D opcTexture = LoadTexture(opcTexturePath);
-                material.SetTexture("_BaseColorMap", opcTexture);
-                Debug.Log($"Assigned OPC texture '{opcTexture.name}' to material '{material.name}'");
+                material.SetFloat("_SurfaceType", 1); // Transparent
+                material.SetFloat("_AlphaCutoffEnable", 1);
+                material.SetFloat("_AlphaCutoff", 0.6f);
+                material.EnableKeyword("_BACK_THEN_FRONT_RENDERING");
+                material.SetFloat("_ReceivesSSRTransparent", 1);
             }
-        }
 
-        // Set default remapping values
-        material.SetFloat("_MetallicRemapMin", 0.0f);
-        material.SetFloat("_MetallicRemapMax", 0.4f);
-        material.SetFloat("_SmoothnessRemapMin", 0.0f);
-        material.SetFloat("_SmoothnessRemapMax", 0.25f);
-        material.SetFloat("_AORemapMin", 0.0f);
-        material.SetFloat("_AORemapMax", 1.0f);
+            // Default remapping values
+            material.SetFloat("_MetallicRemapMin", 0.0f);
+            material.SetFloat("_MetallicRemapMax", 0.4f);
+            material.SetFloat("_SmoothnessRemapMin", 0.0f);
+            material.SetFloat("_SmoothnessRemapMax", 0.25f);
+            material.SetFloat("_AORemapMin", 0.0f);
+            material.SetFloat("_AORemapMax", 1.0f);
+        }
     }
 
     private Texture2D LoadTexture(string path)
