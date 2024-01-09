@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System;
 using UnityEngine;
 using UnityEditor;
@@ -257,6 +258,7 @@ public class JsonLoaderWindow : EditorWindow
             {
                 UnityEngine.Debug.LogError("Json file not found: " + jsonFilePath);
             }
+
         }
         else
         {
@@ -265,3 +267,4 @@ public class JsonLoaderWindow : EditorWindow
     }
 
 }
+#endif

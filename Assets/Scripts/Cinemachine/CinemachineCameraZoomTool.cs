@@ -88,6 +88,12 @@ public class CinemachineCameraZoomTool : MonoBehaviour
                 CycleTarget(-1);
             }
         }
+
+        public int CurrentTargetIndex
+        {
+            get { return currentTargetIndex; }
+            set { currentTargetIndex = value; }
+        }
         private void CycleTarget(int direction)
         {
             if (targets.Count == 0) return;
@@ -129,7 +135,7 @@ public class CinemachineCameraZoomTool : MonoBehaviour
             }
         }
 
-        private void UpdateCameraTarget()
+        public void UpdateCameraTarget()
         {
             // Check if the application is in play mode and if freelook is not null
             if (Application.isPlaying && freelook != null)
