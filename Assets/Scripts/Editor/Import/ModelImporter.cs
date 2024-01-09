@@ -106,7 +106,6 @@ public class ModelImporterWindow : EditorWindow
 
         int createdMaterialsCount = 0;
 
-        // Process each set of textures up to the limit
         foreach (var entry in textureFiles)
         {
             if (createdMaterialsCount >= limit)
@@ -121,16 +120,38 @@ public class ModelImporterWindow : EditorWindow
             Material material;
             if (!existingMaterials.TryGetValue(baseName, out material))
             {
-                // Create new material if it doesn't exist
-                material = new Material(Shader.Find("HDRP/Lit"));
-                string materialPath = Path.Combine(materialsPath, baseName + ".mat");
-                AssetDatabase.CreateAsset(material, materialPath);
-                Debug.Log($"Created HDRP Material: {materialPath}");
-                createdMaterialsCount++;
-            }
-            else
-            {
-                Debug.Log($"Found existing material: {material.name}");
+                // Check if a similar material exists
+                string similarMaterialName = FindSimilarMaterialName(baseName, existingMaterials.Keys);
+                if (!string.IsNullOrEmpty(similarMaterialName) && existingMaterials.TryGetValue(similarMaterialName, out Material similarMaterial))
+                {
+                    // Clone the similar material
+                    material = new Material(similarMaterial);
+                    Debug.Log($"Cloned similar material: {similarMaterialName} for {baseName}");
+                }
+                else
+                {
+                    // Decide which shader to use
+                    Shader shaderToUse;
+                    if (ShouldUseCustomShader(baseName))
+                    {
+                        shaderToUse = Shader.Find("Shader Graphs/Skin");
+                    }
+                    else if (ShouldUseHairShader(baseName))
+                    {
+                        shaderToUse = Shader.Find("HDRP/Hair");
+                    }
+                    else
+                    {
+                        shaderToUse = Shader.Find("HDRP/Lit");
+                    }
+
+                    // Create new material with decided shader
+                    material = new Material(shaderToUse);
+                    string materialPath = Path.Combine(materialsPath, baseName + ".mat");
+                    AssetDatabase.CreateAsset(material, materialPath);
+                    Debug.Log($"Created HDRP Material: {materialPath}");
+                    createdMaterialsCount++;
+                }
             }
 
             // Assign textures to material
@@ -139,6 +160,60 @@ public class ModelImporterWindow : EditorWindow
 
         AssetDatabase.Refresh();
         Debug.Log($"{createdMaterialsCount} materials were created and binding complete.");
+    }
+
+    private bool ShouldUseCustomShader(string resourceName)
+    {
+        // Define names that should use the custom shader
+        string[] specialNames = {
+        "sh_biter_", "sh_man_", "sh_scan_man_", "multihead007_npc_carl_",
+        "sh_wmn_", "sh_scan_wmn_", "sh_dlc_opera_wmn_", "nnpc_wmn_worker",
+        "sh_scan_kid_", "sh_scan_girl_", "sh_scan_boy_", "sh_chld_"
+    };
+
+        if (resourceName.Contains("hair"))
+        {
+            return false;
+        }
+
+        return specialNames.Any(name => resourceName.StartsWith(name));
+    }
+    private bool ShouldUseHairShader(string resourceName)
+    {
+        string[] hairNames = {
+        "sh_man_hair_", "chr_npc_hair_", "chr_hair_", "man_facial_hair_",
+        "man_hair_", "npc_aiden_hair", "npc_hair_", "sh_wmn_hair_",
+        "sh_wmn_zmb_hair", "wmn_hair_", "viral_hair_", "wmn_viral_hair_",
+        "zmb_bolter_a_hair_", "zmb_banshee_hairs_"
+    };
+        return hairNames.Any(name => resourceName.StartsWith(name));
+    }
+
+    private string FindSimilarMaterialName(string baseName, IEnumerable<string> existingMaterialNames)
+    {
+        Debug.Log($"Finding similar material for: {baseName}");
+        int lastIndex = baseName.LastIndexOf('_');
+        if (lastIndex > 0)
+        {
+            string trimmedName = baseName.Substring(0, lastIndex);
+            Debug.Log($"Trimmed name: {trimmedName}");
+
+            foreach (var name in existingMaterialNames)
+            {
+                Debug.Log($"Checking against existing material: {name}");
+                if (name.StartsWith(trimmedName) && !name.Equals(baseName))
+                {
+                    Debug.Log($"Found similar material: {name}");
+                    return name;
+                }
+            }
+        }
+        else
+        {
+            Debug.Log($"No underscore found in {baseName}, unable to trim name.");
+        }
+        Debug.Log($"No similar material found for {baseName}");
+        return null;
     }
 
     private string meshReferencesDirectory = "Assets/StreamingAssets/Mesh references";
@@ -328,12 +403,7 @@ public class ModelImporterWindow : EditorWindow
         bool useCustomShader = textureFiles.Any(file => specialNames.Any(name => Path.GetFileName(file).StartsWith(name)));
         material.shader = useCustomShader ? Shader.Find("Shader Graphs/Skin") : Shader.Find("HDRP/Lit");
 
-        if (useCustomShader)
-        {
-            material.SetFloat("_Modifier", 0);
-            material.SetFloat("_Blend", 0.9f);
-            material.SetFloat("_AO_Multiply", 1.0f);
-        }
+        bool hasDiffuseTexture = false;
 
         foreach (var textureFile in textureFiles)
         {
@@ -349,6 +419,7 @@ public class ModelImporterWindow : EditorWindow
                 {
                     material.SetTexture("_BaseColorMap", texture);
                 }
+                hasDiffuseTexture = true;
             }
             else if (textureFile.Contains(baseName + "_nrm"))
             {
@@ -377,6 +448,23 @@ public class ModelImporterWindow : EditorWindow
             {
                 material.SetTexture("_EmissiveColorMap", texture);
             }
+        }
+
+        if (!hasDiffuseTexture && !useCustomShader)
+        {
+            string grdTexturePath = textureFiles.FirstOrDefault(f => f.Contains(baseName + "_grd"));
+            if (grdTexturePath != null)
+            {
+                Texture2D grdTexture = LoadTexture(grdTexturePath);
+                material.SetTexture("_BaseColorMap", grdTexture);
+            }
+        }
+
+        if (useCustomShader)
+        {
+            material.SetFloat("_Modifier", 0);
+            material.SetFloat("_Blend", 0.9f);
+            material.SetFloat("_AO_Multiply", 1.0f);
         }
 
         // Configure additional properties for non-custom shader

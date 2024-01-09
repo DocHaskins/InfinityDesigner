@@ -111,13 +111,23 @@ public class JsonLoaderWindow : EditorWindow
 
     void OnGUI()
     {
-        GUILayout.Label("Load JSON File", EditorStyles.boldLabel);
+        GUILayout.Label("JSON File Loader", EditorStyles.boldLabel);
+        GUILayout.Space(10);
 
+        GUILayout.Label("JSON Options", EditorStyles.boldLabel);
         if (GUILayout.Button("Update JSON Data"))
         {
             LoadJsonData();
         }
+        if (GUILayout.Button("Open json"))
+        {
+            OpenSelectedJsonFile();
+        }
 
+        GUILayout.Space(10);
+        
+
+        GUILayout.Label("Load IALR Data", EditorStyles.boldLabel);
         bool filtersChanged = false;
 
         // Toggle for Custom Content
@@ -127,10 +137,13 @@ public class JsonLoaderWindow : EditorWindow
         {
             filtersChanged = true;
         }
-
+        GUILayout.Space(10);
+        GUILayout.Label("Filter Settings for JSON", EditorStyles.boldLabel);
+        GUILayout.Space(2);
         // Search field
         GUILayout.BeginHorizontal();
         GUILayout.Label("Search:", GUILayout.Width(50));
+        
         string prevSearchTerm = searchTerm;
         searchTerm = GUILayout.TextField(searchTerm);
         GUILayout.EndHorizontal();
@@ -138,6 +151,7 @@ public class JsonLoaderWindow : EditorWindow
         {
             filtersChanged = true;
         }
+        GUILayout.Space(2);
 
         // Dropdown for Class
         string prevSelectedClass = selectedClass;
@@ -175,7 +189,8 @@ public class JsonLoaderWindow : EditorWindow
         {
             selectedJson = filteredJsonFiles[selectedIndex];
         }
-
+        GUILayout.Space(10);
+        GUILayout.Label("Instatiate Data", EditorStyles.boldLabel);
         if (GUILayout.Button("Load"))
         {
             if (!string.IsNullOrEmpty(selectedJson))
@@ -215,10 +230,9 @@ public class JsonLoaderWindow : EditorWindow
                 UnityEngine.Debug.LogError("ModelLoaderObject not found in the scene.");
             }
         }
-        if (GUILayout.Button("Open json"))
-        {
-            OpenSelectedJsonFile();
-        }
+        GUILayout.Space(20);
+        GUILayout.Label("Additional Options", EditorStyles.boldLabel);
+        
     }
 
     private string DropdownField(string label, string selectedValue, HashSet<string> options)
