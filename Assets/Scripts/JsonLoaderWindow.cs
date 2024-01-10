@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using Cinemachine;
 using System.Diagnostics;
+using System.Collections;
 
 public class JsonLoaderWindow : EditorWindow
 {
@@ -15,6 +16,9 @@ public class JsonLoaderWindow : EditorWindow
     private List<string> jsonFiles = new List<string>();
     private List<string> filteredJsonFiles = new List<string>();
     private int selectedIndex = 0;
+    private int currentJsonIndex = 0;
+    private bool isProcessing = false;
+    private bool cancelRequested = false;
     private string selectedClass = "All";
     private string selectedSex = "All";
     private string selectedRace = "All";
@@ -23,6 +27,8 @@ public class JsonLoaderWindow : EditorWindow
     private HashSet<string> classes = new HashSet<string>();
     private HashSet<string> sexes = new HashSet<string>();
     private HashSet<string> races = new HashSet<string>();
+    private IEnumerator ProcessJsonCoroutine;
+    private string screenshotsFolderPath;
 
     [MenuItem("Tools/Json Loader")]
     public static void ShowWindow()
@@ -34,6 +40,11 @@ public class JsonLoaderWindow : EditorWindow
     {
         // Initialize the JSON data only once when the window is enabled
         LoadJsonData();
+        screenshotsFolderPath = Path.Combine(Application.dataPath, "Screenshots");
+        if (!Directory.Exists(screenshotsFolderPath))
+        {
+            Directory.CreateDirectory(screenshotsFolderPath);
+        }
     }
 
     void LoadJsonData()
@@ -233,7 +244,111 @@ public class JsonLoaderWindow : EditorWindow
         }
         GUILayout.Space(20);
         GUILayout.Label("Additional Options", EditorStyles.boldLabel);
-        
+
+        if (GUILayout.Button("Load All and Take Screenshots"))
+        {
+            if (!isProcessing)
+            {
+                cancelRequested = false; // Reset cancellation flag
+                currentJsonIndex = 0;
+                isProcessing = true;
+                EditorApplication.update += ProcessCurrentJson;
+            }
+        }
+
+        // New button to request cancellation
+        if (GUILayout.Button("Cancel Process"))
+        {
+            cancelRequested = true;
+        }
+        GUILayout.Space(20);
+
+        if (GUILayout.Button("Check Textures"))
+        {
+            CheckAllTextures();
+        }
+    }
+    private void ProcessCurrentJson()
+    {
+        if (cancelRequested)
+        {
+            // Abort the process if cancellation is requested
+            isProcessing = false;
+            EditorApplication.update -= ProcessCurrentJson;
+            UnityEngine.Debug.Log("Processing canceled by user.");
+            return;
+        }
+        if (currentJsonIndex < filteredJsonFiles.Count)
+        {
+            string jsonFile = filteredJsonFiles[currentJsonIndex];
+            ProcessJsonCoroutine = ProcessJson(jsonFile, OnJsonProcessed);
+            EditorApplication.update += ExecuteProcessJsonCoroutine;
+        }
+        else
+        {
+            isProcessing = false;
+            EditorApplication.update -= ProcessCurrentJson;
+            UnityEngine.Debug.Log("Finished processing all JSON files.");
+        }
+    }
+
+    private void OnJsonProcessed()
+    {
+        currentJsonIndex++;
+        ProcessCurrentJson(); // Move to the next JSON file
+    }
+
+    private IEnumerator ProcessJson(string jsonFileName, Action onCompleted)
+    {
+        UnityEngine.Debug.Log("Starting to process JSON: " + jsonFileName);
+
+        GameObject loaderObject = new GameObject("ModelLoaderObject");
+        ModelLoader loader = loaderObject.AddComponent<ModelLoader>();
+        loader.jsonFileName = jsonFileName;
+        loader.LoadModelFromJson();
+        yield return new WaitForSeconds(1240.5f);
+
+        UnityEngine.Debug.Log("Waiting for model to load: " + jsonFileName);
+        yield return new WaitUntil(() => loader.IsModelLoaded);
+        yield return new WaitForSeconds(1240.5f);
+
+        UnityEngine.Debug.Log("Model loaded. Taking screenshot: " + jsonFileName);
+        TakeScreenshotAndSave(jsonFileName);
+
+        UnityEngine.Debug.Log("Screenshot taken. Waiting before unload: " + jsonFileName);
+        yield return new WaitForSeconds(1240.5f);
+
+        UnityEngine.Debug.Log("Unloading model: " + jsonFileName);
+        loader.UnloadModel();
+
+        UnityEngine.Debug.Log("Model unloaded. Waiting before next JSON: " + jsonFileName);
+        yield return new WaitForSeconds(1240.5f);
+
+        UnityEngine.Debug.Log("Destroying loader object: " + jsonFileName);
+        DestroyImmediate(loaderObject);
+        yield return new WaitForSeconds(1240.5f);
+
+        UnityEngine.Debug.Log("JSON processing completed: " + jsonFileName);
+        onCompleted?.Invoke();
+    }
+
+    private void ExecuteProcessJsonCoroutine()
+    {
+        if (ProcessJsonCoroutine != null && !ProcessJsonCoroutine.MoveNext())
+        {
+            UnityEngine.Debug.Log("Coroutine completed for JSON index: " + currentJsonIndex);
+            EditorApplication.update -= ExecuteProcessJsonCoroutine;
+            ProcessJsonCoroutine = null; // Clear the coroutine
+        }
+    }
+
+    private void TakeScreenshotAndSave(string jsonFileName)
+    {
+        string screenshotName = Path.GetFileNameWithoutExtension(jsonFileName) + ".png";
+        string screenshotPath = Path.Combine(screenshotsFolderPath, screenshotName);
+
+        ScreenCapture.CaptureScreenshot(screenshotPath);
+        UnityEngine.Debug.Log("Saved screenshot: " + screenshotPath);
     }
 
     private string DropdownField(string label, string selectedValue, HashSet<string> options)
@@ -265,6 +380,87 @@ public class JsonLoaderWindow : EditorWindow
             UnityEngine.Debug.LogError("No json file selected.");
         }
     }
+
+    private void CheckAllTextures()
+    {
+        string jsonsFolderPath = Application.streamingAssetsPath + "/Jsons";
+        string resourcesTexturesPath = "Textures"; // Path relative to the Resources folder
+        string failedTexturesFilePath = Application.streamingAssetsPath + "/textures_failed.txt";
+        HashSet<string> missingTextures = new HashSet<string>();
+
+        if (!Directory.Exists(jsonsFolderPath))
+        {
+            UnityEngine.Debug.LogError("Jsons folder not found: " + jsonsFolderPath);
+            return;
+        }
+
+        foreach (var file in Directory.GetFiles(jsonsFolderPath, "*.json"))
+        {
+            string jsonPath = Path.Combine(jsonsFolderPath, file);
+            string jsonData = File.ReadAllText(jsonPath);
+            ModelData modelData = JsonUtility.FromJson<ModelData>(jsonData);
+
+            if (modelData != null && modelData.GetSlots() != null)
+            {
+                foreach (var slot in modelData.GetSlots())
+                {
+                    foreach (var modelInfo in slot.Value.models)
+                    {
+                        foreach (var materialResource in modelInfo.materialsResources)
+                        {
+                            foreach (var resource in materialResource.resources)
+                            {
+                                foreach (var rttiValue in resource.rttiValues)
+                                {
+                                    string textureName = rttiValue.val_str;
+                                    if (!string.IsNullOrEmpty(textureName))
+                                    {
+                                        string texturePath = resourcesTexturesPath + "/" + Path.GetFileNameWithoutExtension(textureName);
+                                        Texture2D texture = Resources.Load<Texture2D>(texturePath);
+
+                                        if (texture == null)
+                                        {
+                                            missingTextures.Add(textureName);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        UnityEngine.Debug.LogWarning($"Texture name is null or empty in JSON file: {file}");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Write missing textures to file
+        if (missingTextures.Count > 0)
+        {
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(failedTexturesFilePath, false))
+                {
+                    foreach (var texture in missingTextures)
+                    {
+                        writer.WriteLine(texture);
+                        UnityEngine.Debug.LogError($"Texture '{texture}' not found in Resources.");
+                    }
+                }
+                UnityEngine.Debug.LogError($"Missing textures list written to {failedTexturesFilePath}");
+            }
+            catch (Exception ex)
+            {
+                UnityEngine.Debug.LogError($"Error writing to file: {ex.Message}");
+            }
+        }
+        else
+        {
+            UnityEngine.Debug.Log("All textures found.");
+        }
+    }
+
 
 }
 #endif

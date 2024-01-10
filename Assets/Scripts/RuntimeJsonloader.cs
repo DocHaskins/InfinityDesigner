@@ -3,15 +3,24 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System;
-using UnityEditor;
 using Cinemachine;
+using TMPro;
+using UnityEngine.UI;
 
 public class RuntimeJsonLoader : MonoBehaviour
 {
-    private string selectedJson;
-    private List<string> jsonFiles = new List<string>();
+    public TMP_Text modelName;
+    public TMP_Dropdown filterClassDropdown;
+    public TMP_Dropdown filterSexDropdown;
+    public TMP_Dropdown filterRaceDropdown;
+    public TMP_Dropdown modelSelectionDropdown;
+    public TMP_InputField searchInputField;
+    public Button loadButton;
+    public Button unloadButton;
+
+    private List<MinimalModelData> minimalModelInfos = new List<MinimalModelData>();
     private List<string> filteredJsonFiles = new List<string>();
-    private Vector2 scrollPosition = Vector2.zero;
+    private string selectedJson;
     private string searchTerm = "";
     private string selectedClass = "All";
     private string selectedSex = "All";
@@ -19,120 +28,155 @@ public class RuntimeJsonLoader : MonoBehaviour
     private HashSet<string> classes = new HashSet<string> { "All" };
     private HashSet<string> sexes = new HashSet<string> { "All" };
     private HashSet<string> races = new HashSet<string> { "All" };
-    private int selectedIndex = -1; // Initial selection index
+    private int selectedIndex = -1;
     private Vector2 scrollPos;
-    private bool foldout = false;
-    private string jsonFileName;
-    private GameObject loadedSkeleton; 
+    private GameObject loadedSkeleton;
     private List<GameObject> loadedObjects = new List<GameObject>();
     private CinemachineCameraZoomTool cameraTool;
 
     void Start()
     {
-        LoadJsonFiles();
+        LoadJsonData();
+        PopulateDropdowns();
+        AddButtonListeners();
         cameraTool = FindObjectOfType<CinemachineCameraZoomTool>();
     }
 
-    void LoadJsonFiles()
+    void PopulateDropdowns()
     {
-        jsonFiles.Clear();
-        string jsonsFolderPath = Path.Combine(Application.streamingAssetsPath, "Jsons");
-        if (Directory.Exists(jsonsFolderPath))
-        {
-            foreach (var file in Directory.GetFiles(jsonsFolderPath, "*.json"))
-            {
-                string jsonPath = Path.Combine(jsonsFolderPath, file);
-                string jsonData = File.ReadAllText(jsonPath);
-                ModelData modelData = JsonUtility.FromJson<ModelData>(jsonData);
-                jsonFiles.Add(Path.GetFileName(file));
+        ClearAndAddOptions(filterClassDropdown, classes.ToList());
+        ClearAndAddOptions(filterSexDropdown, sexes.ToList());
+        ClearAndAddOptions(filterRaceDropdown, races.ToList());
 
-                if (modelData.modelProperties != null)
-                {
-                    classes.Add(modelData.modelProperties.@class ?? "Unknown");
-                    sexes.Add(modelData.modelProperties.sex ?? "Unknown");
-                    races.Add(modelData.modelProperties.race ?? "Unknown");
-                }
+        // Add listeners for dropdown value changes
+        filterClassDropdown.onValueChanged.AddListener(delegate { UpdateFilteredJsonFiles(); });
+        filterSexDropdown.onValueChanged.AddListener(delegate { UpdateFilteredJsonFiles(); });
+        filterRaceDropdown.onValueChanged.AddListener(delegate { UpdateFilteredJsonFiles(); });
+        searchInputField.onValueChanged.AddListener(delegate { UpdateFilteredJsonFiles(); });
+
+        // Initial update for model selection dropdown
+        UpdateModelSelectionDropdown();
+    }
+    void ClearAndAddOptions(TMP_Dropdown dropdown, List<string> options)
+    {
+        dropdown.ClearOptions();
+        dropdown.AddOptions(options);
+    }
+
+    void UpdateModelSelectionDropdown()
+    {
+        modelSelectionDropdown.ClearOptions();
+
+        // Create a new list to store filenames without the .json extension and not containing "_fpp"
+        List<string> dropdownOptions = new List<string>();
+
+        foreach (var filename in filteredJsonFiles)
+        {
+            // Check if filename contains "_fpp"
+            if (!filename.Contains("_fpp"))
+            {
+                // Remove the .json extension from each filename
+                string filenameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
+                dropdownOptions.Add(filenameWithoutExtension);
             }
         }
-        else
+
+        // Add the processed filenames to the dropdown
+        modelSelectionDropdown.AddOptions(dropdownOptions);
+    }
+
+    public void LoadSelectedModel()
+    {
+        if (modelSelectionDropdown.value < 0 || modelSelectionDropdown.value >= filteredJsonFiles.Count)
         {
-            Debug.LogError("Jsons folder not found: " + jsonsFolderPath);
+            Debug.LogError("No model selected or index out of range");
+            return;
         }
 
+        selectedJson = filteredJsonFiles[modelSelectionDropdown.value];
+        // Update the modelName text, replacing underscores with spaces
+        if (modelName != null)
+        {
+            string displayName = Path.GetFileNameWithoutExtension(selectedJson).Replace("_", " ");
+            modelName.text = displayName;
+        }
+        LoadModelFromJson(selectedJson); // Pass the selected JSON file name
+    }
+
+    void AddButtonListeners()
+    {
+        loadButton.onClick.AddListener(LoadSelectedModel);
+        unloadButton.onClick.AddListener(UnloadAllObjects);
+    }
+
+
+    void LoadJsonData()
+    {
+        string jsonsFolderPath = Path.Combine(Application.streamingAssetsPath, "Jsons");
+        if (!Directory.Exists(jsonsFolderPath))
+        {
+            Debug.LogError("Jsons folder not found: " + jsonsFolderPath);
+            return;
+        }
+
+        foreach (var file in Directory.GetFiles(jsonsFolderPath, "*.json"))
+        {
+            string jsonPath = Path.Combine(jsonsFolderPath, file);
+            string jsonData = File.ReadAllText(jsonPath);
+            ModelData modelData = JsonUtility.FromJson<ModelData>(jsonData);
+
+            if (modelData.modelProperties != null)
+            {
+                minimalModelInfos.Add(new MinimalModelData
+                {
+                    FileName = Path.GetFileName(file),
+                    Properties = modelData.modelProperties
+                });
+
+                classes.Add(modelData.modelProperties.@class ?? "Unknown");
+                sexes.Add(modelData.modelProperties.sex ?? "Unknown");
+                races.Add(modelData.modelProperties.race ?? "Unknown");
+            }
+        }
+        
+        // Add 'All' option to enable filtering for all categories
+        classes.Add("All");
+        sexes.Add("All");
+        races.Add("All");
+
+        // Initial update for filtered JSON files
         UpdateFilteredJsonFiles();
     }
 
     void UpdateFilteredJsonFiles()
     {
-        filteredJsonFiles = jsonFiles
-            .Where(f => (selectedClass == "All" || f.Contains(selectedClass)) &&
-                        (selectedSex == "All" || f.Contains(selectedSex)) &&
-                        (selectedRace == "All" || f.Contains(selectedRace)) &&
-                        (string.IsNullOrEmpty(searchTerm) || f.ToLower().Contains(searchTerm.ToLower())))
-            .ToList();
+        // Update selectedClass, selectedSex, selectedRace based on dropdown selections
+        selectedClass = GetDropdownSelectedValue(filterClassDropdown);
+        selectedSex = GetDropdownSelectedValue(filterSexDropdown);
+        selectedRace = GetDropdownSelectedValue(filterRaceDropdown);
+        searchTerm = searchInputField.text;
+
+        filteredJsonFiles = minimalModelInfos.Where(info =>
+        {
+            bool classMatch = selectedClass == "All" || info.Properties.@class == selectedClass;
+            bool sexMatch = selectedSex == "All" || info.Properties.sex == selectedSex;
+            bool raceMatch = selectedRace == "All" || info.Properties.race == selectedRace;
+            bool searchMatch = string.IsNullOrEmpty(searchTerm) || info.FileName.ToLower().Contains(searchTerm.ToLower());
+
+            return classMatch && sexMatch && raceMatch && searchMatch;
+        })
+        .Select(info => info.FileName)
+        .ToList();
+        UpdateModelSelectionDropdown();
     }
 
-    void OnGUI()
+    string GetDropdownSelectedValue(TMP_Dropdown dropdown)
     {
-        // Filters
-        GUILayout.BeginHorizontal();
-        selectedClass = DropdownField("Filter by Class", selectedClass, classes);
-        selectedSex = DropdownField("Filter by Sex", selectedSex, sexes);
-        selectedRace = DropdownField("Filter by Race", selectedRace, races);
-        GUILayout.EndHorizontal();
-
-        searchTerm = GUILayout.TextField(searchTerm);
-        if (GUILayout.Button("Search"))
+        if (dropdown.options.Count > dropdown.value)
         {
-            UpdateFilteredJsonFiles();
+            return dropdown.options[dropdown.value].text;
         }
-
-        // Scrollable selection grid for JSON files
-        GUILayout.Label("Select JSON File:");
-        scrollPos = GUILayout.BeginScrollView(scrollPos, GUILayout.Height(100));
-        selectedIndex = GUILayout.SelectionGrid(selectedIndex, filteredJsonFiles.ToArray(), 1);
-        GUILayout.EndScrollView();
-
-        if (selectedIndex >= 0 && selectedIndex < filteredJsonFiles.Count)
-        {
-            selectedJson = filteredJsonFiles[selectedIndex];
-        }
-
-        if (GUILayout.Button("Load"))
-        {
-            LoadModelFromJson();
-        }
-
-        if (GUILayout.Button("Unload"))
-        {
-            UnloadAllObjects();
-        }
-    }
-
-    private Dictionary<string, bool> foldoutStates = new Dictionary<string, bool>();
-
-    private string DropdownField(string label, string selectedValue, HashSet<string> options)
-    {
-        // Initialize foldout state if it doesn't exist
-        if (!foldoutStates.ContainsKey(label))
-        {
-            foldoutStates[label] = false;
-        }
-
-        GUILayout.Label(label);
-        string[] optionArray = options.ToArray();
-        int index = Array.IndexOf(optionArray, selectedValue);
-
-        // Toggle foldout state
-        foldoutStates[label] = GUILayout.Toggle(foldoutStates[label], label + (foldoutStates[label] ? " ▼" : " ►"), "button");
-
-        if (foldoutStates[label])
-        {
-            // Display a selection grid when the foldout is open
-            index = GUILayout.SelectionGrid(index, optionArray, 1);
-        }
-
-        return index >= 0 ? optionArray[index] : selectedValue;
+        return "";
     }
 
     void UnloadAllObjects()
@@ -145,17 +189,11 @@ public class RuntimeJsonLoader : MonoBehaviour
             }
         }
         loadedObjects.Clear();
+        modelName.text = "";
     }
 
-    public void LoadModelFromJson()
+    public void LoadModelFromJson(string jsonFileName)
     {
-        if (selectedIndex < 0 || selectedIndex >= filteredJsonFiles.Count)
-        {
-            Debug.LogError("No JSON file selected or index out of range");
-            return;
-        }
-
-        jsonFileName = filteredJsonFiles[selectedIndex]; // Set the selected JSON file name
         string path = Path.Combine(Application.streamingAssetsPath, "Jsons", jsonFileName);
 
         if (!File.Exists(path))
@@ -195,7 +233,7 @@ public class RuntimeJsonLoader : MonoBehaviour
             cameraTool.targets.Clear();
 
             // Add specific points to the targets list
-            string[] pointNames = { "neck", "spine3", "legs", "r_hand", "l_hand", "l_foot", "r_foot" };
+            string[] pointNames = {  "spine3", "neck", "legs", "r_hand", "l_hand", "l_foot", "r_foot" };
             foreach (var pointName in pointNames)
             {
                 Transform targetTransform = DeepFind(loadedModelTransform, pointName);

@@ -14,7 +14,14 @@ public class ModelData
         Dictionary<string, SlotData> slots = new Dictionary<string, SlotData>();
         foreach (var pair in slotPairs)
         {
-            slots.Add(pair.key, pair.slotData);
+            if (!slots.ContainsKey(pair.key))
+            {
+                slots.Add(pair.key, pair.slotData);
+            }
+            else
+            {
+                Debug.LogWarning($"Duplicate slot key '{pair.key}' found in JSON. Skipping duplicate entry.");
+            }
         }
         return slots;
     }

@@ -9,6 +9,7 @@ public class ModelLoader : MonoBehaviour
     public string jsonFileName;
     private List<GameObject> loadedModels = new List<GameObject>();
     private GameObject loadedSkeleton;
+    private bool isModelLoaded = false; // Property to track if the model is loaded
 
     void Start()
     {
@@ -17,8 +18,10 @@ public class ModelLoader : MonoBehaviour
 
     public void LoadModelFromJson()
     {
+        isModelLoaded = false;
+        Debug.Log($"isModelLoaded: {isModelLoaded}");
         string path = Path.Combine(Application.streamingAssetsPath, "Jsons", jsonFileName);
-        //Debug.Log("Loading JSON from path: " + path);
+        Debug.Log("Loading JSON from path: " + path);
 
         if (!File.Exists(path))
         {
@@ -46,6 +49,8 @@ public class ModelLoader : MonoBehaviour
         {
             Debug.LogError("Failed to deserialize JSON data");
         }
+        isModelLoaded = true;
+        Debug.Log($"isModelLoaded: {isModelLoaded}");
     }
 
     private void LoadSkeleton(string skeletonName)
@@ -119,7 +124,7 @@ public class ModelLoader : MonoBehaviour
                         Debug.Log($"Adjusted position for hair prefab: {prefabPath}");
                     }
 
-                    //Debug.Log($"Prefab loaded and instantiated: {prefabPath}");
+                    Debug.Log($"Prefab loaded and instantiated: {prefabPath}");
                 }
                 else
                 {
@@ -322,7 +327,10 @@ public class ModelLoader : MonoBehaviour
         loadedModels.Clear();
 
         DestroyObject(this.gameObject);
+        isModelLoaded = false; // Reset the flag when unloading
     }
+
+    public bool IsModelLoaded => isModelLoaded;
 
     private void DestroyObject(GameObject obj)
     {
