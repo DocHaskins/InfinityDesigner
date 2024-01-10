@@ -404,6 +404,8 @@ public class ModelImporterWindow : EditorWindow
         material.shader = useCustomShader ? Shader.Find("Shader Graphs/Skin") : Shader.Find("HDRP/Lit");
 
         bool hasDiffuseTexture = false;
+        bool hasRoughnessTexture = textureFiles.Any(file => file.Contains(baseName + "_rgh"));
+        bool hasSpecularTexture = textureFiles.Any(file => file.Contains(baseName + "_spc"));
 
         foreach (var textureFile in textureFiles)
         {
@@ -450,6 +452,22 @@ public class ModelImporterWindow : EditorWindow
             }
         }
 
+        if (!hasRoughnessTexture && hasSpecularTexture)
+        {
+            string spcTexturePath = textureFiles.FirstOrDefault(f => f.Contains(baseName + "_spc"));
+            if (spcTexturePath != null)
+            {
+                Texture2D spcTexture = LoadTexture(spcTexturePath);
+                material.SetTexture("_MaskMap", spcTexture); // Assuming _MaskMap is the correct property
+
+                // Set specific material properties
+                material.SetFloat("_MetallicRemapMin", 0.6f);
+                material.SetFloat("_MetallicRemapMax", 1.0f);
+                material.SetFloat("_SmoothnessRemapMin", 0.25f);
+                material.SetFloat("_SmoothnessRemapMax", 0.5f);
+            }
+        }
+
         if (!hasDiffuseTexture && !useCustomShader)
         {
             string grdTexturePath = textureFiles.FirstOrDefault(f => f.Contains(baseName + "_grd"));
@@ -473,7 +491,6 @@ public class ModelImporterWindow : EditorWindow
             bool hasClippingTexture = textureFiles.Any(file => file.Contains(baseName + "_clp"));
             if (hasClippingTexture)
             {
-                material.SetFloat("_SurfaceType", 1); // Transparent
                 material.SetFloat("_AlphaCutoffEnable", 1);
                 material.SetFloat("_AlphaCutoff", 0.6f);
                 material.EnableKeyword("_BACK_THEN_FRONT_RENDERING");

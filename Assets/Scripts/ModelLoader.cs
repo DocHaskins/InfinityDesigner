@@ -173,24 +173,36 @@ public class ModelLoader : MonoBehaviour
         if (originalMat != null)
         {
             Material clonedMaterial = new Material(originalMat);
-            bool useCustomShader = ShouldUseCustomShader(resource.name);
-            bool useHairShader = ShouldUseHairShader(resource.name);
-            if (useCustomShader)
-            {
-                clonedMaterial.shader = Shader.Find("Shader Graphs/Skin");
-            }
-            else if (useHairShader)
-            {
-                clonedMaterial.shader = Shader.Find("HDRP/Hair");
-            }
-            else
+
+            // Specific condition for 'sh_man_bdt_balaclava'
+            if (resource.name.Equals("sh_man_bdt_balaclava", StringComparison.OrdinalIgnoreCase))
             {
                 clonedMaterial.shader = Shader.Find("HDRP/Lit");
             }
-
-            foreach (var rttiValue in resource.rttiValues)
+            else
             {
-                ApplyTextureToMaterial(clonedMaterial, rttiValue.name, rttiValue.val_str, useCustomShader);
+                bool useCustomShader = ShouldUseCustomShader(resource.name);
+                bool useHairShader = ShouldUseHairShader(resource.name);
+                if (useCustomShader)
+                {
+                    clonedMaterial.shader = Shader.Find("Shader Graphs/Skin");
+                }
+                else if (useHairShader)
+                {
+                    clonedMaterial.shader = Shader.Find("HDRP/Hair");
+                }
+                else
+                {
+                    clonedMaterial.shader = Shader.Find("HDRP/Lit");
+                }
+
+                foreach (var rttiValue in resource.rttiValues)
+                {
+                    if (rttiValue.name != "ems_scale")
+                    {
+                        ApplyTextureToMaterial(clonedMaterial, rttiValue.name, rttiValue.val_str, useCustomShader);
+                    }
+                }
             }
 
             // Check if the renderer should be disabled
@@ -241,64 +253,94 @@ public class ModelLoader : MonoBehaviour
 
     private void ApplyTextureToMaterial(Material material, string rttiValueName, string textureName, bool useCustomShader)
     {
-        string texturePath = "textures/" + Path.GetFileNameWithoutExtension(textureName);
-        Texture2D texture = Resources.Load<Texture2D>(texturePath);
-
-        if (texture != null)
+        if (!string.IsNullOrEmpty(textureName))
         {
-            if (useCustomShader)
+            Debug.Log($"Applying texture. RTTI Value Name: {rttiValueName}, Texture Name: {textureName}");
+
+            if (rttiValueName == "ems_scale")
             {
-                switch (rttiValueName)
+                return;
+            }
+
+            string texturePath = "textures/" + Path.GetFileNameWithoutExtension(textureName);
+            Texture2D texture = Resources.Load<Texture2D>(texturePath);
+            string difTextureName = null;
+            string modifierTextureName = null;
+
+            if (texture != null)
+            {
+                if (useCustomShader)
                 {
-                    case "msk_1_tex":
-                        material.SetTexture("_mask", texture);
-                        break;
-                    case "dif_1_tex":
-                    case "dif_0_tex":
-                        material.SetTexture("_dif", texture);
-                        if (textureName.StartsWith("chr_"))
-                        {
-                            // Set the _modifier texture and enable the modifier
-                            material.SetTexture("_modifier", texture);
-                            material.SetFloat("_Modifier", 1);
-                        }
-                        break;
-                    case "nrm_1_tex":
-                    case "nrm_0_tex":
-                        material.SetTexture("_nrm", texture);
-                        break;
-                        // Add other cases for custom shader
+                    bool difTextureApplied = false;
+                    switch (rttiValueName)
+                    {
+                        case "msk_1_tex":
+                            material.SetTexture("_mask", texture);
+                            break;
+                        case "dif_1_tex":
+                        case "dif_0_tex":
+                            material.SetTexture("_dif", texture);
+                            difTextureName = textureName;
+                            difTextureApplied = true;
+                            break;
+                        case "nrm_1_tex":
+                        case "nrm_0_tex":
+                            material.SetTexture("_nrm", texture);
+                            break;
+                            // Add other cases for custom shader
+                    }
+
+                    if (difTextureApplied && textureName.StartsWith("chr_"))
+                    {
+                        material.SetTexture("_modifier", texture);
+                        modifierTextureName = textureName;
+                    }
+
+                    // Check if _dif and _modifier textures have the same name
+                    if (difTextureName != null && modifierTextureName != null && difTextureName == modifierTextureName)
+                    {
+                        material.SetFloat("_Modifier", 0);
+                    }
+                    else if (difTextureApplied)
+                    {
+                        material.SetFloat("_Modifier", 1);
+                    }
+                }
+                else
+                {
+                    // HDRP/Lit shader texture assignments
+                    switch (rttiValueName)
+                    {
+                        case "dif_1_tex":
+                        case "dif_0_tex":
+                            material.SetTexture("_BaseColorMap", texture);
+                            break;
+                        case "nrm_1_tex":
+                        case "nrm_0_tex":
+                            material.SetTexture("_NormalMap", texture);
+                            break;
+                        case "msk_1_tex":
+                            // Assuming msk_1_tex corresponds to the mask map in HDRP/Lit shader
+                            material.SetTexture("_MaskMap", texture);
+                            break;
+                        case "ems_0_tex":
+                        case "ems_1_tex":
+                            material.SetTexture("_EmissiveColorMap", texture);
+                            material.SetColor("_EmissiveColor", Color.white * 2);
+                            material.EnableKeyword("_EMISSION");
+                            break;
+                            // Add other cases for HDRP/Lit shader
+                    }
                 }
             }
             else
             {
-                switch (rttiValueName)
-                {
-                    case "msk_1_tex":
-                        material.SetTexture("_CoatMaskMap", texture);
-                        material.SetFloat("_CoatMask", 1.0f);
-                        break;
-                    case "dif_1_tex":
-                    case "dif_0_tex":
-                        material.SetTexture("_BaseColorMap", texture);
-                        break;
-                    case "nrm_1_tex":
-                    case "nrm_0_tex":
-                        material.SetTexture("_NormalMap", texture);
-                        break;
-                    case "ems_0_tex":
-                    case "ems_1_tex":
-                        material.SetTexture("_EmissiveColorMap", texture);
-                        material.SetColor("_EmissiveColor", Color.white * 2);
-                        material.EnableKeyword("_EMISSION");
-                        break;
-                        // Add other cases for HDRP/Lit shader
-                }
+                Debug.LogError($"Texture '{texturePath}' not found in Resources for material '{rttiValueName}'");
             }
         }
         else
         {
-            Debug.LogError($"Texture '{texturePath}' not found in Resources for material '{rttiValueName}'");
+            //Debug.LogWarning($"Texture name is empty for RTTI Value Name: {rttiValueName}");
         }
     }
 

@@ -44,9 +44,10 @@ public class RuntimeJsonLoader : MonoBehaviour
 
     void PopulateDropdowns()
     {
-        ClearAndAddOptions(filterClassDropdown, classes.ToList());
-        ClearAndAddOptions(filterSexDropdown, sexes.ToList());
-        ClearAndAddOptions(filterRaceDropdown, races.ToList());
+        // Sort and populate the dropdowns, ensuring "ALL" is at the top
+        AddSortedOptionsWithAllAtTop(filterClassDropdown, classes);
+        AddSortedOptionsWithAllAtTop(filterSexDropdown, sexes);
+        AddSortedOptionsWithAllAtTop(filterRaceDropdown, races);
 
         // Add listeners for dropdown value changes
         filterClassDropdown.onValueChanged.AddListener(delegate { UpdateFilteredJsonFiles(); });
@@ -56,6 +57,16 @@ public class RuntimeJsonLoader : MonoBehaviour
 
         // Initial update for model selection dropdown
         UpdateModelSelectionDropdown();
+    }
+
+    void AddSortedOptionsWithAllAtTop(TMP_Dropdown dropdown, HashSet<string> optionsSet)
+    {
+        List<string> options = optionsSet.ToList(); // Convert HashSet to List
+        options.Remove("All");      // Remove "ALL" if it exists
+        options.Sort();             // Sort the options
+        options.Insert(0, "All");   // Add "ALL" back at the top
+
+        ClearAndAddOptions(dropdown, options);
     }
     void ClearAndAddOptions(TMP_Dropdown dropdown, List<string> options)
     {
@@ -393,24 +404,36 @@ public class RuntimeJsonLoader : MonoBehaviour
         if (originalMat != null)
         {
             Material clonedMaterial = new Material(originalMat);
-            bool useCustomShader = ShouldUseCustomShader(resource.name);
-            bool useHairShader = ShouldUseHairShader(resource.name);
-            if (useCustomShader)
-            {
-                clonedMaterial.shader = Shader.Find("Shader Graphs/Skin");
-            }
-            else if (useHairShader)
-            {
-                clonedMaterial.shader = Shader.Find("HDRP/Hair");
-            }
-            else
+
+            // Specific condition for 'sh_man_bdt_balaclava'
+            if (resource.name.Equals("sh_man_bdt_balaclava", StringComparison.OrdinalIgnoreCase))
             {
                 clonedMaterial.shader = Shader.Find("HDRP/Lit");
             }
-
-            foreach (var rttiValue in resource.rttiValues)
+            else
             {
-                ApplyTextureToMaterial(clonedMaterial, rttiValue.name, rttiValue.val_str, useCustomShader);
+                bool useCustomShader = ShouldUseCustomShader(resource.name);
+                bool useHairShader = ShouldUseHairShader(resource.name);
+                if (useCustomShader)
+                {
+                    clonedMaterial.shader = Shader.Find("Shader Graphs/Skin");
+                }
+                if (useHairShader)
+                {
+                    clonedMaterial.shader = Shader.Find("HDRP/Hair");
+                }
+                else
+                {
+                    clonedMaterial.shader = Shader.Find("HDRP/Lit");
+                }
+
+                foreach (var rttiValue in resource.rttiValues)
+                {
+                    if (rttiValue.name != "ems_scale")
+                    {
+                        ApplyTextureToMaterial(clonedMaterial, rttiValue.name, rttiValue.val_str, useCustomShader);
+                    }
+                }
             }
 
             // Check if the renderer should be disabled
@@ -461,11 +484,24 @@ public class RuntimeJsonLoader : MonoBehaviour
 
     private void ApplyTextureToMaterial(Material material, string rttiValueName, string textureName, bool useCustomShader)
     {
+        Debug.Log($"Applying texture. RTTI Value Name: {rttiValueName}, Texture Name: {textureName}");
+
+        if (rttiValueName == "ems_scale")
+        {
+            return;
+        }
+
         string texturePath = "textures/" + Path.GetFileNameWithoutExtension(textureName);
         Texture2D texture = Resources.Load<Texture2D>(texturePath);
 
         if (texture != null)
         {
+            Texture currentTexture = material.GetTexture("_dif");
+            if (currentTexture != null)
+            {
+                Debug.Log($"Material already has a texture set for _dif: {currentTexture.name}");
+            }
+
             if (useCustomShader)
             {
                 switch (rttiValueName)

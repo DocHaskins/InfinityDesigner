@@ -16,6 +16,19 @@ public class CinemachineCameraZoomTool : MonoBehaviour
         public List<Transform> targets = new List<Transform>();
         private int currentTargetIndex = 0;
 
+        [Tooltip("Speed of vertical camera movement")]
+        public float verticalSpeed = 10f; // Speed of vertical movement
+
+        [Tooltip("Minimum Y position for the camera")]
+        public float minY = -10f; // Minimum Y value
+
+        [Tooltip("Maximum Y position for the camera")]
+        public float maxY = 10f; // Maximum Y value
+
+        private float initialY;
+        private float accumulatedVerticalMovement = 0f;
+        private bool isDragging = false;
+
         [Tooltip("The minimum scale for the orbits")]
         [Range(0.01f, 1f)]
         public float minScale = 0.5f;
@@ -87,7 +100,32 @@ public class CinemachineCameraZoomTool : MonoBehaviour
             {
                 CycleTarget(-1);
             }
+            if (Input.GetMouseButtonDown(2)) // Middle mouse button pressed
+            {
+                initialY = freelook.Follow.position.y; // Store initial Y position
+                accumulatedVerticalMovement = 0f; // Reset accumulated movement
+                isDragging = true; // Set dragging flag to true
+            }
+
+            if (Input.GetMouseButtonUp(2)) // Middle mouse button released
+            {
+                isDragging = false; // Set dragging flag to false
+            }
+
+            if (isDragging) // If dragging
+            {
+                // Increment vertical movement by mouse Y axis
+                accumulatedVerticalMovement += Input.GetAxis("Mouse Y") * verticalSpeed * Time.deltaTime;
+                float newY = Mathf.Clamp(initialY + accumulatedVerticalMovement, minY, maxY);
+
+                Vector3 newPosition = new Vector3(freelook.Follow.position.x, newY, freelook.Follow.position.z);
+
+                freelook.Follow.position = newPosition;
+                freelook.LookAt.position = newPosition;
+            }
         }
+
+
 
         public int CurrentTargetIndex
         {
