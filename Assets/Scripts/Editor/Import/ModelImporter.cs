@@ -284,10 +284,18 @@ public class ModelImporterWindow : EditorWindow
             else if (textureFile.Contains(baseName + "_ems") && !useCustomShader)
             {
                 material.SetTexture("_EmissiveColorMap", texture);
-                material.SetColor("_EmissiveColor", Color.white);
-                material.SetInt("_UseEmissiveIntensity", 1);
 
-                float emissionIntensity = Mathf.Pow(2f, 3f); // Convert 5 EV100 to HDRP's internal unit
+                // Set the HDR emissive color
+                Color emissiveHDRColor = new Color(8f, 8f, 8f, 8f); // High intensity color for HDR
+                material.SetColor("_EmissiveColor", emissiveHDRColor);
+
+                // Set the LDR (Low Dynamic Range) emissive color
+                Color emissiveLDRColor = Color.white; // Standard white color for LDR
+                material.SetColor("_EmissiveColorLDR", emissiveLDRColor);
+
+                // Enable and set the emission intensity
+                material.SetInt("_UseEmissiveIntensity", 1);
+                float emissionIntensity = Mathf.Pow(2f, 3f); // Convert 3 EV100 to HDRP's internal unit
                 material.SetFloat("_EmissiveIntensity", emissionIntensity);
             }
         }
