@@ -8,7 +8,8 @@ using System;
 public class PrefabUtilityScript : EditorWindow
 {
     private static string modelsDirectory = "Assets/Resources/Models";
-    private static string prefabsDirectory = "Assets/Resources/Prefabs"; // Prefabs directory
+    private static string materialsDirectory = "Assets/Resources/Materials";
+    private static string prefabsDirectory = "Assets/Resources/Prefabs";
     private static string meshReferencesDirectory = "Assets/StreamingAssets/Mesh references";
     private int maxPrefabCount = 100;
 
@@ -66,6 +67,12 @@ public class PrefabUtilityScript : EditorWindow
                 prefabAsset = PrefabUtility.SaveAsPrefabAsset(fbxAsset, prefabPath);
                 Debug.Log($"Prefab created: {prefabPath}");
             }
+            else
+            {
+                // Update the existing prefab
+                PrefabUtility.SaveAsPrefabAsset(fbxAsset, prefabPath);
+                Debug.Log($"Prefab updated: {prefabPath}");
+            }
 
             AssignMaterialsToPrefab(prefabAsset, Path.GetFileNameWithoutExtension(fbxFilePath));
         }
@@ -102,7 +109,8 @@ public class PrefabUtilityScript : EditorWindow
                 if (i < materialsList.Count)
                 {
                     var materialData = materialsList[i];
-                    string materialPath = Path.Combine(modelsDirectory, materialData.name);
+                    string materialPath = Path.Combine(materialsDirectory, materialData.name + ".mat");
+                    materialPath = materialPath.Replace("\\", "/");
                     Material newMat = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
 
                     if (newMat != null)

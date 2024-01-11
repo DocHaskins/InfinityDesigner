@@ -37,17 +37,17 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: zmb_demolisher_pants_a
-  m_Shader: {fileID: 4800000, guid: 6e4ae4064600d784cac1e41a9e6f2e59, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 0cf98c43b16dd6e4abfc0e3e03e66cd6, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _ALPHATEST_ON
   - _DOUBLESIDED_ON
+  m_InvalidKeywords:
+  - _ALPHATEST_ON
+  - _BACK_THEN_FRONT_RENDERING
   - _MASKMAP
   - _NORMALMAP
   - _NORMALMAP_TANGENT_SPACE
-  m_InvalidKeywords:
-  - _BACK_THEN_FRONT_RENDERING
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 1
@@ -209,12 +209,16 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _msk:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _nrm:
         m_Texture: {fileID: 2800000, guid: 9fee07b0945e76c4398ee8f1bed3921e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ocl:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: dd3b45ce54b0e0b48b6fd50ea4ddb756, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _rgh:
@@ -257,7 +261,7 @@ Material:
     - _AlphaSrcBlend: 1
     - _AlphaToMask: 0
     - _Anisotropy: 0
-    - _Blend: 0
+    - _Blend: 0.9
     - _BlendMode: 0
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1

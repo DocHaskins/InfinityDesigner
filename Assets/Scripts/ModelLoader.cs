@@ -174,18 +174,26 @@ public class ModelLoader : MonoBehaviour
         {
             Material clonedMaterial = new Material(originalMat);
 
-            // Specific condition for 'sh_man_bdt_balaclava'
+            // Determine which shader to use
             if (resource.name.Equals("sh_man_bdt_balaclava", StringComparison.OrdinalIgnoreCase))
             {
                 clonedMaterial.shader = Shader.Find("HDRP/Lit");
             }
             else
             {
-                bool useCustomShader = ShouldUseCustomShader(resource.name);
+                // Check if the original material uses one of the custom shaders
+                string[] customShaders = new string[] {
+                "Shader Graphs/Clothing",
+                "Shader Graphs/Clothing_dif",
+                "Shader Graphs/Skin"
+            };
+                bool useCustomShader = customShaders.Contains(originalMat.shader.name) || ShouldUseCustomShader(resource.name);
                 bool useHairShader = ShouldUseHairShader(resource.name);
+
+                // Set the shader based on conditions
                 if (useCustomShader)
                 {
-                    clonedMaterial.shader = Shader.Find("Shader Graphs/Skin");
+                    clonedMaterial.shader = originalMat.shader; // Use the original shader
                 }
                 else if (useHairShader)
                 {
@@ -196,6 +204,7 @@ public class ModelLoader : MonoBehaviour
                     clonedMaterial.shader = Shader.Find("HDRP/Lit");
                 }
 
+                // Apply textures
                 foreach (var rttiValue in resource.rttiValues)
                 {
                     if (rttiValue.name != "ems_scale")
@@ -274,8 +283,38 @@ public class ModelLoader : MonoBehaviour
                     bool difTextureApplied = false;
                     switch (rttiValueName)
                     {
+                        case "msk_0_tex":
                         case "msk_1_tex":
-                            material.SetTexture("_mask", texture);
+                        case "msk_1_add_tex":
+                            material.SetTexture("_msk", texture);
+                            break;
+                        case "idx_0_tex":
+                        case "idx_1_tex":
+                            material.SetTexture("_idx", texture);
+                            break;
+                        case "grd_0_tex":
+                        case "grd_1_tex":
+                            material.SetTexture("_gra", texture);
+                            break;
+                        case "spc_0_tex":
+                        case "spc_1_tex":
+                            material.SetTexture("_spc", texture);
+                            break;
+                        case "clp_0_tex":
+                        case "clp_1_tex":
+                            material.SetTexture("_clp", texture);
+                            break;
+                        case "rgh_0_tex":
+                        case "rgh_1_tex":
+                            material.SetTexture("_rgh", texture);
+                            break;
+                        case "ocl_0_tex":
+                        case "ocl_1_tex":
+                            material.SetTexture("_ocl", texture);
+                            break;
+                        case "ems_0_tex":
+                        case "ems_1_tex":
+                            material.SetTexture("_ems", texture);
                             break;
                         case "dif_1_tex":
                         case "dif_0_tex":
@@ -287,7 +326,6 @@ public class ModelLoader : MonoBehaviour
                         case "nrm_0_tex":
                             material.SetTexture("_nrm", texture);
                             break;
-                            // Add other cases for custom shader
                     }
 
                     if (difTextureApplied && textureName.StartsWith("chr_"))

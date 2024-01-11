@@ -9,29 +9,15 @@ using System;
 public class ModelImporterWindow : EditorWindow
 {
     private int materialCreationLimit = 100; // Default value
-    private int fbxProcessingLimit = 10;
 
-    [MenuItem("Tools/Model Importer")]
+    [MenuItem("Tools/Asset Management")]
     public static void ShowWindow()
     {
-        GetWindow<ModelImporterWindow>("Model Importer");
+        GetWindow<ModelImporterWindow>("Asset Management");
     }
     void OnGUI()
     {
-        GUILayout.Label("Import Models from AssetImport", EditorStyles.boldLabel);
-
-        if (GUILayout.Button("Import Models"))
-        {
-            string targetDirectory = Path.Combine(Application.dataPath, "AssetImport");
-            if (Directory.Exists(targetDirectory))
-            {
-                ImportModelsAndTextures(targetDirectory);
-            }
-            else
-            {
-                Debug.LogError("AssetImport directory not found.");
-            }
-        }
+        GUILayout.Label("Asset Management", EditorStyles.boldLabel);
 
         GUILayout.BeginHorizontal();
         GUILayout.Label("Material Creation Limit:", GUILayout.Width(150));
@@ -44,17 +30,11 @@ public class ModelImporterWindow : EditorWindow
             CreateAndBindMaterials(materialCreationLimit);
         }
 
-        GUILayout.BeginHorizontal();
-        GUILayout.Label("FBX Processing Limit:", GUILayout.Width(150));
-        fbxProcessingLimit = EditorGUILayout.IntField(fbxProcessingLimit);
-        GUILayout.EndHorizontal();
-
-        if (GUILayout.Button("Assign Materials to FBX"))
+        if (GUILayout.Button("Assign Custom Shader Textures"))
         {
-            AssignMaterialsToFbx();
+            AssignCustomShaderTextures();
         }
 
-        
     }
 
     private Dictionary<string, Material> LoadMaterialsFromFolder(string folderPath)
@@ -114,36 +94,36 @@ public class ModelImporterWindow : EditorWindow
             var baseName = entry.Key;
             var textures = entry.Value;
 
-            Material material;
+            // Determine which shader to use based on texture names
             Shader shaderToUse = DetermineShader(textures, baseName);
 
-            if (existingMaterials.TryGetValue(baseName, out material))
+            Material material;
+            string materialPath = Path.Combine(materialsPath, baseName + ".mat");
+
+            if (!existingMaterials.TryGetValue(baseName, out material))
             {
-                if (shaderToUse != null)
+                if (!File.Exists(materialPath))
                 {
-                    material.shader = shaderToUse;
-                    EditorUtility.SetDirty(material); // Mark the material as dirty to ensure it gets saved
-                    Debug.Log($"Updated existing material '{baseName}' with shader: {shaderToUse.name}");
+                    // Only create a new material if it doesn't already exist
+                    material = new Material(shaderToUse);
+                    AssetDatabase.CreateAsset(material, materialPath);
+                    Debug.Log($"Created new material: {materialPath}");
                 }
                 else
                 {
-                    Debug.LogError($"Failed to find shader for {baseName}");
+                    // Load the existing material instead of creating a new one
+                    material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+                    Debug.Log($"Loaded existing material: {materialPath}");
                 }
-            }
-            else
-            {
-                material = new Material(shaderToUse);
-                string materialPath = Path.Combine(materialsPath, baseName + ".mat");
-                AssetDatabase.CreateAsset(material, materialPath);
-                Debug.Log($"Created new material '{baseName}' with shader: {shaderToUse.name}");
                 createdMaterialsCount++;
             }
 
+            // Assign textures to material
             AssignTexturesToMaterial(material, textures, baseName);
         }
-        AssetDatabase.SaveAssets();
+
         AssetDatabase.Refresh();
-        Debug.Log($"{createdMaterialsCount} materials were created or updated. Binding complete.");
+        Debug.Log($"{createdMaterialsCount} materials were created and binding complete.");
     }
 
     private Shader DetermineShader(List<string> textures, string baseName)
@@ -152,25 +132,26 @@ public class ModelImporterWindow : EditorWindow
         bool hasDif = textures.Any(file => file.EndsWith("_dif.png"));
         bool hasGra = textures.Any(file => file.EndsWith("_gra.png"));
 
-        if (hasIdx && hasDif)
+        if (ShouldUseCustomShader(baseName))
         {
-            return Shader.Find("DoppelGanger/Clothing_dif");
+            return Shader.Find("Shader Graphs/Skin");
         }
-        else if (hasIdx && hasGra)
+        else if (ShouldUseHairShader(baseName))
         {
-            return Shader.Find("DoppelGanger/Clothing");
+            return Shader.Find("HDRP/Hair");
         }
-        else if (hasIdx && !hasDif && !hasGra)
+        else if (hasGra)
         {
-            return Shader.Find("DoppelGanger/Clothing");
+            return Shader.Find("Shader Graphs/Clothing");
         }
-        else if (hasDif || textures.Any(file => file.EndsWith("_nrm.png")) || textures.Any(file => file.EndsWith("_rgh.png")))
+        else if (hasIdx && hasDif)
         {
-            return ShouldUseCustomShader(baseName) ? Shader.Find("Shader Graphs/Skin") : Shader.Find("HDRP/Lit");
+            return Shader.Find("Shader Graphs/Clothing_dif");
         }
-
-        // Default shader
-        return Shader.Find("DoppelGanger/Clothing");
+        else
+        {
+            return Shader.Find("HDRP/Lit");
+        }
     }
 
     private bool ShouldUseCustomShader(string resourceName)
@@ -227,6 +208,54 @@ public class ModelImporterWindow : EditorWindow
         return null;
     }
 
+    private void AssignCustomShaderTextures()
+    {
+        Debug.Log("AssignCustomShaderTextures started");
+        string materialsPath = "Assets/Resources/Materials";
+        string texturesPath = "Assets/Resources/Textures";
+
+        var materials = LoadMaterialsFromFolder(materialsPath);
+        var textureFiles = LoadTexturesFromFolder(texturesPath);
+
+        Debug.Log($"Total materials found: {materials.Count}");
+
+        foreach (var materialEntry in materials)
+        {
+            Material material = materialEntry.Value;
+
+            Debug.Log($"Processing material: {material.name}, Shader: {material.shader.name}");
+
+            // Check if material uses any of the specific shaders
+            if (material.shader.name == "Shader Graphs/Clothing" ||
+                material.shader.name == "Shader Graphs/Clothing_dif" ||
+                material.shader.name == "Shader Graphs/Skin")
+            {
+                string baseName = materialEntry.Key;
+                Debug.Log($"Material '{baseName}' uses one of the specific shaders");
+
+                List<string> matchingTextures = FindTexturesForMaterial(textureFiles, baseName);
+                Debug.Log($"Matching textures for '{baseName}': {string.Join(", ", matchingTextures)}");
+
+                AssignTexturesToMaterial(material, matchingTextures, baseName);
+                EditorUtility.SetDirty(material);
+            }
+            else
+            {
+                Debug.Log($"Material '{material.name}' does not use one of the specific shaders");
+            }
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("AssignCustomShaderTextures completed");
+    }
+
+    private List<string> FindTexturesForMaterial(Dictionary<string, List<string>> textureFiles, string baseName)
+    {
+        Debug.Log($"FindTexturesForMaterial");
+        return textureFiles.ContainsKey(baseName) ? textureFiles[baseName] : new List<string>();
+    }
+
     private void AssignTexturesToMaterial(Material material, List<string> textureFiles, string baseName)
     {
         string[] specialNames = new string[] {
@@ -235,12 +264,17 @@ public class ModelImporterWindow : EditorWindow
         "sh_scan_kid_", "sh_scan_girl_", "sh_scan_boy_", "sh_chld_"
     };
 
-        bool useCustomShader = textureFiles.Any(file => specialNames.Any(name => Path.GetFileName(file).StartsWith(name)));
-        material.shader = useCustomShader ? Shader.Find("Shader Graphs/Skin") : Shader.Find("HDRP/Lit");
+        string[] customShaders = new string[] {
+        "Shader Graphs/Clothing",
+        "Shader Graphs/Clothing_dif",
+        "Shader Graphs/Skin"
+    };
+        bool useCustomShader = customShaders.Contains(material.shader.name);
 
         bool hasDiffuseTexture = false;
         bool hasRoughnessTexture = textureFiles.Any(file => file.Contains(baseName + "_rgh"));
         bool hasSpecularTexture = textureFiles.Any(file => file.Contains(baseName + "_spc"));
+        bool foundGraTexture = false;
 
         foreach (var textureFile in textureFiles)
         {
@@ -273,6 +307,23 @@ public class ModelImporterWindow : EditorWindow
             {
                 material.SetTexture("_ocl", texture);
             }
+            else if (textureFile.Contains(baseName + "_spc") && useCustomShader)
+            {
+                material.SetTexture("_spc", texture);
+            }
+            else if (textureFile.Contains(baseName + "_clp") && useCustomShader)
+            {
+                material.SetTexture("_clp", texture);
+            }
+            else if (textureFile.Contains(baseName + "_gra") && useCustomShader)
+            {
+                material.SetTexture("_gra", texture);
+                foundGraTexture = true;
+            }
+            else if (textureFile.Contains(baseName + "_idx") && useCustomShader)
+            {
+                material.SetTexture("_idx", texture);
+            }
             else if (textureFile.Contains(baseName + "_msk") && useCustomShader)
             {
                 material.SetTexture("_mask", texture);
@@ -297,6 +348,19 @@ public class ModelImporterWindow : EditorWindow
                 material.SetInt("_UseEmissiveIntensity", 1);
                 float emissionIntensity = Mathf.Pow(2f, 3f); // Convert 3 EV100 to HDRP's internal unit
                 material.SetFloat("_EmissiveIntensity", emissionIntensity);
+            }
+
+            if (!foundGraTexture)
+            {
+                string grdTexturePath = textureFiles.FirstOrDefault(f => f.Contains(baseName + "_grd"));
+                if (grdTexturePath != null)
+                {
+                    Texture2D grdTexture = LoadTexture(grdTexturePath);
+                    if (useCustomShader)
+                    {
+                        material.SetTexture("_gra", grdTexture);
+                    }
+                }
             }
         }
 
@@ -373,170 +437,7 @@ public class ModelImporterWindow : EditorWindow
 
         return texture;
     }
-
-    private string meshReferencesDirectory = "Assets/StreamingAssets/Mesh references";
-    private static string modelsDirectory = "Assets/Resources/Models";
-
-    private void AssignMaterialsToFbx()
-    {
-        var fbxPaths = Directory.GetFiles(modelsDirectory, "*.fbx", SearchOption.AllDirectories);
-        int processedFbxCount = 0;
-
-        foreach (var fbxPath in fbxPaths)
-        {
-            if (processedFbxCount >= fbxProcessingLimit)
-            {
-                Debug.Log($"FBX processing limit of {fbxProcessingLimit} reached. Stopping further processing.");
-                break;
-            }
-
-            Debug.Log($"Processing FBX at path: {fbxPath}");
-            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fbxPath);
-            string jsonPath = Path.Combine(meshReferencesDirectory, fileNameWithoutExtension + ".json");
-
-            if (!File.Exists(jsonPath))
-            {
-                Debug.LogError($"Mesh reference JSON not found: {jsonPath}");
-                continue;
-            }
-
-            string jsonContent = File.ReadAllText(jsonPath);
-            var modelData = JsonUtility.FromJson<ModelData>(jsonContent);
-
-            AssetDatabase.ImportAsset(fbxPath, ImportAssetOptions.ForceUpdate);
-            var importer = AssetImporter.GetAtPath(fbxPath) as ModelImporter;
-
-            if (importer != null && modelData != null)
-            {
-                // Change import mode to embedded materials
-                importer.materialImportMode = ModelImporterMaterialImportMode.ImportViaMaterialDescription;
-                SerializedObject serializedObject = new SerializedObject(importer);
-                SerializedProperty materialsProperty = serializedObject.FindProperty("m_ExternalObjects");
-
-                foreach (var slotPair in modelData.slotPairs)
-                {
-                    foreach (var modelInfo in slotPair.slotData.models)
-                    {
-                        foreach (var materialResource in modelInfo.materialsResources)
-                        {
-                            int materialIndex = materialResource.number - 1;
-
-                            foreach (var resource in materialResource.resources)
-                            {
-                                string materialPath = Path.Combine(modelsDirectory, resource.name);
-                                Material material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
-
-                                if (material != null && materialIndex >= 0 && materialIndex < materialsProperty.arraySize)
-                                {
-                                    SerializedProperty materialProperty = materialsProperty.GetArrayElementAtIndex(materialIndex);
-                                    materialProperty.FindPropertyRelative("second").objectReferenceValue = material;
-                                    Debug.Log($"Loaded material '{material.name}' from path: {materialPath}");
-                                }
-                                else
-                                {
-                                    Debug.LogError($"Failed to load material from path: {materialPath} or index out of bounds. Material null: {material == null}");
-                                }
-                            }
-                        }
-                    }
-                }
-
-                serializedObject.ApplyModifiedProperties();
-                importer.SaveAndReimport(); // Apply the changes immediately
-                Debug.Log($"Updated materials for FBX: {fbxPath}");
-            }
-            else
-            {
-                Debug.LogError($"Importer for the FBX file at '{fbxPath}' could not be found or modelData is null.");
-            }
-            processedFbxCount++;
-        }
-
-        Debug.Log($"Processed {processedFbxCount} FBX files out of {fbxPaths.Length} available.");
-        AssetDatabase.SaveAssets();
-        Debug.Log("FBX material assignment complete.");
-    }
-
-    private void ImportModelsAndTextures(string dirPath)
-    {
-        var allFiles = Directory.GetFiles(dirPath, "*.*", SearchOption.AllDirectories);
-        var fbxFiles = new List<string>();
-        var textureFiles = new Dictionary<string, List<string>>();
-
-        foreach (var file in allFiles)
-        {
-            var relativePath = file.Replace(Application.dataPath, "Assets"); // Convert to relative path
-            var baseName = GetBaseName(relativePath);
-
-            if (Path.GetExtension(relativePath).ToLower() == ".fbx")
-            {
-                fbxFiles.Add(relativePath);
-                if (!textureFiles.ContainsKey(baseName))
-                    textureFiles[baseName] = new List<string>();
-            }
-            else if (IsTextureFile(relativePath))
-            {
-                if (!textureFiles.ContainsKey(baseName))
-                    textureFiles[baseName] = new List<string>();
-                textureFiles[baseName].Add(relativePath);
-            }
-        }
-
-        string modelsPath = "Assets/Models";
-        Directory.CreateDirectory(modelsPath); // Ensure the Models directory exists
-
-        foreach (var fbxFile in fbxFiles)
-        {
-            string newFbxPath = Path.Combine(modelsPath, Path.GetFileName(fbxFile));
-            if (fbxFile != newFbxPath) // Check if the new path is different to avoid unnecessary operations
-            {
-                string error = AssetDatabase.MoveAsset(fbxFile, newFbxPath);
-                if (string.IsNullOrEmpty(error))
-                {
-                    Debug.Log($"Moved FBX: {newFbxPath}");
-                }
-                else
-                {
-                    Debug.LogError($"Failed to move FBX: {fbxFile} to {newFbxPath}. Error: {error}");
-                }
-            }
-            else
-            {
-                Debug.Log($"FBX already in place: {newFbxPath}");
-            }
-        }
-
-
-        // Process textures to create materials
-        foreach (var textureEntry in textureFiles)
-        {
-            var baseName = textureEntry.Key;
-            var textures = textureEntry.Value;
-
-            // Check if a diffuse texture exists
-            var diffuseTexture = textures.FirstOrDefault(t => t.Contains("_dif"));
-            if (diffuseTexture != null)
-            {
-                Material newMaterial = new Material(Shader.Find("HDRP/Lit"));
-                AssignTexturesToMaterial(newMaterial, textures, baseName);  // Adjusted the order of parameters here
-
-                string materialPath = Path.Combine(modelsPath, baseName + ".mat");
-                AssetDatabase.CreateAsset(newMaterial, materialPath);
-                Debug.Log($"Created Material: {materialPath}");
-
-                // Move textures to the Models directory
-                foreach (var textureFile in textures)
-                {
-                    string newTexturePath = Path.Combine(modelsPath, Path.GetFileName(textureFile));
-                    AssetDatabase.MoveAsset(textureFile, newTexturePath);
-                    Debug.Log($"Moved Texture: {newTexturePath}");
-                }
-            }
-        }
-
-        AssetDatabase.Refresh();
-    }
-
+    
     private string GetBaseName(string filePath)
     {
         var baseName = Path.GetFileNameWithoutExtension(filePath);
@@ -549,7 +450,6 @@ public class ModelImporterWindow : EditorWindow
         var extension = Path.GetExtension(fileName).ToLower();
         return extension == ".png" || extension == ".jpg" || extension == ".dds";
     }
-
     
     private string RemoveDuplicateExtensions(string path)
     {
