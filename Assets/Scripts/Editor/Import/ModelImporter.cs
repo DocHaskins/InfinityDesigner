@@ -98,10 +98,7 @@ public class ModelImporterWindow : EditorWindow
         string texturesPath = "Assets/Resources/Textures";
         string materialsPath = "Assets/Resources/Materials";
 
-        // Load existing materials
         var existingMaterials = LoadMaterialsFromFolder(materialsPath);
-
-        // Load textures from the Textures folder
         var textureFiles = LoadTexturesFromFolder(texturesPath);
 
         int createdMaterialsCount = 0;
@@ -118,48 +115,62 @@ public class ModelImporterWindow : EditorWindow
             var textures = entry.Value;
 
             Material material;
-            if (!existingMaterials.TryGetValue(baseName, out material))
+            Shader shaderToUse = DetermineShader(textures, baseName);
+
+            if (existingMaterials.TryGetValue(baseName, out material))
             {
-                // Check if a similar material exists
-                string similarMaterialName = FindSimilarMaterialName(baseName, existingMaterials.Keys);
-                if (!string.IsNullOrEmpty(similarMaterialName) && existingMaterials.TryGetValue(similarMaterialName, out Material similarMaterial))
+                if (shaderToUse != null)
                 {
-                    // Clone the similar material
-                    material = new Material(similarMaterial);
-                    Debug.Log($"Cloned similar material: {similarMaterialName} for {baseName}");
+                    material.shader = shaderToUse;
+                    EditorUtility.SetDirty(material); // Mark the material as dirty to ensure it gets saved
+                    Debug.Log($"Updated existing material '{baseName}' with shader: {shaderToUse.name}");
                 }
                 else
                 {
-                    // Decide which shader to use
-                    Shader shaderToUse;
-                    if (ShouldUseCustomShader(baseName))
-                    {
-                        shaderToUse = Shader.Find("Shader Graphs/Skin");
-                    }
-                    else if (ShouldUseHairShader(baseName))
-                    {
-                        shaderToUse = Shader.Find("HDRP/Hair");
-                    }
-                    else
-                    {
-                        shaderToUse = Shader.Find("HDRP/Lit");
-                    }
-
-                    // Create new material with decided shader
-                    material = new Material(shaderToUse);
-                    string materialPath = Path.Combine(materialsPath, baseName + ".mat");
-                    AssetDatabase.CreateAsset(material, materialPath);
-                    Debug.Log($"Created HDRP Material: {materialPath}");
-                    createdMaterialsCount++;
+                    Debug.LogError($"Failed to find shader for {baseName}");
                 }
             }
+            else
+            {
+                material = new Material(shaderToUse);
+                string materialPath = Path.Combine(materialsPath, baseName + ".mat");
+                AssetDatabase.CreateAsset(material, materialPath);
+                Debug.Log($"Created new material '{baseName}' with shader: {shaderToUse.name}");
+                createdMaterialsCount++;
+            }
 
-            // Assign textures to material
             AssignTexturesToMaterial(material, textures, baseName);
         }
-
+        AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Debug.Log($"{createdMaterialsCount} materials were created and binding complete.");
+        Debug.Log($"{createdMaterialsCount} materials were created or updated. Binding complete.");
+    }
+
+    private Shader DetermineShader(List<string> textures, string baseName)
+    {
+        bool hasIdx = textures.Any(file => file.EndsWith("_idx.png"));
+        bool hasDif = textures.Any(file => file.EndsWith("_dif.png"));
+        bool hasGra = textures.Any(file => file.EndsWith("_gra.png"));
+
+        if (hasIdx && hasDif)
+        {
+            return Shader.Find("DoppelGanger/Clothing_dif");
+        }
+        else if (hasIdx && hasGra)
+        {
+            return Shader.Find("DoppelGanger/Clothing");
+        }
+        else if (hasIdx && !hasDif && !hasGra)
+        {
+            return Shader.Find("DoppelGanger/Clothing");
+        }
+        else if (hasDif || textures.Any(file => file.EndsWith("_nrm.png")) || textures.Any(file => file.EndsWith("_rgh.png")))
+        {
+            return ShouldUseCustomShader(baseName) ? Shader.Find("Shader Graphs/Skin") : Shader.Find("HDRP/Lit");
+        }
+
+        // Default shader
+        return Shader.Find("DoppelGanger/Clothing");
     }
 
     private bool ShouldUseCustomShader(string resourceName)
@@ -214,6 +225,145 @@ public class ModelImporterWindow : EditorWindow
         }
         Debug.Log($"No similar material found for {baseName}");
         return null;
+    }
+
+    private void AssignTexturesToMaterial(Material material, List<string> textureFiles, string baseName)
+    {
+        string[] specialNames = new string[] {
+        "sh_biter_", "sh_man_", "sh_scan_man_", "multihead007_npc_carl_",
+        "sh_wmn_", "sh_scan_wmn_", "sh_dlc_opera_wmn_", "nnpc_wmn_worker",
+        "sh_scan_kid_", "sh_scan_girl_", "sh_scan_boy_", "sh_chld_"
+    };
+
+        bool useCustomShader = textureFiles.Any(file => specialNames.Any(name => Path.GetFileName(file).StartsWith(name)));
+        material.shader = useCustomShader ? Shader.Find("Shader Graphs/Skin") : Shader.Find("HDRP/Lit");
+
+        bool hasDiffuseTexture = false;
+        bool hasRoughnessTexture = textureFiles.Any(file => file.Contains(baseName + "_rgh"));
+        bool hasSpecularTexture = textureFiles.Any(file => file.Contains(baseName + "_spc"));
+
+        foreach (var textureFile in textureFiles)
+        {
+            Texture2D texture = LoadTexture(textureFile);
+
+            if (textureFile.Contains(baseName + "_dif"))
+            {
+                if (useCustomShader)
+                {
+                    material.SetTexture("_dif", texture);
+                }
+                else
+                {
+                    material.SetTexture("_BaseColorMap", texture);
+                }
+                hasDiffuseTexture = true;
+            }
+            else if (textureFile.Contains(baseName + "_nrm"))
+            {
+                if (useCustomShader)
+                {
+                    material.SetTexture("_nrm", texture);
+                }
+                else
+                {
+                    material.SetTexture("_NormalMap", texture);
+                }
+            }
+            else if (textureFile.Contains(baseName + "_ocl") && useCustomShader)
+            {
+                material.SetTexture("_ocl", texture);
+            }
+            else if (textureFile.Contains(baseName + "_msk") && useCustomShader)
+            {
+                material.SetTexture("_mask", texture);
+            }
+            else if (textureFile.Contains(baseName + "_rgh") && !useCustomShader)
+            {
+                material.SetTexture("_MaskMap", texture);
+            }
+            else if (textureFile.Contains(baseName + "_ems") && !useCustomShader)
+            {
+                material.SetTexture("_EmissiveColorMap", texture);
+                material.SetColor("_EmissiveColor", Color.white);
+                material.SetInt("_UseEmissiveIntensity", 1);
+
+                float emissionIntensity = Mathf.Pow(2f, 3f); // Convert 5 EV100 to HDRP's internal unit
+                material.SetFloat("_EmissiveIntensity", emissionIntensity);
+            }
+        }
+
+        if (!hasRoughnessTexture && hasSpecularTexture)
+        {
+            string spcTexturePath = textureFiles.FirstOrDefault(f => f.Contains(baseName + "_spc"));
+            if (spcTexturePath != null)
+            {
+                Texture2D spcTexture = LoadTexture(spcTexturePath);
+                material.SetTexture("_MaskMap", spcTexture); // Assuming _MaskMap is the correct property
+
+                // Set specific material properties
+                material.SetFloat("_MetallicRemapMin", 0.6f);
+                material.SetFloat("_MetallicRemapMax", 1.0f);
+                material.SetFloat("_SmoothnessRemapMin", 0.25f);
+                material.SetFloat("_SmoothnessRemapMax", 0.5f);
+            }
+        }
+
+        if (!hasDiffuseTexture && !useCustomShader)
+        {
+            string grdTexturePath = textureFiles.FirstOrDefault(f => f.Contains(baseName + "_grd"));
+            if (grdTexturePath != null)
+            {
+                Texture2D grdTexture = LoadTexture(grdTexturePath);
+                material.SetTexture("_BaseColorMap", grdTexture);
+            }
+        }
+
+        if (useCustomShader)
+        {
+            material.SetFloat("_Modifier", 0);
+            material.SetFloat("_Blend", 0.9f);
+            material.SetFloat("_AO_Multiply", 1.0f);
+        }
+
+        // Configure additional properties for non-custom shader
+        if (!useCustomShader)
+        {
+            bool hasClippingTexture = textureFiles.Any(file => file.Contains(baseName + "_clp"));
+            if (hasClippingTexture)
+            {
+                material.SetFloat("_AlphaCutoffEnable", 1);
+                material.SetFloat("_AlphaCutoff", 0.6f);
+                material.EnableKeyword("_BACK_THEN_FRONT_RENDERING");
+                material.SetFloat("_ReceivesSSRTransparent", 1);
+            }
+
+            // Default remapping values
+            material.SetFloat("_MetallicRemapMin", 0.0f);
+            material.SetFloat("_MetallicRemapMax", 0.4f);
+            material.SetFloat("_SmoothnessRemapMin", 0.0f);
+            material.SetFloat("_SmoothnessRemapMax", 0.25f);
+            material.SetFloat("_AORemapMin", 0.0f);
+            material.SetFloat("_AORemapMax", 1.0f);
+        }
+    }
+
+    private Texture2D LoadTexture(string path)
+    {
+        // Remove any duplicate file extensions
+        string relativePath = RemoveDuplicateExtensions(path.Replace(Application.dataPath, "Assets"));
+
+        Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(relativePath);
+
+        if (texture == null)
+        {
+            Debug.LogError($"Failed to load texture at path: {relativePath}");
+        }
+        else
+        {
+            Debug.Log($"Loaded Texture: {relativePath}");
+        }
+
+        return texture;
     }
 
     private string meshReferencesDirectory = "Assets/StreamingAssets/Mesh references";
@@ -392,140 +542,7 @@ public class ModelImporterWindow : EditorWindow
         return extension == ".png" || extension == ".jpg" || extension == ".dds";
     }
 
-    private void AssignTexturesToMaterial(Material material, List<string> textureFiles, string baseName)
-    {
-        string[] specialNames = new string[] {
-        "sh_biter_", "sh_man_", "sh_scan_man_", "multihead007_npc_carl_",
-        "sh_wmn_", "sh_scan_wmn_", "sh_dlc_opera_wmn_", "nnpc_wmn_worker",
-        "sh_scan_kid_", "sh_scan_girl_", "sh_scan_boy_", "sh_chld_"
-    };
-
-        bool useCustomShader = textureFiles.Any(file => specialNames.Any(name => Path.GetFileName(file).StartsWith(name)));
-        material.shader = useCustomShader ? Shader.Find("Shader Graphs/Skin") : Shader.Find("HDRP/Lit");
-
-        bool hasDiffuseTexture = false;
-        bool hasRoughnessTexture = textureFiles.Any(file => file.Contains(baseName + "_rgh"));
-        bool hasSpecularTexture = textureFiles.Any(file => file.Contains(baseName + "_spc"));
-
-        foreach (var textureFile in textureFiles)
-        {
-            Texture2D texture = LoadTexture(textureFile);
-
-            if (textureFile.Contains(baseName + "_dif"))
-            {
-                if (useCustomShader)
-                {
-                    material.SetTexture("_dif", texture);
-                }
-                else
-                {
-                    material.SetTexture("_BaseColorMap", texture);
-                }
-                hasDiffuseTexture = true;
-            }
-            else if (textureFile.Contains(baseName + "_nrm"))
-            {
-                if (useCustomShader)
-                {
-                    material.SetTexture("_nrm", texture);
-                }
-                else
-                {
-                    material.SetTexture("_NormalMap", texture);
-                }
-            }
-            else if (textureFile.Contains(baseName + "_ocl") && useCustomShader)
-            {
-                material.SetTexture("_ocl", texture);
-            }
-            else if (textureFile.Contains(baseName + "_msk") && useCustomShader)
-            {
-                material.SetTexture("_mask", texture);
-            }
-            else if (textureFile.Contains(baseName + "_rgh") && !useCustomShader)
-            {
-                material.SetTexture("_MaskMap", texture);
-            }
-            else if (textureFile.Contains(baseName + "_ems") && !useCustomShader)
-            {
-                material.SetTexture("_EmissiveColorMap", texture);
-            }
-        }
-
-        if (!hasRoughnessTexture && hasSpecularTexture)
-        {
-            string spcTexturePath = textureFiles.FirstOrDefault(f => f.Contains(baseName + "_spc"));
-            if (spcTexturePath != null)
-            {
-                Texture2D spcTexture = LoadTexture(spcTexturePath);
-                material.SetTexture("_MaskMap", spcTexture); // Assuming _MaskMap is the correct property
-
-                // Set specific material properties
-                material.SetFloat("_MetallicRemapMin", 0.6f);
-                material.SetFloat("_MetallicRemapMax", 1.0f);
-                material.SetFloat("_SmoothnessRemapMin", 0.25f);
-                material.SetFloat("_SmoothnessRemapMax", 0.5f);
-            }
-        }
-
-        if (!hasDiffuseTexture && !useCustomShader)
-        {
-            string grdTexturePath = textureFiles.FirstOrDefault(f => f.Contains(baseName + "_grd"));
-            if (grdTexturePath != null)
-            {
-                Texture2D grdTexture = LoadTexture(grdTexturePath);
-                material.SetTexture("_BaseColorMap", grdTexture);
-            }
-        }
-
-        if (useCustomShader)
-        {
-            material.SetFloat("_Modifier", 0);
-            material.SetFloat("_Blend", 0.9f);
-            material.SetFloat("_AO_Multiply", 1.0f);
-        }
-
-        // Configure additional properties for non-custom shader
-        if (!useCustomShader)
-        {
-            bool hasClippingTexture = textureFiles.Any(file => file.Contains(baseName + "_clp"));
-            if (hasClippingTexture)
-            {
-                material.SetFloat("_AlphaCutoffEnable", 1);
-                material.SetFloat("_AlphaCutoff", 0.6f);
-                material.EnableKeyword("_BACK_THEN_FRONT_RENDERING");
-                material.SetFloat("_ReceivesSSRTransparent", 1);
-            }
-
-            // Default remapping values
-            material.SetFloat("_MetallicRemapMin", 0.0f);
-            material.SetFloat("_MetallicRemapMax", 0.4f);
-            material.SetFloat("_SmoothnessRemapMin", 0.0f);
-            material.SetFloat("_SmoothnessRemapMax", 0.25f);
-            material.SetFloat("_AORemapMin", 0.0f);
-            material.SetFloat("_AORemapMax", 1.0f);
-        }
-    }
-
-    private Texture2D LoadTexture(string path)
-    {
-        // Remove any duplicate file extensions
-        string relativePath = RemoveDuplicateExtensions(path.Replace(Application.dataPath, "Assets"));
-
-        Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(relativePath);
-
-        if (texture == null)
-        {
-            Debug.LogError($"Failed to load texture at path: {relativePath}");
-        }
-        else
-        {
-            Debug.Log($"Loaded Texture: {relativePath}");
-        }
-
-        return texture;
-    }
-
+    
     private string RemoveDuplicateExtensions(string path)
     {
         string extension = Path.GetExtension(path);

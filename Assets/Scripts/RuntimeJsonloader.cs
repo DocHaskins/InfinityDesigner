@@ -404,36 +404,24 @@ public class RuntimeJsonLoader : MonoBehaviour
         if (originalMat != null)
         {
             Material clonedMaterial = new Material(originalMat);
-
-            // Specific condition for 'sh_man_bdt_balaclava'
-            if (resource.name.Equals("sh_man_bdt_balaclava", StringComparison.OrdinalIgnoreCase))
+            bool useCustomShader = ShouldUseCustomShader(resource.name);
+            bool useHairShader = ShouldUseHairShader(resource.name);
+            if (useCustomShader)
             {
-                clonedMaterial.shader = Shader.Find("HDRP/Lit");
+                clonedMaterial.shader = Shader.Find("Shader Graphs/Skin");
+            }
+            else if (useHairShader)
+            {
+                clonedMaterial.shader = Shader.Find("HDRP/Hair");
             }
             else
             {
-                bool useCustomShader = ShouldUseCustomShader(resource.name);
-                bool useHairShader = ShouldUseHairShader(resource.name);
-                if (useCustomShader)
-                {
-                    clonedMaterial.shader = Shader.Find("Shader Graphs/Skin");
-                }
-                if (useHairShader)
-                {
-                    clonedMaterial.shader = Shader.Find("HDRP/Hair");
-                }
-                else
-                {
-                    clonedMaterial.shader = Shader.Find("HDRP/Lit");
-                }
+                clonedMaterial.shader = Shader.Find("HDRP/Lit");
+            }
 
-                foreach (var rttiValue in resource.rttiValues)
-                {
-                    if (rttiValue.name != "ems_scale")
-                    {
-                        ApplyTextureToMaterial(clonedMaterial, rttiValue.name, rttiValue.val_str, useCustomShader);
-                    }
-                }
+            foreach (var rttiValue in resource.rttiValues)
+            {
+                ApplyTextureToMaterial(clonedMaterial, rttiValue.name, rttiValue.val_str, useCustomShader);
             }
 
             // Check if the renderer should be disabled
@@ -484,24 +472,11 @@ public class RuntimeJsonLoader : MonoBehaviour
 
     private void ApplyTextureToMaterial(Material material, string rttiValueName, string textureName, bool useCustomShader)
     {
-        Debug.Log($"Applying texture. RTTI Value Name: {rttiValueName}, Texture Name: {textureName}");
-
-        if (rttiValueName == "ems_scale")
-        {
-            return;
-        }
-
         string texturePath = "textures/" + Path.GetFileNameWithoutExtension(textureName);
         Texture2D texture = Resources.Load<Texture2D>(texturePath);
 
         if (texture != null)
         {
-            Texture currentTexture = material.GetTexture("_dif");
-            if (currentTexture != null)
-            {
-                Debug.Log($"Material already has a texture set for _dif: {currentTexture.name}");
-            }
-
             if (useCustomShader)
             {
                 switch (rttiValueName)
