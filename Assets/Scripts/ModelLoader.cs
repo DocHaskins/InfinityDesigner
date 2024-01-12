@@ -185,6 +185,7 @@ public class ModelLoader : MonoBehaviour
                 string[] customShaders = new string[] {
                 "Shader Graphs/Clothing",
                 "Shader Graphs/Clothing_dif",
+                "Shader Graphs/Decal",
                 "Shader Graphs/Skin"
             };
                 bool useCustomShader = customShaders.Contains(originalMat.shader.name) || ShouldUseCustomShader(resource.name);

@@ -261,12 +261,7 @@ public class JsonLoaderWindow : EditorWindow
         {
             cancelRequested = true;
         }
-        GUILayout.Space(20);
-
-        if (GUILayout.Button("Check Textures"))
-        {
-            CheckAllTextures();
-        }
+        
     }
     private void ProcessCurrentJson()
     {
@@ -381,85 +376,7 @@ public class JsonLoaderWindow : EditorWindow
         }
     }
 
-    private void CheckAllTextures()
-    {
-        string jsonsFolderPath = Application.streamingAssetsPath + "/Jsons";
-        string resourcesTexturesPath = "Textures"; // Path relative to the Resources folder
-        string failedTexturesFilePath = Application.streamingAssetsPath + "/textures_failed.txt";
-        HashSet<string> missingTextures = new HashSet<string>();
-
-        if (!Directory.Exists(jsonsFolderPath))
-        {
-            UnityEngine.Debug.LogError("Jsons folder not found: " + jsonsFolderPath);
-            return;
-        }
-
-        foreach (var file in Directory.GetFiles(jsonsFolderPath, "*.json"))
-        {
-            string jsonPath = Path.Combine(jsonsFolderPath, file);
-            string jsonData = File.ReadAllText(jsonPath);
-            ModelData modelData = JsonUtility.FromJson<ModelData>(jsonData);
-
-            if (modelData != null && modelData.GetSlots() != null)
-            {
-                foreach (var slot in modelData.GetSlots())
-                {
-                    foreach (var modelInfo in slot.Value.models)
-                    {
-                        foreach (var materialResource in modelInfo.materialsResources)
-                        {
-                            foreach (var resource in materialResource.resources)
-                            {
-                                foreach (var rttiValue in resource.rttiValues)
-                                {
-                                    string textureName = rttiValue.val_str;
-                                    if (!string.IsNullOrEmpty(textureName))
-                                    {
-                                        string texturePath = resourcesTexturesPath + "/" + Path.GetFileNameWithoutExtension(textureName);
-                                        Texture2D texture = Resources.Load<Texture2D>(texturePath);
-
-                                        if (texture == null)
-                                        {
-                                            missingTextures.Add(textureName);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        UnityEngine.Debug.LogWarning($"Texture name is null or empty in JSON file: {file}");
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Write missing textures to file
-        if (missingTextures.Count > 0)
-        {
-            try
-            {
-                using (StreamWriter writer = new StreamWriter(failedTexturesFilePath, false))
-                {
-                    foreach (var texture in missingTextures)
-                    {
-                        writer.WriteLine(texture);
-                        UnityEngine.Debug.LogError($"Texture '{texture}' not found in Resources.");
-                    }
-                }
-                UnityEngine.Debug.LogError($"Missing textures list written to {failedTexturesFilePath}");
-            }
-            catch (Exception ex)
-            {
-                UnityEngine.Debug.LogError($"Error writing to file: {ex.Message}");
-            }
-        }
-        else
-        {
-            UnityEngine.Debug.Log("All textures found.");
-        }
-    }
+    
 
 
 }
