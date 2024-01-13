@@ -20,6 +20,7 @@ public class RuntimeJsonLoader : MonoBehaviour
     public Button unloadButton;
 
     private List<MinimalModelData> minimalModelInfos = new List<MinimalModelData>();
+    private Dictionary<string, string> displayNameToFileMap = new Dictionary<string, string>();
     private List<string> filteredJsonFiles = new List<string>();
     private string selectedJson;
     private string searchTerm = "";
@@ -78,42 +79,37 @@ public class RuntimeJsonLoader : MonoBehaviour
     void UpdateModelSelectionDropdown()
     {
         modelSelectionDropdown.ClearOptions();
+        displayNameToFileMap.Clear();  // Clear the existing mapping
 
-        // Create a new list to store filenames without the .json extension, not containing "_fpp", and not starting with "db_"
         List<string> dropdownOptions = new List<string>();
 
         foreach (var filename in filteredJsonFiles)
         {
-            // Remove the .json extension from each filename
             string filenameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
 
-            // Check if filename does not contain "_fpp" and does not start with "db_"
             if (!filenameWithoutExtension.Contains("_fpp") && !filenameWithoutExtension.StartsWith("db_"))
             {
                 dropdownOptions.Add(filenameWithoutExtension);
+                displayNameToFileMap[filenameWithoutExtension] = filename;  // Map the display name to the full file name
             }
         }
 
-        // Add the processed filenames to the dropdown
         modelSelectionDropdown.AddOptions(dropdownOptions);
     }
 
     public void LoadSelectedModel()
     {
-        if (modelSelectionDropdown.value < 0 || modelSelectionDropdown.value >= filteredJsonFiles.Count)
-        {
-            Debug.LogError("No model selected or index out of range");
-            return;
-        }
+        string selectedDisplayName = modelSelectionDropdown.options[modelSelectionDropdown.value].text;
 
-        selectedJson = filteredJsonFiles[modelSelectionDropdown.value];
-        // Update the modelName text, replacing underscores with spaces
-        if (modelName != null)
+        if (displayNameToFileMap.TryGetValue(selectedDisplayName, out string selectedJsonFile))
         {
-            string displayName = Path.GetFileNameWithoutExtension(selectedJson).Replace("_", " ");
-            modelName.text = displayName;
+            // Load model from the mapped JSON file
+            LoadModelFromJson(selectedJsonFile);
         }
-        LoadModelFromJson(selectedJson); // Pass the selected JSON file name
+        else
+        {
+            Debug.LogError("No corresponding JSON file found for the selected model.");
+        }
     }
 
     void AddButtonListeners()
@@ -418,6 +414,7 @@ public class RuntimeJsonLoader : MonoBehaviour
                 string[] customShaders = new string[] {
                 "Shader Graphs/Clothing",
                 "Shader Graphs/Clothing_dif",
+                "Shader Graphs/Decal",
                 "Shader Graphs/Skin"
             };
                 bool useCustomShader = customShaders.Contains(originalMat.shader.name) || ShouldUseCustomShader(resource.name);

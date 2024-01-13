@@ -699,6 +699,24 @@ public class AssetManager : EditorWindow
                     }
                 }
             }
+
+            if (!hasSpecularTexture)
+            {
+                string frsTexturePath = textureFiles.FirstOrDefault(file => file.Contains(baseName + "_frs"));
+                if (frsTexturePath != null)
+                {
+                    Texture2D frsTexture = LoadTexture(frsTexturePath);
+                    if (useCustomShader)
+                    {
+                        material.SetTexture("_spc", frsTexture);
+                    }
+                    else
+                    {
+                        //material.SetTexture("_SpecMap", frsTexture);
+                    }
+                }
+            }
+
         }
 
         if (!hasRoughnessTexture && hasSpecularTexture)

@@ -140,14 +140,20 @@ public class ModelLoader : MonoBehaviour
 
         foreach (var materialResource in modelInfo.materialsResources)
         {
-            if (materialResource.number - 1 < skinnedMeshRenderers.Length)
+            // Calculate the renderer index based on the material number
+            int rendererIndex = materialResource.number - 1;
+
+            // Debugging: Log the material name and its intended index
+            //Debug.Log($"Applying material '{materialResource.resources[0].name}' to renderer at index {rendererIndex} for model '{modelInfo.name}'");
+
+            if (rendererIndex >= 0 && rendererIndex < skinnedMeshRenderers.Length)
             {
-                var renderer = skinnedMeshRenderers[materialResource.number - 1];
+                var renderer = skinnedMeshRenderers[rendererIndex];
                 ApplyMaterialToRenderer(renderer, materialResource.resources[0]);
             }
             else
             {
-                Debug.LogError($"Renderer index out of bounds for material number {materialResource.number} in model '{modelInfo.name}'");
+                Debug.LogError($"Renderer index out of bounds: {rendererIndex} for material number {materialResource.number} in model '{modelInfo.name}'");
             }
         }
     }
