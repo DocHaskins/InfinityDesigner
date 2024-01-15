@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [Serializable]
 public class ModelData
@@ -50,11 +51,34 @@ public class ModelData
     }
 
     [Serializable]
+    public class SkeletonData
+    {
+        public List<SkeletonBoneData> bones;
+    }
+
+    [Serializable]
+    public class SkeletonBoneData
+    {
+        public string boneName;
+        public string[] position;
+        public string[] rotation;
+    }
+
+    [Serializable]
+    public class BoneData
+    {
+        public string boneName;
+        public string[] position;
+        public string[] rotation;
+    }
+
+    [Serializable]
     public class ModelInfo
     {
         public string name;
         public List<MaterialData> materialsData;
         public List<MaterialResource> materialsResources;
+        public List<BoneData> bones;
     }
 
     [Serializable]

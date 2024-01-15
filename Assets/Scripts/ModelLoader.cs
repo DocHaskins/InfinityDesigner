@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System;
 using System.Linq;
+using static ModelData;
 
 public class ModelLoader : MonoBehaviour
 {
@@ -14,6 +15,50 @@ public class ModelLoader : MonoBehaviour
     void Start()
     {
         LoadModelFromJson();
+    }
+
+    private void LoadModelJson(ModelInfo modelInfo)
+    {
+        // Remove the .msh extension from the model name
+        string modelNameWithoutExtension = modelInfo.name.Replace(".msh", "");
+        Debug.Log($"Model name for bone lookup: {modelNameWithoutExtension}");
+        string modelJsonPath = Path.Combine(Application.streamingAssetsPath, "Mesh References", modelNameWithoutExtension + ".json");
+
+        if (File.Exists(modelJsonPath))
+        {
+            string modelJsonData = File.ReadAllText(modelJsonPath);
+            Debug.Log($"Model name for bone lookup: {modelJsonData}");
+            ModelInfo tempModelInfo = JsonUtility.FromJson<ModelInfo>(modelJsonData);
+
+            modelInfo.bones = tempModelInfo.bones;
+            Debug.Log($"Model name for bone lookup: {modelInfo.bones}");
+        }
+        else
+        {
+            Debug.LogError("Model JSON not found: " + modelJsonPath);
+        }
+
+        if (modelInfo.bones != null)
+        {
+            foreach (var boneData in modelInfo.bones)
+            {
+                if (string.IsNullOrEmpty(boneData.boneName))
+                {
+                    Debug.LogError("Bone name is null or empty.");
+                    continue; // Skip this iteration if bone name is null or empty
+                }
+
+                Transform bone = loadedSkeleton.transform.Find(boneData.boneName);
+                if (bone != null)
+                {
+                    Debug.Log($"Bone '{boneData.boneName}' found in skeleton.");
+                }
+                else
+                {
+                    Debug.LogError($"Bone '{boneData.boneName}' not found in skeleton.");
+                }
+            }
+        }
     }
 
     public void LoadModelFromJson()
@@ -55,28 +100,41 @@ public class ModelLoader : MonoBehaviour
 
     private void LoadSkeleton(string skeletonName)
     {
+        string cleanedSkeletonName = skeletonName.Replace(".msh", "");
+        string skeletonJsonPath = Path.Combine(Application.streamingAssetsPath, "Skeletons", cleanedSkeletonName + ".json");
+
+        if (!File.Exists(skeletonJsonPath))
+        {
+            Debug.LogError("Skeleton JSON not found: " + skeletonJsonPath);
+            return;
+        }
+
+        string skeletonJsonData = File.ReadAllText(skeletonJsonPath);
+        SkeletonData skeletonData = JsonUtility.FromJson<SkeletonData>(skeletonJsonData);
+
         string resourcePath = "Models/" + skeletonName.Replace(".msh", "");
         GameObject skeletonPrefab = Resources.Load<GameObject>(resourcePath);
-        if (skeletonPrefab != null)
+
+        if (skeletonPrefab != null && skeletonData != null)
         {
             loadedSkeleton = Instantiate(skeletonPrefab, Vector3.zero, Quaternion.Euler(-90, 0, 0));
 
-            // Find the 'pelvis' child in the loaded skeleton
-            Transform pelvis = loadedSkeleton.transform.Find("pelvis");
-            if (pelvis != null)
+            foreach (var boneData in skeletonData.bones)
             {
-                // Create a new GameObject named 'Legs'
-                GameObject legs = new GameObject("legs");
+                Transform bone = FindDeepChild(loadedSkeleton.transform, boneData.boneName);
+                if (bone != null)
+                {
+                    // Update method names here
+                    Vector3 parsedPosition = ParseVector3FromStrings(boneData.position);
+                    Quaternion parsedRotation = ParseQuaternionFromStrings(boneData.rotation);
 
-                // Set 'Legs' as a child of 'pelvis'
-                legs.transform.SetParent(pelvis);
-
-                // Set the local position of 'Legs' with the specified offset
-                legs.transform.localPosition = new Vector3(0, 0, -0.005f);
-            }
-            else
-            {
-                Debug.LogError("Pelvis not found in the skeleton prefab: " + skeletonName);
+                    bone.localPosition = parsedPosition;
+                    bone.localRotation = parsedRotation;
+                }
+                else
+                {
+                    Debug.LogWarning($"Bone '{boneData.boneName}' not found in skeleton '{skeletonName}'.");
+                }
             }
         }
         else
@@ -92,46 +150,83 @@ public class ModelLoader : MonoBehaviour
             var slot = slotPair.Value;
             foreach (var modelInfo in slot.models)
             {
-                // Correctly formatting the prefab path for Resources.Load
+                LoadModelJson(modelInfo); // Load the bone data
+
                 string prefabPath = modelInfo.name.Replace(".msh", "");
                 GameObject modelPrefab = Resources.Load<GameObject>("Prefabs/" + prefabPath);
 
-                //Debug.Log($"Attempting to load prefab from Resources path: Prefabs/{prefabPath}");
-
                 if (modelPrefab != null)
                 {
-                    GameObject modelInstance = Instantiate(modelPrefab, Vector3.zero, Quaternion.identity);
-                    ApplyMaterials(modelInstance, modelInfo);
+                    GameObject modelInstance = Instantiate(modelPrefab);
+                    if (modelInfo.bones != null && modelInfo.bones.Count > 0)
+                    {
+                        // Ensure loadedSkeleton has an Animator component
+                        Animator skeletonAnimator = loadedSkeleton.GetComponent<Animator>();
+                        if (skeletonAnimator != null)
+                        {
+                            BindModelToSkeleton(modelInstance, modelInfo, skeletonAnimator);
+                        }
+                        else
+                        {
+                            Debug.LogError("Animator component not found on the loaded skeleton.");
+                        }
+
+                        ApplyMaterials(modelInstance, modelInfo); // Ensure this method is implemented
+                    }
+
                     loadedModels.Add(modelInstance);
-
-                    // Check if the prefab name contains "sh_man_facial_hair_" and adjust Z position
-                    if (prefabPath.Contains("sh_man_facial_hair_"))
-                    {
-                        Vector3 localPosition = modelInstance.transform.localPosition;
-                        localPosition.z += 0.01f;
-                        modelInstance.transform.localPosition = localPosition;
-
-                        Debug.Log($"Adjusted position for facial hair prefab: {prefabPath}");
-                    }
-
-                    if (prefabPath.Contains("sh_man_hair_system_"))
-                    {
-                        Vector3 localPosition = modelInstance.transform.localPosition;
-                        //localPosition.y += 0.009f;
-                        localPosition.z += 0.009f;
-                        modelInstance.transform.localPosition = localPosition;
-
-                        Debug.Log($"Adjusted position for hair prefab: {prefabPath}");
-                    }
-
-                    Debug.Log($"Prefab loaded and instantiated: {prefabPath}");
                 }
                 else
                 {
-                    Debug.LogError($"Model prefab not found in Resources: Prefabs/{prefabPath}");
+                    Debug.LogError($"Model prefab not found: Prefabs/{prefabPath}");
                 }
             }
         }
+    }
+
+    private void BindModelToSkeleton(GameObject model, ModelInfo modelInfo, Animator skeletonAnimator)
+    {
+        foreach (var boneData in modelInfo.bones)
+        {
+            HumanBodyBones bone;
+            if (Enum.TryParse(boneData.boneName, out bone))
+            {
+                Transform boneTransform = skeletonAnimator.GetBoneTransform(bone);
+                if (boneTransform != null)
+                {
+                    Vector3 bonePositionOffset = ParseVector3FromStrings(boneData.position);
+                    Quaternion boneRotationOffset = ParseQuaternionFromStrings(boneData.rotation);
+
+                    model.transform.position = boneTransform.TransformPoint(bonePositionOffset);
+                    model.transform.rotation = boneTransform.rotation * boneRotationOffset;
+                    model.transform.SetParent(boneTransform, true);
+                }
+            }
+        }
+    }
+
+    // Convert string arrays to Vector3 and Quaternion
+    private Vector3 ParseVector3FromStrings(string[] positionStrings)
+    {
+        return new Vector3(float.Parse(positionStrings[0]), float.Parse(positionStrings[1]), float.Parse(positionStrings[2]));
+    }
+
+    private Quaternion ParseQuaternionFromStrings(string[] rotationStrings)
+    {
+        return new Quaternion(float.Parse(rotationStrings[0]), float.Parse(rotationStrings[1]), float.Parse(rotationStrings[2]), float.Parse(rotationStrings[3]));
+    }
+    private Transform FindDeepChild(Transform parent, string childName)
+    {
+        if (parent.name == childName)
+            return parent;
+
+        foreach (Transform child in parent)
+        {
+            Transform found = FindDeepChild(child, childName);
+            if (found != null)
+                return found;
+        }
+        return null;
     }
 
     private void ApplyMaterials(GameObject modelInstance, ModelData.ModelInfo modelInfo)
