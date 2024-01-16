@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 [System.Serializable]
 public class BoneDictionaryEntry
@@ -26,6 +27,7 @@ public class PrefabSkeletonMapper : MonoBehaviour
     void Awake()
     {
         boneDictionary = new Dictionary<string, Transform>();
+        serializedBoneDictionary = new List<BoneDictionaryEntry>();
         foreach (var entry in serializedBoneDictionary)
         {
             if (entry.boneTransform != null)
@@ -40,7 +42,12 @@ public class PrefabSkeletonMapper : MonoBehaviour
         Transform armature = transform.Find("Armature");
         if (armature != null)
         {
+            Debug.Log("Caching bones starting from armature: " + armature.name);
             CacheBonesRecursive(armature);
+        }
+        else
+        {
+            Debug.LogError("Armature not found in CacheBones");
         }
     }
 
@@ -51,16 +58,35 @@ public class PrefabSkeletonMapper : MonoBehaviour
 
     private void CacheBonesRecursive(Transform parent)
     {
-        if (parent == null) return;
+        if (parent == null)
+        {
+            Debug.LogError("CacheBonesRecursive: parent is null");
+            return;
+        }
+
+        Debug.Log("Caching bones for parent: " + parent.name);
 
         foreach (Transform child in parent)
         {
-            if (child == null) continue;
+            if (child == null)
+            {
+                Debug.LogError("CacheBonesRecursive: Found a null child in " + parent.name);
+                continue;
+            }
 
+            // Additional debug log to check the state of the bone dictionary
+            Debug.Log("Checking bone: " + child.name);
             if (bonesToCache.Contains(child.name) && !boneDictionary.ContainsKey(child.name))
             {
-                boneDictionary.Add(child.name, child);
-                serializedBoneDictionary.Add(new BoneDictionaryEntry { boneName = child.name, boneTransform = child });
+                try
+                {
+                    boneDictionary.Add(child.name, child);
+                    serializedBoneDictionary.Add(new BoneDictionaryEntry { boneName = child.name, boneTransform = child });
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("Error processing bone: " + child.name + ". Exception: " + e.Message);
+                }
             }
             CacheBonesRecursive(child); // Recursive call
         }

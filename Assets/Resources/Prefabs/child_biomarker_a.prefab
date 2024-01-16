@@ -2153,6 +2153,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: -8679921383154817045}
+  - component: {fileID: 4260536746591571797}
   m_Layer: 0
   m_Name: child_biomarker_a
   m_TagString: Untagged
@@ -2177,6 +2178,41 @@ Transform:
   - {fileID: 4387178994843460687}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4260536746591571797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132149155446097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06fe76e46385cf546a6a8e50503a1a36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bonesToCache:
+  - pelvis
+  - l_thigh
+  - l_calf
+  - l_foot
+  - r_thigh
+  - r_calf
+  - r_foot
+  - spine
+  - spine1
+  - spine2
+  - spine3
+  - l_clavicle
+  - l_upperarm
+  - l_forearm
+  - l_hand
+  - neck
+  - head
+  - r_clavicle
+  - r_upperarm
+  - r_forearm
+  - r_hand
+  serializedBoneDictionary: []
 --- !u!1 &922043900838431320
 GameObject:
   m_ObjectHideFlags: 0

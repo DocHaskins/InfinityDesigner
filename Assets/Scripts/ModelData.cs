@@ -58,6 +58,12 @@ public class ModelData
     }
 
     [Serializable]
+    public class SlotModelData
+    {
+        public List<string> meshes;
+    }
+
+    [Serializable]
     public class MaterialData
     {
         public int number;
