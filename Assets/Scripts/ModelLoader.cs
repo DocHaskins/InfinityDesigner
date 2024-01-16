@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System;
 using System.Linq;
+using UnityEngine.Animations.Rigging;
 
 public class ModelLoader : MonoBehaviour
 {
@@ -55,7 +56,7 @@ public class ModelLoader : MonoBehaviour
 
     private void LoadSkeleton(string skeletonName)
     {
-        string resourcePath = "Models/" + skeletonName.Replace(".msh", "");
+        string resourcePath = "Prefabs/" + skeletonName.Replace(".msh", "");
         GameObject skeletonPrefab = Resources.Load<GameObject>(resourcePath);
         if (skeletonPrefab != null)
         {
@@ -87,50 +88,64 @@ public class ModelLoader : MonoBehaviour
 
     private void LoadModels(Dictionary<string, ModelData.SlotData> slotDictionary)
     {
+        SkeletonAttachmentHelper helper = new SkeletonAttachmentHelper(loadedSkeleton);
+
         foreach (var slotPair in slotDictionary)
         {
             var slot = slotPair.Value;
             foreach (var modelInfo in slot.models)
             {
-                // Correctly formatting the prefab path for Resources.Load
                 string prefabPath = modelInfo.name.Replace(".msh", "");
                 GameObject modelPrefab = Resources.Load<GameObject>("Prefabs/" + prefabPath);
-
-                //Debug.Log($"Attempting to load prefab from Resources path: Prefabs/{prefabPath}");
 
                 if (modelPrefab != null)
                 {
                     GameObject modelInstance = Instantiate(modelPrefab, Vector3.zero, Quaternion.identity);
-                    ApplyMaterials(modelInstance, modelInfo);
-                    loadedModels.Add(modelInstance);
+                    PrefabSkeletonMapper mapper = modelInstance.GetComponent<PrefabSkeletonMapper>();
 
-                    // Check if the prefab name contains "sh_man_facial_hair_" and adjust Z position
-                    if (prefabPath.Contains("sh_man_facial_hair_"))
+                    if (mapper != null)
                     {
-                        Vector3 localPosition = modelInstance.transform.localPosition;
-                        localPosition.z += 0.01f;
-                        modelInstance.transform.localPosition = localPosition;
+                        ApplyMaterials(modelInstance, modelInfo);
+                        loadedModels.Add(modelInstance);
 
-                        Debug.Log($"Adjusted position for facial hair prefab: {prefabPath}");
+                        //SetupModelRigConstraints(modelInstance, mapper.BoneDictionary);
+                        AttachToRiggedSkeleton(modelInstance);
+                        //helper.SetupModelRigConstraints(modelInstance, mapper.BoneDictionary);
                     }
-
-                    if (prefabPath.Contains("sh_man_hair_system_"))
+                    else
                     {
-                        Vector3 localPosition = modelInstance.transform.localPosition;
-                        //localPosition.y += 0.009f;
-                        localPosition.z += 0.009f;
-                        modelInstance.transform.localPosition = localPosition;
-
-                        Debug.Log($"Adjusted position for hair prefab: {prefabPath}");
+                        Debug.LogError($"PrefabSkeletonMapper not found on instantiated model: {modelPrefab.name}");
                     }
-
-                    Debug.Log($"Prefab loaded and instantiated: {prefabPath}");
                 }
                 else
                 {
                     Debug.LogError($"Model prefab not found in Resources: Prefabs/{prefabPath}");
                 }
             }
+        }
+    }
+
+    private void AttachToRiggedSkeleton(GameObject modelInstance)
+    {
+        SkinnedMeshRenderer modelRenderer = modelInstance.GetComponent<SkinnedMeshRenderer>();
+        if (modelRenderer != null)
+        {
+            Transform[] boneTransforms = new Transform[modelRenderer.bones.Length];
+            for (int i = 0; i < modelRenderer.bones.Length; i++)
+            {
+                string boneName = modelRenderer.bones[i].name;
+                Transform boneInSkeleton = loadedSkeleton.transform.FindDeepChild(boneName);
+                if (boneInSkeleton != null)
+                {
+                    boneTransforms[i] = boneInSkeleton;
+                }
+                else
+                {
+                    Debug.LogWarning($"Bone '{boneName}' not found in rigged skeleton.");
+                }
+            }
+            modelRenderer.bones = boneTransforms;
+            modelRenderer.rootBone = loadedSkeleton.transform; // Set the root bone if needed
         }
     }
 
