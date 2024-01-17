@@ -13,7 +13,7 @@ public class CharacterBuilder : MonoBehaviour
     public Slider genderSlider;
     public GameObject slidersPanel;
     public GameObject sliderPrefab;
-    private GameObject loadedSkeleton;
+    public GameObject loadedSkeleton;
     private Dictionary<string, List<string>> slotData = new Dictionary<string, List<string>>();
     private Dictionary<string, GameObject> currentlyLoadedModels = new Dictionary<string, GameObject>();
 
@@ -22,6 +22,7 @@ public class CharacterBuilder : MonoBehaviour
         LoadSlotData();
         genderSlider.value = 0;
         PopulateSliders();
+        UpdateCameraTarget(loadedSkeleton.transform);
         genderSlider.onValueChanged.AddListener(delegate { PopulateSliders(); });
     }
 
@@ -117,8 +118,8 @@ public class CharacterBuilder : MonoBehaviour
         Slider slider = sliderObject.GetComponentInChildren<Slider>();
         if (slider != null)
         {
-            slider.minValue = 0;
-            slider.maxValue = Mathf.Max(1, meshesCount - 1);
+            slider.minValue = 0; // 0 for 'off'
+            slider.maxValue = meshesCount; // Start from 1, not 0
             slider.wholeNumbers = true;
             slider.onValueChanged.AddListener(delegate { OnSliderValueChanged(slotName, slider.value); });
         }
@@ -132,7 +133,20 @@ public class CharacterBuilder : MonoBehaviour
 
     void OnSliderValueChanged(string slotName, float value)
     {
-        LoadModelFromJson(slotName, value);
+        if (value == 0)
+        {
+            // Unload the current model
+            if (currentlyLoadedModels.TryGetValue(slotName, out GameObject currentModel))
+            {
+                Destroy(currentModel);
+                currentlyLoadedModels.Remove(slotName);
+            }
+        }
+        else
+        {
+            // Adjust the index since our slider now starts from 1
+            LoadModelFromJson(slotName, value - 1);
+        }
     }
 
     void LoadModelFromJson(string slotName, float value)
