@@ -349,7 +349,7 @@ public class AssetManager : EditorWindow
         }
         else if (ShouldUseHairShader(baseName))
         {
-            return Shader.Find("HDRP/Hair");
+            return Shader.Find("Shader Graphs/Hair");
         }
         else if (hasGra || hasIdx || hasGrd)
         {
@@ -521,7 +521,7 @@ public class AssetManager : EditorWindow
 
             // Check if material uses any of the specific shaders
             if (material.shader.name == "Shader Graphs/Clothing" ||
-                material.shader.name == "Shader Graphs/Clothing_dif" ||
+                material.shader.name == "Shader Graphs/Hair" ||
                 material.shader.name == "Shader Graphs/Decal" ||
                 material.shader.name == "Shader Graphs/Skin")
             {
@@ -561,6 +561,7 @@ public class AssetManager : EditorWindow
 
         string[] customShaders = new string[] {
         "Shader Graphs/Clothing",
+        "Shader Graphs/Hair",
         "Shader Graphs/Decal",
         "Shader Graphs/Skin"
     };
