@@ -81,7 +81,7 @@ public class CinemachineCameraZoomTool : MonoBehaviour
                 }
 
                 // Modify input handling for orbiting
-                if (Input.GetMouseButton(0)) // Left mouse button
+                if (Input.GetMouseButton(1)) // Left mouse button
                 {
                     freelook.m_XAxis.m_InputAxisValue = Input.GetAxis("Mouse X");
                     freelook.m_YAxis.m_InputAxisValue = Input.GetAxis("Mouse Y");

@@ -36,6 +36,10 @@ public class AssetManager : EditorWindow
         {
             CreateAndUpdatePrefabs(maxPrefabCount);
         }
+        if (GUILayout.Button("Update Materials on All Prefabs"))
+        {
+            ApplyMaterialsToAllPrefabs();
+        }
 
         GUILayout.Space(20);
         GUILayout.Label("Material Creation", EditorStyles.boldLabel);
@@ -132,6 +136,26 @@ public class AssetManager : EditorWindow
         string jsonContent = File.ReadAllText(jsonPath);
         var meshReferenceData = JsonUtility.FromJson<MeshReferenceData>(jsonContent);
         UpdateMaterials(prefab, meshReferenceData.materialsData);
+    }
+
+    private static void ApplyMaterialsToAllPrefabs()
+    {
+        string[] prefabGuids = AssetDatabase.FindAssets("t:GameObject", new[] { prefabsDirectory });
+        foreach (string guid in prefabGuids)
+        {
+            string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+
+            if (prefab != null)
+            {
+                string prefabName = Path.GetFileNameWithoutExtension(assetPath);
+                AssignMaterialsToPrefab(prefab, prefabName);
+            }
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("Materials applied to all prefabs in " + prefabsDirectory);
     }
 
     private static void UpdateMaterials(GameObject prefab, List<MaterialData> materialsList)
