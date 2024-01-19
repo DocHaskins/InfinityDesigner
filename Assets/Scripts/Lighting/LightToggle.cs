@@ -37,7 +37,7 @@ public class LightToggle : MonoBehaviour
                 {
                     if (excludedLight != null)
                     {
-                        excludedLight.intensity = 8.5f;
+                        excludedLight.intensity = 3.5f;
                     }
                 }
             }

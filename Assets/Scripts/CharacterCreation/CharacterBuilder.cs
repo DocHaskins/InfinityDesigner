@@ -11,7 +11,8 @@ using System.Linq;
 public class CharacterBuilder : MonoBehaviour
 {
     public CinemachineCameraZoomTool cameraTool;
-    public Slider genderSlider;
+    public Button TypeManButton, TypeWmnButton, TypePlayerButton, TypeInfectedButton, TypeChildButton;
+    private string currentType = "Man";
     public GameObject slidersPanel;
     public GameObject sliderPrefab;
     public GameObject loadedSkeleton;
@@ -21,15 +22,21 @@ public class CharacterBuilder : MonoBehaviour
     public Button armorButton;
     public Button clothesButton;
 
+    private string lastFilterCategoryKey = "";
+    private Dictionary<string, float> sliderValues = new Dictionary<string, float>();
+    private Dictionary<string, bool> sliderInitialized = new Dictionary<string, bool>();
     private Dictionary<string, List<string>> slotData = new Dictionary<string, List<string>>();
     private Dictionary<string, GameObject> currentlyLoadedModels = new Dictionary<string, GameObject>();
     private Dictionary<string, List<string>> filterSets = new Dictionary<string, List<string>>
 {
-    { "BodyButton", new List<string> { "ALL_head", "ALL_facial_hair", "ALL_hair", "ALL_hands" } },
-    { "ArmorButton", new List<string> { "ALL_armor_helmet", "ALL_armor_torso", "ALL_armor_torso_lowerleft", "ALL_armor_torso_lowerright", "ALL_armor_torso_upperleft", "ALL_armor_torso_upperright" } },
-    { "ClothesButton", new List<string> { "ALL_backpack", "ALL_cape", "ALL_decals", "ALL_earrings", "ALL_glasses", "ALL_gloves", "ALL_hands", "ALL_hat", "ALL_leg_access", "ALL_legs", "ALL_mask", "ALL_necklace", "ALL_rings", "ALL_shoes", "ALL_sleeve", "ALL_torso", "ALL_torso_access" } },
+    { "BodyButton", new List<string> { "ALL_head", "ALL_facial_hair", "ALL_hair", "ALL_hair_base", "ALL_hair_2", "ALL_hair_3", "ALL_hands", "ALL_tattoo" } },
+    { "ArmorButton", new List<string> { "ALL_armor_helmet", "ALL_armor_torso", "ALL_armor_torso_lowerleft", "ALL_armor_torso_lowerright", "ALL_armor_torso_upperleft", "ALL_armor_torso_upperright", "armor_legs", "armor_legs_upperright", "armor_legs_upperleft", "armor_legs_lowerright", "armor_legs_lowerleft" } },
+    { "ClothesButton", new List<string> { "ALL_backpack", "ALL_cape", "ALL_decals", "ALL_earrings", "ALL_glasses", "ALL_gloves", "ALL_hat", "ALL_leg_access", "ALL_legs", "ALL_mask", "ALL_necklace", "ALL_rings", "ALL_shoes", "ALL_sleeve", "ALL_torso", "ALL_torso_extra", "ALL_torso_access" } },
     { "HeadButton", new List<string> { "ALL_head"} },
-    { "HairButton", new List<string> { "ALL_hair"} },
+    { "HairButton", new List<string> { "ALL_hair", "ALL_hair_base", "ALL_hair_2", "ALL_hair_3" } },
+    { "HairBaseButton", new List<string> { "ALL_hair_base"} },
+    { "Hair2Button", new List<string> { "ALL_hair_2" } },
+    { "Hair3Button", new List<string> { "ALL_hair_3" } },
     { "HatButton", new List<string> { "ALL_hat" } },
     { "MaskButton", new List<string> { "ALL_mask" } },
     { "GlassesButton", new List<string> { "ALL_glasses" } },
@@ -38,7 +45,8 @@ public class CharacterBuilder : MonoBehaviour
     { "RingsButton", new List<string> { "ALL_rings" } },
     { "FacialHairButton", new List<string> { "ALL_facial_hair" } },
     { "CapeButton", new List<string> { "ALL_cape" } },
-    { "TorsoButton", new List<string> { "ALL_torso" } },
+    { "TorsoButton", new List<string> { "ALL_torso", "ALL_torso_extra", "ALL_torso_access" } },
+    { "TorsoExtraButton", new List<string> { "ALL_torso_extra" } },
     { "TorsoAccessButton", new List<string> { "ALL_torso_access" } },
     { "TattooButton", new List<string> { "ALL_tattoo" } },
     { "HandsButton", new List<string> { "ALL_hands" } },
@@ -52,18 +60,32 @@ public class CharacterBuilder : MonoBehaviour
     { "LegAccessButton", new List<string> { "ALL_leg_access" } },
     { "ShoesButton", new List<string> { "ALL_shoes" } },
     { "ArmorHelmetButton", new List<string> { "ALL_armor_helmet" } },
+    { "ArmorTorsoButton", new List<string> { "ALL_armor_torso" } },
+    { "ArmorTorsoUpperRightButton", new List<string> { "ALL_armor_torso_upperright" } },
+    { "ArmorTorsoUpperLeftButton", new List<string> { "ALL_armor_torso_upperleft" } },
+    { "ArmorTorsoLowerRightButton", new List<string> { "ALL_armor_torso_lowerright" } },
+    { "ArmorTorsoLowerLeftButton", new List<string> { "ALL_armor_torso_lowerleft" } },
+    { "ArmorLegsButton", new List<string> { "ALL_armor_legs" } },
+    { "ArmorLegsUpperRightButton", new List<string> { "ALL_armor_legs_upperright" } },
+    { "ArmorLegsUpperLeftButton", new List<string> { "ALL_armor_legs_upperleft" } },
+    { "ArmorLegsLowerRightButton", new List<string> { "ALL_armor_legs_lowerright" } },
+    { "ArmorLegsLowerLeftButton", new List<string> { "ALL_armor_legs_lowerleft" } }
 };
 
     void Start()
     {
         LoadSlotData();
-        genderSlider.value = 0;
-        PopulateSliders();
-        UpdateInterfaceBasedOnGender();
+        UpdateInterfaceBasedOnType();
         UpdateCameraTarget(loadedSkeleton.transform);
-        genderSlider.onValueChanged.AddListener(delegate { PopulateSliders(); });
 
-        CreateDynamicButtons();
+        // Set up type button listeners
+        TypeManButton.onClick.AddListener(() => SetCurrentType("Man"));
+        TypeWmnButton.onClick.AddListener(() => SetCurrentType("Wmn"));
+        TypePlayerButton.onClick.AddListener(() => SetCurrentType("Player"));
+        TypeInfectedButton.onClick.AddListener(() => SetCurrentType("Infected"));
+        TypeChildButton.onClick.AddListener(() => SetCurrentType("Child"));
+
+        // Set up button listeners
         if (bodyButton != null) bodyButton.onClick.AddListener(() => FilterCategory("BodyButton"));
         if (armorButton != null) armorButton.onClick.AddListener(() => FilterCategory("ArmorButton"));
         if (clothesButton != null) clothesButton.onClick.AddListener(() => FilterCategory("ClothesButton"));
@@ -73,6 +95,7 @@ public class CharacterBuilder : MonoBehaviour
     {
         if (subButtonsPanel == null || buttonPrefab == null)
         {
+            Debug.LogError("CreateDynamicButtons: subButtonsPanel or buttonPrefab is null");
             return; // Early exit if essential components are missing
         }
 
@@ -82,7 +105,7 @@ public class CharacterBuilder : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        string currentGender = GetCurrentGender();
+        string currentGender = GetCurrentType();
 
         if (slotData.TryGetValue(currentGender, out List<string> slots))
         {
@@ -97,6 +120,7 @@ public class CharacterBuilder : MonoBehaviour
 
                 string imageName = "Character_Builder_" + slot.Replace("ALL_", "");
                 Sprite buttonImage = Resources.Load<Sprite>("UI/" + imageName);
+
                 if (buttonImage != null)
                 {
                     Image buttonImageComponent = newButton.GetComponent<Image>();
@@ -104,7 +128,7 @@ public class CharacterBuilder : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogWarning($"Image not found for  '{imageName}'");
+                    Debug.LogWarning($"CreateDynamicButtons: Image not found for '{imageName}'");
                 }
 
                 Button buttonComponent = newButton.GetComponent<Button>();
@@ -112,62 +136,9 @@ public class CharacterBuilder : MonoBehaviour
                 buttonComponent.onClick.AddListener(() => FilterSlidersForSlot(slotName));
             }
         }
-    }
-
-    void FilterCategory(string categoryKey)
-    {
-        if (filterSets.TryGetValue(categoryKey, out List<string> filters))
+        else
         {
-            // Filter sliders
-            PopulateSliders(filters);
-
-            // Filter sub-buttons
-            CreateDynamicButtons(filters);
-        }
-    }
-
-    void UpdateInterfaceBasedOnGender()
-    {
-        string currentGender = GetCurrentGender();
-        List<string> currentSlots = slotData[currentGender];
-
-        PopulateSliders(currentSlots);
-        CreateDynamicButtons(currentSlots);
-    }
-
-    string GetCurrentGender()
-    {
-        // Your logic to determine the current gender
-        return genderSlider.value == 0 ? "Man" : "Wmn";
-    }
-
-    public void OnHeadButtonClick()
-    {
-        FilterSliders("HeadButton");
-    }
-
-    public void OnArmorButtonClick()
-    {
-        FilterSliders("ArmorButton");
-    }
-
-    void FilterSliders(string filterSetKey)
-    {
-        if (filterSets.TryGetValue(filterSetKey, out List<string> filters))
-        {
-            PopulateSliders(filters);
-        }
-    }
-
-    void FilterSlidersForSlot(string slotName)
-    {
-        ClearExistingSliders();
-
-        // Check if the slotName is in the current gender's slot data
-        string currentGender = GetCurrentGender();
-        if (slotData[currentGender].Contains(slotName))
-        {
-            CreateSliderForSlot(slotName);
+            Debug.LogError($"CreateDynamicButtons: No slot data found for gender {currentGender}");
         }
     }
 
@@ -199,15 +170,76 @@ public class CharacterBuilder : MonoBehaviour
         }
     }
 
-    void LoadSlotData()
+    void FilterCategory(string categoryKey)
     {
-        LoadSlotDataForGender("Man");
-        LoadSlotDataForGender("Wmn");
+        lastFilterCategoryKey = categoryKey; // Store the selected filter category key
+
+        if (filterSets.TryGetValue(categoryKey, out List<string> filters))
+        {
+            PopulateSliders(filters);
+            CreateDynamicButtons(filters);
+        }
     }
 
-    void LoadSlotDataForGender(string gender)
+    void SetCurrentType(string type)
     {
-        string path = Path.Combine(Application.streamingAssetsPath, "Slotdata", gender);
+        currentType = type;
+        UpdateInterfaceBasedOnType();
+    }
+
+    void UpdateInterfaceBasedOnType()
+    {
+        string currentType = GetCurrentType();
+        Debug.Log($"Current type: {currentType}");
+        List<string> currentSlots = slotData[currentType];
+
+        if (currentSlots == null || currentSlots.Count == 0)
+        {
+            Debug.LogError($"UpdateInterfaceBasedOnGender: No slots found for gender {currentType}");
+            return;
+        }
+
+        // If no filter category has been selected yet, update sliders and buttons normally
+        if (string.IsNullOrEmpty(lastFilterCategoryKey))
+        {
+            PopulateSliders(currentSlots);
+            CreateDynamicButtons(currentSlots);
+        }
+    }
+
+    string GetCurrentType()
+    {
+        return currentType;
+    }
+
+    void FilterSlidersForSlot(string slotName)
+    {
+        ClearExistingSliders();
+
+        // Check if the slotName is in the current gender's slot data
+        string currentGender = GetCurrentType();
+        if (slotData[currentGender].Contains(slotName))
+        {
+            CreateSliderForSlot(slotName);
+        }
+        else
+        {
+            Debug.LogWarning($"FilterSlidersForSlot: Slot '{slotName}' not found in gender '{currentGender}' data");
+        }
+    }
+
+    void LoadSlotData()
+    {
+        LoadSlotDataForType("Man");
+        LoadSlotDataForType("Wmn");
+        LoadSlotDataForType("Infected");
+        LoadSlotDataForType("Child");
+        LoadSlotDataForType("Player");
+    }
+
+    void LoadSlotDataForType(string type)
+    {
+        string path = Path.Combine(Application.streamingAssetsPath, "Slotdata", type);
         string[] files = Directory.GetFiles(path, "*.json");
         List<string> slots = new List<string>();
 
@@ -217,13 +249,19 @@ public class CharacterBuilder : MonoBehaviour
             slots.Add(fileName);
         }
 
-        slotData[gender] = slots;
+        slotData[type] = slots;
     }
 
     void PopulateSliders(List<string> filter = null)
     {
-        string selectedGender = genderSlider.value == 0 ? "Man" : "Wmn";
-        List<string> slots = slotData[selectedGender];
+        string selectedType = GetCurrentType();
+        if (!slotData.ContainsKey(selectedType))
+        {
+            Debug.LogError($"No slot data found for type: {selectedType}");
+            return;
+        }
+
+        List<string> slots = slotData[selectedType];
 
         // Filter slots to only include those starting with "ALL_"
         slots = slots.Where(slot => slot.StartsWith("ALL_")).ToList();
@@ -251,8 +289,8 @@ public class CharacterBuilder : MonoBehaviour
 
     void CreateSliderForSlot(string slotName)
     {
-        string selectedGender = genderSlider.value == 0 ? "Man" : "Wmn";
-        string jsonFilePath = Path.Combine(Application.streamingAssetsPath, "Slotdata", selectedGender, slotName + ".json");
+        string selectedType = GetCurrentType();
+        string jsonFilePath = Path.Combine(Application.streamingAssetsPath, "Slotdata", selectedType, slotName + ".json");
 
         int meshesCount = 0;
         if (File.Exists(jsonFilePath))
@@ -271,10 +309,17 @@ public class CharacterBuilder : MonoBehaviour
         Slider slider = sliderObject.GetComponentInChildren<Slider>();
         if (slider != null)
         {
+            // Set the slider value to either the stored value or default to 0
             slider.minValue = 0; // 0 for 'off'
             slider.maxValue = meshesCount; // Start from 1, not 0
             slider.wholeNumbers = true;
-            slider.onValueChanged.AddListener(delegate { OnSliderValueChanged(slotName, slider.value); });
+
+            float sliderValue = sliderValues.ContainsKey(slotName) ? sliderValues[slotName] : 0;
+            slider.value = sliderValue;
+            slider.onValueChanged.AddListener(delegate { OnSliderValueChanged(slotName, slider.value, true); });
+
+            // Mark the slider as initialized
+            sliderInitialized[slotName] = true;
         }
 
         TextMeshProUGUI labelText = sliderObject.GetComponentInChildren<TextMeshProUGUI>();
@@ -285,8 +330,14 @@ public class CharacterBuilder : MonoBehaviour
         }
     }
 
-    void OnSliderValueChanged(string slotName, float value)
+    void OnSliderValueChanged(string slotName, float value, bool userChanged)
     {
+        if (userChanged)
+        {
+            // Update the slider value in the dictionary only if the change is made by the user
+            sliderValues[slotName] = value;
+        }
+
         if (value == 0)
         {
             // Unload the current model
@@ -305,8 +356,8 @@ public class CharacterBuilder : MonoBehaviour
 
     void LoadModelFromJson(string slotName, float value)
     {
-        string selectedGender = genderSlider.value == 0 ? "Man" : "Wmn";
-        string jsonFilePath = Path.Combine(Application.streamingAssetsPath, "Slotdata", selectedGender, slotName + ".json");
+        string selectedType = GetCurrentType();
+        string jsonFilePath = Path.Combine(Application.streamingAssetsPath, "Slotdata", selectedType, slotName + ".json");
 
         if (File.Exists(jsonFilePath))
         {

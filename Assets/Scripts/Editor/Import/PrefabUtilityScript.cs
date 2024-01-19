@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
 using System.IO;
@@ -133,3 +134,4 @@ public class PrefabUtilityScript : EditorWindow
         Debug.Log($"Prefab '{prefab.name}' updated with new materials.");
     }
 }
+#endif

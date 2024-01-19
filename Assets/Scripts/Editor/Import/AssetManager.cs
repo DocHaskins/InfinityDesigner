@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 using System.IO;
@@ -155,12 +156,16 @@ public class AssetManager : EditorWindow
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Debug.Log("Materials applied to all prefabs in " + prefabsDirectory);
+        Debug.Log("Saved all asset changes.");
     }
 
     private static void UpdateMaterials(GameObject prefab, List<MaterialData> materialsList)
     {
-        var skinnedMeshRenderers = prefab.GetComponentsInChildren<SkinnedMeshRenderer>();
+        var prefabPath = AssetDatabase.GetAssetPath(prefab);
+        var prefabAsset = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+        var skinnedMeshRenderers = prefabAsset.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+
+        bool updatedMaterials = false; // Flag to check if any materials were updated
 
         foreach (var renderer in skinnedMeshRenderers)
         {
@@ -171,18 +176,19 @@ public class AssetManager : EditorWindow
                 if (i < materialsList.Count)
                 {
                     var materialData = materialsList[i];
-                    string materialPath = Path.Combine(materialsDirectory, materialData.name + ".mat");
+                    string materialPath = Path.Combine(materialsDirectory, materialData.name);
                     materialPath = materialPath.Replace("\\", "/");
                     Material newMat = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
 
                     if (newMat != null)
                     {
                         materialsToUpdate[i] = newMat;
+                        updatedMaterials = true; // Set flag to true as a material was updated
                         Debug.Log($"Assigned material '{materialData.name}' to '{renderer.gameObject.name}' in prefab '{prefab.name}' at index {i}");
                     }
                     else
                     {
-                        Debug.LogError($"Material '{materialData.name}' not found at '{materialPath}'");
+                        Debug.LogError($"Material '{materialData.name}' not found at '{materialPath}' for renderer '{renderer.gameObject.name}' in prefab '{prefab.name}'.");
                     }
                 }
             }
@@ -190,9 +196,11 @@ public class AssetManager : EditorWindow
             renderer.sharedMaterials = materialsToUpdate;
         }
 
-        EditorUtility.SetDirty(prefab);
-        AssetDatabase.SaveAssets();
-        Debug.Log($"Prefab '{prefab.name}' updated with new materials.");
+        if (updatedMaterials)
+        {
+            EditorUtility.SetDirty(prefabAsset);
+            Debug.Log($"Prefab '{prefabAsset.name}' marked as dirty for material updates.");
+        }
     }
 
     private void CheckAllMaterials()
@@ -927,3 +935,4 @@ public class AssetManager : EditorWindow
         return Path.Combine(directory, filenameWithoutExtension + extension);
     }
 }
+#endif
