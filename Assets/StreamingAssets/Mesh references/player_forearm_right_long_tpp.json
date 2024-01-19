@@ -5,22 +5,28 @@
             "name": "player_hands_tpp_a.mat"
         }
     ],
-    "variations": {
-        "1": [
-            {
-                "number": 1,
-                "name": "player_hands_tpp_a.mat"
-            }
-        ],
-        "2": [
-            {
-                "number": 1,
-                "name": "player_hands_tpp_a.mat"
-            },
-            {
-                "number": 2,
-                "name": "chr_decal_blood_a.mat"
-            }
-        ]
-    }
+    "variations": [
+        {
+            "id": "1",
+            "materials": [
+                {
+                    "number": 1,
+                    "name": "player_hands_tpp_a.mat"
+                }
+            ]
+        },
+        {
+            "id": "2",
+            "materials": [
+                {
+                    "number": 1,
+                    "name": "player_hands_tpp_a.mat"
+                },
+                {
+                    "number": 2,
+                    "name": "chr_decal_blood_a.mat"
+                }
+            ]
+        }
+    ]
 }

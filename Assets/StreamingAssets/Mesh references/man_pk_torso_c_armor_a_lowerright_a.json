@@ -5,22 +5,28 @@
             "name": "man_pk_torso_c_armor_a.mat"
         }
     ],
-    "variations": {
-        "1": [
-            {
-                "number": 1,
-                "name": "man_pk_torso_c_armor_a.mat"
-            }
-        ],
-        "2": [
-            {
-                "number": 1,
-                "name": "man_pk_torso_c_armor_a.mat"
-            },
-            {
-                "number": 2,
-                "name": "man_pk_torso_c.mat"
-            }
-        ]
-    }
+    "variations": [
+        {
+            "id": "1",
+            "materials": [
+                {
+                    "number": 1,
+                    "name": "man_pk_torso_c_armor_a.mat"
+                }
+            ]
+        },
+        {
+            "id": "2",
+            "materials": [
+                {
+                    "number": 1,
+                    "name": "man_pk_torso_c_armor_a.mat"
+                },
+                {
+                    "number": 2,
+                    "name": "man_pk_torso_c.mat"
+                }
+            ]
+        }
+    ]
 }

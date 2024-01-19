@@ -9,36 +9,45 @@
             "name": "man_zmb_arm_leg.mat"
         }
     ],
-    "variations": {
-        "1": [
-            {
-                "number": 1,
-                "name": "man_zmb_deg_legs_a_bottom_b.mat"
-            },
-            {
-                "number": 2,
-                "name": "man_deg_arm_leg.mat"
-            }
-        ],
-        "2": [
-            {
-                "number": 1,
-                "name": "man_zmb_legs_a_bottom_a.mat"
-            },
-            {
-                "number": 2,
-                "name": "man_zmb_arm_leg.mat"
-            }
-        ],
-        "3": [
-            {
-                "number": 1,
-                "name": "man_zmb_legs_a_bottom_a.mat"
-            },
-            {
-                "number": 2,
-                "name": "man_deg_arm_leg.mat"
-            }
-        ]
-    }
+    "variations": [
+        {
+            "id": "1",
+            "materials": [
+                {
+                    "number": 1,
+                    "name": "man_zmb_deg_legs_a_bottom_b.mat"
+                },
+                {
+                    "number": 2,
+                    "name": "man_deg_arm_leg.mat"
+                }
+            ]
+        },
+        {
+            "id": "2",
+            "materials": [
+                {
+                    "number": 1,
+                    "name": "man_zmb_legs_a_bottom_a.mat"
+                },
+                {
+                    "number": 2,
+                    "name": "man_zmb_arm_leg.mat"
+                }
+            ]
+        },
+        {
+            "id": "3",
+            "materials": [
+                {
+                    "number": 1,
+                    "name": "man_zmb_legs_a_bottom_a.mat"
+                },
+                {
+                    "number": 2,
+                    "name": "man_deg_arm_leg.mat"
+                }
+            ]
+        }
+    ]
 }

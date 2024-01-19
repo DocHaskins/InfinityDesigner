@@ -296,68 +296,41 @@ public class CharacterBuilder : MonoBehaviour
         string selectedType = GetCurrentType();
         string slotJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Slotdata", selectedType, slotName + ".json");
 
-        int meshesCount = 0;
-        int maxVariationCount = 0;
-
         if (File.Exists(slotJsonFilePath))
         {
             string slotJsonData = File.ReadAllText(slotJsonFilePath);
             SlotModelData slotModelData = JsonUtility.FromJson<SlotModelData>(slotJsonData);
+
             if (slotModelData != null && slotModelData.meshes != null)
             {
-                meshesCount = slotModelData.meshes.Count;
-                Debug.Log($"meshesCount '{meshesCount}'");
-
-                foreach (var meshName in slotModelData.meshes)
-                {
-                    string modelName = meshName.EndsWith(".msh") ? meshName.Substring(0, meshName.Length - 4) : meshName;
-                    string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");
-
-                    if (File.Exists(materialJsonFilePath))
-                    {
-                        string materialJsonData = File.ReadAllText(materialJsonFilePath);
-                        ModelData.ModelInfo modelInfo = JsonUtility.FromJson<ModelData.ModelInfo>(materialJsonData);
-                        Debug.Log($"modelInfo '{materialJsonData}'");
-                        if (modelInfo != null && modelInfo.variations != null)
-                        {
-                            maxVariationCount = Mathf.Max(maxVariationCount, modelInfo.variations.Count);
-                            Debug.Log($"Found variations for model '{modelName}' - Count: {modelInfo.variations.Count}");
-                        }
-                    }
-                }
+                // Initialize primary slider with the full range of meshes
+                InitializePrimarySlider(slotName, slotModelData.meshes.Count);
             }
         }
+        else
+        {
+            Debug.LogError("Slot JSON file not found: " + slotJsonFilePath);
+        }
+    }
 
+    void InitializePrimarySlider(string slotName, int meshesCount)
+    {
         GameObject sliderObject = Instantiate(sliderPrefab, slidersPanel.transform, false);
         sliderObject.name = slotName + "Slider";
 
         Slider slider = sliderObject.GetComponentInChildren<Slider>();
         if (slider != null)
         {
-            // Set the slider value to either the stored value or default to 0
             slider.minValue = 0; // 0 for 'off'
-            slider.maxValue = meshesCount; // Start from 1, not 0
+            slider.maxValue = meshesCount;
             slider.wholeNumbers = true;
-
-            float sliderValue = sliderValues.ContainsKey(slotName) ? sliderValues[slotName] : 0;
-            slider.value = sliderValue;
+            slider.value = sliderValues.ContainsKey(slotName) ? sliderValues[slotName] : 0;
             slider.onValueChanged.AddListener(delegate { OnSliderValueChanged(slotName, slider.value, true); });
-
-            // Mark the slider as initialized
-            sliderInitialized[slotName] = true;
         }
 
+        // Set label text
         TextMeshProUGUI labelText = sliderObject.GetComponentInChildren<TextMeshProUGUI>();
-        if (labelText != null)
-        {
-            // Filter out "ALL_" from the slotName for display
-            labelText.text = slotName.Replace("ALL_", "");
-        }
-
-        if (maxVariationCount > 0)
-        {
-            CreateVariationSlider(slotName, maxVariationCount);
-        }
+        if (labelText != null) labelText.text = slotName.Replace("ALL_", "");
     }
 
     void CreateVariationSlider(string slotName, int variationCount)
@@ -390,29 +363,70 @@ public class CharacterBuilder : MonoBehaviour
 
         if (value == 0)
         {
-            if (currentlyLoadedModels.TryGetValue(slotName, out GameObject currentModel))
+            RemoveModelAndVariationSlider(slotName);
+        }
+        else
+        {
+            int modelIndex = Mathf.Clamp((int)(value - 1), 0, int.MaxValue);
+            LoadModelAndCreateVariationSlider(slotName, modelIndex);
+        }
+    }
+
+    void RemoveModelAndVariationSlider(string slotName)
+    {
+        // Remove model
+        if (currentlyLoadedModels.TryGetValue(slotName, out GameObject currentModel))
+        {
+            Destroy(currentModel);
+            currentlyLoadedModels.Remove(slotName);
+        }
+
+        // Remove variation slider
+        Transform existingVariationSlider = slidersPanel.transform.Find(slotName + "VariationSlider");
+        if (existingVariationSlider != null) Destroy(existingVariationSlider.gameObject);
+    }
+
+
+    void OnVariationSliderValueChanged(string slotName, float value)
+    {
+        Debug.Log($"OnVariationSliderValueChanged for slot: {slotName} with value: {value}");
+        if (!currentlyLoadedModels.TryGetValue(slotName, out GameObject currentModel))
+        {
+            Debug.LogError($"No model currently loaded for slot: {slotName}");
+            return;
+        }
+
+        // Retrieve the model index from the primary slider
+        int modelIndex = Mathf.Clamp((int)sliderValues[slotName] - 1, 0, int.MaxValue);
+
+        // Get the modelName using the modelIndex
+        string modelName = GetModelNameFromIndex(slotName, modelIndex);
+
+        string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");
+
+        if (File.Exists(materialJsonFilePath))
+        {
+            string materialJsonData = File.ReadAllText(materialJsonFilePath);
+            ModelData.ModelInfo modelInfo = JsonUtility.FromJson<ModelData.ModelInfo>(materialJsonData);
+            if (modelInfo != null && modelInfo.variations != null)
             {
-                Destroy(currentModel);
-                currentlyLoadedModels.Remove(slotName);
+                // Correctly determine the variation index
+                int variationIndex = Mathf.Clamp((int)value - 1, 0, modelInfo.variations.Count - 1);
+                var variationMaterials = modelInfo.variations[variationIndex].materials;
+                if (variationMaterials != null)
+                {
+                    ApplyVariationMaterials(currentModel, variationMaterials);
+                }
             }
         }
         else
         {
-            int modelIndex = Mathf.Clamp((int)(value - 1), 0, int.MaxValue); // Convert to int
-            LoadModelFromJson(slotName, modelIndex);
-            UpdateVariationSlider(slotName, modelIndex); // Pass the integer modelIndex
+            Debug.LogError("Material JSON file not found: " + materialJsonFilePath);
         }
     }
 
-    void UpdateVariationSlider(string slotName, int modelIndex)
+    string GetModelNameFromIndex(string slotName, int modelIndex)
     {
-        // Destroy existing variation slider
-        Transform existingVariationSlider = slidersPanel.transform.Find(slotName + "VariationSlider");
-        if (existingVariationSlider != null)
-        {
-            Destroy(existingVariationSlider.gameObject);
-        }
-
         string selectedType = GetCurrentType();
         string slotJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Slotdata", selectedType, slotName + ".json");
 
@@ -423,127 +437,32 @@ public class CharacterBuilder : MonoBehaviour
             if (slotModelData != null && slotModelData.meshes != null && slotModelData.meshes.Count > modelIndex)
             {
                 string meshName = slotModelData.meshes[modelIndex];
-                string modelName = meshName.EndsWith(".msh") ? meshName.Substring(0, meshName.Length - 4) : meshName;
-                string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");
-
-                if (File.Exists(materialJsonFilePath))
-                {
-                    string materialJsonData = File.ReadAllText(materialJsonFilePath);
-                    ModelData.ModelInfo modelInfo = JsonUtility.FromJson<ModelData.ModelInfo>(materialJsonData);
-                    if (modelInfo != null && modelInfo.variations != null)
-                    {
-                        CreateVariationSlider(slotName, modelInfo.variations.Count);
-                    }
-                    else
-                    {
-                        Debug.Log($"No variations for model '{modelName}' at index {modelIndex} in slot {slotName}");
-                    }
-                }
-                else
-                {
-                    Debug.LogError("Material JSON file not found: " + materialJsonFilePath);
-                }
-            }
-            else
-            {
-                Debug.LogError($"Invalid model index or meshes not found in slot data: {slotName}");
+                return GetModelName(meshName);
             }
         }
-        else
-        {
-            Debug.LogError("Slot JSON file not found: " + slotJsonFilePath);
-        }
+        Debug.LogError("Slot JSON file not found: " + slotJsonFilePath);
+        return null;
     }
 
-    void OnVariationSliderValueChanged(string slotName, float value)
-    {
-        if (!currentlyLoadedModels.TryGetValue(slotName, out GameObject currentModel))
-        {
-            Debug.LogError($"No model currently loaded for slot: {slotName}");
-            return;
-        }
-
-        string selectedType = GetCurrentType();
-        string jsonFilePath = Path.Combine(Application.streamingAssetsPath, "Slotdata", selectedType, slotName + ".json");
-
-        if (File.Exists(jsonFilePath))
-        {
-            string jsonData = File.ReadAllText(jsonFilePath);
-            ModelData modelData = JsonUtility.FromJson<ModelData>(jsonData);
-            if (modelData != null && modelData.slotPairs != null)
-            {
-                foreach (var pair in modelData.slotPairs)
-                {
-                    if (pair.key == slotName)
-                    {
-                        int modelIndex = Mathf.Clamp((int)value, 0, pair.slotData.models.Count - 1);
-                        var modelInfo = pair.slotData.models[modelIndex];
-                        if (modelInfo.variations != null && modelInfo.variations.Count > 0)
-                        {
-                            int variationIndex = Mathf.Clamp((int)value, 0, modelInfo.variations.Count - 1);
-                            var variationMaterials = modelInfo.variations[variationIndex].materials;
-                            if (variationMaterials != null)
-                            {
-                                ApplyVariationMaterials(currentModel, variationMaterials);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        else
-        {
-            Debug.LogError("JSON file not found: " + jsonFilePath);
-        }
-    }
-
-    void LoadModelFromJson(string slotName, float value)
+    void LoadModelAndCreateVariationSlider(string slotName, int modelIndex)
     {
         string selectedType = GetCurrentType();
-        string jsonFilePath = Path.Combine(Application.streamingAssetsPath, "Slotdata", selectedType, slotName + ".json");
+        string slotJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Slotdata", selectedType, slotName + ".json");
 
-        if (File.Exists(jsonFilePath))
+        if (File.Exists(slotJsonFilePath))
         {
-            string jsonData = File.ReadAllText(jsonFilePath);
-            SlotModelData slotModelData = JsonUtility.FromJson<SlotModelData>(jsonData);
+            string slotJsonData = File.ReadAllText(slotJsonFilePath);
+            SlotModelData slotModelData = JsonUtility.FromJson<SlotModelData>(slotJsonData);
 
-            if (slotModelData != null && slotModelData.meshes != null && slotModelData.meshes.Count > 0)
+            if (slotModelData != null && slotModelData.meshes != null && slotModelData.meshes.Count > modelIndex)
             {
-                int modelIndex = Mathf.Clamp((int)value, 0, slotModelData.meshes.Count - 1);
                 string meshName = slotModelData.meshes[modelIndex];
-                string modelName = meshName.EndsWith(".msh") ? meshName.Substring(0, meshName.Length - 4) : meshName;
+                string modelName = GetModelName(meshName);
 
-                if (currentlyLoadedModels.TryGetValue(slotName, out GameObject currentModel))
-                {
-                    Destroy(currentModel);
-                    currentlyLoadedModels.Remove(slotName);
-                }
-
-                string prefabPath = Path.Combine("Prefabs", modelName);
-                GameObject prefab = Resources.Load<GameObject>(prefabPath);
-
-                if (prefab != null)
-                {
-                    GameObject modelInstance = Instantiate(prefab, Vector3.zero, Quaternion.identity);
-                    currentlyLoadedModels[slotName] = modelInstance;
-
-                    // Load and apply materials
-                    string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");
-                    if (File.Exists(materialJsonFilePath))
-                    {
-                        string materialJsonData = File.ReadAllText(materialJsonFilePath);
-                        ModelData.ModelInfo modelInfo = JsonUtility.FromJson<ModelData.ModelInfo>(materialJsonData);
-                        ApplyMaterials(modelInstance, modelInfo);
-                    }
-                    else
-                    {
-                        Debug.LogError("Material JSON file not found: " + materialJsonFilePath);
-                    }
-                }
-                else
-                {
-                    Debug.LogError("Prefab not found: " + prefabPath);
-                }
+                RemoveModelAndVariationSlider(slotName);
+                GameObject modelInstance = LoadModelPrefab(modelName, slotName);
+                LoadAndApplyMaterials(modelName, modelInstance);
+                CreateOrUpdateVariationSlider(slotName, modelName);
             }
             else
             {
@@ -552,7 +471,91 @@ public class CharacterBuilder : MonoBehaviour
         }
         else
         {
-            Debug.LogError("JSON file not found: " + jsonFilePath);
+            Debug.LogError("Slot JSON file not found: " + slotJsonFilePath);
+        }
+    }
+
+    string GetModelName(string meshName)
+    {
+        return meshName.EndsWith(".msh") ? meshName.Substring(0, meshName.Length - 4) : meshName;
+    }
+
+    void LoadAndApplyMaterials(string modelName, GameObject modelInstance)
+    {
+        string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");
+        if (File.Exists(materialJsonFilePath))
+        {
+            string materialJsonData = File.ReadAllText(materialJsonFilePath);
+            ModelData.ModelInfo modelInfo = JsonUtility.FromJson<ModelData.ModelInfo>(materialJsonData);
+            ApplyMaterials(modelInstance, modelInfo);
+        }
+        else
+        {
+            Debug.LogError("Material JSON file not found: " + materialJsonFilePath);
+        }
+    }
+
+    void CreateOrUpdateVariationSlider(string slotName, string modelName)
+    {
+        // Check if a variation slider already exists and remove it
+        RemoveVariationSlider(slotName);
+
+        string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");
+        if (File.Exists(materialJsonFilePath))
+        {
+            string materialJsonData = File.ReadAllText(materialJsonFilePath);
+            ModelData.ModelInfo modelInfo = JsonUtility.FromJson<ModelData.ModelInfo>(materialJsonData);
+
+            if (modelInfo != null && modelInfo.variations != null && modelInfo.variations.Count > 0)
+            {
+                CreateVariationSlider(slotName, modelInfo.variations.Count);
+            }
+            // No else block needed, as RemoveVariationSlider has already been called
+        }
+    }
+
+    private void ApplyVariationMaterials(GameObject modelInstance, List<MaterialData> variationMaterials)
+    {
+        var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+
+        foreach (var materialData in variationMaterials)
+        {
+            int rendererIndex = materialData.number - 1;
+            if (rendererIndex >= 0 && rendererIndex < skinnedMeshRenderers.Length)
+            {
+                var renderer = skinnedMeshRenderers[rendererIndex];
+                ApplyMaterialToRenderer(renderer, materialData.name);
+                Debug.Log($"Applied material '{materialData.name}' to renderer index: {rendererIndex}");
+            }
+            else
+            {
+                Debug.LogError($"Renderer index out of bounds: {rendererIndex} for material number {materialData.number} in model '{modelInstance.name}'");
+            }
+        }
+    }
+
+    void RemoveVariationSlider(string slotName)
+    {
+        Transform existingVariationSlider = slidersPanel.transform.Find(slotName + "VariationSlider");
+        if (existingVariationSlider != null) Destroy(existingVariationSlider.gameObject);
+    }
+
+
+    GameObject LoadModelPrefab(string modelName, string slotName) // Add slotName as parameter
+    {
+        string prefabPath = Path.Combine("Prefabs", modelName);
+        GameObject prefab = Resources.Load<GameObject>(prefabPath);
+
+        if (prefab != null)
+        {
+            GameObject modelInstance = Instantiate(prefab, Vector3.zero, Quaternion.identity);
+            currentlyLoadedModels[slotName] = modelInstance; // Now slotName is in the correct context
+            return modelInstance;
+        }
+        else
+        {
+            Debug.LogError("Prefab not found: " + prefabPath);
+            return null;
         }
     }
 
@@ -569,10 +572,24 @@ public class CharacterBuilder : MonoBehaviour
 
     private void ApplyMaterials(GameObject modelInstance, ModelData.ModelInfo modelInfo)
     {
-        var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true); // Include inactive
+        // Check if modelInstance and modelInfo are not null
+        if (modelInstance == null || modelInfo == null || modelInfo.materialsData == null)
+        {
+            Debug.LogError("ApplyMaterials: modelInstance or modelInfo is null.");
+            return;
+        }
+
+        var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
 
         foreach (var materialData in modelInfo.materialsData)
         {
+            // Check if materialData is not null
+            if (materialData == null)
+            {
+                Debug.LogError("Material data is null.");
+                continue;
+            }
+
             int rendererIndex = materialData.number - 1;
             if (rendererIndex >= 0 && rendererIndex < skinnedMeshRenderers.Length)
             {
@@ -624,25 +641,6 @@ public class CharacterBuilder : MonoBehaviour
         }
     }
 
-    private void ApplyVariationMaterials(GameObject modelInstance, List<MaterialData> variationMaterials)
-    {
-        var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
-
-        foreach (var materialData in variationMaterials)
-        {
-            int rendererIndex = materialData.number - 1;
-            if (rendererIndex >= 0 && rendererIndex < skinnedMeshRenderers.Length)
-            {
-                var renderer = skinnedMeshRenderers[rendererIndex];
-                ApplyMaterialToRenderer(renderer, materialData.name);
-            }
-            else
-            {
-                Debug.LogError($"Renderer index out of bounds: {rendererIndex} for material number {materialData.number} in model '{modelInstance.name}'");
-            }
-        }
-    }
-
     private bool ShouldDisableRenderer(string gameObjectName)
     {
         return gameObjectName.Contains("sh_eye_shadow") ||
@@ -650,8 +648,4 @@ public class CharacterBuilder : MonoBehaviour
                gameObjectName.Contains("_null");
     }
 
-    private void DestroyObject(GameObject obj)
-    {
-        Destroy(obj);
-    }
 }

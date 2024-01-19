@@ -9,26 +9,32 @@
             "name": "player_default_bracers_torn_fpp.mat"
         }
     ],
-    "variations": {
-        "1": [
-            {
-                "number": 1,
-                "name": "player_default_bracers_fpp.mat"
-            },
-            {
-                "number": 2,
-                "name": "player_default_bracers_torn_fpp.mat"
-            }
-        ],
-        "2": [
-            {
-                "number": 1,
-                "name": "player_default_bracers_tpp.mat"
-            },
-            {
-                "number": 2,
-                "name": "player_default_bracers_torn_tpp.mat"
-            }
-        ]
-    }
+    "variations": [
+        {
+            "id": "1",
+            "materials": [
+                {
+                    "number": 1,
+                    "name": "player_default_bracers_fpp.mat"
+                },
+                {
+                    "number": 2,
+                    "name": "player_default_bracers_torn_fpp.mat"
+                }
+            ]
+        },
+        {
+            "id": "2",
+            "materials": [
+                {
+                    "number": 1,
+                    "name": "player_default_bracers_tpp.mat"
+                },
+                {
+                    "number": 2,
+                    "name": "player_default_bracers_torn_tpp.mat"
+                }
+            ]
+        }
+    ]
 }

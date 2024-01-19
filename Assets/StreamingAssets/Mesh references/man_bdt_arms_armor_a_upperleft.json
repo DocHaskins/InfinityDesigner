@@ -5,28 +5,37 @@
             "name": "man_bdt_arms_armor_a_upper.mat"
         }
     ],
-    "variations": {
-        "1": [
-            {
-                "number": 1,
-                "name": "man_bdt_arms_armor_a_upper.mat"
-            }
-        ],
-        "2": [
-            {
-                "number": 1,
-                "name": "man_bdt_arms_armor_a_upper.mat"
-            },
-            {
-                "number": 2,
-                "name": "man_bdt_armor_elements.mat"
-            }
-        ],
-        "3": [
-            {
-                "number": 1,
-                "name": "man_bdt_arms_armor_a_upper_gold.mat"
-            }
-        ]
-    }
+    "variations": [
+        {
+            "id": "1",
+            "materials": [
+                {
+                    "number": 1,
+                    "name": "man_bdt_arms_armor_a_upper.mat"
+                }
+            ]
+        },
+        {
+            "id": "2",
+            "materials": [
+                {
+                    "number": 1,
+                    "name": "man_bdt_arms_armor_a_upper.mat"
+                },
+                {
+                    "number": 2,
+                    "name": "man_bdt_armor_elements.mat"
+                }
+            ]
+        },
+        {
+            "id": "3",
+            "materials": [
+                {
+                    "number": 1,
+                    "name": "man_bdt_arms_armor_a_upper_gold.mat"
+                }
+            ]
+        }
+    ]
 }

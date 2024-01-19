@@ -13,34 +13,40 @@
             "name": "chr_pouch_d.mat"
         }
     ],
-    "variations": {
-        "1": [
-            {
-                "number": 1,
-                "name": "player_default_torso_belt_fpp.mat"
-            },
-            {
-                "number": 2,
-                "name": "null.mat"
-            },
-            {
-                "number": 3,
-                "name": "null.mat"
-            }
-        ],
-        "2": [
-            {
-                "number": 1,
-                "name": "player_default_torso_belt_tpp.mat"
-            },
-            {
-                "number": 2,
-                "name": "chr_pouch_c.mat"
-            },
-            {
-                "number": 3,
-                "name": "chr_pouch_d.mat"
-            }
-        ]
-    }
+    "variations": [
+        {
+            "id": "1",
+            "materials": [
+                {
+                    "number": 1,
+                    "name": "player_default_torso_belt_fpp.mat"
+                },
+                {
+                    "number": 2,
+                    "name": "null.mat"
+                },
+                {
+                    "number": 3,
+                    "name": "null.mat"
+                }
+            ]
+        },
+        {
+            "id": "2",
+            "materials": [
+                {
+                    "number": 1,
+                    "name": "player_default_torso_belt_tpp.mat"
+                },
+                {
+                    "number": 2,
+                    "name": "chr_pouch_c.mat"
+                },
+                {
+                    "number": 3,
+                    "name": "chr_pouch_d.mat"
+                }
+            ]
+        }
+    ]
 }
