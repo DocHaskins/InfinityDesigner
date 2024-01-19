@@ -55,6 +55,7 @@ public class ModelData
         public string name;
         public List<MaterialData> materialsData;
         public List<MaterialResource> materialsResources;
+        public Dictionary<string, List<MaterialData>> variations;
     }
 
     [Serializable]
