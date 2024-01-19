@@ -12,7 +12,7 @@ public class CharacterBuilder : MonoBehaviour
 {
     public CinemachineCameraZoomTool cameraTool;
     public Button TypeManButton, TypeWmnButton, TypePlayerButton, TypeInfectedButton, TypeChildButton;
-    private string currentType = "Man";
+    private string currentType = "Player";
     public GameObject slidersPanel;
     public GameObject sliderPrefab;
     public GameObject loadedSkeleton;
@@ -30,8 +30,8 @@ public class CharacterBuilder : MonoBehaviour
     private Dictionary<string, List<string>> filterSets = new Dictionary<string, List<string>>
 {
     { "BodyButton", new List<string> { "ALL_head", "ALL_facial_hair", "ALL_hair", "ALL_hair_base", "ALL_hair_2", "ALL_hair_3", "ALL_hands", "ALL_tattoo" } },
-    { "ArmorButton", new List<string> { "ALL_armor_helmet", "ALL_armor_torso", "ALL_armor_torso_lowerleft", "ALL_armor_torso_lowerright", "ALL_armor_torso_upperleft", "ALL_armor_torso_upperright", "armor_legs", "armor_legs_upperright", "armor_legs_upperleft", "armor_legs_lowerright", "armor_legs_lowerleft" } },
     { "ClothesButton", new List<string> { "ALL_backpack", "ALL_cape", "ALL_decals", "ALL_earrings", "ALL_glasses", "ALL_gloves", "ALL_hat", "ALL_leg_access", "ALL_legs", "ALL_mask", "ALL_necklace", "ALL_rings", "ALL_shoes", "ALL_sleeve", "ALL_torso", "ALL_torso_extra", "ALL_torso_access" } },
+    { "ArmorButton", new List<string> { "ALL_armor_helmet", "ALL_armor_torso", "ALL_armor_torso_lowerleft", "ALL_armor_torso_lowerright", "ALL_armor_torso_upperleft", "ALL_armor_torso_upperright", "armor_legs", "armor_legs_upperright", "armor_legs_upperleft", "armor_legs_lowerright", "armor_legs_lowerleft" } },
     { "HeadButton", new List<string> { "ALL_head"} },
     { "HairButton", new List<string> { "ALL_hair", "ALL_hair_base", "ALL_hair_2", "ALL_hair_3" } },
     { "HairBaseButton", new List<string> { "ALL_hair_base"} },
@@ -109,6 +109,9 @@ public class CharacterBuilder : MonoBehaviour
 
         if (slotData.TryGetValue(currentGender, out List<string> slots))
         {
+            // Sort the slots list
+            slots.Sort();
+
             foreach (string slot in slots)
             {
                 if (!slot.StartsWith("ALL_") || (filters != null && !filters.Contains(slot)))

@@ -13,11 +13,12 @@ Material:
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _DISABLE_SSR_TRANSPARENT
+  - _DOUBLESIDED_ON
   m_InvalidKeywords:
   - _NORMALMAP_TANGENT_SPACE
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
+  m_DoubleSidedGI: 1
   m_CustomRenderQueue: 2225
   stringTagMap:
     MotionVector: User
@@ -132,7 +133,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _idx:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: b1231d9928a37854ea28e5fbe81b740d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _msk:
@@ -140,19 +141,19 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _nrm:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: e8fa0c56a17515d4cbd5aff72c603a8e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ocl:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: ed37773b270550646ad7e389b25171cd, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _rgh:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 16e4c68e18bb5e04dab69add675b8cf6, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _spc:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: c54642742cf39fa439e79c2f2d10b489, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -188,8 +189,8 @@ Material:
     - _BlendMode: 0
     - _CoatMask: 0
     - _ConservativeDepthOffsetEnable: 0
-    - _CullMode: 2
-    - _CullModeForward: 2
+    - _CullMode: 0
+    - _CullModeForward: 0
     - _Cutoff: 0.5
     - _DepthOffsetEnable: 0
     - _DetailAlbedoScale: 1
@@ -200,7 +201,7 @@ Material:
     - _DisplacementLockObjectScale: 1
     - _DisplacementLockTilingScale: 1
     - _DisplacementMode: 0
-    - _DoubleSidedEnable: 0
+    - _DoubleSidedEnable: 1
     - _DoubleSidedGIMode: 0
     - _DoubleSidedNormalMode: 1
     - _DstBlend: 0
