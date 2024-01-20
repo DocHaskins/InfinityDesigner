@@ -26,6 +26,7 @@ public class CharacterBuilder : MonoBehaviour
     private string lastFilterCategoryKey = "";
     private Dictionary<string, float> sliderValues = new Dictionary<string, float>();
     private Dictionary<string, bool> sliderInitialized = new Dictionary<string, bool>();
+    private Dictionary<string, List<Material>> originalMaterials = new Dictionary<string, List<Material>>();
     private Dictionary<string, List<string>> slotData = new Dictionary<string, List<string>>();
     private Dictionary<string, GameObject> currentlyLoadedModels = new Dictionary<string, GameObject>();
     private Dictionary<string, List<string>> filterSets = new Dictionary<string, List<string>>
@@ -188,6 +189,7 @@ public class CharacterBuilder : MonoBehaviour
     void SetCurrentType(string type)
     {
         currentType = type;
+        lastFilterCategoryKey = string.Empty;
         UpdateInterfaceBasedOnType();
     }
 
@@ -199,16 +201,13 @@ public class CharacterBuilder : MonoBehaviour
 
         if (currentSlots == null || currentSlots.Count == 0)
         {
-            Debug.LogError($"UpdateInterfaceBasedOnGender: No slots found for gender {currentType}");
+            Debug.LogError($"UpdateInterfaceBasedOnType: No slots found for type {currentType}");
             return;
         }
 
-        // If no filter category has been selected yet, update sliders and buttons normally
-        if (string.IsNullOrEmpty(lastFilterCategoryKey))
-        {
-            PopulateSliders(currentSlots);
-            CreateDynamicButtons(currentSlots);
-        }
+        // Always update sliders and buttons for the new type, ignoring any previous filter
+        PopulateSliders(currentSlots);
+        CreateDynamicButtons(currentSlots);
     }
 
     string GetCurrentType()
@@ -281,6 +280,8 @@ public class CharacterBuilder : MonoBehaviour
         {
             CreateSliderForSlot(slot);
         }
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(slidersPanel.GetComponent<RectTransform>());
     }
 
     void ClearExistingSliders()
@@ -338,9 +339,19 @@ public class CharacterBuilder : MonoBehaviour
         GameObject variationSliderObject = Instantiate(variationSliderPrefab, slidersPanel.transform, false);
         variationSliderObject.name = slotName + "VariationSlider";
 
+        // Find the index of the primary slider in the slidersPanel
+        int primarySliderIndex = FindSliderIndex(slotName + "Slider");
+
+        // Position the variation slider directly below the primary slider
+        if (primarySliderIndex != -1 && primarySliderIndex < slidersPanel.transform.childCount - 1)
+        {
+            variationSliderObject.transform.SetSiblingIndex(primarySliderIndex + 1);
+        }
+
         Slider variationSlider = variationSliderObject.GetComponentInChildren<Slider>();
         if (variationSlider != null)
         {
+            // Slider setup
             variationSlider.minValue = 0;
             variationSlider.maxValue = variationCount;
             variationSlider.wholeNumbers = true;
@@ -352,6 +363,18 @@ public class CharacterBuilder : MonoBehaviour
         {
             variationLabel.text = "Variation";
         }
+    }
+
+    int FindSliderIndex(string sliderName)
+    {
+        for (int i = 0; i < slidersPanel.transform.childCount; i++)
+        {
+            if (slidersPanel.transform.GetChild(i).name == sliderName)
+            {
+                return i;
+            }
+        }
+        return -1; // Return -1 if the slider is not found
     }
 
     void OnSliderValueChanged(string slotName, float value, bool userChanged)
@@ -389,10 +412,24 @@ public class CharacterBuilder : MonoBehaviour
 
     void OnVariationSliderValueChanged(string slotName, float value)
     {
-        Debug.Log($"OnVariationSliderValueChanged for slot: {slotName} with value: {value}");
+        //Debug.Log($"OnVariationSliderValueChanged for slot: {slotName} with value: {value}");
         if (!currentlyLoadedModels.TryGetValue(slotName, out GameObject currentModel))
         {
             Debug.LogError($"No model currently loaded for slot: {slotName}");
+            return;
+        }
+
+        if (value == 0 && originalMaterials.TryGetValue(slotName, out List<Material> mats))
+        {
+            // Apply original materials
+            var skinnedMeshRenderers = currentModel.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+            for (int i = 0; i < skinnedMeshRenderers.Length; i++)
+            {
+                if (i < mats.Count)
+                {
+                    skinnedMeshRenderers[i].sharedMaterial = mats[i];
+                }
+            }
             return;
         }
 
@@ -423,6 +460,12 @@ public class CharacterBuilder : MonoBehaviour
         {
             Debug.LogError("Material JSON file not found: " + materialJsonFilePath);
         }
+    }
+
+    void RemoveVariationSlider(string slotName)
+    {
+        Transform existingVariationSlider = slidersPanel.transform.Find(slotName + "VariationSlider");
+        if (existingVariationSlider != null) Destroy(existingVariationSlider.gameObject);
     }
 
     string GetModelNameFromIndex(string slotName, int modelIndex)
@@ -461,7 +504,7 @@ public class CharacterBuilder : MonoBehaviour
 
                 RemoveModelAndVariationSlider(slotName);
                 GameObject modelInstance = LoadModelPrefab(modelName, slotName);
-                LoadAndApplyMaterials(modelName, modelInstance);
+                LoadAndApplyMaterials(modelName, modelInstance, slotName);
                 CreateOrUpdateVariationSlider(slotName, modelName);
             }
             else
@@ -480,7 +523,7 @@ public class CharacterBuilder : MonoBehaviour
         return meshName.EndsWith(".msh") ? meshName.Substring(0, meshName.Length - 4) : meshName;
     }
 
-    void LoadAndApplyMaterials(string modelName, GameObject modelInstance)
+    void LoadAndApplyMaterials(string modelName, GameObject modelInstance, string slotName)
     {
         string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");
         if (File.Exists(materialJsonFilePath))
@@ -488,6 +531,15 @@ public class CharacterBuilder : MonoBehaviour
             string materialJsonData = File.ReadAllText(materialJsonFilePath);
             ModelData.ModelInfo modelInfo = JsonUtility.FromJson<ModelData.ModelInfo>(materialJsonData);
             ApplyMaterials(modelInstance, modelInfo);
+
+            // Store original materials
+            var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+            List<Material> mats = new List<Material>();
+            foreach (var renderer in skinnedMeshRenderers)
+            {
+                mats.AddRange(renderer.sharedMaterials);
+            }
+            originalMaterials[slotName] = mats;
         }
         else
         {
@@ -525,7 +577,7 @@ public class CharacterBuilder : MonoBehaviour
             {
                 var renderer = skinnedMeshRenderers[rendererIndex];
                 ApplyMaterialToRenderer(renderer, materialData.name);
-                Debug.Log($"Applied material '{materialData.name}' to renderer index: {rendererIndex}");
+                //Debug.Log($"Applied material '{materialData.name}' to renderer index: {rendererIndex}");
             }
             else
             {
@@ -534,13 +586,7 @@ public class CharacterBuilder : MonoBehaviour
         }
     }
 
-    void RemoveVariationSlider(string slotName)
-    {
-        Transform existingVariationSlider = slidersPanel.transform.Find(slotName + "VariationSlider");
-        if (existingVariationSlider != null) Destroy(existingVariationSlider.gameObject);
-    }
-
-
+    
     GameObject LoadModelPrefab(string modelName, string slotName) // Add slotName as parameter
     {
         string prefabPath = Path.Combine("Prefabs", modelName);
@@ -605,16 +651,19 @@ public class CharacterBuilder : MonoBehaviour
 
     private void ApplyMaterialToRenderer(SkinnedMeshRenderer renderer, string materialName)
     {
+        if (materialName.Equals("null.mat", StringComparison.OrdinalIgnoreCase))
+        {
+            renderer.enabled = false;
+            return;
+        }
+        else
+        {
+            renderer.enabled = true;
+        }
+
         if (materialName.StartsWith("sm_"))
         {
             Debug.Log($"Skipped material '{materialName}' as it starts with 'sm_'");
-            return;
-        }
-
-        if (materialName.Equals("null.mat", StringComparison.OrdinalIgnoreCase) || ShouldDisableRenderer(renderer.gameObject.name))
-        {
-            renderer.enabled = false;
-            //Debug.Log($"Disabled SkinnedMeshRenderer on '{renderer.gameObject.name}' due to null.mat or renderer should be disabled");
             return;
         }
 
@@ -624,7 +673,6 @@ public class CharacterBuilder : MonoBehaviour
         if (loadedMaterial != null)
         {
             Material[] rendererMaterials = renderer.sharedMaterials;
-
             if (rendererMaterials.Length > 0)
             {
                 rendererMaterials[0] = loadedMaterial;

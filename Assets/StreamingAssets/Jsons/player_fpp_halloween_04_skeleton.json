@@ -1,0 +1,158 @@
+{
+    "skeletonName": "player_fpp_skeleton.msh",
+    "modelProperties": {
+        "class": "player",
+        "production_state": "prototype",
+        "race": "caucasian",
+        "sex": "male",
+        "size": "normal",
+        "type": "character",
+        "weight": "normal"
+    },
+    "slotPairs": [
+        {
+            "key": "TORSO_PART_6",
+            "slotData": {
+                "slotUid": 600,
+                "name": "TORSO_PART_6",
+                "models": [
+                    {
+                        "name": "zmb_screamer.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "zmb_screamer_body.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "null.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "zmb_screamer_body.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "null.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "LEGS_PART_5",
+            "slotData": {
+                "slotUid": 800,
+                "name": "LEGS_PART_5",
+                "models": [
+                    {
+                        "name": "zmb_screamer.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "null.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "zmb_screamer_legs_part.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "null.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "zmb_screamer_legs_part.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "key": "PLAYER_GLOVES",
+            "slotData": {
+                "slotUid": 810,
+                "name": "PLAYER_GLOVES",
+                "models": [
+                    {
+                        "name": "player_hands_tpp_a.msh",
+                        "materialsData": [
+                            {
+                                "number": 1,
+                                "name": "player_hands_tpp_a.mat"
+                            },
+                            {
+                                "number": 2,
+                                "name": "player_hands_tpp_a_b.mat"
+                            }
+                        ],
+                        "materialsResources": [
+                            {
+                                "number": 1,
+                                "resources": [
+                                    {
+                                        "name": "player_hands_tpp_a.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "resources": [
+                                    {
+                                        "name": "player_hands_tpp_a_b.mat",
+                                        "selected": true,
+                                        "layoutId": 4,
+                                        "loadFlags": "S",
+                                        "rttiValues": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}

@@ -2,7 +2,6 @@
     "skeletonName": "man_pk_light_skeleton.msh",
     "modelProperties": {
         "class": "peacekeeper",
-        "production_state": "prototype",
         "race": "caucasian",
         "sex": "male",
         "size": "normal",
@@ -155,7 +154,13 @@
                                         "selected": true,
                                         "layoutId": 4,
                                         "loadFlags": "S",
-                                        "rttiValues": []
+                                        "rttiValues": [
+                                            {
+                                                "name": "dif_0_tex",
+                                                "type": 7,
+                                                "val_str": "metal_blue_dif.png"
+                                            }
+                                        ]
                                     }
                                 ]
                             },
@@ -459,7 +464,7 @@
                         "materialsData": [
                             {
                                 "number": 1,
-                                "name": "man_pk_legs_a_empty.mat"
+                                "name": "ch_male_peacekeeper_01_legs.mat"
                             }
                         ],
                         "materialsResources": [
