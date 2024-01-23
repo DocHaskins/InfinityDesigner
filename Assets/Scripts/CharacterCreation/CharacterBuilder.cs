@@ -26,13 +26,13 @@ namespace doppelganger
         public Button clothesButton;
 
         private string lastFilterCategoryKey = "";
-        private Dictionary<string, float> sliderValues = new Dictionary<string, float>();
+        public Dictionary<string, float> sliderValues = new Dictionary<string, float>();
         private Dictionary<string, bool> sliderInitialized = new Dictionary<string, bool>();
         private Dictionary<GameObject, List<int>> disabledRenderers = new Dictionary<GameObject, List<int>>();
         private Dictionary<GameObject, bool[]> initialRendererStates = new Dictionary<GameObject, bool[]>();
         private Dictionary<string, List<Material>> originalMaterials = new Dictionary<string, List<Material>>();
         private Dictionary<string, List<string>> slotData = new Dictionary<string, List<string>>();
-        private Dictionary<string, GameObject> currentlyLoadedModels = new Dictionary<string, GameObject>();
+        public Dictionary<string, GameObject> currentlyLoadedModels = new Dictionary<string, GameObject>();
         private Dictionary<string, List<string>> filterSets = new Dictionary<string, List<string>>
 {
     { "BodyButton", new List<string> { "ALL_head", "ALL_facial_hair", "ALL_hair", "ALL_hair_base", "ALL_hair_2", "ALL_hair_3", "ALL_hands", "ALL_tattoo" } },
@@ -148,6 +148,74 @@ namespace doppelganger
             else
             {
                 Debug.LogError($"CreateDynamicButtons: No slot data found for gender {currentGender}");
+            }
+        }
+
+        public void Reroll()
+        {
+            // Iterate through each child of slidersPanel which is expected to be a slider container
+            foreach (Transform sliderContainer in slidersPanel.transform)
+            {
+                // Find the child object named "LockToggle" in the sliderContainer
+                Transform lockToggleTransform = sliderContainer.Find("LockToggle");
+                Toggle lockToggle = lockToggleTransform ? lockToggleTransform.GetComponent<Toggle>() : null;
+
+                // Skip this slider if the toggle is set to true
+                if (lockToggle != null && lockToggle.isOn)
+                {
+                    Debug.Log("Skipping locked slider: " + sliderContainer.name);
+                    continue;
+                }
+
+                // Find the child object named "primarySlider" in the sliderContainer
+                Transform primarySliderTransform = sliderContainer.Find("primarySlider");
+                if (primarySliderTransform != null)
+                {
+                    Slider slider = primarySliderTransform.GetComponent<Slider>();
+                    if (slider != null)
+                    {
+                        float randomValue = UnityEngine.Random.Range(slider.minValue, slider.maxValue + 1);
+                        Debug.Log("Random value for " + sliderContainer.name + ": " + randomValue);
+
+                        slider.value = randomValue;
+
+                        string slotName = sliderContainer.name.Replace("Slider", "");
+                        OnSliderValueChanged(slotName, randomValue, true);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("No slider component found in primarySlider of: " + sliderContainer.name);
+                    }
+                }
+            }
+        }
+
+        public void Reset()
+        {
+            foreach (Transform sliderContainer in slidersPanel.transform)
+            {
+                Debug.Log("Checking child: " + sliderContainer.name);
+
+                // Find the child object named "primarySlider" in the sliderContainer
+                Transform primarySliderTransform = sliderContainer.Find("primarySlider");
+                if (primarySliderTransform != null)
+                {
+                    Slider slider = primarySliderTransform.GetComponent<Slider>();
+                    if (slider != null)
+                    {
+                        slider.value = 0;
+                        string slotName = sliderContainer.name.Replace("Slider", "");
+                        OnSliderValueChanged(slotName, 0, true);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("No slider component found in primarySlider of: " + sliderContainer.name);
+                    }
+                }
+                else
+                {
+                    //Debug.LogWarning("primarySlider not found in: " + sliderContainer.name);
+                }
             }
         }
 
@@ -494,6 +562,9 @@ namespace doppelganger
 
         void LoadModelAndCreateVariationSlider(string slotName, int modelIndex)
         {
+            // Declare modelInstance at the start of the method
+            GameObject modelInstance = null;
+
             string selectedType = GetCurrentType();
             string slotJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Slotdata", selectedType, slotName + ".json");
 
@@ -508,9 +579,21 @@ namespace doppelganger
                     string modelName = GetModelName(meshName);
 
                     RemoveModelAndVariationSlider(slotName);
-                    GameObject modelInstance = LoadModelPrefab(modelName, slotName);
+                    modelInstance = LoadModelPrefab(modelName, slotName);
                     LoadAndApplyMaterials(modelName, modelInstance, slotName);
                     CreateOrUpdateVariationSlider(slotName, modelName);
+
+                    // Update the currentlyLoadedModels dictionary
+                    if (currentlyLoadedModels.ContainsKey(slotName))
+                    {
+                        // Replace the existing model
+                        currentlyLoadedModels[slotName] = modelInstance;
+                    }
+                    else
+                    {
+                        // Add new model
+                        currentlyLoadedModels.Add(slotName, modelInstance);
+                    }
                 }
                 else
                 {
@@ -693,6 +776,11 @@ namespace doppelganger
                 renderer.enabled = true;
             }
 
+            if (materialName.Equals(ShouldDisableRenderer(renderer.gameObject.name)))
+            {
+                renderer.enabled = false;
+            }
+
             if (materialName.StartsWith("sm_"))
             {
                 Debug.Log($"Skipped material '{materialName}' as it starts with 'sm_'");
@@ -719,6 +807,24 @@ namespace doppelganger
             {
                 Debug.LogError($"Material not found: '{matPath}' for renderer '{renderer.gameObject.name}'");
             }
+        }
+
+        private bool ShouldDisableRenderer(string gameObjectName)
+        {
+            return gameObjectName.Contains("sh_eye_shadow") ||
+                   gameObjectName.Contains("sh_wet_eye") ||
+                   gameObjectName.Contains("_null");
+        }
+
+        public Dictionary<string, float> GetSliderValues()
+        {
+            return sliderValues;
+        }
+
+        // Example of a public getter method for currentlyLoadedModels
+        public Dictionary<string, GameObject> GetCurrentlyLoadedModels()
+        {
+            return currentlyLoadedModels;
         }
 
     }

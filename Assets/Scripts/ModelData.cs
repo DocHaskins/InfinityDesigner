@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -55,6 +56,8 @@ public class ModelData
         public string name;
         public List<MaterialData> materialsData;
         public List<MaterialResource> materialsResources;
+        
+        [JsonIgnore]
         public List<VariationInfo> variations;
     }
 
@@ -89,6 +92,9 @@ public class ModelData
     public class Resource
     {
         public string name;
+        public bool selected;
+        public int layoutId;
+        public string loadFlags;
         public List<RttiValue> rttiValues;
     }
 
