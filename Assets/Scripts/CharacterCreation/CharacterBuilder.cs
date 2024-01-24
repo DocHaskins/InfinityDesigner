@@ -8,6 +8,26 @@ using UnityEngine.UI;
 using static ModelData;
 using System.Linq;
 
+[Serializable]
+public class CharacterConfig
+{
+    public string gender_property;
+    public List<ModelConfiguration> models;
+}
+
+[Serializable]
+public class SlotModelData
+{
+    public List<string> meshes;
+}
+
+[Serializable]
+public class ModelConfiguration
+{
+    public string modelName;
+    public List<string> materialsResources;
+}
+
 namespace doppelganger
 {
     public class CharacterBuilder : MonoBehaviour
@@ -28,6 +48,7 @@ namespace doppelganger
         private string lastFilterCategoryKey = "";
         public Dictionary<string, float> sliderValues = new Dictionary<string, float>();
         private Dictionary<string, bool> sliderInitialized = new Dictionary<string, bool>();
+        private List<string> modelNamesToFind = new List<string>();
         private Dictionary<GameObject, List<int>> disabledRenderers = new Dictionary<GameObject, List<int>>();
         private Dictionary<GameObject, bool[]> initialRendererStates = new Dictionary<GameObject, bool[]>();
         private Dictionary<string, List<Material>> originalMaterials = new Dictionary<string, List<Material>>();
@@ -219,6 +240,108 @@ namespace doppelganger
             }
         }
 
+        public string FindSlotForModel(string modelName)
+        {
+            Debug.Log($"FindSlotForModel for {modelName}");
+            string genderProperty = GetCurrentType();
+
+            // Construct the correct path using the gender property
+            string genderFolderPath = Path.Combine(Application.streamingAssetsPath, "SlotData", genderProperty);
+
+            // Check if the gender folder path exists
+            if (!Directory.Exists(genderFolderPath))
+            {
+                Debug.LogError($"Gender folder not found: {genderFolderPath}");
+                return null;
+            }
+
+            // Iterate through all slot JSON files within the gender folder
+            foreach (var slotFile in Directory.GetFiles(genderFolderPath, "*.json"))
+            {
+                string slotJsonData = File.ReadAllText(slotFile);
+                //Debug.Log($"searching {slotFile} for {modelName}");
+
+                try
+                {
+                    SlotModelData slotModelData = JsonUtility.FromJson<SlotModelData>(slotJsonData);
+
+                    foreach (string meshName in slotModelData.meshes)
+                    {
+                        // Case-insensitive comparison
+                        if (string.Equals(meshName.Trim(), modelName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            string slotName = Path.GetFileNameWithoutExtension(slotFile);
+                            Debug.Log($"Found slot {slotName} for model {modelName}");
+                            return slotName;
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Error parsing JSON file: {slotFile}. Error: {e.Message}");
+                }
+            }
+
+            Debug.Log($"Model {modelName} not found in any slot");
+            return null;
+        }
+
+        public int GetModelIndex(string slotName, string modelName)
+        {
+            Debug.Log($"GetModelIndex for slot {slotName} and model {modelName}");
+            string genderProperty = GetCurrentType();
+            string slotJsonFilePath = Path.Combine(Application.streamingAssetsPath, "SlotData", genderProperty, slotName + ".json");
+            modelName = modelName.Trim(); // Trim any leading or trailing whitespace
+
+            if (File.Exists(slotJsonFilePath))
+            {
+                string slotJsonData = File.ReadAllText(slotJsonFilePath);
+                SlotModelData slotModelData = JsonUtility.FromJson<SlotModelData>(slotJsonData);
+
+                for (int i = 0; i < slotModelData.meshes.Count; i++)
+                {
+                    // Case-insensitive comparison
+                    if (string.Equals(slotModelData.meshes[i].Trim(), modelName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        Debug.Log($"Model {modelName} found at index {i} in slot {slotName}");
+                        return i;
+                    }
+                }
+                Debug.Log($"Model {modelName} not found in slot {slotName}");
+            }
+            else
+            {
+                Debug.Log($"Slot JSON file not found for {slotName}");
+            }
+            return -1;
+        }
+
+
+        public void SetSliderValue(string slotName, int modelIndex)
+        {
+            string sliderName = slotName + "Slider";
+            Debug.Log($"SetSliderValue for {sliderName} with model index {modelIndex}");
+            int sliderIndex = FindSliderIndex(sliderName);
+            if (sliderIndex != -1)
+            {
+                Transform sliderTransform = slidersPanel.transform.GetChild(sliderIndex);
+                Slider slider = sliderTransform.GetComponentInChildren<Slider>();
+                if (slider != null)
+                {
+                    slider.value = modelIndex;
+                    Debug.Log($"Set slider value for {sliderName} to {modelIndex}");
+                }
+                else
+                {
+                    Debug.Log($"Slider component not found for {sliderName}");
+                }
+            }
+            else
+            {
+                Debug.Log($"Slider index not found for {sliderName}");
+            }
+        }
+
         private void UpdateCameraTarget(Transform loadedModelTransform)
         {
             if (cameraTool != null && loadedModelTransform != null)
@@ -258,17 +381,29 @@ namespace doppelganger
             }
         }
 
-        void SetCurrentType(string type)
+        public void SetCurrentType(string type)
         {
-            currentType = type;
-            lastFilterCategoryKey = string.Empty;
-            UpdateInterfaceBasedOnType();
+            if (slotData.ContainsKey(type))
+            {
+                currentType = type;
+                lastFilterCategoryKey = string.Empty;
+                UpdateInterfaceBasedOnType();
+            }
+            else
+            {
+                Debug.LogError($"Invalid type specified: {type}. This type does not exist in slotData.");
+            }
         }
 
-        void UpdateInterfaceBasedOnType()
+        public void UpdateInterfaceBasedOnType()
         {
             string currentType = GetCurrentType();
-            Debug.Log($"Current type: {currentType}");
+            if (string.IsNullOrEmpty(currentType) || !slotData.ContainsKey(currentType))
+            {
+                Debug.LogError($"Invalid or missing type: {currentType}");
+                return;
+            }
+
             List<string> currentSlots = slotData[currentType];
 
             if (currentSlots == null || currentSlots.Count == 0)
@@ -282,7 +417,7 @@ namespace doppelganger
             CreateDynamicButtons(currentSlots);
         }
 
-        string GetCurrentType()
+        public string GetCurrentType()
         {
             return currentType;
         }
@@ -611,7 +746,7 @@ namespace doppelganger
             return meshName.EndsWith(".msh") ? meshName.Substring(0, meshName.Length - 4) : meshName;
         }
 
-        void LoadAndApplyMaterials(string modelName, GameObject modelInstance, string slotName)
+        public void LoadAndApplyMaterials(string modelName, GameObject modelInstance, string slotName)
         {
             string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");
             if (File.Exists(materialJsonFilePath))
@@ -691,7 +826,7 @@ namespace doppelganger
             }
         }
 
-        GameObject LoadModelPrefab(string modelName, string slotName) // Add slotName as parameter
+        public GameObject LoadModelPrefab(string modelName, string slotName) // Add slotName as parameter
         {
             string prefabPath = Path.Combine("Prefabs", modelName);
             GameObject prefab = Resources.Load<GameObject>(prefabPath);
