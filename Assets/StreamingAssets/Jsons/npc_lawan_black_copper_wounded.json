@@ -1,446 +1,448 @@
 {
-    "skeletonName": "woman_light_skeleton.msh",
-    "modelProperties": {
-        "class": "npc",
-        "production_state": "prototype",
-        "race": "caucasian",
-        "sex": "female",
-        "size": "normal",
-        "type": "character",
-        "weight": "normal"
+  "skeletonName": "woman_light_skeleton.msh",
+  "modelProperties": {
+    "class": "npc",
+    "race": "caucasian",
+    "sex": "female"
+  },
+  "slotPairs": [
+    {
+      "key": "HEAD",
+      "slotData": {
+        "slotUid": 100,
+        "name": "HEAD",
+        "filterText": "head",
+        "models": [
+          {
+            "name": "sh_npc_lawan.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "sh_npc_lawan.mat"
+              },
+              {
+                "number": 2,
+                "name": "sh_eye.mat"
+              },
+              {
+                "number": 3,
+                "name": "sh_mouth_interior.mat"
+              },
+              {
+                "number": 4,
+                "name": "sh_eyelashes.mat"
+              },
+              {
+                "number": 5,
+                "name": "sh_eye_shadow.mat"
+              },
+              {
+                "number": 6,
+                "name": "sh_wet_eye.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "sh_npc_lawan.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "sh_eye_african.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "sh_mouth_interior.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 4,
+                "resources": [
+                  {
+                    "name": "sh_eyelashes.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 5,
+                "resources": [
+                  {
+                    "name": "sh_eye_shadow.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 6,
+                "resources": [
+                  {
+                    "name": "sh_wet_eye.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
     },
-    "slotPairs": [
-        {
-            "key": "HEAD",
-            "slotData": {
-                "slotUid": 100,
-                "name": "HEAD",
-                "models": [
-                    {
-                        "name": "sh_npc_lawan.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "sh_npc_lawan.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "sh_eye.mat"
-                            },
-                            {
-                                "number": 3,
-                                "name": "sh_mouth_interior.mat"
-                            },
-                            {
-                                "number": 4,
-                                "name": "sh_eyelashes.mat"
-                            },
-                            {
-                                "number": 5,
-                                "name": "sh_eye_shadow.mat"
-                            },
-                            {
-                                "number": 6,
-                                "name": "sh_wet_eye.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "sh_npc_lawan.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "sh_eye_african.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 3,
-                                "resources": [
-                                    {
-                                        "name": "sh_mouth_interior.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 4,
-                                "resources": [
-                                    {
-                                        "name": "sh_eyelashes.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 5,
-                                "resources": [
-                                    {
-                                        "name": "sh_eye_shadow.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 6,
-                                "resources": [
-                                    {
-                                        "name": "sh_wet_eye.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+    {
+      "key": "HEAD_PART_4",
+      "slotData": {
+        "slotUid": 104,
+        "name": "HEAD_PART_4",
+        "filterText": "head",
+        "models": [
+          {
+            "name": "npc_lawan_hair.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "npc_lawan_hair_add_a.mat"
+              },
+              {
+                "number": 2,
+                "name": "npc_lawan_hair.mat"
+              },
+              {
+                "number": 3,
+                "name": "npc_lawan_hair_violet.mat"
+              },
+              {
+                "number": 4,
+                "name": "npc_lawan_hair_add_b.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "npc_lawan_hair_add_a_black_copper.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "HEAD_PART_4",
-            "slotData": {
-                "slotUid": 104,
-                "name": "HEAD_PART_4",
-                "models": [
-                    {
-                        "name": "npc_lawan_hair.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "npc_lawan_hair_add_a.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "npc_lawan_hair.mat"
-                            },
-                            {
-                                "number": 3,
-                                "name": "npc_lawan_hair_violet.mat"
-                            },
-                            {
-                                "number": 4,
-                                "name": "npc_lawan_hair_add_b.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "npc_lawan_hair_add_a_black_copper.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "npc_lawan_hair.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 3,
-                                "resources": [
-                                    {
-                                        "name": "npc_lawan_hair.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 4,
-                                "resources": [
-                                    {
-                                        "name": "npc_lawan_hair_add_b_black_copper.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "npc_lawan_hair.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "TORSO",
-            "slotData": {
-                "slotUid": 105,
-                "name": "TORSO",
-                "models": [
-                    {
-                        "name": "npc_lawan_torso.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "npc_lawan_torso.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "npc_lawan_torso_b.mat"
-                            },
-                            {
-                                "number": 3,
-                                "name": "npc_lawan_necklace.mat"
-                            },
-                            {
-                                "number": 4,
-                                "name": "npc_lawan_hands_a.mat"
-                            },
-                            {
-                                "number": 5,
-                                "name": "npc_lawan_decal.mat"
-                            },
-                            {
-                                "number": 6,
-                                "name": "npc_lawan_threads.mat"
-                            },
-                            {
-                                "number": 7,
-                                "name": "tpp_biomarker.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "npc_lawan_torso_black_copper.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "npc_lawan_torso_b_black_copper.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 3,
-                                "resources": [
-                                    {
-                                        "name": "npc_lawan_necklace_black_copper.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 4,
-                                "resources": [
-                                    {
-                                        "name": "npc_lawan_hands_a.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 5,
-                                "resources": [
-                                    {
-                                        "name": "npc_lawan_decal_black_copper.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 6,
-                                "resources": [
-                                    {
-                                        "name": "npc_lawan_threads_black_copper.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 7,
-                                "resources": [
-                                    {
-                                        "name": "tpp_biomarker.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "npc_lawan_hair.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "LEGS",
-            "slotData": {
-                "slotUid": 109,
-                "name": "LEGS",
-                "models": [
-                    {
-                        "name": "npc_lawan_pants.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "npc_lawan_pants.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "npc_lawan_pants_black_copper.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 4,
+                "resources": [
+                  {
+                    "name": "npc_lawan_hair_add_b_black_copper.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "OTHER_PART_1",
-            "slotData": {
-                "slotUid": 110,
-                "name": "OTHER_PART_1",
-                "models": [
-                    {
-                        "name": "npc_lawan_belt_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "npc_lawan_torso.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "npc_lawan_torso_black_copper.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "TORSO",
+      "slotData": {
+        "slotUid": 105,
+        "name": "TORSO",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "npc_lawan_torso.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "npc_lawan_torso.mat"
+              },
+              {
+                "number": 2,
+                "name": "npc_lawan_torso_b.mat"
+              },
+              {
+                "number": 3,
+                "name": "npc_lawan_necklace.mat"
+              },
+              {
+                "number": 4,
+                "name": "npc_lawan_hands_a.mat"
+              },
+              {
+                "number": 5,
+                "name": "npc_lawan_decal.mat"
+              },
+              {
+                "number": 6,
+                "name": "npc_lawan_threads.mat"
+              },
+              {
+                "number": 7,
+                "name": "tpp_biomarker.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "npc_lawan_torso_black_copper.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "OTHER_PART_2",
-            "slotData": {
-                "slotUid": 111,
-                "name": "OTHER_PART_2",
-                "models": [
-                    {
-                        "name": "npc_lawan_torso_centre_b.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "npc_lawan_bandages_a.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "npc_lawan_torso_b.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "npc_lawan_bandages_a.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "npc_lawan_torso_b_black_copper.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "npc_lawan_torso_b_black_copper.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        }
-    ]
+              },
+              {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "npc_lawan_necklace_black_copper.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 4,
+                "resources": [
+                  {
+                    "name": "npc_lawan_hands_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 5,
+                "resources": [
+                  {
+                    "name": "npc_lawan_decal_black_copper.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 6,
+                "resources": [
+                  {
+                    "name": "npc_lawan_threads_black_copper.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 7,
+                "resources": [
+                  {
+                    "name": "tpp_biomarker.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "LEGS",
+      "slotData": {
+        "slotUid": 109,
+        "name": "LEGS",
+        "filterText": "legs",
+        "models": [
+          {
+            "name": "npc_lawan_pants.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "npc_lawan_pants.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "npc_lawan_pants_black_copper.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "OTHER_PART_1",
+      "slotData": {
+        "slotUid": 110,
+        "name": "OTHER_PART_1",
+        "filterText": "",
+        "models": [
+          {
+            "name": "npc_lawan_belt_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "npc_lawan_torso.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "npc_lawan_torso_black_copper.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "OTHER_PART_2",
+      "slotData": {
+        "slotUid": 111,
+        "name": "OTHER_PART_2",
+        "filterText": "",
+        "models": [
+          {
+            "name": "npc_lawan_torso_centre_b.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "npc_lawan_bandages_a.mat"
+              },
+              {
+                "number": 2,
+                "name": "npc_lawan_torso_b.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "npc_lawan_bandages_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "npc_lawan_torso_b_black_copper.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

@@ -1,158 +1,165 @@
 {
-    "skeletonName": "zmb_bolter_skeleton.msh",
-    "modelProperties": {
-        "class": "bolter",
-        "production_state": "prototype",
-        "race": "caucasian",
-        "sex": "male",
-        "size": "normal",
-        "type": "character",
-        "weight": "normal"
+  "skeletonName": "zmb_bolter_skeleton.msh",
+  "modelProperties": {
+    "class": "bolter",
+    "race": "caucasian",
+    "sex": "male"
+  },
+  "slotPairs": [
+    {
+      "key": "TORSO",
+      "slotData": {
+        "slotUid": 105,
+        "name": "TORSO",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "zmb_bolter_b.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "zmb_bolter_b_pants.mat"
+              },
+              {
+                "number": 2,
+                "name": "zmb_bolter_b_torso.mat"
+              },
+              {
+                "number": 3,
+                "name": "zmb_bolter_b_pants_torn.mat"
+              },
+              {
+                "number": 4,
+                "name": "zmb_bolter_b_rags_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "zmb_bolter_b_pants.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "zmb_bolter_b_torso.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "zmb_bolter_b_pants_torn.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 4,
+                "resources": [
+                  {
+                    "name": "zmb_bolter_b_rags_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
     },
-    "slotPairs": [
-        {
-            "key": "TORSO",
-            "slotData": {
-                "slotUid": 105,
-                "name": "TORSO",
-                "models": [
-                    {
-                        "name": "zmb_bolter_b.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "zmb_bolter_b_pants.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "zmb_bolter_b_torso.mat"
-                            },
-                            {
-                                "number": 3,
-                                "name": "zmb_bolter_b_pants_torn.mat"
-                            },
-                            {
-                                "number": 4,
-                                "name": "zmb_bolter_b_rags_a.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "zmb_bolter_b_pants.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "zmb_bolter_b_torso.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 3,
-                                "resources": [
-                                    {
-                                        "name": "zmb_bolter_b_pants_torn.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 4,
-                                "resources": [
-                                    {
-                                        "name": "zmb_bolter_b_rags_a.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+    {
+      "key": "HEADCOVER",
+      "slotData": {
+        "slotUid": 200,
+        "name": "HEADCOVER",
+        "filterText": "head",
+        "models": [
+          {
+            "name": "zmb_bolter_b_mask_payday_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_outfit_payday2_headwear_a_tpp.mat"
+              },
+              {
+                "number": 2,
+                "name": "chr_belt_b.mat"
+              },
+              {
+                "number": 3,
+                "name": "npc_hair_a_dark_brown.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_outfit_payday2_headwear_a_tpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "HEADCOVER",
-            "slotData": {
-                "slotUid": 200,
-                "name": "HEADCOVER",
-                "models": [
-                    {
-                        "name": "zmb_bolter_b_mask_payday_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_outfit_payday2_headwear_a_tpp.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "chr_belt_b.mat"
-                            },
-                            {
-                                "number": 3,
-                                "name": "npc_hair_a_dark_brown.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_outfit_payday2_headwear_a_tpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "chr_belt_b.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 3,
-                                "resources": [
-                                    {
-                                        "name": "npc_hair_a_dark_brown.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "chr_belt_b.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        }
-    ]
+              },
+              {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "npc_hair_a_dark_brown.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "OTHER",
+      "slotData": {
+        "slotUid": 900,
+        "name": "OTHER",
+        "filterText": "",
+        "models": []
+      }
+    }
+  ]
 }

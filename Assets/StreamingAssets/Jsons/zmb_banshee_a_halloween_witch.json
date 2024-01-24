@@ -1,271 +1,273 @@
 {
-    "skeletonName": "zmb_banshee_skeleton.msh",
-    "modelProperties": {
-        "class": "banshee",
-        "damage_size": "slim",
-        "production_state": "prototype",
-        "race": "caucasian",
-        "sex": "female",
-        "size": "little",
-        "type": "character",
-        "weight": "slim"
+  "skeletonName": "zmb_banshee_skeleton.msh",
+  "modelProperties": {
+    "class": "banshee",
+    "race": "caucasian",
+    "sex": "female"
+  },
+  "slotPairs": [
+    {
+      "key": "HEAD",
+      "slotData": {
+        "slotUid": 100,
+        "name": "HEAD",
+        "filterText": "multihead",
+        "models": [
+          {
+            "name": "zmb_banshee_head_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "zmb_banshee_head_a.mat"
+              },
+              {
+                "number": 2,
+                "name": "zmb_banshee_eye.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "zmb_banshee_head_hag.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "zmb_banshee_eye.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
     },
-    "slotPairs": [
-        {
-            "key": "HEAD",
-            "slotData": {
-                "slotUid": 100,
-                "name": "HEAD",
-                "models": [
-                    {
-                        "name": "zmb_banshee_head_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "zmb_banshee_head_a.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "zmb_banshee_eye.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "zmb_banshee_head_hag.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "zmb_banshee_eye.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+    {
+      "key": "HEAD_PART_1",
+      "slotData": {
+        "slotUid": 101,
+        "name": "HEAD_PART_1",
+        "filterText": "multihead",
+        "models": [
+          {
+            "name": "zmb_banshee_witch_hat_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "zmb_banshee_witch_hat_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "zmb_banshee_witch_hat_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "HEAD_PART_1",
-            "slotData": {
-                "slotUid": 101,
-                "name": "HEAD_PART_1",
-                "models": [
-                    {
-                        "name": "zmb_banshee_witch_hat_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "zmb_banshee_witch_hat_a.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "zmb_banshee_witch_hat_a.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "HAT",
+      "slotData": {
+        "slotUid": 300,
+        "name": "HAT",
+        "filterText": "hat",
+        "models": [
+          {
+            "name": "zmb_banshee_hairs_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "zmb_banshee_hairs_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "zmb_banshee_hairs_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "HAT",
-            "slotData": {
-                "slotUid": 300,
-                "name": "HAT",
-                "models": [
-                    {
-                        "name": "zmb_banshee_hairs_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "zmb_banshee_hairs_a.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "zmb_banshee_hairs_a.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "ARMS",
+      "slotData": {
+        "slotUid": 400,
+        "name": "ARMS",
+        "filterText": "arms",
+        "models": [
+          {
+            "name": "zmb_banshee_torso_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "zmb_banshee_body_a.mat"
+              },
+              {
+                "number": 2,
+                "name": "zmb_banshee_dress_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "zmb_banshee_body_hag.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "ARMS",
-            "slotData": {
-                "slotUid": 400,
-                "name": "ARMS",
-                "models": [
-                    {
-                        "name": "zmb_banshee_torso_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "zmb_banshee_body_a.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "zmb_banshee_dress_a.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "zmb_banshee_body_hag.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "zmb_banshee_dress_a.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "zmb_banshee_dress_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "TORSO",
-            "slotData": {
-                "slotUid": 600,
-                "name": "TORSO",
-                "models": [
-                    {
-                        "name": "zmb_banshee_dress_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "zmb_banshee_dress_a.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "zmb_banshee_dress_a.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "TORSO",
+      "slotData": {
+        "slotUid": 600,
+        "name": "TORSO",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "zmb_banshee_dress_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "zmb_banshee_dress_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "zmb_banshee_dress_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "LEGS",
-            "slotData": {
-                "slotUid": 700,
-                "name": "LEGS",
-                "models": [
-                    {
-                        "name": "zmb_banshee_legs_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "zmb_banshee_body_a.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "zmb_banshee_body_hag.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "LEGS",
+      "slotData": {
+        "slotUid": 700,
+        "name": "LEGS",
+        "filterText": "legs",
+        "models": [
+          {
+            "name": "zmb_banshee_legs_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "zmb_banshee_body_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "zmb_banshee_body_hag.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "OTHER",
-            "slotData": {
-                "slotUid": 900,
-                "name": "OTHER",
-                "models": [
-                    {
-                        "name": "zmb_banshee_jaw_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "zmb_banshee_head_a.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "zmb_banshee_head_a.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "OTHER",
+      "slotData": {
+        "slotUid": 900,
+        "name": "OTHER",
+        "filterText": "",
+        "models": [
+          {
+            "name": "zmb_banshee_jaw_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "zmb_banshee_head_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "zmb_banshee_head_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        }
-    ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

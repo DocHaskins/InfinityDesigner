@@ -1,302 +1,339 @@
 {
-    "skeletonName": "player_fpp_skeleton.msh",
-    "modelProperties": {
-        "class": "player",
-        "production_state": "prototype",
-        "race": "caucasian",
-        "sex": "male",
-        "size": "normal",
-        "type": "character",
-        "weight": "normal"
+  "skeletonName": "player_fpp_skeleton.msh",
+  "modelProperties": {
+    "class": "player",
+    "race": "caucasian",
+    "sex": "male"
+  },
+  "slotPairs": [
+    {
+      "key": "HEAD",
+      "slotData": {
+        "slotUid": 100,
+        "name": "HEAD",
+        "filterText": "head",
+        "models": []
+      }
     },
-    "slotPairs": [
-        {
-            "key": "TORSO",
-            "slotData": {
-                "slotUid": 105,
-                "name": "TORSO",
-                "models": [
-                    {
-                        "name": "player_outfit_rahim_torso_a_tpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_rahim_torso_a_sleeves_a_tpp.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "player_rahim_torso_a_tpp.mat"
-                            },
-                            {
-                                "number": 3,
-                                "name": "player_rahim_torso_a_b_tpp.mat"
-                            },
-                            {
-                                "number": 4,
-                                "name": "player_rahim_torso_a_threads_a_tpp.mat"
-                            },
-                            {
-                                "number": 5,
-                                "name": "player_rahim_torso_a_threads_b_tpp.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_rahim_viral_torso_a_sleeves_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "player_rahim_viral_torso_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 3,
-                                "resources": [
-                                    {
-                                        "name": "player_rahim_viral_torso_a_b_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 4,
-                                "resources": [
-                                    {
-                                        "name": "player_rahim_torso_a_threads_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 5,
-                                "resources": [
-                                    {
-                                        "name": "player_rahim_torso_a_threads_b_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+    {
+      "key": "TORSO",
+      "slotData": {
+        "slotUid": 105,
+        "name": "TORSO",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "player_outfit_rahim_torso_a_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_rahim_torso_a_sleeves_a_tpp.mat"
+              },
+              {
+                "number": 2,
+                "name": "player_rahim_torso_a_tpp.mat"
+              },
+              {
+                "number": 3,
+                "name": "player_rahim_torso_a_b_tpp.mat"
+              },
+              {
+                "number": 4,
+                "name": "player_rahim_torso_a_threads_a_tpp.mat"
+              },
+              {
+                "number": 5,
+                "name": "player_rahim_torso_a_threads_b_tpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_rahim_viral_torso_a_sleeves_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "HANDS_PART_1",
-            "slotData": {
-                "slotUid": 106,
-                "name": "HANDS_PART_1",
-                "models": [
-                    {
-                        "name": "player_biomarker_e3.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_biomarker_fpp_a.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_biomarker_fpp_a.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "player_rahim_viral_torso_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "LEGS",
-            "slotData": {
-                "slotUid": 109,
-                "name": "LEGS",
-                "models": [
-                    {
-                        "name": "player_outfit_rahim_pants_a_tpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_outfit_brecken_pants_a_tpp.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "player_outfit_brecken_shoes_a_tpp.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_outfit_brecken_pants_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "player_outfit_brecken_shoes_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "player_rahim_viral_torso_a_b_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "ARMS_PART_1",
-            "slotData": {
-                "slotUid": 112,
-                "name": "ARMS_PART_1",
-                "models": [
-                    {
-                        "name": "player_forearm_fpp_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_hands_hair_fpp.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "player_hands_fpp_a.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_hands_hair_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "player_hands_viral_fpp_a.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 4,
+                "resources": [
+                  {
+                    "name": "player_rahim_torso_a_threads_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "PLAYER_GLOVES",
-            "slotData": {
-                "slotUid": 810,
-                "name": "PLAYER_GLOVES",
-                "models": [
-                    {
-                        "name": "player_hands_fpp_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_hands_fpp_a.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "player_hands_hair_fpp.mat"
-                            },
-                            {
-                                "number": 3,
-                                "name": "player_hands_fpp_a_b.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_hands_viral_fpp_a.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "player_hands_hair_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 3,
-                                "resources": [
-                                    {
-                                        "name": "player_hands_viral_fpp_a.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 5,
+                "resources": [
+                  {
+                    "name": "player_rahim_torso_a_threads_b_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        }
-    ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "HANDS_PART_1",
+      "slotData": {
+        "slotUid": 106,
+        "name": "HANDS_PART_1",
+        "filterText": "hands",
+        "models": [
+          {
+            "name": "player_biomarker_e3.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_biomarker_fpp_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_biomarker_fpp_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "HANDS_PART_2",
+      "slotData": {
+        "slotUid": 107,
+        "name": "HANDS_PART_2",
+        "filterText": "hands",
+        "models": []
+      }
+    },
+    {
+      "key": "LEGS",
+      "slotData": {
+        "slotUid": 109,
+        "name": "LEGS",
+        "filterText": "legs",
+        "models": [
+          {
+            "name": "player_outfit_rahim_pants_a_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_outfit_brecken_pants_a_tpp.mat"
+              },
+              {
+                "number": 2,
+                "name": "player_outfit_brecken_shoes_a_tpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_outfit_brecken_pants_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "player_outfit_brecken_shoes_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "ARMS_PART_1",
+      "slotData": {
+        "slotUid": 112,
+        "name": "ARMS_PART_1",
+        "filterText": "arms",
+        "models": [
+          {
+            "name": "player_forearm_fpp_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_hands_hair_fpp.mat"
+              },
+              {
+                "number": 2,
+                "name": "player_hands_fpp_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_hands_hair_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "player_hands_viral_fpp_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "PARAGLIDER",
+      "slotData": {
+        "slotUid": 520,
+        "name": "PARAGLIDER",
+        "filterText": "paraglider",
+        "models": []
+      }
+    },
+    {
+      "key": "SHIELDHOLDER",
+      "slotData": {
+        "slotUid": 530,
+        "name": "SHIELDHOLDER",
+        "filterText": "shieldholder",
+        "models": []
+      }
+    },
+    {
+      "key": "PLAYER_GLOVES",
+      "slotData": {
+        "slotUid": 810,
+        "name": "PLAYER_GLOVES",
+        "filterText": "hands",
+        "models": [
+          {
+            "name": "player_hands_fpp_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_hands_fpp_a.mat"
+              },
+              {
+                "number": 2,
+                "name": "player_hands_hair_fpp.mat"
+              },
+              {
+                "number": 3,
+                "name": "player_hands_fpp_a_b.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_hands_viral_fpp_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "player_hands_hair_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "player_hands_viral_fpp_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

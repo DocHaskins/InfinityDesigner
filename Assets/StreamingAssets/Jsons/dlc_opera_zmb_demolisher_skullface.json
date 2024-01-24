@@ -1,390 +1,393 @@
 {
-    "skeletonName": "zmb_demolisher_skeleton.msh",
-    "modelProperties": {
-        "class": "demolisher",
-        "damage_size": "big",
-        "production_state": "prototype",
-        "race": "caucasian",
-        "sex": "male",
-        "size": "big",
-        "type": "character",
-        "weight": "fat"
+  "skeletonName": "zmb_demolisher_skeleton.msh",
+  "modelProperties": {
+    "class": "demolisher",
+    "race": "caucasian",
+    "sex": "male"
+  },
+  "slotPairs": [
+    {
+      "key": "HEAD",
+      "slotData": {
+        "slotUid": 100,
+        "name": "HEAD",
+        "filterText": "head",
+        "models": [
+          {
+            "name": "zmb_demolisher_head_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "zmb_demolisher_head_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "zmb_demolisher_head_b.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "ems_0_tex",
+                        "type": 7,
+                        "val_str": "zmb_demolisher_head_c_red_ems.png"
+                      },
+                      {
+                        "name": "ems_0_scale",
+                        "type": 2,
+                        "val_str": null
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
     },
-    "slotPairs": [
-        {
-            "key": "HEAD",
-            "slotData": {
-                "slotUid": 100,
-                "name": "HEAD",
-                "models": [
-                    {
-                        "name": "zmb_demolisher_head_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "zmb_demolisher_head_a.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "zmb_demolisher_head_b.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": [
-                                            {
-                                                "name": "ems_0_tex",
-                                                "type": 7,
-                                                "val_str": "zmb_demolisher_head_c_red_ems.png"
-                                            },
-                                            {
-                                                "name": "ems_0_scale",
-                                                "type": 2,
-                                                "val_float": 0.15000000596046448
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+    {
+      "key": "HEAD_PART_1",
+      "slotData": {
+        "slotUid": 101,
+        "name": "HEAD_PART_1",
+        "filterText": "head",
+        "models": [
+          {
+            "name": "zmb_demolisher_hair_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "zmb_demolisher_hair.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "zmb_demolisher_hair.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "HEAD_PART_1",
-            "slotData": {
-                "slotUid": 101,
-                "name": "HEAD_PART_1",
-                "models": [
-                    {
-                        "name": "zmb_demolisher_hair_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "zmb_demolisher_hair.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "zmb_demolisher_hair.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "TORSO_PART_3",
+      "slotData": {
+        "slotUid": 102,
+        "name": "TORSO_PART_3",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "zmb_demolisher_torso_b_addons_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "chr_chain_b.mat"
+              },
+              {
+                "number": 2,
+                "name": "chr_spike_c.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "chr_chain_b_gold.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "TORSO_PART_3",
-            "slotData": {
-                "slotUid": 102,
-                "name": "TORSO_PART_3",
-                "models": [
-                    {
-                        "name": "zmb_demolisher_torso_b_addons_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "chr_chain_b.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "chr_spike_c.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "chr_chain_b_gold.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "chr_spike_c_gold.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "chr_spike_c_gold.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "HEAD_PART_2",
-            "slotData": {
-                "slotUid": 103,
-                "name": "HEAD_PART_2",
-                "models": [
-                    {
-                        "name": "zmb_demolisher_head_a_horns_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "npc_skullface_helmet_horns.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "npc_skullface_helmet_horns.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "HEAD_PART_2",
+      "slotData": {
+        "slotUid": 103,
+        "name": "HEAD_PART_2",
+        "filterText": "head",
+        "models": [
+          {
+            "name": "zmb_demolisher_head_a_horns_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "npc_skullface_helmet_horns.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "npc_skullface_helmet_horns.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "TORSO",
-            "slotData": {
-                "slotUid": 105,
-                "name": "TORSO",
-                "models": [
-                    {
-                        "name": "zmb_demolisher_torso_b.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "zmb_demolisher_torso_b.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "zmb_demolisher_arms_b.mat"
-                            },
-                            {
-                                "number": 3,
-                                "name": "zmb_demolisher_armor_a.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "zmb_demolisher_torso_c.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": [
-                                            {
-                                                "name": "ems_0_tex",
-                                                "type": 7,
-                                                "val_str": "zmb_demolisher_torso_c_red_ems.png"
-                                            },
-                                            {
-                                                "name": "ems_0_scale",
-                                                "type": 2,
-                                                "val_float": 0.2800000011920929
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "zmb_demolisher_arms_c.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": [
-                                            {
-                                                "name": "ems_0_tex",
-                                                "type": 7,
-                                                "val_str": "zmb_demolisher_arms_c_red_ems.png"
-                                            },
-                                            {
-                                                "name": "ems_0_scale",
-                                                "type": 2,
-                                                "val_float": 0.2199999988079071
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 3,
-                                "resources": [
-                                    {
-                                        "name": "zmb_demolisher_armor_a.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": [
-                                            {
-                                                "name": "ems_0_tex",
-                                                "type": 7,
-                                                "val_str": "zmb_demolisher_armor_a_red_ems.png"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "TORSO",
+      "slotData": {
+        "slotUid": 105,
+        "name": "TORSO",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "zmb_demolisher_torso_b.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "zmb_demolisher_torso_b.mat"
+              },
+              {
+                "number": 2,
+                "name": "zmb_demolisher_arms_b.mat"
+              },
+              {
+                "number": 3,
+                "name": "zmb_demolisher_armor_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "zmb_demolisher_torso_c.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "ems_0_tex",
+                        "type": 7,
+                        "val_str": "zmb_demolisher_torso_c_red_ems.png"
+                      },
+                      {
+                        "name": "ems_0_scale",
+                        "type": 2,
+                        "val_str": null
+                      }
+                    ]
+                  }
                 ]
-            }
-        },
-        {
-            "key": "TORSO_PART_1",
-            "slotData": {
-                "slotUid": 106,
-                "name": "TORSO_PART_1",
-                "models": [
-                    {
-                        "name": "zmb_demolisher_torso_b_horns_b.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "zmb_demolisher_arms_b.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "zmb_demolisher_arms_b.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "zmb_demolisher_arms_c.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "ems_0_tex",
+                        "type": 7,
+                        "val_str": "zmb_demolisher_arms_c_red_ems.png"
+                      },
+                      {
+                        "name": "ems_0_scale",
+                        "type": 2,
+                        "val_str": null
+                      }
+                    ]
+                  }
                 ]
-            }
-        },
-        {
-            "key": "TORSO_PART_2",
-            "slotData": {
-                "slotUid": 107,
-                "name": "TORSO_PART_2",
-                "models": [
-                    {
-                        "name": "zmb_demolisher_torso_b_armor_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "zmb_demolisher_armor_a.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "zmb_demolisher_armor_a.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": [
-                                            {
-                                                "name": "skn_0_tex",
-                                                "type": 7,
-                                                "val_str": "chr_white_dif.png"
-                                            },
-                                            {
-                                                "name": "ems_0_tex",
-                                                "type": 7,
-                                                "val_str": "zmb_demolisher_armor_a_red_ems.png"
-                                            },
-                                            {
-                                                "name": "ems_0_scale",
-                                                "type": 2,
-                                                "val_float": 0.7799999713897705
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "zmb_demolisher_armor_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "ems_0_tex",
+                        "type": 7,
+                        "val_str": "zmb_demolisher_armor_a_red_ems.png"
+                      }
+                    ]
+                  }
                 ]
-            }
-        },
-        {
-            "key": "LEGS",
-            "slotData": {
-                "slotUid": 109,
-                "name": "LEGS",
-                "models": [
-                    {
-                        "name": "zmb_demolisher_legs_b.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "zmb_demolisher_pants_a.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "zmb_demolisher_legs_a.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "zmb_demolisher_pants_b.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "zmb_demolisher_legs_b.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "TORSO_PART_1",
+      "slotData": {
+        "slotUid": 106,
+        "name": "TORSO_PART_1",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "zmb_demolisher_torso_b_horns_b.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "zmb_demolisher_arms_b.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "zmb_demolisher_arms_b.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        }
-    ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "TORSO_PART_2",
+      "slotData": {
+        "slotUid": 107,
+        "name": "TORSO_PART_2",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "zmb_demolisher_torso_b_armor_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "zmb_demolisher_armor_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "zmb_demolisher_armor_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "skn_0_tex",
+                        "type": 7,
+                        "val_str": "chr_white_dif.png"
+                      },
+                      {
+                        "name": "ems_0_tex",
+                        "type": 7,
+                        "val_str": "zmb_demolisher_armor_a_red_ems.png"
+                      },
+                      {
+                        "name": "ems_0_scale",
+                        "type": 2,
+                        "val_str": null
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "LEGS",
+      "slotData": {
+        "slotUid": 109,
+        "name": "LEGS",
+        "filterText": "legs",
+        "models": [
+          {
+            "name": "zmb_demolisher_legs_b.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "zmb_demolisher_pants_a.mat"
+              },
+              {
+                "number": 2,
+                "name": "zmb_demolisher_legs_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "zmb_demolisher_pants_b.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "zmb_demolisher_legs_b.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

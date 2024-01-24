@@ -1,190 +1,225 @@
 {
-    "skeletonName": "player_fpp_skeleton.msh",
-    "modelProperties": {
-        "class": "player",
-        "production_state": "prototype",
-        "race": "caucasian",
-        "sex": "male",
-        "size": "normal",
-        "type": "character",
-        "weight": "normal"
+  "skeletonName": "player_fpp_skeleton.msh",
+  "modelProperties": {
+    "class": "player",
+    "race": "caucasian",
+    "sex": "male"
+  },
+  "slotPairs": [
+    {
+      "key": "HEAD",
+      "slotData": {
+        "slotUid": 100,
+        "name": "HEAD",
+        "filterText": "head",
+        "models": []
+      }
     },
-    "slotPairs": [
-        {
-            "key": "TORSO",
-            "slotData": {
-                "slotUid": 105,
-                "name": "TORSO",
-                "models": [
-                    {
-                        "name": "player_outfit_payday2_torso_a_tpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_outfit_payday2_torso_tpp.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "player_outfit_payday2_sleeves_tpp.mat"
-                            },
-                            {
-                                "number": 3,
-                                "name": "player_outfit_payday2_torso_tie_a_tpp.mat"
-                            },
-                            {
-                                "number": 4,
-                                "name": "player_outfit_payday2_torso_shirt_a_tpp.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_outfit_payday2_torso_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "player_outfit_payday2_sleeves_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 3,
-                                "resources": [
-                                    {
-                                        "name": "player_outfit_payday2_torso_tie_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 4,
-                                "resources": [
-                                    {
-                                        "name": "player_outfit_payday2_torso_shirt_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+    {
+      "key": "HEAD_PART_1",
+      "slotData": {
+        "slotUid": 102,
+        "name": "HEAD_PART_1",
+        "filterText": "head",
+        "models": []
+      }
+    },
+    {
+      "key": "TORSO",
+      "slotData": {
+        "slotUid": 105,
+        "name": "TORSO",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "player_outfit_payday2_torso_a_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_outfit_payday2_torso_tpp.mat"
+              },
+              {
+                "number": 2,
+                "name": "player_outfit_payday2_sleeves_tpp.mat"
+              },
+              {
+                "number": 3,
+                "name": "player_outfit_payday2_torso_tie_a_tpp.mat"
+              },
+              {
+                "number": 4,
+                "name": "player_outfit_payday2_torso_shirt_a_tpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_outfit_payday2_torso_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "LEGS",
-            "slotData": {
-                "slotUid": 109,
-                "name": "LEGS",
-                "models": [
-                    {
-                        "name": "player_outfit_rais_pants_tpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_outfit_rais_pants_tpp.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "player_outfit_rais_shoes_tpp.mat"
-                            },
-                            {
-                                "number": 3,
-                                "name": "player_outfit_rais_torso_tpp.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_outfit_rais_pants_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "player_outfit_rais_shoes_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 3,
-                                "resources": [
-                                    {
-                                        "name": "null.mat",
-                                        "selected": true,
-                                        "layoutId": 1,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "player_outfit_payday2_sleeves_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "PLAYER_GLOVES",
-            "slotData": {
-                "slotUid": 810,
-                "name": "PLAYER_GLOVES",
-                "models": [
-                    {
-                        "name": "player_outfit_payday2_gloves_a_fpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_outfit_payday2_gloves_a_fpp.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_outfit_payday2_gloves_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "player_outfit_payday2_torso_tie_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        }
-    ]
+              },
+              {
+                "number": 4,
+                "resources": [
+                  {
+                    "name": "player_outfit_payday2_torso_shirt_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "LEGS",
+      "slotData": {
+        "slotUid": 109,
+        "name": "LEGS",
+        "filterText": "legs",
+        "models": [
+          {
+            "name": "player_outfit_rais_pants_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_outfit_rais_pants_tpp.mat"
+              },
+              {
+                "number": 2,
+                "name": "player_outfit_rais_shoes_tpp.mat"
+              },
+              {
+                "number": 3,
+                "name": "player_outfit_rais_torso_tpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_outfit_rais_pants_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "player_outfit_rais_shoes_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "null.mat",
+                    "selected": true,
+                    "layoutId": 1,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "PARAGLIDER",
+      "slotData": {
+        "slotUid": 520,
+        "name": "PARAGLIDER",
+        "filterText": "paraglider",
+        "models": []
+      }
+    },
+    {
+      "key": "SHIELDHOLDER",
+      "slotData": {
+        "slotUid": 530,
+        "name": "SHIELDHOLDER",
+        "filterText": "shieldholder",
+        "models": []
+      }
+    },
+    {
+      "key": "PLAYER_GLOVES",
+      "slotData": {
+        "slotUid": 810,
+        "name": "PLAYER_GLOVES",
+        "filterText": "hands",
+        "models": [
+          {
+            "name": "player_outfit_payday2_gloves_a_fpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_outfit_payday2_gloves_a_fpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_outfit_payday2_gloves_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

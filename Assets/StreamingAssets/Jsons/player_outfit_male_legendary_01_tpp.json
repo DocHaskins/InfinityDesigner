@@ -1,609 +1,770 @@
 {
-    "skeletonName": "player_skeleton.msh",
-    "modelProperties": {
-        "class": "player",
-        "production_state": "prototype",
-        "race": "caucasian",
-        "sex": "male",
-        "size": "normal",
-        "type": "character",
-        "weight": "normal"
+  "skeletonName": "player_skeleton.msh",
+  "modelProperties": {
+    "class": "player",
+    "race": "caucasian",
+    "sex": "male"
+  },
+  "slotPairs": [
+    {
+      "key": "HEAD",
+      "slotData": {
+        "slotUid": 100,
+        "name": "HEAD",
+        "filterText": "head",
+        "models": [
+          {
+            "name": "sh_npc_aiden.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "sh_npc_aiden.mat"
+              },
+              {
+                "number": 2,
+                "name": "zmb_volatile_a_eyes.mat"
+              },
+              {
+                "number": 3,
+                "name": "sh_mouth_interior.mat"
+              },
+              {
+                "number": 4,
+                "name": "sh_eyelashes.mat"
+              },
+              {
+                "number": 5,
+                "name": "sh_eye_shadow.mat"
+              },
+              {
+                "number": 6,
+                "name": "sh_wet_eye.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "sh_biter_a_hair.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "dif_0_tex",
+                        "type": 7,
+                        "val_str": "sh_npc_barney_b_injured_dif.png"
+                      },
+                      {
+                        "name": "msk_0_tex",
+                        "type": 7,
+                        "val_str": "npc_vincente_blood_msk.png"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "zmb_volatile_a_eyes.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "msk_0_add_tex",
+                        "type": 7,
+                        "val_str": "zmb_banshee_b_eye_red_ems.png"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "sh_mouth_interior_zmb.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 4,
+                "resources": [
+                  {
+                    "name": "sh_eyelashes.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 5,
+                "resources": [
+                  {
+                    "name": "sh_eye_shadow.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 6,
+                "resources": [
+                  {
+                    "name": "sh_wet_eye.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
     },
-    "slotPairs": [
-        {
-            "key": "HEAD",
-            "slotData": {
-                "slotUid": 100,
-                "name": "HEAD",
-                "models": [
-                    {
-                        "name": "sh_npc_aiden.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "sh_npc_aiden.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "zmb_volatile_a_eyes.mat"
-                            },
-                            {
-                                "number": 3,
-                                "name": "sh_mouth_interior.mat"
-                            },
-                            {
-                                "number": 4,
-                                "name": "sh_eyelashes.mat"
-                            },
-                            {
-                                "number": 5,
-                                "name": "sh_eye_shadow.mat"
-                            },
-                            {
-                                "number": 6,
-                                "name": "sh_wet_eye.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "sh_biter_a_hair.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": [
-                                            {
-                                                "name": "dif_0_tex",
-                                                "type": 7,
-                                                "val_str": "sh_npc_barney_b_injured_dif.png"
-                                            },
-                                            {
-                                                "name": "msk_0_tex",
-                                                "type": 7,
-                                                "val_str": "npc_vincente_blood_msk.png"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "zmb_volatile_a_eyes.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": [
-                                            {
-                                                "name": "msk_0_add_tex",
-                                                "type": 7,
-                                                "val_str": "zmb_banshee_b_eye_red_ems.png"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 3,
-                                "resources": [
-                                    {
-                                        "name": "sh_mouth_interior_zmb.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 4,
-                                "resources": [
-                                    {
-                                        "name": "sh_eyelashes.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 5,
-                                "resources": [
-                                    {
-                                        "name": "sh_eye_shadow.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 6,
-                                "resources": [
-                                    {
-                                        "name": "sh_wet_eye.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+    {
+      "key": "LEGS_PART_1",
+      "slotData": {
+        "slotUid": 101,
+        "name": "LEGS_PART_1",
+        "filterText": "legs",
+        "models": [
+          {
+            "name": "player_default_shoes_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_default_shoes_tpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_default_shoes_tpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "LEGS_PART_1",
-            "slotData": {
-                "slotUid": 101,
-                "name": "LEGS_PART_1",
-                "models": [
-                    {
-                        "name": "player_default_shoes_tpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_default_shoes_tpp.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_default_shoes_tpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "HEAD_PART_1",
+      "slotData": {
+        "slotUid": 102,
+        "name": "HEAD_PART_1",
+        "filterText": "head",
+        "models": []
+      }
+    },
+    {
+      "key": "ARMS",
+      "slotData": {
+        "slotUid": 103,
+        "name": "ARMS",
+        "filterText": "arms",
+        "models": [
+          {
+            "name": "player_forearm_left_long_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_hands_tpp_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_hands_tpp_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "ARMS",
-            "slotData": {
-                "slotUid": 103,
-                "name": "ARMS",
-                "models": [
-                    {
-                        "name": "player_forearm_left_long_tpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_hands_tpp_a.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_hands_tpp_a.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "HANDS",
+      "slotData": {
+        "slotUid": 104,
+        "name": "HANDS",
+        "filterText": "hands",
+        "models": []
+      }
+    },
+    {
+      "key": "TORSO",
+      "slotData": {
+        "slotUid": 105,
+        "name": "TORSO",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "player_default_torso_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_default_torso_tpp.mat"
+              },
+              {
+                "number": 2,
+                "name": "player_default_torso_detail_tpp.mat"
+              },
+              {
+                "number": 3,
+                "name": "zipper_a.mat"
+              },
+              {
+                "number": 4,
+                "name": "player_default_torso_sleeves_tpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_default_torso_tpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "TORSO",
-            "slotData": {
-                "slotUid": 105,
-                "name": "TORSO",
-                "models": [
-                    {
-                        "name": "player_default_torso_tpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_default_torso_tpp.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "player_default_torso_detail_tpp.mat"
-                            },
-                            {
-                                "number": 3,
-                                "name": "zipper_a.mat"
-                            },
-                            {
-                                "number": 4,
-                                "name": "player_default_torso_sleeves_tpp.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_default_torso_tpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "player_default_torso_detail_tpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 3,
-                                "resources": [
-                                    {
-                                        "name": "zipper_a.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 4,
-                                "resources": [
-                                    {
-                                        "name": "player_default_torso_sleeves_tpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "player_default_torso_detail_tpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "HANDS_PART_1",
-            "slotData": {
-                "slotUid": 106,
-                "name": "HANDS_PART_1",
-                "models": [
-                    {
-                        "name": "man_tpp_biomarker_b.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "tpp_biomarker.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "tpp_biomarker.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "zipper_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "HANDS_PART_2",
-            "slotData": {
-                "slotUid": 107,
-                "name": "HANDS_PART_2",
-                "models": [
-                    {
-                        "name": "player_hands_tpp_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_hands_tpp_r.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "player_hands_tpp_a.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_hands_tpp_r.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": [
-                                            {
-                                                "name": "msk_0_tex",
-                                                "type": 7,
-                                                "val_str": "npc_vincente_hands_dirt_msk.png"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "player_hands_tpp_a.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": [
-                                            {
-                                                "name": "msk_0_tex",
-                                                "type": 7,
-                                                "val_str": "npc_vincente_hands_dirt_msk.png"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 4,
+                "resources": [
+                  {
+                    "name": "player_default_torso_sleeves_tpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "LEGS",
-            "slotData": {
-                "slotUid": 109,
-                "name": "LEGS",
-                "models": [
-                    {
-                        "name": "player_default_pants_tpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_default_pants_tpp.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_default_pants_tpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "HANDS_PART_1",
+      "slotData": {
+        "slotUid": 106,
+        "name": "HANDS_PART_1",
+        "filterText": "hands",
+        "models": [
+          {
+            "name": "man_tpp_biomarker_b.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "tpp_biomarker.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "tpp_biomarker.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "TORSO_PART_1",
-            "slotData": {
-                "slotUid": 110,
-                "name": "TORSO_PART_1",
-                "models": [
-                    {
-                        "name": "player_default_torso_belt_tpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_default_torso_belt_tpp.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_default_torso_belt_tpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "HANDS_PART_2",
+      "slotData": {
+        "slotUid": 107,
+        "name": "HANDS_PART_2",
+        "filterText": "hands",
+        "models": [
+          {
+            "name": "player_hands_tpp_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_hands_tpp_r.mat"
+              },
+              {
+                "number": 2,
+                "name": "player_hands_tpp_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_hands_tpp_r.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "msk_0_tex",
+                        "type": 7,
+                        "val_str": "npc_vincente_hands_dirt_msk.png"
+                      }
+                    ]
+                  }
                 ]
-            }
-        },
-        {
-            "key": "ARMS_PART_1",
-            "slotData": {
-                "slotUid": 112,
-                "name": "ARMS_PART_1",
-                "models": [
-                    {
-                        "name": "player_forearm_right_long_tpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_hands_tpp_a.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "chr_decal_blood_a.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_hands_tpp_a.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": [
-                                            {
-                                                "name": "msk_0_tex",
-                                                "type": 7,
-                                                "val_str": "npc_vincente_hands_dirt_msk.png"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "chr_decal_blood_a.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "player_hands_tpp_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "msk_0_tex",
+                        "type": 7,
+                        "val_str": "npc_vincente_hands_dirt_msk.png"
+                      }
+                    ]
+                  }
                 ]
-            }
-        },
-        {
-            "key": "HANDS_PART_4",
-            "slotData": {
-                "slotUid": 113,
-                "name": "HANDS_PART_4",
-                "models": [
-                    {
-                        "name": "player_default_bracelet_tpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_default_bracelet_tpp.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_default_bracelet_tpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "HANDS_PART_3",
+      "slotData": {
+        "slotUid": 108,
+        "name": "HANDS_PART_3",
+        "filterText": "hands",
+        "models": []
+      }
+    },
+    {
+      "key": "LEGS",
+      "slotData": {
+        "slotUid": 109,
+        "name": "LEGS",
+        "filterText": "legs",
+        "models": [
+          {
+            "name": "player_default_pants_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_default_pants_tpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_default_pants_tpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "HEADCOVER",
-            "slotData": {
-                "slotUid": 200,
-                "name": "HEADCOVER",
-                "models": [
-                    {
-                        "name": "npc_aiden_hair.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "npc_aiden_hair.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "npc_aiden_hair.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "TORSO_PART_1",
+      "slotData": {
+        "slotUid": 110,
+        "name": "TORSO_PART_1",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "player_default_torso_belt_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_default_torso_belt_tpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_default_torso_belt_tpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "PLAYER_GLOVES",
-            "slotData": {
-                "slotUid": 810,
-                "name": "PLAYER_GLOVES",
-                "models": [
-                    {
-                        "name": "player_hands_tpp_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_hands_tpp_a.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "player_hands_tpp_a_b.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_hands_tpp_a.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "player_hands_tpp_a_b.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "TORSO_PART_2",
+      "slotData": {
+        "slotUid": 111,
+        "name": "TORSO_PART_2",
+        "filterText": "torso",
+        "models": []
+      }
+    },
+    {
+      "key": "ARMS_PART_1",
+      "slotData": {
+        "slotUid": 112,
+        "name": "ARMS_PART_1",
+        "filterText": "arms",
+        "models": [
+          {
+            "name": "player_forearm_right_long_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_hands_tpp_a.mat"
+              },
+              {
+                "number": 2,
+                "name": "chr_decal_blood_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_hands_tpp_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "msk_0_tex",
+                        "type": 7,
+                        "val_str": "npc_vincente_hands_dirt_msk.png"
+                      }
+                    ]
+                  }
                 ]
-            }
-        }
-    ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "chr_decal_blood_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "HANDS_PART_4",
+      "slotData": {
+        "slotUid": 113,
+        "name": "HANDS_PART_4",
+        "filterText": "hands",
+        "models": [
+          {
+            "name": "player_default_bracelet_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_default_bracelet_tpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_default_bracelet_tpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "LEGS_PART_2",
+      "slotData": {
+        "slotUid": 114,
+        "name": "LEGS_PART_2",
+        "filterText": "legs",
+        "models": []
+      }
+    },
+    {
+      "key": "TORSO_PART_3",
+      "slotData": {
+        "slotUid": 115,
+        "name": "TORSO_PART_3",
+        "filterText": "torso",
+        "models": []
+      }
+    },
+    {
+      "key": "TORSO_PART_4",
+      "slotData": {
+        "slotUid": 116,
+        "name": "TORSO_PART_4",
+        "filterText": "torso",
+        "models": []
+      }
+    },
+    {
+      "key": "HEAD_PART_2",
+      "slotData": {
+        "slotUid": 117,
+        "name": "HEAD_PART_2",
+        "filterText": "head",
+        "models": []
+      }
+    },
+    {
+      "key": "TORSO_PART_6",
+      "slotData": {
+        "slotUid": 118,
+        "name": "TORSO_PART_6",
+        "filterText": "torso",
+        "models": []
+      }
+    },
+    {
+      "key": "LEGS_PART_3",
+      "slotData": {
+        "slotUid": 119,
+        "name": "LEGS_PART_3",
+        "filterText": "legs",
+        "models": []
+      }
+    },
+    {
+      "key": "LEGS_PART_4",
+      "slotData": {
+        "slotUid": 120,
+        "name": "LEGS_PART_4",
+        "filterText": "legs",
+        "models": []
+      }
+    },
+    {
+      "key": "HANDS_PART_5",
+      "slotData": {
+        "slotUid": 121,
+        "name": "HANDS_PART_5",
+        "filterText": "hands",
+        "models": []
+      }
+    },
+    {
+      "key": "HANDS_PART_6",
+      "slotData": {
+        "slotUid": 122,
+        "name": "HANDS_PART_6",
+        "filterText": "hands",
+        "models": []
+      }
+    },
+    {
+      "key": "OTHER_PART_5",
+      "slotData": {
+        "slotUid": 123,
+        "name": "OTHER_PART_5",
+        "filterText": "torso",
+        "models": []
+      }
+    },
+    {
+      "key": "HEADCOVER",
+      "slotData": {
+        "slotUid": 200,
+        "name": "HEADCOVER",
+        "filterText": "head",
+        "models": [
+          {
+            "name": "npc_aiden_hair.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "npc_aiden_hair.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "npc_aiden_hair.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "HEADCOVER_PART_1",
+      "slotData": {
+        "slotUid": 201,
+        "name": "HEADCOVER_PART_1",
+        "filterText": "head",
+        "models": []
+      }
+    },
+    {
+      "key": "PARAGLIDER",
+      "slotData": {
+        "slotUid": 520,
+        "name": "PARAGLIDER",
+        "filterText": "paraglider",
+        "models": []
+      }
+    },
+    {
+      "key": "SHIELDHOLDER",
+      "slotData": {
+        "slotUid": 530,
+        "name": "SHIELDHOLDER",
+        "filterText": "shieldholder",
+        "models": []
+      }
+    },
+    {
+      "key": "PLAYER_GLOVES",
+      "slotData": {
+        "slotUid": 810,
+        "name": "PLAYER_GLOVES",
+        "filterText": "hands",
+        "models": [
+          {
+            "name": "player_hands_tpp_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_hands_tpp_a.mat"
+              },
+              {
+                "number": 2,
+                "name": "player_hands_tpp_a_b.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_hands_tpp_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "player_hands_tpp_a_b.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

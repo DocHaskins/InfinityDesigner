@@ -1,206 +1,252 @@
 {
-    "skeletonName": "player_fpp_skeleton.msh",
-    "modelProperties": {
-        "class": "player",
-        "production_state": "prototype",
-        "race": "caucasian",
-        "sex": "male",
-        "size": "normal",
-        "type": "character",
-        "weight": "normal"
+  "skeletonName": "player_fpp_skeleton.msh",
+  "modelProperties": {
+    "class": "player",
+    "race": "caucasian",
+    "sex": "male"
+  },
+  "slotPairs": [
+    {
+      "key": "HEAD",
+      "slotData": {
+        "slotUid": 100,
+        "name": "HEAD",
+        "filterText": "head",
+        "models": []
+      }
     },
-    "slotPairs": [
-        {
-            "key": "LEGS_PART_1",
-            "slotData": {
-                "slotUid": 101,
-                "name": "LEGS_PART_1",
-                "models": [
-                    {
-                        "name": "player_wod_tremere_pants_a_pocket_a_tpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_wod_tremere_pants_a_pocket_a_tpp.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_wod_tremere_pants_a_pocket_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+    {
+      "key": "LEGS_PART_1",
+      "slotData": {
+        "slotUid": 101,
+        "name": "LEGS_PART_1",
+        "filterText": "legs",
+        "models": [
+          {
+            "name": "player_wod_tremere_pants_a_pocket_a_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_wod_tremere_pants_a_pocket_a_tpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_wod_tremere_pants_a_pocket_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "ARMS",
-            "slotData": {
-                "slotUid": 103,
-                "name": "ARMS",
-                "models": [
-                    {
-                        "name": "player_wod_tremere_hands_a_fpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_wod_tremere_hands_a_fpp.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_wod_tremere_hands_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "HEAD_PART_1",
+      "slotData": {
+        "slotUid": 102,
+        "name": "HEAD_PART_1",
+        "filterText": "head",
+        "models": []
+      }
+    },
+    {
+      "key": "ARMS",
+      "slotData": {
+        "slotUid": 103,
+        "name": "ARMS",
+        "filterText": "arms",
+        "models": [
+          {
+            "name": "player_wod_tremere_hands_a_fpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_wod_tremere_hands_a_fpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_wod_tremere_hands_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "LEGS_PART_2",
-            "slotData": {
-                "slotUid": 104,
-                "name": "LEGS_PART_2",
-                "models": [
-                    {
-                        "name": "player_wod_tremere_shoes_a_tpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_wod_tremere_shoes_a_tpp.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_wod_tremere_shoes_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "LEGS_PART_2",
+      "slotData": {
+        "slotUid": 104,
+        "name": "LEGS_PART_2",
+        "filterText": "legs",
+        "models": [
+          {
+            "name": "player_wod_tremere_shoes_a_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_wod_tremere_shoes_a_tpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_wod_tremere_shoes_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "TORSO",
-            "slotData": {
-                "slotUid": 105,
-                "name": "TORSO",
-                "models": [
-                    {
-                        "name": "player_wod_tremere_torso_body_a_tpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "chr_chain_b.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "player_wod_tremere_torso_body_a_tpp.mat"
-                            },
-                            {
-                                "number": 3,
-                                "name": "player_wod_tremere_upper_arm_tpp.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "null.mat",
-                                        "selected": true,
-                                        "layoutId": 1,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "player_wod_tremere_torso_body_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 3,
-                                "resources": [
-                                    {
-                                        "name": "player_wod_tremere_upper_arm_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "TORSO",
+      "slotData": {
+        "slotUid": 105,
+        "name": "TORSO",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "player_wod_tremere_torso_body_a_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "chr_chain_b.mat"
+              },
+              {
+                "number": 2,
+                "name": "player_wod_tremere_torso_body_a_tpp.mat"
+              },
+              {
+                "number": 3,
+                "name": "player_wod_tremere_upper_arm_tpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "null.mat",
+                    "selected": true,
+                    "layoutId": 1,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "LEGS",
-            "slotData": {
-                "slotUid": 109,
-                "name": "LEGS",
-                "models": [
-                    {
-                        "name": "player_wod_tremere_pants_a_tpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_wod_tremere_pants_a_tpp.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_wod_tremere_pants_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "player_wod_tremere_torso_body_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        }
-    ]
+              },
+              {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "player_wod_tremere_upper_arm_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "LEGS",
+      "slotData": {
+        "slotUid": 109,
+        "name": "LEGS",
+        "filterText": "legs",
+        "models": [
+          {
+            "name": "player_wod_tremere_pants_a_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_wod_tremere_pants_a_tpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_wod_tremere_pants_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "PARAGLIDER",
+      "slotData": {
+        "slotUid": 520,
+        "name": "PARAGLIDER",
+        "filterText": "paraglider",
+        "models": []
+      }
+    },
+    {
+      "key": "SHIELDHOLDER",
+      "slotData": {
+        "slotUid": 530,
+        "name": "SHIELDHOLDER",
+        "filterText": "shieldholder",
+        "models": []
+      }
+    },
+    {
+      "key": "PLAYER_GLOVES",
+      "slotData": {
+        "slotUid": 810,
+        "name": "PLAYER_GLOVES",
+        "filterText": "gloves",
+        "models": []
+      }
+    }
+  ]
 }

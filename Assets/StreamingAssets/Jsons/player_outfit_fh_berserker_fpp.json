@@ -1,340 +1,378 @@
 {
-    "skeletonName": "player_fpp_skeleton.msh",
-    "modelProperties": {
-        "class": "player",
-        "production_state": "prototype",
-        "race": "caucasian",
-        "sex": "male",
-        "size": "normal",
-        "type": "character",
-        "weight": "normal"
+  "skeletonName": "player_fpp_skeleton.msh",
+  "modelProperties": {
+    "class": "player",
+    "race": "caucasian",
+    "sex": "male"
+  },
+  "slotPairs": [
+    {
+      "key": "LEGS_PART_1",
+      "slotData": {
+        "slotUid": 101,
+        "name": "LEGS_PART_1",
+        "filterText": "legs",
+        "models": [
+          {
+            "name": "player_fh_berserker_shoes_a_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_fh_berserker_shoes_a_tpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_fh_berserker_shoes_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
     },
-    "slotPairs": [
-        {
-            "key": "LEGS_PART_1",
-            "slotData": {
-                "slotUid": 101,
-                "name": "LEGS_PART_1",
-                "models": [
-                    {
-                        "name": "player_fh_berserker_shoes_a_tpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_fh_berserker_shoes_a_tpp.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_fh_berserker_shoes_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+    {
+      "key": "TORSO_PART_1",
+      "slotData": {
+        "slotUid": 102,
+        "name": "TORSO_PART_1",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "player_fh_berserker_axe_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_fh_berserker_pants_a_tpp.mat"
+              },
+              {
+                "number": 2,
+                "name": "player_fh_berserker_axe_tpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_fh_berserker_pants_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "TORSO_PART_1",
-            "slotData": {
-                "slotUid": 102,
-                "name": "TORSO_PART_1",
-                "models": [
-                    {
-                        "name": "player_fh_berserker_axe_tpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_fh_berserker_pants_a_tpp.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "player_fh_berserker_axe_tpp.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_fh_berserker_pants_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "player_fh_berserker_axe_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "player_fh_berserker_axe_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "ARMS",
-            "slotData": {
-                "slotUid": 103,
-                "name": "ARMS",
-                "models": [
-                    {
-                        "name": "player_fh_berserker_forearms_a_fpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_fh_berserker_hands_a_fpp.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_fh_berserker_hands_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "ARMS",
+      "slotData": {
+        "slotUid": 103,
+        "name": "ARMS",
+        "filterText": "",
+        "models": [
+          {
+            "name": "player_fh_berserker_forearms_a_fpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_fh_berserker_hands_a_fpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_fh_berserker_hands_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "TORSO",
-            "slotData": {
-                "slotUid": 105,
-                "name": "TORSO",
-                "models": [
-                    {
-                        "name": "player_fh_berserker_torso_a_tpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_fh_berserker_torso_a_tpp.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "player_fh_berserker_torso_a_fur_a_tpp.mat"
-                            },
-                            {
-                                "number": 3,
-                                "name": "player_fh_berserker_torso_a_skin_tpp.mat"
-                            },
-                            {
-                                "number": 4,
-                                "name": "player_fh_berserker_torso_a_sleeves_a_tpp.mat"
-                            },
-                            {
-                                "number": 5,
-                                "name": "player_fh_berserker_fur_alpha_tpp.mat"
-                            },
-                            {
-                                "number": 6,
-                                "name": "player_fh_berserker_pants_a_tpp.mat"
-                            },
-                            {
-                                "number": 7,
-                                "name": "player_fh_berserker_torso_a_torn_tpp.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_fh_berserker_torso_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": [
-                                            {
-                                                "name": "ocl_tex",
-                                                "type": 7,
-                                                "val_str": "chr_white_dif.png"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "player_fh_berserker_torso_a_fur_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 3,
-                                "resources": [
-                                    {
-                                        "name": "player_fh_berserker_torso_a_skin_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 4,
-                                "resources": [
-                                    {
-                                        "name": "player_fh_berserker_torso_a_sleeves_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 5,
-                                "resources": [
-                                    {
-                                        "name": "player_fh_berserker_fur_alpha_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 6,
-                                "resources": [
-                                    {
-                                        "name": "player_fh_berserker_pants_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 7,
-                                "resources": [
-                                    {
-                                        "name": "player_fh_berserker_torso_a_torn_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "HEAD_PART_1",
+      "slotData": {
+        "slotUid": 104,
+        "name": "HEAD_PART_1",
+        "filterText": "head",
+        "models": []
+      }
+    },
+    {
+      "key": "TORSO",
+      "slotData": {
+        "slotUid": 105,
+        "name": "TORSO",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "player_fh_berserker_torso_a_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_fh_berserker_torso_a_tpp.mat"
+              },
+              {
+                "number": 2,
+                "name": "player_fh_berserker_torso_a_fur_a_tpp.mat"
+              },
+              {
+                "number": 3,
+                "name": "player_fh_berserker_torso_a_skin_tpp.mat"
+              },
+              {
+                "number": 4,
+                "name": "player_fh_berserker_torso_a_sleeves_a_tpp.mat"
+              },
+              {
+                "number": 5,
+                "name": "player_fh_berserker_fur_alpha_tpp.mat"
+              },
+              {
+                "number": 6,
+                "name": "player_fh_berserker_pants_a_tpp.mat"
+              },
+              {
+                "number": 7,
+                "name": "player_fh_berserker_torso_a_torn_tpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_fh_berserker_torso_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "ocl_tex",
+                        "type": 7,
+                        "val_str": "chr_white_dif.png"
+                      }
+                    ]
+                  }
                 ]
-            }
-        },
-        {
-            "key": "LEGS",
-            "slotData": {
-                "slotUid": 109,
-                "name": "LEGS",
-                "models": [
-                    {
-                        "name": "player_fh_berserker_pants_a_tpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_fh_berserker_pants_a_tpp.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_fh_berserker_pants_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "player_fh_berserker_torso_a_fur_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "PLAYER_GLOVES",
-            "slotData": {
-                "slotUid": 810,
-                "name": "PLAYER_GLOVES",
-                "models": [
-                    {
-                        "name": "player_fh_berserker_hands_a_fpp.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "player_fh_berserker_hands_a_fpp.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "player_fh_berserker_torso_a_sleeves_a_fpp.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "player_fh_berserker_hands_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "player_fh_berserker_torso_a_sleeves_a_fpp.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "player_fh_berserker_torso_a_skin_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        }
-    ]
+              },
+              {
+                "number": 4,
+                "resources": [
+                  {
+                    "name": "player_fh_berserker_torso_a_sleeves_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 5,
+                "resources": [
+                  {
+                    "name": "player_fh_berserker_fur_alpha_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 6,
+                "resources": [
+                  {
+                    "name": "player_fh_berserker_pants_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 7,
+                "resources": [
+                  {
+                    "name": "player_fh_berserker_torso_a_torn_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "HEAD_PART_3",
+      "slotData": {
+        "slotUid": 107,
+        "name": "HEAD_PART_3",
+        "filterText": "head",
+        "models": []
+      }
+    },
+    {
+      "key": "LEGS",
+      "slotData": {
+        "slotUid": 109,
+        "name": "LEGS",
+        "filterText": "legs",
+        "models": [
+          {
+            "name": "player_fh_berserker_pants_a_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_fh_berserker_pants_a_tpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_fh_berserker_pants_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "PARAGLIDER",
+      "slotData": {
+        "slotUid": 520,
+        "name": "PARAGLIDER",
+        "filterText": "paraglider",
+        "models": []
+      }
+    },
+    {
+      "key": "SHIELDHOLDER",
+      "slotData": {
+        "slotUid": 530,
+        "name": "SHIELDHOLDER",
+        "filterText": "shieldholder",
+        "models": []
+      }
+    },
+    {
+      "key": "PLAYER_GLOVES",
+      "slotData": {
+        "slotUid": 810,
+        "name": "PLAYER_GLOVES",
+        "filterText": "arms",
+        "models": [
+          {
+            "name": "player_fh_berserker_hands_a_fpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_fh_berserker_hands_a_fpp.mat"
+              },
+              {
+                "number": 2,
+                "name": "player_fh_berserker_torso_a_sleeves_a_fpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_fh_berserker_hands_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "player_fh_berserker_torso_a_sleeves_a_fpp.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

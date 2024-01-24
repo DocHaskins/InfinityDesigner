@@ -1,461 +1,462 @@
 {
-    "skeletonName": "woman_npc_meredith_skeleton.msh",
-    "modelProperties": {
-        "class": "survivor",
-        "production_state": "prototype",
-        "race": "caucasian",
-        "sex": "female",
-        "size": "normal",
-        "type": "character",
-        "weight": "normal"
+  "skeletonName": "woman_npc_meredith_skeleton.msh",
+  "modelProperties": {
+    "class": "survivor",
+    "race": "caucasian",
+    "sex": "female"
+  },
+  "slotPairs": [
+    {
+      "key": "HEAD",
+      "slotData": {
+        "slotUid": 100,
+        "name": "HEAD",
+        "filterText": "multihead",
+        "models": [
+          {
+            "name": "sh_npc_meredith.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "sh_npc_meredith.mat"
+              },
+              {
+                "number": 2,
+                "name": "sh_eye.mat"
+              },
+              {
+                "number": 3,
+                "name": "sh_mouth_interior.mat"
+              },
+              {
+                "number": 4,
+                "name": "sh_eyelashes.mat"
+              },
+              {
+                "number": 5,
+                "name": "sh_eye_shadow.mat"
+              },
+              {
+                "number": 6,
+                "name": "sh_wet_eye.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "sh_npc_meredith.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "sh_eye_green.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "sh_mouth_interior.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 4,
+                "resources": [
+                  {
+                    "name": "sh_eyelashes.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 5,
+                "resources": [
+                  {
+                    "name": "sh_eye_shadow.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 6,
+                "resources": [
+                  {
+                    "name": "sh_wet_eye.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
     },
-    "slotPairs": [
-        {
-            "key": "HEAD",
-            "slotData": {
-                "slotUid": 100,
-                "name": "HEAD",
-                "models": [
-                    {
-                        "name": "sh_npc_meredith.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "sh_npc_meredith.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "sh_eye.mat"
-                            },
-                            {
-                                "number": 3,
-                                "name": "sh_mouth_interior.mat"
-                            },
-                            {
-                                "number": 4,
-                                "name": "sh_eyelashes.mat"
-                            },
-                            {
-                                "number": 5,
-                                "name": "sh_eye_shadow.mat"
-                            },
-                            {
-                                "number": 6,
-                                "name": "sh_wet_eye.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "sh_npc_meredith.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "sh_eye_green.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 3,
-                                "resources": [
-                                    {
-                                        "name": "sh_mouth_interior.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 4,
-                                "resources": [
-                                    {
-                                        "name": "sh_eyelashes.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 5,
-                                "resources": [
-                                    {
-                                        "name": "sh_eye_shadow.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 6,
-                                "resources": [
-                                    {
-                                        "name": "sh_wet_eye.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+    {
+      "key": "HEADCOVER",
+      "slotData": {
+        "slotUid": 200,
+        "name": "HEADCOVER",
+        "filterText": "head",
+        "models": [
+          {
+            "name": "npc_meredith_hair_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "npc_meredith_hair_b.mat"
+              },
+              {
+                "number": 2,
+                "name": "npc_meredith_hair_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "npc_meredith_hair_b.mat",
+                    "selected": true,
+                    "layoutId": 7,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "aniso_spc2",
+                        "type": 2,
+                        "val_str": null
+                      },
+                      {
+                        "name": "aniso_spc2_offset",
+                        "type": 2,
+                        "val_str": null
+                      },
+                      {
+                        "name": "dif",
+                        "type": 4,
+                        "val_str": null
+                      },
+                      {
+                        "name": "spc",
+                        "type": 4,
+                        "val_str": null
+                      }
+                    ]
+                  }
                 ]
-            }
-        },
-        {
-            "key": "HEADCOVER",
-            "slotData": {
-                "slotUid": 200,
-                "name": "HEADCOVER",
-                "models": [
-                    {
-                        "name": "npc_meredith_hair_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "npc_meredith_hair_b.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "npc_meredith_hair_a.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "npc_meredith_hair_b.mat",
-                                        "selected": true,
-                                        "layoutId": 7,
-                                        "loadFlags": "S",
-                                        "rttiValues": [
-                                            {
-                                                "name": "aniso_spc2",
-                                                "type": 2,
-                                                "val_float": 0.0
-                                            },
-                                            {
-                                                "name": "aniso_spc2_offset",
-                                                "type": 2,
-                                                "val_float": 0.15000000596046448
-                                            },
-                                            {
-                                                "name": "dif",
-                                                "type": 4,
-                                                "val_vec3": "+9.56862986e-01 +9.56862986e-01 +9.56862986e-01"
-                                            },
-                                            {
-                                                "name": "spc",
-                                                "type": 4,
-                                                "val_vec3": "+6.58824027e-01 +6.43136978e-01 +6.15685999e-01"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "npc_meredith_hair_a.mat",
-                                        "selected": true,
-                                        "layoutId": 7,
-                                        "loadFlags": "S",
-                                        "rttiValues": [
-                                            {
-                                                "name": "aniso_rotation",
-                                                "type": 2,
-                                                "val_float": 0.17599999904632568
-                                            },
-                                            {
-                                                "name": "aniso_spc2",
-                                                "type": 2,
-                                                "val_float": 0.05000000074505806
-                                            },
-                                            {
-                                                "name": "dif",
-                                                "type": 4,
-                                                "val_vec3": "+9.56862807e-01 +9.56862807e-01 +9.56862807e-01"
-                                            },
-                                            {
-                                                "name": "grf_dif_tex",
-                                                "type": 7,
-                                                "val_str": "chr_hair_bright_neutral_a_grf.png"
-                                            },
-                                            {
-                                                "name": "spc",
-                                                "type": 4,
-                                                "val_vec3": "+6.58823550e-01 +6.43137276e-01 +6.15686297e-01"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "npc_meredith_hair_a.mat",
+                    "selected": true,
+                    "layoutId": 7,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "aniso_rotation",
+                        "type": 2,
+                        "val_str": null
+                      },
+                      {
+                        "name": "aniso_spc2",
+                        "type": 2,
+                        "val_str": null
+                      },
+                      {
+                        "name": "dif",
+                        "type": 4,
+                        "val_str": null
+                      },
+                      {
+                        "name": "grf_dif_tex",
+                        "type": 7,
+                        "val_str": "chr_hair_bright_neutral_a_grf.png"
+                      },
+                      {
+                        "name": "spc",
+                        "type": 4,
+                        "val_str": null
+                      }
+                    ]
+                  }
                 ]
-            }
-        },
-        {
-            "key": "TORSO",
-            "slotData": {
-                "slotUid": 600,
-                "name": "TORSO",
-                "models": [
-                    {
-                        "name": "npc_meredith_torso.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "npc_meredith_arms.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "npc_meredith_torso.mat"
-                            },
-                            {
-                                "number": 3,
-                                "name": "npc_meredith_detail.mat"
-                            },
-                            {
-                                "number": 4,
-                                "name": "wmn_hands_white_a.mat"
-                            },
-                            {
-                                "number": 5,
-                                "name": "tpp_biomarker.mat"
-                            },
-                            {
-                                "number": 6,
-                                "name": "npc_aitor_belt_herbs.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "npc_meredith_arms.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "npc_meredith_torso.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 3,
-                                "resources": [
-                                    {
-                                        "name": "npc_meredith_detail.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 4,
-                                "resources": [
-                                    {
-                                        "name": "wmn_hands_white_a.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 5,
-                                "resources": [
-                                    {
-                                        "name": "tpp_biomarker.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 6,
-                                "resources": [
-                                    {
-                                        "name": "npc_aitor_belt_herbs.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "TORSO",
+      "slotData": {
+        "slotUid": 600,
+        "name": "TORSO",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "npc_meredith_torso.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "npc_meredith_arms.mat"
+              },
+              {
+                "number": 2,
+                "name": "npc_meredith_torso.mat"
+              },
+              {
+                "number": 3,
+                "name": "npc_meredith_detail.mat"
+              },
+              {
+                "number": 4,
+                "name": "wmn_hands_white_a.mat"
+              },
+              {
+                "number": 5,
+                "name": "tpp_biomarker.mat"
+              },
+              {
+                "number": 6,
+                "name": "npc_aitor_belt_herbs.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "npc_meredith_arms.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "TORSO_PART_1",
-            "slotData": {
-                "slotUid": 601,
-                "name": "TORSO_PART_1",
-                "models": [
-                    {
-                        "name": "npc_meredith_hood_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "npc_meredith_arms.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "npc_meredith_detail.mat"
-                            },
-                            {
-                                "number": 3,
-                                "name": "npc_meredith_torso.mat"
-                            },
-                            {
-                                "number": 4,
-                                "name": "npc_meredith_fur.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "npc_meredith_arms.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "npc_meredith_detail.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 3,
-                                "resources": [
-                                    {
-                                        "name": "npc_meredith_torso.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 4,
-                                "resources": [
-                                    {
-                                        "name": "npc_meredith_fur.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "npc_meredith_torso.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "PANTS",
-            "slotData": {
-                "slotUid": 800,
-                "name": "PANTS",
-                "models": [
-                    {
-                        "name": "npc_meredith_legs.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "wmn_sc_runner_legs_a.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "npc_meredith_hood_boot.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "wmn_sc_runner_legs_a.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "npc_meredith_hood_boot.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "npc_meredith_detail.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        }
-    ]
+              },
+              {
+                "number": 4,
+                "resources": [
+                  {
+                    "name": "wmn_hands_white_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 5,
+                "resources": [
+                  {
+                    "name": "tpp_biomarker.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 6,
+                "resources": [
+                  {
+                    "name": "npc_aitor_belt_herbs.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "TORSO_PART_1",
+      "slotData": {
+        "slotUid": 601,
+        "name": "TORSO_PART_1",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "npc_meredith_hood_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "npc_meredith_arms.mat"
+              },
+              {
+                "number": 2,
+                "name": "npc_meredith_detail.mat"
+              },
+              {
+                "number": 3,
+                "name": "npc_meredith_torso.mat"
+              },
+              {
+                "number": 4,
+                "name": "npc_meredith_fur.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "npc_meredith_arms.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "npc_meredith_detail.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "npc_meredith_torso.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 4,
+                "resources": [
+                  {
+                    "name": "npc_meredith_fur.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "PANTS",
+      "slotData": {
+        "slotUid": 800,
+        "name": "PANTS",
+        "filterText": "pants",
+        "models": [
+          {
+            "name": "npc_meredith_legs.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "wmn_sc_runner_legs_a.mat"
+              },
+              {
+                "number": 2,
+                "name": "npc_meredith_hood_boot.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "wmn_sc_runner_legs_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "npc_meredith_hood_boot.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

@@ -1,142 +1,140 @@
 {
-    "skeletonName": "zmb_volataile_skeleton.msh",
-    "modelProperties": {
-        "class": "volatile",
-        "production_state": "prototype",
-        "race": "caucasian",
-        "sex": "male",
-        "size": "normal",
-        "type": "character",
-        "weight": "normal"
+  "skeletonName": "zmb_volataile_skeleton.msh",
+  "modelProperties": {
+    "class": "volatile",
+    "race": "caucasian",
+    "sex": "male"
+  },
+  "slotPairs": [
+    {
+      "key": "TORSO_PART_1",
+      "slotData": {
+        "slotUid": 101,
+        "name": "TORSO_PART_1",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "zmb_volatile_a_head_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "zmb_volatile_a_head.mat"
+              },
+              {
+                "number": 2,
+                "name": "zmb_volatile_a_eyes.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "zmb_volatile_a_head.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "zmb_volatile_a_eyes.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
     },
-    "slotPairs": [
-        {
-            "key": "TORSO_PART_1",
-            "slotData": {
-                "slotUid": 101,
-                "name": "TORSO_PART_1",
-                "models": [
-                    {
-                        "name": "zmb_volatile_a_head_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "zmb_volatile_a_head.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "zmb_volatile_a_eyes.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "zmb_volatile_a_head.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "zmb_volatile_a_eyes.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+    {
+      "key": "TORSO",
+      "slotData": {
+        "slotUid": 105,
+        "name": "TORSO",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "zmb_volatile_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "zmb_volatile_a_torso.mat"
+              },
+              {
+                "number": 2,
+                "name": "zmb_volatile_a_arm_left.mat"
+              },
+              {
+                "number": 3,
+                "name": "zmb_volatile_a_arm_right.mat"
+              },
+              {
+                "number": 4,
+                "name": "zmb_volatile_a_legs.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "zmb_volatile_a_torso.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        },
-        {
-            "key": "TORSO",
-            "slotData": {
-                "slotUid": 105,
-                "name": "TORSO",
-                "models": [
-                    {
-                        "name": "zmb_volatile_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "zmb_volatile_a_torso.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "zmb_volatile_a_arm_left.mat"
-                            },
-                            {
-                                "number": 3,
-                                "name": "zmb_volatile_a_arm_right.mat"
-                            },
-                            {
-                                "number": 4,
-                                "name": "zmb_volatile_a_legs.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "zmb_volatile_a_torso.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "zmb_volatile_a_arm_left.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 3,
-                                "resources": [
-                                    {
-                                        "name": "zmb_volatile_a_arm_right.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 4,
-                                "resources": [
-                                    {
-                                        "name": "zmb_volatile_a_legs.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "zmb_volatile_a_arm_left.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        }
-    ]
+              },
+              {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "zmb_volatile_a_arm_right.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 4,
+                "resources": [
+                  {
+                    "name": "zmb_volatile_a_legs.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

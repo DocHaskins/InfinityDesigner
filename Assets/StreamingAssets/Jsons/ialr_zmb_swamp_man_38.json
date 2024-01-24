@@ -1,399 +1,481 @@
 {
-    "skeletonName": "man_zmb_medium_skeleton.msh",
-    "modelProperties": {
-        "class": "biter",
-        "damage_size": "big",
-        "production_state": "prototype",
-        "race": "caucasian",
-        "sex": "male",
-        "size": "normal",
-        "type": "character",
-        "weight": "fat"
+  "skeletonName": "man_zmb_medium_skeleton.msh",
+  "modelProperties": {
+    "class": "biter",
+    "race": "caucasian",
+    "sex": "male"
+  },
+  "slotPairs": [
+    {
+      "key": "HEAD",
+      "slotData": {
+        "slotUid": 100,
+        "name": "HEAD",
+        "filterText": "head",
+        "models": []
+      }
     },
-    "slotPairs": [
-        {
-            "key": "HEAD_PART_1",
-            "slotData": {
-                "slotUid": 101,
-                "name": "HEAD_PART_1",
-                "models": [
-                    {
-                        "name": "man_zmb_gastank_headgear_b.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "man_zmb_gastank_torso.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "man_zmb_gastank_torso_gre.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": [
-                                            {
-                                                "name": "dif_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_dif.png"
-                                            },
-                                            {
-                                                "name": "nrm_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_nrm.png"
-                                            },
-                                            {
-                                                "name": "rgh_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_rgh.png"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+    {
+      "key": "HEAD_PART_1",
+      "slotData": {
+        "slotUid": 101,
+        "name": "HEAD_PART_1",
+        "filterText": "head",
+        "models": [
+          {
+            "name": "man_zmb_gastank_headgear_b.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "man_zmb_gastank_torso.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "man_zmb_gastank_torso_gre.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "dif_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_dif.png"
+                      },
+                      {
+                        "name": "nrm_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_nrm.png"
+                      },
+                      {
+                        "name": "rgh_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_rgh.png"
+                      }
+                    ]
+                  }
                 ]
-            }
-        },
-        {
-            "key": "TORSO",
-            "slotData": {
-                "slotUid": 105,
-                "name": "TORSO",
-                "models": [
-                    {
-                        "name": "man_zmb_gastank_torso_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "man_zmb_gastank_torso.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "man_zmb_gastank_torso_gre.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": [
-                                            {
-                                                "name": "dif_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_dif.png"
-                                            },
-                                            {
-                                                "name": "nrm_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_nrm.png"
-                                            },
-                                            {
-                                                "name": "rgh_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_rgh.png"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "HEAD_PART_2",
+      "slotData": {
+        "slotUid": 102,
+        "name": "HEAD_PART_2",
+        "filterText": "head",
+        "models": []
+      }
+    },
+    {
+      "key": "ARMS",
+      "slotData": {
+        "slotUid": 103,
+        "name": "ARMS",
+        "filterText": "arms",
+        "models": []
+      }
+    },
+    {
+      "key": "HANDS",
+      "slotData": {
+        "slotUid": 104,
+        "name": "HANDS",
+        "filterText": "hands",
+        "models": []
+      }
+    },
+    {
+      "key": "TORSO",
+      "slotData": {
+        "slotUid": 105,
+        "name": "TORSO",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "man_zmb_gastank_torso_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "man_zmb_gastank_torso.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "man_zmb_gastank_torso_gre.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "dif_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_dif.png"
+                      },
+                      {
+                        "name": "nrm_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_nrm.png"
+                      },
+                      {
+                        "name": "rgh_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_rgh.png"
+                      }
+                    ]
+                  }
                 ]
-            }
-        },
-        {
-            "key": "TORSO_PART_1",
-            "slotData": {
-                "slotUid": 106,
-                "name": "TORSO_PART_1",
-                "models": [
-                    {
-                        "name": "man_zmb_gastank_sleeves_a.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "man_zmb_gastank_torso.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "man_zmb_gastank_torso_gre.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": [
-                                            {
-                                                "name": "dif_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_dif.png"
-                                            },
-                                            {
-                                                "name": "nrm_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_nrm.png"
-                                            },
-                                            {
-                                                "name": "rgh_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_rgh.png"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "TORSO_PART_1",
+      "slotData": {
+        "slotUid": 106,
+        "name": "TORSO_PART_1",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "man_zmb_gastank_sleeves_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "man_zmb_gastank_torso.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "man_zmb_gastank_torso_gre.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "dif_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_dif.png"
+                      },
+                      {
+                        "name": "nrm_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_nrm.png"
+                      },
+                      {
+                        "name": "rgh_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_rgh.png"
+                      }
+                    ]
+                  }
                 ]
-            }
-        },
-        {
-            "key": "LEGS",
-            "slotData": {
-                "slotUid": 109,
-                "name": "LEGS",
-                "models": [
-                    {
-                        "name": "man_zmb_gastank_pants_b.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "man_zmb_gastank_pants.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "man_zmb_gastank_torns.mat"
-                            },
-                            {
-                                "number": 3,
-                                "name": "man_zmb_arm_leg.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "man_zmb_gastank_pants_gre.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": [
-                                            {
-                                                "name": "dif_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_dif.png"
-                                            },
-                                            {
-                                                "name": "nrm_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_nrm.png"
-                                            },
-                                            {
-                                                "name": "rgh_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_rgh.png"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "man_zmb_gastank_torns_gre.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": [
-                                            {
-                                                "name": "dif_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_dif.png"
-                                            },
-                                            {
-                                                "name": "nrm_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_nrm.png"
-                                            },
-                                            {
-                                                "name": "rgh_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_rgh.png"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 3,
-                                "resources": [
-                                    {
-                                        "name": "man_zmb_arm_leg.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": [
-                                            {
-                                                "name": "dif_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_dif.png"
-                                            },
-                                            {
-                                                "name": "nrm_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_nrm.png"
-                                            },
-                                            {
-                                                "name": "rgh_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_rgh.png"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "TORSO_PART_2",
+      "slotData": {
+        "slotUid": 107,
+        "name": "TORSO_PART_2",
+        "filterText": "torso",
+        "models": []
+      }
+    },
+    {
+      "key": "TORSO_PART_3",
+      "slotData": {
+        "slotUid": 108,
+        "name": "TORSO_PART_3",
+        "filterText": "torso",
+        "models": []
+      }
+    },
+    {
+      "key": "LEGS",
+      "slotData": {
+        "slotUid": 109,
+        "name": "LEGS",
+        "filterText": "legs",
+        "models": [
+          {
+            "name": "man_zmb_gastank_pants_b.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "man_zmb_gastank_pants.mat"
+              },
+              {
+                "number": 2,
+                "name": "man_zmb_gastank_torns.mat"
+              },
+              {
+                "number": 3,
+                "name": "man_zmb_arm_leg.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "man_zmb_gastank_pants_gre.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "dif_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_dif.png"
+                      },
+                      {
+                        "name": "nrm_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_nrm.png"
+                      },
+                      {
+                        "name": "rgh_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_rgh.png"
+                      }
+                    ]
+                  }
                 ]
-            }
-        },
-        {
-            "key": "OTHER_PART_1",
-            "slotData": {
-                "slotUid": 110,
-                "name": "OTHER_PART_1",
-                "models": [
-                    {
-                        "name": "man_zmb_gastank_tank.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "man_zmb_gastank_tank.mat"
-                            },
-                            {
-                                "number": 2,
-                                "name": "null.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "man_zmb_gastank_tank.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": [
-                                            {
-                                                "name": "dif_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_dif.png"
-                                            },
-                                            {
-                                                "name": "nrm_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_nrm.png"
-                                            },
-                                            {
-                                                "name": "rgh_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_rgh.png"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "number": 2,
-                                "resources": [
-                                    {
-                                        "name": "null.mat",
-                                        "selected": true,
-                                        "layoutId": 1,
-                                        "loadFlags": "S",
-                                        "rttiValues": [
-                                            {
-                                                "name": "dif_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_dif.png"
-                                            },
-                                            {
-                                                "name": "nrm_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_nrm.png"
-                                            },
-                                            {
-                                                "name": "rgh_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_rgh.png"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "man_zmb_gastank_torns_gre.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "dif_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_dif.png"
+                      },
+                      {
+                        "name": "nrm_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_nrm.png"
+                      },
+                      {
+                        "name": "rgh_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_rgh.png"
+                      }
+                    ]
+                  }
                 ]
-            }
-        },
-        {
-            "key": "OTHER_PART_2",
-            "slotData": {
-                "slotUid": 111,
-                "name": "OTHER_PART_2",
-                "models": [
-                    {
-                        "name": "man_zmb_gastank_tube_b.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "man_zmb_gastank_tube.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "man_zmb_gastank_tube_gre.mat",
-                                        "selected": true,
-                                        "layoutId": 4,
-                                        "loadFlags": "S",
-                                        "rttiValues": [
-                                            {
-                                                "name": "dif_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_dif.png"
-                                            },
-                                            {
-                                                "name": "nrm_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_nrm.png"
-                                            },
-                                            {
-                                                "name": "rgh_0_tex",
-                                                "type": 7,
-                                                "val_str": "ter_base_chemicals_a_rgh.png"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+              },
+              {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "man_zmb_arm_leg.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "dif_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_dif.png"
+                      },
+                      {
+                        "name": "nrm_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_nrm.png"
+                      },
+                      {
+                        "name": "rgh_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_rgh.png"
+                      }
+                    ]
+                  }
                 ]
-            }
-        }
-    ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "OTHER_PART_1",
+      "slotData": {
+        "slotUid": 110,
+        "name": "OTHER_PART_1",
+        "filterText": "",
+        "models": [
+          {
+            "name": "man_zmb_gastank_tank.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "man_zmb_gastank_tank.mat"
+              },
+              {
+                "number": 2,
+                "name": "null.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "man_zmb_gastank_tank.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "dif_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_dif.png"
+                      },
+                      {
+                        "name": "nrm_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_nrm.png"
+                      },
+                      {
+                        "name": "rgh_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_rgh.png"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "null.mat",
+                    "selected": true,
+                    "layoutId": 1,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "dif_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_dif.png"
+                      },
+                      {
+                        "name": "nrm_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_nrm.png"
+                      },
+                      {
+                        "name": "rgh_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_rgh.png"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "OTHER_PART_2",
+      "slotData": {
+        "slotUid": 111,
+        "name": "OTHER_PART_2",
+        "filterText": "",
+        "models": [
+          {
+            "name": "man_zmb_gastank_tube_b.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "man_zmb_gastank_tube.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "man_zmb_gastank_tube_gre.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "dif_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_dif.png"
+                      },
+                      {
+                        "name": "nrm_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_nrm.png"
+                      },
+                      {
+                        "name": "rgh_0_tex",
+                        "type": 7,
+                        "val_str": "ter_base_chemicals_a_rgh.png"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "OTHER_PART_3",
+      "slotData": {
+        "slotUid": 112,
+        "name": "OTHER_PART_3",
+        "filterText": "",
+        "models": []
+      }
+    },
+    {
+      "key": "OTHER_PART_4",
+      "slotData": {
+        "slotUid": 113,
+        "name": "OTHER_PART_4",
+        "filterText": "",
+        "models": []
+      }
+    },
+    {
+      "key": "OTHER_PART_5",
+      "slotData": {
+        "slotUid": 114,
+        "name": "OTHER_PART_5",
+        "filterText": "",
+        "models": []
+      }
+    }
+  ]
 }

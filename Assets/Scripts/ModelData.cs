@@ -47,6 +47,7 @@ public class ModelData
     {
         public int slotUid;
         public string name;
+        public string filterText;
         public List<ModelInfo> models;
     }
 

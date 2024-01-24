@@ -1,41 +1,115 @@
 {
-    "skeletonName": "man_basic_skeleton.msh",
-    "modelProperties": {
-        "production_state": "prototype",
-        "type": "character"
-    },
-    "slotPairs": [
-        {
-            "key": "HEAD",
-            "slotData": {
-                "slotUid": 100,
-                "name": "HEAD",
-                "models": [
-                    {
-                        "name": "sh_dlc_univ_npc_sobek.msh",
-                        "materialsData": [
-                            {
-                                "number": 1,
-                                "name": "nomesh.mat"
-                            }
-                        ],
-                        "materialsResources": [
-                            {
-                                "number": 1,
-                                "resources": [
-                                    {
-                                        "name": "nomesh.mat",
-                                        "selected": true,
-                                        "layoutId": 0,
-                                        "loadFlags": "I",
-                                        "rttiValues": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+  "skeletonName": "man_basic_skeleton.msh",
+  "modelProperties": {
+    "class": null,
+    "race": null,
+    "sex": null
+  },
+  "slotPairs": [
+    {
+      "key": "HEAD",
+      "slotData": {
+        "slotUid": 100,
+        "name": "HEAD",
+        "filterText": "head",
+        "models": [
+          {
+            "name": "sh_dlc_univ_npc_sobek.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "nomesh.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "nomesh.mat",
+                    "selected": true,
+                    "layoutId": 0,
+                    "loadFlags": "I",
+                    "rttiValues": []
+                  }
                 ]
-            }
-        }
-    ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "HEADCOVER",
+      "slotData": {
+        "slotUid": 200,
+        "name": "HEADCOVER",
+        "filterText": "head",
+        "models": []
+      }
+    },
+    {
+      "key": "HAT",
+      "slotData": {
+        "slotUid": 300,
+        "name": "HAT",
+        "filterText": "hat",
+        "models": []
+      }
+    },
+    {
+      "key": "ARMS",
+      "slotData": {
+        "slotUid": 400,
+        "name": "ARMS",
+        "filterText": "arms",
+        "models": []
+      }
+    },
+    {
+      "key": "HANDS",
+      "slotData": {
+        "slotUid": 500,
+        "name": "HANDS",
+        "filterText": "hands",
+        "models": []
+      }
+    },
+    {
+      "key": "TORSO",
+      "slotData": {
+        "slotUid": 600,
+        "name": "TORSO",
+        "filterText": "torso",
+        "models": []
+      }
+    },
+    {
+      "key": "LEGS",
+      "slotData": {
+        "slotUid": 700,
+        "name": "LEGS",
+        "filterText": "legs",
+        "models": []
+      }
+    },
+    {
+      "key": "PANTS",
+      "slotData": {
+        "slotUid": 800,
+        "name": "PANTS",
+        "filterText": "pants",
+        "models": []
+      }
+    },
+    {
+      "key": "OTHER",
+      "slotData": {
+        "slotUid": 900,
+        "name": "OTHER",
+        "filterText": "",
+        "models": []
+      }
+    }
+  ]
 }
