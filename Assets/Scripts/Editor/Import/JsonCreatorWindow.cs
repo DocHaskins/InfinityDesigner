@@ -161,6 +161,7 @@ public class JsonCreatorWindow : EditorWindow
         string[] jsonFiles = Directory.GetFiles(jsonsDir, "*.json");
         Dictionary<string, Dictionary<string, List<string>>> modelsSortedByCategory = new Dictionary<string, Dictionary<string, List<string>>>();
         HashSet<string> unsortedModels = new HashSet<string>();
+        Dictionary<string, List<string>> modelToFilterLookup = new Dictionary<string, List<string>>();
 
         foreach (var file in jsonFiles)
         {
@@ -180,7 +181,7 @@ public class JsonCreatorWindow : EditorWindow
                     foreach (var model in slotPair.slotData.models)
                     {
                         string modelName = model.name.ToLower();
-                        SortModel(modelName, modelsSortedByCategory, unsortedModels);
+                        SortModel(modelName, modelsSortedByCategory, unsortedModels, modelToFilterLookup);
                     }
                 }
             }
@@ -192,16 +193,16 @@ public class JsonCreatorWindow : EditorWindow
 
         SaveSortedModels(modelsSortedByCategory);
         SaveUnsortedModels(unsortedModels);
+        SaveModelFilterLookup(modelToFilterLookup);
         Debug.Log("JSON files organized and saved.");
     }
 
-    void SortModel(string modelName, Dictionary<string, Dictionary<string, List<string>>> modelsSortedByCategory, HashSet<string> unsortedModels)
+    void SortModel(string modelName, Dictionary<string, Dictionary<string, List<string>>> modelsSortedByCategory, HashSet<string> unsortedModels, Dictionary<string, List<string>> modelToFilterLookup)
     {
-        Debug.Log($"Processing model: {modelName}");
 
         // Determine the category of the model
         string category = DetermineModelCategory(modelName, categoryPrefixes);
-        Debug.Log($"Model '{modelName}' determined category: {category}");
+        //Debug.Log($"Model '{modelName}' determined category: {category}");
 
         // Initialize category in modelsSortedByCategory if not exists
         if (!modelsSortedByCategory.ContainsKey(category))
@@ -224,16 +225,25 @@ public class JsonCreatorWindow : EditorWindow
                     // Check if model is excluded by any term in exclude_filters
                     if (exclude_filters.ContainsKey(filterName) && exclude_filters[filterName].Any(excludeTerm => modelName.Contains(excludeTerm)))
                     {
-                        Debug.Log($"Model '{modelName}' is excluded by term in exclude_filters for filter '{filterName}'");
+                        //Debug.Log($"Model '{modelName}' is excluded by term in exclude_filters for filter '{filterName}'");
                         continue; // Skip this filter as model is excluded
                     }
 
-                    Debug.Log($"Model '{modelName}' matches filter term '{filterTerm}' in filter category '{filterName}'");
+                    //Debug.Log($"Model '{modelName}' matches filter term '{filterTerm}' in filter category '{filterName}'");
 
                     // Initialize filter list in category if not exists
                     if (!modelsSortedByCategory[category].ContainsKey(filterName))
                     {
                         modelsSortedByCategory[category][filterName] = new List<string>();
+                    }
+
+                    if (!modelToFilterLookup.ContainsKey(modelName))
+                    {
+                        modelToFilterLookup[modelName] = new List<string>();
+                    }
+                    if (!modelToFilterLookup[modelName].Contains(filterName))
+                    {
+                        modelToFilterLookup[modelName].Add(filterName);
                     }
 
                     // Add model to the corresponding filter list
@@ -248,6 +258,15 @@ public class JsonCreatorWindow : EditorWindow
             Debug.LogWarning($"Model '{modelName}' did not match any filters or was excluded in category '{category}'");
             unsortedModels.Add(modelName);
         }
+    }
+
+    void SaveModelFilterLookup(Dictionary<string, List<string>> modelToFilterLookup)
+    {
+        string outputDir = Path.Combine(Application.dataPath, "StreamingAssets/SlotData");
+        Directory.CreateDirectory(outputDir);
+        string filePath = Path.Combine(outputDir, "ModelFilterLookup.json");
+        string jsonContent = JsonConvert.SerializeObject(modelToFilterLookup, Formatting.Indented);
+        File.WriteAllText(filePath, jsonContent);
     }
 
     void SaveSortedModels(Dictionary<string, Dictionary<string, List<string>>> modelsSortedByCategory)
