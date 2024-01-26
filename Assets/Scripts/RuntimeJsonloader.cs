@@ -119,7 +119,7 @@ namespace doppelganger
         void AddButtonListeners()
         {
             loadButton.onClick.AddListener(LoadSelectedModel);
-            unloadButton.onClick.AddListener(UnloadAllObjects);
+            //unloadButton.onClick.AddListener(UnloadAllObjects);
         }
 
 

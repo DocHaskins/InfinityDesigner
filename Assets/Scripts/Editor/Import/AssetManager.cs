@@ -208,7 +208,7 @@ public class AssetManager : EditorWindow
         string jsonsFolderPath = Application.streamingAssetsPath + "/Jsons";
         string resourcesMaterialsPath = "Materials";
         string failedMaterialsFilePath = Application.streamingAssetsPath + "/materials_failed.txt";
-        HashSet<string> missingMaterials = new HashSet<string>();
+        Dictionary<string, int> missingMaterials = new Dictionary<string, int>();
 
         if (!Directory.Exists(jsonsFolderPath))
         {
@@ -239,7 +239,11 @@ public class AssetManager : EditorWindow
 
                                     if (material == null)
                                     {
-                                        missingMaterials.Add(matPath);
+                                        if (!missingMaterials.ContainsKey(matPath))
+                                        {
+                                            missingMaterials[matPath] = 0;
+                                        }
+                                        missingMaterials[matPath]++;
                                     }
                                 }
                             }
@@ -256,13 +260,13 @@ public class AssetManager : EditorWindow
             {
                 using (StreamWriter writer = new StreamWriter(failedMaterialsFilePath, false))
                 {
-                    foreach (var material in missingMaterials)
+                    foreach (var material in missingMaterials.OrderByDescending(x => x.Value))
                     {
-                        writer.WriteLine(material);
-                        UnityEngine.Debug.LogError($"Material not found: '{material}'");
+                        writer.WriteLine($"{material.Key} - Missing {material.Value} times");
+                        UnityEngine.Debug.LogError($"Material not found: '{material.Key}' - Missing {material.Value} times");
                     }
                 }
-                UnityEngine.Debug.LogError($"Missing materials list written to {failedMaterialsFilePath}");
+                UnityEngine.Debug.Log($"Missing materials list written to {failedMaterialsFilePath}");
             }
             catch (Exception ex)
             {

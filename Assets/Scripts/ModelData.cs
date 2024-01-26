@@ -63,6 +63,12 @@ public class ModelData
     }
 
     [Serializable]
+    public class AllFiltersModelData
+    {
+        public List<string> meshes;
+    }
+
+    [Serializable]
     public class VariationInfo
     {
         public string id;

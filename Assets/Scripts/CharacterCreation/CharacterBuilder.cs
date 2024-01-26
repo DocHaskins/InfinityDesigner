@@ -35,6 +35,10 @@ namespace doppelganger
         public CinemachineCameraZoomTool cameraTool;
         public Button TypeManButton, TypeWmnButton, TypePlayerButton, TypeInfectedButton, TypeChildButton;
         private string currentType = "Player";
+        private string currentPath;
+        public TMP_Dropdown typeDropdown;
+        public TMP_Dropdown categoryDropdown;
+        public TMP_Dropdown classDropdown;
         public GameObject slidersPanel;
         public GameObject sliderPrefab;
         public GameObject variationSliderPrefab;
@@ -101,16 +105,16 @@ namespace doppelganger
 
         void Start()
         {
-            LoadSlotData();
-            UpdateInterfaceBasedOnType();
             UpdateCameraTarget(loadedSkeleton.transform);
 
-            // Set up type button listeners
-            TypeManButton.onClick.AddListener(() => SetCurrentType("Man"));
-            TypeWmnButton.onClick.AddListener(() => SetCurrentType("Wmn"));
-            TypePlayerButton.onClick.AddListener(() => SetCurrentType("Player"));
-            TypeInfectedButton.onClick.AddListener(() => SetCurrentType("Infected"));
-            TypeChildButton.onClick.AddListener(() => SetCurrentType("Child"));
+            PopulateDropdown(typeDropdown, Application.streamingAssetsPath + "/SlotData", "Human");
+            PopulateDropdown(categoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", "Human"), "ALL", true);
+            PopulateDropdown(classDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", "Human", "Player"), "ALL");
+
+            // Add listeners to dropdowns
+            typeDropdown.onValueChanged.AddListener(OnTypeChanged);
+            categoryDropdown.onValueChanged.AddListener(OnCategoryChanged);
+            classDropdown.onValueChanged.AddListener(OnClassChanged);
 
             // Set up button listeners
             if (bodyButton != null) bodyButton.onClick.AddListener(() => FilterCategory("BodyButton"));
@@ -118,60 +122,7 @@ namespace doppelganger
             if (clothesButton != null) clothesButton.onClick.AddListener(() => FilterCategory("ClothesButton"));
         }
 
-        void CreateDynamicButtons(List<string> filters = null)
-        {
-            if (subButtonsPanel == null || buttonPrefab == null)
-            {
-                Debug.LogError("CreateDynamicButtons: subButtonsPanel or buttonPrefab is null");
-                return; // Early exit if essential components are missing
-            }
-
-            // Clear existing buttons in the panel
-            foreach (Transform child in subButtonsPanel)
-            {
-                Destroy(child.gameObject);
-            }
-
-            string currentGender = GetCurrentType();
-
-            if (slotData.TryGetValue(currentGender, out List<string> slots))
-            {
-                // Sort the slots list
-                slots.Sort();
-
-                foreach (string slot in slots)
-                {
-                    if (!slot.StartsWith("ALL_") || (filters != null && !filters.Contains(slot)))
-                    {
-                        continue; // Skip slots that do not match filters
-                    }
-
-                    GameObject newButton = Instantiate(buttonPrefab, subButtonsPanel);
-
-                    string imageName = "Character_Builder_" + slot.Replace("ALL_", "");
-                    Sprite buttonImage = Resources.Load<Sprite>("UI/" + imageName);
-
-                    if (buttonImage != null)
-                    {
-                        Image buttonImageComponent = newButton.GetComponent<Image>();
-                        buttonImageComponent.sprite = buttonImage;
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"CreateDynamicButtons: Image not found for '{imageName}'");
-                    }
-
-                    Button buttonComponent = newButton.GetComponent<Button>();
-                    string slotName = slot; // Capture slot in local variable
-                    buttonComponent.onClick.AddListener(() => FilterSlidersForSlot(slotName));
-                }
-            }
-            else
-            {
-                Debug.LogError($"CreateDynamicButtons: No slot data found for gender {currentGender}");
-            }
-        }
-
+        
         public void Reroll()
         {
             // Iterate through each child of slidersPanel which is expected to be a slider container
@@ -370,15 +321,139 @@ namespace doppelganger
             }
         }
 
+        void PopulateDropdown(TMPro.TMP_Dropdown dropdown, string path, string defaultValue, bool includeAllOption = false)
+        {
+            var options = GetSubFolders(path).Select(option => new TMPro.TMP_Dropdown.OptionData(option)).ToList();
+
+            if (includeAllOption)
+            {
+                options.Insert(0, new TMPro.TMP_Dropdown.OptionData("ALL"));
+            }
+
+            if (defaultValue != null && !options.Any(o => o.text == defaultValue))
+            {
+                options.Insert(0, new TMPro.TMP_Dropdown.OptionData(defaultValue));
+            }
+
+            dropdown.ClearOptions();
+            dropdown.AddOptions(options);
+            dropdown.value = options.FindIndex(option => option.text == defaultValue);
+            dropdown.RefreshShownValue();
+        }
+
+
+        List<string> GetSubFolders(string path)
+        {
+            if (Directory.Exists(path))
+            {
+                return Directory.GetDirectories(path).Select(Path.GetFileName).ToList();
+            }
+            return new List<string>();
+        }
+
+        void OnTypeChanged(int index)
+        {
+            string selectedType = typeDropdown.options[index].text;
+            PopulateDropdown(categoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType), "ALL", true);
+            UpdateInterfaceBasedOnDropdownSelection();
+        }
+
+        void OnCategoryChanged(int index)
+        {
+            string selectedCategory = categoryDropdown.options[index].text;
+            PopulateDropdown(classDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", typeDropdown.options[typeDropdown.value].text, selectedCategory), "ALL");
+            UpdateInterfaceBasedOnDropdownSelection();
+        }
+
+        void OnClassChanged(int index)
+        {
+            UpdateInterfaceBasedOnDropdownSelection();
+        }
+
+        void UpdateInterfaceBasedOnDropdownSelection()
+        {
+            UpdateSlidersBasedOnSelection();
+
+            string type = typeDropdown.options[typeDropdown.value].text;
+            string category = categoryDropdown.options[categoryDropdown.value].text;
+            string classSelection = classDropdown.options[classDropdown.value].text;
+
+            // Create a list to store filters based on dropdown selections
+            List<string> filters = new List<string>();
+
+            // Populate filters based on dropdown selections
+            if (category != "ALL")
+            {
+                filters.Add(category);
+                if (classSelection != "ALL")
+                {
+                    filters.Add(classSelection);
+                }
+            }
+            else
+            {
+                // If category is "ALL", add all filters
+                filters.AddRange(filterSets.SelectMany(pair => pair.Value).Distinct());
+            }
+
+            CreateDynamicButtons(filters);
+        }
+
+
+        void UpdateSlidersBasedOnSelection()
+        {
+            string type = typeDropdown.options[typeDropdown.value].text;
+            string category = categoryDropdown.options[categoryDropdown.value].text;
+            string classSelection = classDropdown.options[classDropdown.value].text;
+
+            currentPath = Path.Combine(Application.streamingAssetsPath, "SlotData", type);
+
+            if (category != "ALL")
+            {
+                currentPath = Path.Combine(currentPath, category);
+                if (classSelection != "ALL")
+                {
+                    currentPath = Path.Combine(currentPath, classSelection);
+                }
+            }
+
+            PopulateSliders(currentPath);
+        }
+
         void FilterCategory(string categoryKey)
         {
-            lastFilterCategoryKey = categoryKey; // Store the selected filter category key
+            lastFilterCategoryKey = categoryKey;
 
             if (filterSets.TryGetValue(categoryKey, out List<string> filters))
             {
-                PopulateSliders(filters);
-                CreateDynamicButtons(filters);
+                PopulateSlidersWithFilters(currentPath, filters);
+                //CreateDynamicButtons(filters);
             }
+            else
+            {
+                Debug.LogError("Filter set not found for category: " + categoryKey);
+            }
+        }
+
+        void PopulateSlidersWithFilters(string basePath, List<string> filters)
+        {
+            ClearExistingSliders();
+
+            foreach (var filter in filters)
+            {
+                string fullPath = Path.Combine(basePath, filter + ".json");
+                if (File.Exists(fullPath))
+                {
+                    CreateSliderForSlot(filter, basePath);
+                }
+                else
+                {
+                    Debug.LogWarning("JSON file not found for filter: " + fullPath);
+                }
+            }
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(slidersPanel.GetComponent<RectTransform>());
+            CreateDynamicButtons(filters);
         }
 
         public void SetCurrentType(string type)
@@ -404,17 +479,12 @@ namespace doppelganger
                 return;
             }
 
-            List<string> currentSlots = slotData[currentType];
+            string path = Path.Combine(Application.streamingAssetsPath, "SlotData", currentType);
+            PopulateSliders(path);
 
-            if (currentSlots == null || currentSlots.Count == 0)
-            {
-                Debug.LogError($"UpdateInterfaceBasedOnType: No slots found for type {currentType}");
-                return;
-            }
-
-            // Always update sliders and buttons for the new type, ignoring any previous filter
-            PopulateSliders(currentSlots);
-            CreateDynamicButtons(currentSlots);
+            // Create a list to store all filters
+            List<string> allFilters = filterSets.SelectMany(pair => pair.Value).Distinct().ToList();
+            CreateDynamicButtons(allFilters);
         }
 
         public string GetCurrentType()
@@ -426,68 +496,109 @@ namespace doppelganger
         {
             ClearExistingSliders();
 
-            // Check if the slotName is in the current gender's slot data
-            string currentGender = GetCurrentType();
-            if (slotData[currentGender].Contains(slotName))
+            string type = typeDropdown.options[typeDropdown.value].text;
+            string category = categoryDropdown.options[categoryDropdown.value].text;
+            string classSelection = classDropdown.options[classDropdown.value].text;
+
+            string path = Path.Combine(Application.streamingAssetsPath, "SlotData", type);
+
+            if (category != "ALL")
             {
-                CreateSliderForSlot(slotName);
+                path = Path.Combine(path, category);
+
+                if (classSelection != "ALL")
+                {
+                    path = Path.Combine(path, classSelection);
+                }
+            }
+
+            string slotPath = Path.Combine(path, slotName + ".json");
+            if (File.Exists(slotPath))
+            {
+                CreateSliderForSlot(slotName, path);
             }
             else
             {
-                Debug.LogWarning($"FilterSlidersForSlot: Slot '{slotName}' not found in gender '{currentGender}' data");
+                Debug.LogWarning($"FilterSlidersForSlot: Slot file '{slotPath}' not found");
             }
         }
 
-        void LoadSlotData()
+        void CreateDynamicButtons(List<string> filters)
         {
-            LoadSlotDataForType("Man");
-            LoadSlotDataForType("Wmn");
-            LoadSlotDataForType("Infected");
-            LoadSlotDataForType("Child");
-            LoadSlotDataForType("Player");
+            if (subButtonsPanel == null || buttonPrefab == null)
+            {
+                Debug.LogError("CreateDynamicButtons: subButtonsPanel or buttonPrefab is null");
+                return; // Early exit if essential components are missing
+            }
+
+            // Clear existing buttons in the panel
+            foreach (Transform child in subButtonsPanel)
+            {
+                Destroy(child.gameObject);
+            }
+
+            string type = typeDropdown.options[typeDropdown.value].text;
+            string category = categoryDropdown.options[categoryDropdown.value].text;
+            string classSelection = classDropdown.options[classDropdown.value].text;
+
+            // Construct the path based on the dropdown selections
+            string path = Path.Combine(Application.streamingAssetsPath, "SlotData", type);
+
+            if (category != "ALL")
+            {
+                path = Path.Combine(path, category);
+                if (classSelection != "ALL")
+                {
+                    path = Path.Combine(path, classSelection);
+                }
+            }
+
+            // Ensure the path exists before trying to access it
+            if (Directory.Exists(path))
+            {
+                string[] files = Directory.GetFiles(path, "*.json");
+                foreach (var file in files)
+                {
+                    string slotName = Path.GetFileNameWithoutExtension(file);
+                    GameObject newButton = Instantiate(buttonPrefab, subButtonsPanel);
+
+                    string imageName = "Character_Builder_" + slotName.Replace("ALL_", "");
+                    Sprite buttonImage = Resources.Load<Sprite>("UI/" + imageName);
+
+                    if (buttonImage != null)
+                    {
+                        Image buttonImageComponent = newButton.GetComponent<Image>();
+                        buttonImageComponent.sprite = buttonImage;
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"CreateDynamicButtons: Image not found for '{imageName}'");
+                    }
+
+                    Button buttonComponent = newButton.GetComponent<Button>();
+                    buttonComponent.onClick.AddListener(() => FilterSlidersForSlot(slotName));
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Path not found for creating buttons: " + path);
+            }
         }
 
-        void LoadSlotDataForType(string type)
+        void PopulateSliders(string path)
         {
-            string path = Path.Combine(Application.streamingAssetsPath, "Slotdata", type);
-            string[] files = Directory.GetFiles(path, "*.json");
-            List<string> slots = new List<string>();
+            // Clear existing sliders first
+            ClearExistingSliders();
 
+            // Your logic to load sliders from the specified path
+            string[] files = Directory.GetFiles(path, "*.json");
             foreach (var file in files)
             {
                 string fileName = Path.GetFileNameWithoutExtension(file);
-                slots.Add(fileName);
+                CreateSliderForSlot(fileName, path); // Pass the path here
             }
 
-            slotData[type] = slots;
-        }
-
-        void PopulateSliders(List<string> filter = null)
-        {
-            string selectedType = GetCurrentType();
-            if (!slotData.ContainsKey(selectedType))
-            {
-                Debug.LogError($"No slot data found for type: {selectedType}");
-                return;
-            }
-
-            List<string> slots = slotData[selectedType];
-
-            // Filter slots to only include those starting with "ALL_"
-            slots = slots.Where(slot => slot.StartsWith("ALL_")).ToList();
-
-            if (filter != null)
-            {
-                slots = slots.Where(slot => filter.Contains(slot)).ToList();
-            }
-
-            ClearExistingSliders();
-
-            foreach (var slot in slots)
-            {
-                CreateSliderForSlot(slot);
-            }
-
+            // Rebuild layout if necessary
             LayoutRebuilder.ForceRebuildLayoutImmediate(slidersPanel.GetComponent<RectTransform>());
         }
 
@@ -499,10 +610,9 @@ namespace doppelganger
             }
         }
 
-        void CreateSliderForSlot(string slotName)
+        void CreateSliderForSlot(string slotName, string path)
         {
-            string selectedType = GetCurrentType();
-            string slotJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Slotdata", selectedType, slotName + ".json");
+            string slotJsonFilePath = Path.Combine(path, slotName + ".json");
 
             if (File.Exists(slotJsonFilePath))
             {
@@ -678,8 +788,24 @@ namespace doppelganger
 
         string GetModelNameFromIndex(string slotName, int modelIndex)
         {
-            string selectedType = GetCurrentType();
-            string slotJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Slotdata", selectedType, slotName + ".json");
+            string type = typeDropdown.options[typeDropdown.value].text;
+            string category = categoryDropdown.options[categoryDropdown.value].text;
+            string classSelection = classDropdown.options[classDropdown.value].text;
+
+            // Construct the path based on the dropdown selections
+            string path = Path.Combine(Application.streamingAssetsPath, "SlotData", type);
+
+            if (category != "ALL")
+            {
+                path = Path.Combine(path, category);
+
+                if (classSelection != "ALL")
+                {
+                    path = Path.Combine(path, classSelection);
+                }
+            }
+
+            string slotJsonFilePath = Path.Combine(path, slotName + ".json");
 
             if (File.Exists(slotJsonFilePath))
             {
@@ -691,6 +817,7 @@ namespace doppelganger
                     return GetModelName(meshName);
                 }
             }
+
             Debug.LogError("Slot JSON file not found: " + slotJsonFilePath);
             return null;
         }
@@ -700,8 +827,23 @@ namespace doppelganger
             // Declare modelInstance at the start of the method
             GameObject modelInstance = null;
 
-            string selectedType = GetCurrentType();
-            string slotJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Slotdata", selectedType, slotName + ".json");
+            string type = typeDropdown.options[typeDropdown.value].text;
+            string category = categoryDropdown.options[categoryDropdown.value].text;
+            string classSelection = classDropdown.options[classDropdown.value].text;
+
+            string path = Path.Combine(Application.streamingAssetsPath, "SlotData", type);
+
+            if (category != "ALL")
+            {
+                path = Path.Combine(path, category);
+
+                if (classSelection != "ALL")
+                {
+                    path = Path.Combine(path, classSelection);
+                }
+            }
+
+            string slotJsonFilePath = Path.Combine(path, slotName + ".json");
 
             if (File.Exists(slotJsonFilePath))
             {
