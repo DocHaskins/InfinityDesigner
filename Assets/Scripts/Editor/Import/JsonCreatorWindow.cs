@@ -183,7 +183,8 @@ public class JsonCreatorWindow : EditorWindow
         Dictionary<string, string> specificTermsToCategory = new Dictionary<string, string>
 {
     { "young", "Child" },
-    { "destroyed", "Biter" }
+    { "destroyed", "Biter" },
+    { "waltz_young", "Man" }
     // Add more terms as needed
 };
 
@@ -312,6 +313,14 @@ public class JsonCreatorWindow : EditorWindow
                       bool storeClassData)
     {
         HashSet<string> classSkipList = new HashSet<string> { "none", "player", "npc", "viral", "biter" };
+        Dictionary<string, string> classIdentifiers = new Dictionary<string, string>
+{
+    { "peacekeeper", "_pk_" },
+    { "bandit", "_bdt_" },
+    { "renegade", "_ren_" },
+    { "scavenger", "_sc_" },
+    { "survivor", "_srv_" }
+};
 
         // Iterate through each category
         foreach (var category in modelsSortedByCategory.Keys)
@@ -345,12 +354,20 @@ public class JsonCreatorWindow : EditorWindow
 
                     foreach (var filterEntry in classEntry.Value)
                     {
-                        List<string> classSortedModels = filterEntry.Value.Distinct().ToList();
+                        // Filter models based on the class-specific identifier
+                        string classIdentifier = classIdentifiers.ContainsKey(classEntry.Key) ? classIdentifiers[classEntry.Key] : "";
+                        List<string> classSortedModels = filterEntry.Value
+                            .Where(model => model.Contains(classIdentifier))
+                            .Distinct().ToList();
                         classSortedModels.Sort();
 
-                        string classFilePath = Path.Combine(classDir, $"ALL_{filterEntry.Key}.json");
-                        string classJsonContent = JsonConvert.SerializeObject(new { meshes = classSortedModels }, Formatting.Indented);
-                        File.WriteAllText(classFilePath, classJsonContent);
+                        // Only write file if classSortedModels is not empty
+                        if (classSortedModels.Any())
+                        {
+                            string classFilePath = Path.Combine(classDir, $"ALL_{filterEntry.Key}.json");
+                            string classJsonContent = JsonConvert.SerializeObject(new { meshes = classSortedModels }, Formatting.Indented);
+                            File.WriteAllText(classFilePath, classJsonContent);
+                        }
                     }
                 }
             }
