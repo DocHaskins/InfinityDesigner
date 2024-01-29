@@ -370,6 +370,21 @@ namespace doppelganger
             UpdateInterfaceBasedOnDropdownSelection();
         }
 
+        public string GetSelectedType()
+        {
+            return typeDropdown.options[typeDropdown.value].text;
+        }
+
+        public string GetSelectedCategory()
+        {
+            return categoryDropdown.options[categoryDropdown.value].text;
+        }
+
+        public string GetSelectedClass()
+        {
+            return classDropdown.options[classDropdown.value].text;
+        }
+
         void UpdateInterfaceBasedOnDropdownSelection()
         {
             UpdateSlidersBasedOnSelection();

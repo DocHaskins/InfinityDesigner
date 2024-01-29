@@ -173,7 +173,14 @@ public class JsonCreatorWindow : EditorWindow
     {
         storeClassData = EditorGUILayout.Toggle("Store Class Data", storeClassData);
         string jsonsDir = Path.Combine(Application.dataPath, "StreamingAssets/Jsons");
-        string[] jsonFiles = Directory.GetFiles(jsonsDir, "*.json");
+        List<string> jsonFiles = new List<string>();
+        foreach (var typeDir in Directory.GetDirectories(jsonsDir))
+        {
+            foreach (var categoryDir in Directory.GetDirectories(typeDir))
+            {
+                jsonFiles.AddRange(Directory.GetFiles(categoryDir, "*.json"));
+            }
+        }
         Dictionary<string, Dictionary<string, List<string>>> modelsSortedByCategory = new Dictionary<string, Dictionary<string, List<string>>>();
         HashSet<string> unsortedModels = new HashSet<string>();
         HashSet<string> ignoreList = new HashSet<string> { "player_legs_a.msh", "man_bdt_torso_c_shawl_b.msh", "chr_player_healer_mask.msh", "reporter_woman_old_skeleton.msh", "player_camo_gloves_a_tpp.msh", "player_camo_headwear_a_tpp.msh", "player_camo_hood_a_tpp.msh", "player_camo_pants_a_tpp.msh", "npc_colonel_coat_b.msh" };
@@ -325,7 +332,8 @@ public class JsonCreatorWindow : EditorWindow
         // Iterate through each category
         foreach (var category in modelsSortedByCategory.Keys)
         {
-            string categoryDir = Path.Combine(Application.dataPath, $"StreamingAssets/SlotData/{category}");
+            string type = DetermineType(category);
+            string categoryDir = Path.Combine(Application.dataPath, $"StreamingAssets/SlotData/{type}/{category}");
             Directory.CreateDirectory(categoryDir);
 
             // Save general category models
@@ -525,16 +533,84 @@ public class JsonCreatorWindow : EditorWindow
             string jsonData = File.ReadAllText(modelFile);
             JObject modelObject = JObject.Parse(jsonData);
 
+            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(modelFile);
             var processedData = ProcessModelData(modelObject);
             string outputJson = JsonConvert.SerializeObject(processedData, Newtonsoft.Json.Formatting.Indented);
 
-            string outputDir = Path.Combine(Application.dataPath, "StreamingAssets/Jsons");
+            // Determine category using file name, class, and sex
+            string category = DetermineCategory(processedData.modelProperties.@class, processedData.modelProperties.sex, fileNameWithoutExtension);
+            string type = DetermineType(category);
+
+            // Create directories if they don't exist
+            string outputDir = Path.Combine(Application.dataPath, "StreamingAssets/Jsons", type, category);
             Directory.CreateDirectory(outputDir);
 
             string outputFilePath = Path.Combine(outputDir, Path.GetFileNameWithoutExtension(modelFile) + ".json");
             File.WriteAllText(outputFilePath, outputJson);
             Debug.Log($"Processed data saved to: {outputFilePath}");
         }
+    }
+
+    string DetermineCategory(string modelClass, string sex, string fileName)
+    {
+        fileName = fileName.ToLower();
+
+        // First, try to determine the category based on the file name
+        foreach (var prefix in categoryPrefixes)
+        {
+            if (categoryPrefixes[prefix.Key].Any(p => fileName.Contains(p.ToLower())))
+            {
+                return prefix.Key;
+            }
+        }
+
+        // If the file name check fails, fallback to modelClass
+        if (!string.IsNullOrEmpty(modelClass))
+        {
+            modelClass = modelClass.ToLower();
+            foreach (var prefix in categoryPrefixes)
+            {
+                if (categoryPrefixes[prefix.Key].Any(p => modelClass.Contains(p.ToLower())))
+                {
+                    return prefix.Key;
+                }
+            }
+        }
+
+        // Lastly, use sex as a secondary fallback
+        return DetermineCategoryBySex(sex);
+    }
+
+    string DetermineCategoryBySex(string sex)
+    {
+        if (!string.IsNullOrEmpty(sex))
+        {
+            switch (sex.ToLower())
+            {
+                case "male":
+                    return "Man";
+                case "female":
+                    return "Wmn";
+            }
+        }
+        return "Unknown"; // Default category if no match is found
+    }
+
+    string DetermineType(string category)
+    {
+        string humanPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons", "Human");
+        string infectedPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons", "Infected");
+        var folderMappings = new Dictionary<string, string>
+    {
+        {"Player", humanPath},
+        {"Man", humanPath},
+        {"Wmn", humanPath},
+        {"Child", humanPath},
+        {"Biter", infectedPath},
+        {"Viral", infectedPath},
+        {"Special Infected", infectedPath}
+    };
+        return folderMappings.TryGetValue(category, out string typePath) ? Path.GetFileName(typePath) : "Unknown";
     }
 
     ModelData ProcessModelData(JObject modelObject)
