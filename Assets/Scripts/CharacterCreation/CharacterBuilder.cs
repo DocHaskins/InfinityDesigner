@@ -172,32 +172,17 @@ namespace doppelganger
                     Slider slider = primarySliderTransform.GetComponent<Slider>();
                     if (slider != null)
                     {
+                        float randomValue = UnityEngine.Random.Range(slider.minValue, slider.maxValue + 1);
+                        Debug.Log("Random value for " + sliderContainer.name + ": " + randomValue);
+
+                        slider.value = randomValue;
+
                         string slotName = sliderContainer.name.Replace("Slider", "");
-
-                        // Check if the slot weight is defined
-                        if (slotWeights.ContainsKey(slotName))
-                        {
-                            float weight = slotWeights[slotName];
-
-                            // Adjust the range based on weight or other logic
-                            float minRange = slider.minValue;
-                            float maxRange = slider.maxValue;
-
-                            // Generate a random value based on weight
-                            float randomValue = SelectAndWeighValue(minRange, maxRange, weight);
-                            Debug.Log($"Value for {slotName}: {minRange}, {maxRange}, {weight}");
-
-                            slider.value = randomValue;
-                            OnSliderValueChanged(slotName, randomValue, true);
-                        }
-                        else
-                        {
-                            Debug.LogWarning($"No weight defined for slot: {slotName}");
-                        }
+                        OnSliderValueChanged(slotName, randomValue, true);
                     }
                     else
                     {
-                        Debug.LogWarning($"No slider component found in primarySlider of: {sliderContainer.name}");
+                        Debug.LogWarning("No slider component found in primarySlider of: " + sliderContainer.name);
                     }
                 }
             }

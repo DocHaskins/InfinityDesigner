@@ -88,7 +88,7 @@ public class ModelLoader : MonoBehaviour
 
     private void LoadModels(Dictionary<string, ModelData.SlotData> slotDictionary)
     {
-        SkeletonAttachmentHelper helper = new SkeletonAttachmentHelper(loadedSkeleton);
+        //SkeletonAttachmentHelper helper = new SkeletonAttachmentHelper(loadedSkeleton);
 
         foreach (var slotPair in slotDictionary)
         {
