@@ -15,6 +15,7 @@ public class CinemachineCameraZoomTool : MonoBehaviour
         public CinemachineFreeLook.Orbit[] originalOrbits = new CinemachineFreeLook.Orbit[0];
         public List<Transform> targets = new List<Transform>();
         private int currentTargetIndex = 0;
+        private float initialCameraOffsetY;
 
         [Tooltip("Speed of vertical camera movement")]
         public float verticalSpeed = 10f; // Speed of vertical movement
@@ -102,7 +103,7 @@ public class CinemachineCameraZoomTool : MonoBehaviour
             }
             if (Input.GetMouseButtonDown(2)) // Middle mouse button pressed
             {
-                initialY = freelook.Follow.position.y; // Store initial Y position
+                initialCameraOffsetY = freelook.GetRig(1).GetCinemachineComponent<CinemachineComposer>().m_TrackedObjectOffset.y;
                 accumulatedVerticalMovement = 0f; // Reset accumulated movement
                 isDragging = true; // Set dragging flag to true
             }
@@ -116,16 +117,25 @@ public class CinemachineCameraZoomTool : MonoBehaviour
             {
                 // Increment vertical movement by mouse Y axis
                 accumulatedVerticalMovement += Input.GetAxis("Mouse Y") * verticalSpeed * Time.deltaTime;
-                float newY = Mathf.Clamp(initialY + accumulatedVerticalMovement, minY, maxY);
+                float newOffsetY = Mathf.Clamp(initialCameraOffsetY + accumulatedVerticalMovement, minY, maxY);
 
-                Vector3 newPosition = new Vector3(freelook.Follow.position.x, newY, freelook.Follow.position.z);
-
-                freelook.Follow.position = newPosition;
-                freelook.LookAt.position = newPosition;
+                // Update the camera offset for each rig
+                UpdateCameraRigsOffset(newOffsetY);
             }
         }
 
-
+        private void UpdateCameraRigsOffset(float newOffsetY)
+        {
+            for (int i = 0; i < freelook.m_Orbits.Length; i++)
+            {
+                var rig = freelook.GetRig(i);
+                var composer = rig.GetCinemachineComponent<CinemachineComposer>();
+                if (composer != null)
+                {
+                    composer.m_TrackedObjectOffset.y = newOffsetY;
+                }
+            }
+        }
 
         public int CurrentTargetIndex
         {
