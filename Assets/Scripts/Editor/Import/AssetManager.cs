@@ -165,42 +165,39 @@ public class AssetManager : EditorWindow
         var prefabAsset = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
         var skinnedMeshRenderers = prefabAsset.GetComponentsInChildren<SkinnedMeshRenderer>(true);
 
-        bool updatedMaterials = false; // Flag to check if any materials were updated
-
-        foreach (var renderer in skinnedMeshRenderers)
+        foreach (var materialData in materialsList)
         {
-            Material[] materialsToUpdate = renderer.sharedMaterials;
-
-            for (int i = 0; i < materialsToUpdate.Length; i++)
+            int rendererIndex = materialData.number - 1; // Assuming 'number' starts from 1
+            if (rendererIndex >= 0 && rendererIndex < skinnedMeshRenderers.Length)
             {
-                if (i < materialsList.Count)
-                {
-                    var materialData = materialsList[i];
-                    string materialPath = Path.Combine(materialsDirectory, materialData.name);
-                    materialPath = materialPath.Replace("\\", "/");
-                    Material newMat = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+                var renderer = skinnedMeshRenderers[rendererIndex];
+                string materialPath = Path.Combine(materialsDirectory, materialData.name);
+                materialPath = materialPath.Replace("\\", "/");
+                Material newMat = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
 
-                    if (newMat != null)
+                if (newMat != null)
+                {
+                    Material[] rendererMaterials = renderer.sharedMaterials;
+                    if (rendererMaterials.Length > 0)
                     {
-                        materialsToUpdate[i] = newMat;
-                        updatedMaterials = true; // Set flag to true as a material was updated
-                        Debug.Log($"Assigned material '{materialData.name}' to '{renderer.gameObject.name}' in prefab '{prefab.name}' at index {i}");
-                    }
-                    else
-                    {
-                        Debug.LogError($"Material '{materialData.name}' not found at '{materialPath}' for renderer '{renderer.gameObject.name}' in prefab '{prefab.name}'.");
+                        rendererMaterials[0] = newMat; // Assign new material to the first slot
+                        renderer.sharedMaterials = rendererMaterials;
+                        Debug.Log($"Assigned material '{materialData.name}' to '{renderer.gameObject.name}' in prefab '{prefab.name}' at index {rendererIndex}");
                     }
                 }
+                else
+                {
+                    Debug.LogError($"Material '{materialData.name}' not found at '{materialPath}' for renderer '{renderer.gameObject.name}' in prefab '{prefab.name}'.");
+                }
             }
-
-            renderer.sharedMaterials = materialsToUpdate;
+            else
+            {
+                Debug.LogError($"Renderer index out of bounds: {rendererIndex} for material number {materialData.number} in prefab '{prefab.name}'.");
+            }
         }
 
-        if (updatedMaterials)
-        {
-            EditorUtility.SetDirty(prefabAsset);
-            Debug.Log($"Prefab '{prefabAsset.name}' marked as dirty for material updates.");
-        }
+        EditorUtility.SetDirty(prefabAsset);
+        Debug.Log($"Prefab '{prefabAsset.name}' marked as dirty for material updates.");
     }
 
     private void CheckAllMaterials()
