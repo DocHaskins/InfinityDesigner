@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine.UI;
 using static ModelData;
 using System.Linq;
+using System.Collections;
 
 [Serializable]
 public class CharacterConfig
@@ -34,7 +35,7 @@ namespace doppelganger
     {
         public CinemachineCameraZoomTool cameraTool;
         public Button TypeManButton, TypeWmnButton, TypePlayerButton, TypeInfectedButton, TypeChildButton;
-        private string currentType = "Player";
+        private string currentType;
         private string currentPath;
         public TMP_Dropdown typeDropdown;
         public TMP_Dropdown categoryDropdown;
@@ -107,23 +108,12 @@ namespace doppelganger
 
         void Start()
         {
-            UpdateCameraTarget(loadedSkeleton.transform);
+            currentType = "Human";
 
             PopulateDropdown(typeDropdown, Application.streamingAssetsPath + "/SlotData", "Human");
             PopulateDropdown(categoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", "Human"), "ALL", true);
-            PopulateDropdown(classDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", "Human", "Player"), "ALL");
 
-            // Add listeners to dropdowns
-            typeDropdown.onValueChanged.AddListener(OnTypeChanged);
-            categoryDropdown.onValueChanged.AddListener(OnCategoryChanged);
-            classDropdown.onValueChanged.AddListener(OnClassChanged);
-            // Set initial values for Type, Category, and Class dropdowns
-            typeDropdown.value = typeDropdown.options.FindIndex(option => option.text == "Human");
-            categoryDropdown.value = categoryDropdown.options.FindIndex(option => option.text == "ALL");
-            classDropdown.value = classDropdown.options.FindIndex(option => option.text == "Player");
-
-            // Manually trigger the interface update as if the dropdown values were changed
-            UpdateInterfaceBasedOnDropdownSelection();
+            StartCoroutine(SetInitialDropdownValues());
 
             // Set up button listeners
             if (bodyButton != null) bodyButton.onClick.AddListener(() => FilterCategory("BodyButton"));
@@ -140,13 +130,49 @@ namespace doppelganger
                 sliderSetStatus[sliderName] = false;
             }
 
+            int playerTypeIndex = categoryDropdown.options.FindIndex(option => option.text == "Player");
+            if (playerTypeIndex != -1)
+            {
+                categoryDropdown.value = playerTypeIndex;
+            }
+            else
+            {
+                Debug.LogError("Player type not found in dropdown options.");
+            }
+
+            // Update dropdowns based on the selected 'Player' type
+            OnTypeChanged(typeDropdown.value);
+
             // Load default JSON file and set sliders
             string defaultJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Jsons", "Human", "Player", "player_tpp_skeleton.json");
             LoadJsonAndSetSliders(defaultJsonFilePath);
             slotWeights = LoadSlotWeights();
 
+            // Manually trigger the interface update as if the dropdown values were changed
+            UpdateInterfaceBasedOnDropdownSelection();
+
             // Manually update preset dropdown based on initial dropdown selections
             UpdatePresetDropdown();
+        }
+
+        IEnumerator SetInitialDropdownValues()
+        {
+            // Wait for the end of the frame to ensure dropdowns are populated
+            yield return new WaitForEndOfFrame();
+
+            // Set initial values for Type, Category, and Class dropdowns
+            typeDropdown.value = typeDropdown.options.FindIndex(option => option.text == "Human");
+            categoryDropdown.value = categoryDropdown.options.FindIndex(option => option.text == "Player");
+            classDropdown.value = classDropdown.options.FindIndex(option => option.text == "ALL");
+
+            // Trigger updates
+            OnTypeChanged(typeDropdown.value);
+            OnCategoryChanged(categoryDropdown.value);
+
+            // Add listeners to dropdowns after setting the initial values
+            typeDropdown.onValueChanged.AddListener(OnTypeChanged);
+            categoryDropdown.onValueChanged.AddListener(OnCategoryChanged);
+            classDropdown.onValueChanged.AddListener(OnClassChanged);
         }
 
         public void Reroll()
@@ -324,6 +350,23 @@ namespace doppelganger
 
                 if (modelData != null)
                 {
+                    string skeletonName = modelData.skeletonName;
+                    if (!string.IsNullOrEmpty(skeletonName))
+                    {
+                        // Find and destroy the currently loaded skeleton
+                        GameObject currentSkeleton = GameObject.FindGameObjectWithTag("Skeleton");
+                        if (currentSkeleton != null)
+                        {
+                            Destroy(currentSkeleton);
+                        }
+
+                        LoadSkeleton(skeletonName);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("Skeleton name not found in JSON.");
+                    }
+
                     var slots = modelData.GetSlots();
                     if (slots != null && slots.Count > 0)
                     {
@@ -332,7 +375,8 @@ namespace doppelganger
                             SlotData slot = slotPair.Value;
                             foreach (var modelInfo in slot.models)
                             {
-                                //Debug.Log($"Processing model: {modelInfo.name}");
+                                // Remove the '.msh' extension from the model name
+                                string modelNameWithClone = Path.GetFileNameWithoutExtension(modelInfo.name) + "(Clone)";
 
                                 string slotName = FindSlotForModel(modelInfo.name);
                                 if (!string.IsNullOrEmpty(slotName))
@@ -341,6 +385,15 @@ namespace doppelganger
                                     if (modelIndex != -1)
                                     {
                                         SetSliderValue(slotName, modelIndex);
+                                        if (currentlyLoadedModels.TryGetValue(modelNameWithClone, out GameObject modelInstance))
+                                        {
+                                            ApplyMaterials(modelInstance, modelInfo);
+                                        }
+                                        else
+                                        {
+                                            Debug.LogWarning($"Model instance not found for {modelNameWithClone}");
+                                            PrintCurrentlyLoadedModels();
+                                        }
                                     }
                                     else
                                     {
@@ -351,6 +404,7 @@ namespace doppelganger
                                 {
                                     Debug.LogWarning($"Slot not found for model {modelInfo.name}");
                                 }
+                                
                             }
                         }
                     }
@@ -367,6 +421,49 @@ namespace doppelganger
             else
             {
                 Debug.LogError("Preset JSON file not found: " + jsonPath);
+            }
+        }
+
+        void PrintCurrentlyLoadedModels()
+        {
+            Debug.Log("Currently Loaded Models:");
+            foreach (var pair in currentlyLoadedModels)
+            {
+                Debug.Log($"Key: {pair.Key}, GameObject Name: {pair.Value.name}");
+            }
+        }
+
+        private void LoadSkeleton(string skeletonName)
+        {
+            string resourcePath = "Prefabs/" + skeletonName.Replace(".msh", "");
+            GameObject skeletonPrefab = Resources.Load<GameObject>(resourcePath);
+            if (skeletonPrefab != null)
+            {
+                GameObject loadedSkeleton = Instantiate(skeletonPrefab, Vector3.zero, Quaternion.Euler(-90, 0, 0));
+                loadedSkeleton.tag = "Skeleton";
+
+                // Find the 'pelvis' child in the loaded skeleton
+                Transform pelvis = loadedSkeleton.transform.Find("pelvis");
+                if (pelvis != null)
+                {
+                    // Create a new GameObject named 'Legs'
+                    GameObject legs = new GameObject("legs");
+
+                    // Set 'Legs' as a child of 'pelvis'
+                    legs.transform.SetParent(pelvis);
+
+                    // Set the local position of 'Legs' with the specified offset
+                    legs.transform.localPosition = new Vector3(0, 0, -0.005f);
+                }
+                else
+                {
+                    Debug.LogError("Pelvis not found in the skeleton prefab: " + skeletonName);
+                }
+                UpdateCameraTarget(loadedSkeleton.transform);
+            }
+            else
+            {
+                Debug.LogError("Skeleton prefab not found in Resources: " + resourcePath);
             }
         }
 
@@ -1244,8 +1341,7 @@ namespace doppelganger
 
         private void ApplyMaterials(GameObject modelInstance, ModelData.ModelInfo modelInfo)
         {
-            // Check if modelInstance and modelInfo are not null
-            if (modelInstance == null || modelInfo == null || modelInfo.materialsData == null)
+            if (modelInstance == null || modelInfo == null || modelInfo.materialsResources == null)
             {
                 Debug.LogError("ApplyMaterials: modelInstance or modelInfo is null.");
                 return;
@@ -1253,60 +1349,65 @@ namespace doppelganger
 
             var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
 
-            // Store initial state
             if (!initialRendererStates.ContainsKey(modelInstance))
             {
                 initialRendererStates[modelInstance] = skinnedMeshRenderers.Select(r => r.enabled).ToArray();
             }
 
-            foreach (var materialData in modelInfo.materialsData)
+            foreach (var materialResource in modelInfo.materialsResources)
             {
-                // Check if materialData is not null
-                if (materialData == null)
+                if (materialResource == null || materialResource.resources == null || materialResource.resources.Count == 0)
                 {
-                    Debug.LogError("Material data is null.");
+                    Debug.LogError("Material resource data is null or empty.");
                     continue;
                 }
 
-                int rendererIndex = materialData.number - 1;
+                int rendererIndex = materialResource.number - 1;
                 if (rendererIndex >= 0 && rendererIndex < skinnedMeshRenderers.Length)
                 {
                     var renderer = skinnedMeshRenderers[rendererIndex];
-                    ApplyMaterialToRenderer(renderer, materialData.name, modelInstance);
+
+                    // Example logic to select the first resource or based on some condition
+                    var resource = materialResource.resources.First();
+                    string materialName = resource.name;
+                    List<RttiValue> rttiValues = resource.rttiValues;
+                    ApplyMaterialToRenderer(renderer, materialName, modelInstance, rttiValues);
                 }
                 else
                 {
-                    Debug.LogError($"Renderer index out of bounds: {rendererIndex} for material number {materialData.number} in model '{modelInfo.name}'");
+                    Debug.LogError($"Renderer index out of bounds: {rendererIndex} for material number {materialResource.number} in model '{modelInfo.name}'");
                 }
             }
         }
 
-        private void ApplyMaterialToRenderer(SkinnedMeshRenderer renderer, string materialName, GameObject modelInstance)
+        private bool ShouldUseCustomShader(string resourceName)
+        {
+            // Define names that should use the custom shader
+            string[] specialNames = {
+        "sh_biter_", "sh_man_", "sh_scan_man_", "multihead007_npc_carl_",
+        "sh_wmn_", "sh_scan_wmn_", "sh_dlc_opera_wmn_", "nnpc_wmn_worker",
+        "sh_scan_kid_", "sh_scan_girl_", "sh_scan_boy_", "sh_chld_"
+    };
+
+            if (resourceName.Contains("hair"))
+            {
+                return false;
+            }
+
+            return specialNames.Any(name => resourceName.StartsWith(name));
+        }
+
+        private void ApplyMaterialToRenderer(SkinnedMeshRenderer renderer, string materialName, GameObject modelInstance, List<RttiValue> rttiValues = null)
         {
             if (materialName.Equals("null.mat", StringComparison.OrdinalIgnoreCase))
             {
                 renderer.enabled = false;
-                if (!disabledRenderers.ContainsKey(modelInstance))
-                {
-                    disabledRenderers[modelInstance] = new List<int>();
-                }
-                disabledRenderers[modelInstance].Add(Array.IndexOf(modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true), renderer));
+                AddToDisabledRenderers(modelInstance, renderer);
                 return;
             }
             else
             {
                 renderer.enabled = true;
-            }
-
-            if (materialName.Equals(ShouldDisableRenderer(renderer.gameObject.name)))
-            {
-                renderer.enabled = false;
-            }
-
-            if (materialName.StartsWith("sm_"))
-            {
-                Debug.Log($"Skipped material '{materialName}' as it starts with 'sm_'");
-                return;
             }
 
             Material loadedMaterial = LoadMaterial(materialName);
@@ -1316,8 +1417,21 @@ namespace doppelganger
                 Material[] rendererMaterials = renderer.sharedMaterials;
                 if (rendererMaterials.Length > 0)
                 {
-                    rendererMaterials[0] = loadedMaterial;
+                    Material clonedMaterial = new Material(loadedMaterial);
+                    rendererMaterials[0] = clonedMaterial;
                     renderer.sharedMaterials = rendererMaterials;
+
+                    if (rttiValues != null)
+                    {
+                        foreach (var rttiValue in rttiValues)
+                        {
+                            if (rttiValue.name != "ems_scale")
+                            {
+                                bool useCustomShader = ShouldUseCustomShader(materialName);
+                                ApplyTextureToMaterial(clonedMaterial, rttiValue.name, rttiValue.val_str, useCustomShader);
+                            }
+                        }
+                    }
                 }
                 else
                 {
@@ -1327,6 +1441,137 @@ namespace doppelganger
             else
             {
                 Debug.LogError($"Material not found: '{materialName}' for renderer '{renderer.gameObject.name}'");
+            }
+        }
+
+        private void AddToDisabledRenderers(GameObject modelInstance, SkinnedMeshRenderer renderer)
+        {
+            if (!disabledRenderers.ContainsKey(modelInstance))
+            {
+                disabledRenderers[modelInstance] = new List<int>();
+            }
+            disabledRenderers[modelInstance].Add(Array.IndexOf(modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true), renderer));
+        }
+
+        private void ApplyTextureToMaterial(Material material, string rttiValueName, string textureName, bool useCustomShader)
+        {
+            if (!string.IsNullOrEmpty(textureName))
+            {
+                Debug.Log($"Applying texture. RTTI Value Name: {rttiValueName}, Texture Name: {textureName}");
+
+                if (rttiValueName == "ems_scale")
+                {
+                    return;
+                }
+
+                string texturePath = "textures/" + Path.GetFileNameWithoutExtension(textureName);
+                Texture2D texture = Resources.Load<Texture2D>(texturePath);
+                string difTextureName = null;
+                string modifierTextureName = null;
+
+                if (texture != null)
+                {
+                    if (useCustomShader)
+                    {
+                        bool difTextureApplied = false;
+                        switch (rttiValueName)
+                        {
+                            case "msk_0_tex":
+                            case "msk_1_tex":
+                            case "msk_1_add_tex":
+                                material.SetTexture("_msk", texture);
+                                break;
+                            case "idx_0_tex":
+                            case "idx_1_tex":
+                                material.SetTexture("_idx", texture);
+                                break;
+                            case "grd_0_tex":
+                            case "grd_1_tex":
+                                material.SetTexture("_gra", texture);
+                                break;
+                            case "spc_0_tex":
+                            case "spc_1_tex":
+                                material.SetTexture("_spc", texture);
+                                break;
+                            case "clp_0_tex":
+                            case "clp_1_tex":
+                                material.SetTexture("_clp", texture);
+                                break;
+                            case "rgh_0_tex":
+                            case "rgh_1_tex":
+                                material.SetTexture("_rgh", texture);
+                                break;
+                            case "ocl_0_tex":
+                            case "ocl_1_tex":
+                                material.SetTexture("_ocl", texture);
+                                break;
+                            case "ems_0_tex":
+                            case "ems_1_tex":
+                                material.SetTexture("_ems", texture);
+                                break;
+                            case "dif_1_tex":
+                            case "dif_0_tex":
+                                material.SetTexture("_dif", texture);
+                                difTextureName = textureName;
+                                difTextureApplied = true;
+                                break;
+                            case "nrm_1_tex":
+                            case "nrm_0_tex":
+                                material.SetTexture("_nrm", texture);
+                                break;
+                        }
+
+                        if (difTextureApplied && textureName.StartsWith("chr_"))
+                        {
+                            material.SetTexture("_modifier", texture);
+                            modifierTextureName = textureName;
+                        }
+
+                        // Check if _dif and _modifier textures have the same name
+                        if (difTextureName != null && modifierTextureName != null && difTextureName == modifierTextureName)
+                        {
+                            material.SetFloat("_Modifier", 0);
+                        }
+                        else if (difTextureApplied)
+                        {
+                            material.SetFloat("_Modifier", 1);
+                        }
+                    }
+                    else
+                    {
+                        // HDRP/Lit shader texture assignments
+                        switch (rttiValueName)
+                        {
+                            case "dif_1_tex":
+                            case "dif_0_tex":
+                                material.SetTexture("_BaseColorMap", texture);
+                                break;
+                            case "nrm_1_tex":
+                            case "nrm_0_tex":
+                                material.SetTexture("_NormalMap", texture);
+                                break;
+                            case "msk_1_tex":
+                                // Assuming msk_1_tex corresponds to the mask map in HDRP/Lit shader
+                                material.SetTexture("_MaskMap", texture);
+                                break;
+                            case "ems_0_tex":
+                            case "ems_1_tex":
+                                material.SetTexture("_EmissiveColorMap", texture);
+                                material.SetColor("_EmissiveColor", Color.white * 2);
+                                material.EnableKeyword("_EMISSION");
+                                break;
+                                // Add other cases for HDRP/Lit shader
+                        }
+                    }
+                }
+                else
+                {
+                    Debug.LogError($"Texture '{texturePath}' not found in Resources for material '{rttiValueName}'");
+                }
+            }
+            else
+            {
+                //Debug.LogWarning($"Texture name is empty for RTTI Value Name: {rttiValueName}");
             }
         }
 

@@ -60,6 +60,8 @@ public class JsonCreatorWindow : EditorWindow
             {"sleeve", new List<string> {"sleeve", "sleeves", "forearm", "arm", "arms"}},
             {"backpack", new List<string> {"backpack", "bag", "parachute", "backback"}},
             {"decals", new List<string> {"decal", "patch"}},
+            {"decals_extra", new List<string> {"decal", "patch"}},
+            {"decals_logo", new List<string> {"logo"}},
             {"legs", new List<string> {"leg", "legs", "pants", "trousers", "army_pants"}},
             {"legs_extra", new List<string> {"pocket", "socks", "bottom", "sc_ov_legs", "legs_a_part", "child_torso_a_bottom", "skirt", "man_srv_legs_b_bottom_a", "belt", "legs_c_add_", "legs_a_addon", "pants_b_rag"}},
             {"legs_access", new List<string> {"pocket", "socks", "bottom", "sc_ov_legs", "legs_a_part", "pouch", "child_torso_a_bottom", "holster", "skirt", "chain", "equipment", "npc_jack_legs_adds", "man_srv_legs_b_bottom_a", "belt", "pad_", "legs_c_add_", "legs_a_addon", "pants_b_rag", "bumbag", "bag", "patch_", "bandage", "element", "tapes"}},
@@ -73,10 +75,10 @@ public class JsonCreatorWindow : EditorWindow
             {"armor_torso_lowerright", new List<string> {"lowerright", "bracers", "bracer", "hand_tapes_a_right", "pad_a_r", "elbow_pad_a_normal_r", "elbow_pad_a_muscular_r"}},
             {"armor_torso_lowerleft", new List<string> {"lowerleft", "bracers", "npc_skullface_shield", "pad_a_l", "hand_tapes_a_left", "elbow_pad_a_muscular_l", "elbow_pad_a_normal_l"}},
             {"armor_legs", new List<string> { "legs_armor", "legs_b_armor", "leg_armor", "pants_armor", "legs_a_armor", "pants_b_armor", "leg_armor", "pants_a_armor"}},
-            {"armor_legs_upperright", new List<string> {"armor_upperright"}},
-            {"armor_legs_upperleft", new List<string> {"armor_upperleft"}},
-            {"armor_legs_lowerright", new List<string> {"armor_lowerright"}},
-            {"armor_legs_lowerleft", new List<string> {"armor_lowerleft"}}
+            {"armor_legs_upperright", new List<string> { "armor"}},
+            {"armor_legs_upperleft", new List<string> { "armor"}},
+            {"armor_legs_lowerright", new List<string> { "armor"}},
+            {"armor_legs_lowerleft", new List<string> { "armor"}}
         };
 
         categoryPrefixes = new Dictionary<string, string[]>
@@ -111,7 +113,7 @@ public class JsonCreatorWindow : EditorWindow
             {"torso_2", new List<string> {"armor", "sleeve", "plates", "wrench", "detail", "bracer", "bracers", "sh_npc_anderson", "bottom", "base", "torso_c_sweater", "stethoscope", "plaguewitch", "horns", "wpntmp", "equipment", "head", "hair", "shoulderpad", "player_camo_torso_a_tpp", "hat", "mask", "player_inquisitor_torso_a_tpp", "player_torso_tpp_a", "addon", "machete_tpp", "skull", "chain_armour", "hands", "battery", "arms", "cape", "turtleneck", "apron", "pants", "backpack", "bag", "parachute", "suspenders", "legs", "hood", "spikes", "chain", "decal", "collar", "scarf", "pouch", "zipper", "belt", "part", "patch", "bag", "pocket", "jewelry", "necklace", "ring"}},
             {"torso_extra", new List<string> {"armor", "mask", "gloves", "sleeve", "hands", "battery", "arms", "cape", "pants", "backpack", "bag", "parachute", "legs", "hood", "spikes", "chain", "decal", "collar", "scarf", "pouch", "zipper", "belt", "bag", "pocket", "jewelry", "necklace", "ring"}},
             {"torso_access", new List<string> {"pants", "leg", "legs", "shoes", "man_bdt_chain_i", "bracken_bandage", "man_bdt_chain_g", "man_bdt_chain_h", "man_bdt_chain_f"}},
-            {"hands", new List<string> {"sleeve", "upper_arms", "pk", "man_srv_arms_a", "_left", "belts", "chains", "elbow", "_right", "armor", "decal_tattoo", "decal"}},
+            {"hands", new List<string> {"sleeve", "upper_arms", "pk", "man_srv_arms_a", "man_srv_torso_b_arms", "_left", "belts", "chains", "elbow", "_right", "armor", "decal_tattoo", "decal"}},
             {"lhand", new List<string> {"_right", "upper", "headwear", "belts", "wrapper", "bracer", "bracers", "chains", "elbow", "balaclava", "shoes", "sleeve", "armor", "glove", "decal_tattoo", "tattoo", "torso", "leg", "legs", "pants", "hand", "decal"}},
             {"rhand", new List<string> {"_left", "upper", "headwear", "belts", "wrapper", "bracer", "bracers", "chains", "elbow", "balaclava", "shoes", "sleeve", "armor", "glove", "decal_tattoo", "tattoo", "torso", "leg", "legs", "pants", "hand", "decal"}},
             {"tattoo", new List<string> {"mask"}},
@@ -120,6 +122,8 @@ public class JsonCreatorWindow : EditorWindow
             {"sleeve", new List<string> {"decal", "logo", "headwear", "gloves", "pants", "shoes", "leg", "addon", "torso_armor"}},
             {"backpack", new List<string> {"pants"}},
             {"decals", new List<string> {"mask"}},
+            {"decals_extra", new List<string> {"mask"}},
+            {"decals_graphic", new List<string> {"mask"}},
             {"legs", new List<string> {"mask", "shoes", "player_legs_a", "sc_ov_legs", "feet", "part", "child_torso_a_bottom", "child_pants_b", "player_camo_pants_a_tpp", "arm", "chain", "elbow", "_right", "npc_jack_legs_adds", "bandage", "sleeve", "patch", "add_", "armor", "glove", "addon", "bag", "tapes", "man_srv_legs_b_bottom_a", "element", "hand", "decal", "equipment", "pocket", "pouch", "element", "decal_logo", "belt", "pad", "pants_b_rag", "bumbag", "bag", "patch_"}},
             {"legs_extra", new List<string> {"armor", "man_bdt_belt_d_pouches_a", "hair", "chainmail", "bracken_bandage", "man_bdt_belt_g", "man_bdt_belt_c_addon_a", "man_bdt_belt_c", "man_bzr_belt_c", "man_bdt_belt_d", "man_bzr_belt_a", "man_srv_belt_bags_a", "torso", "elbow", "decal_logo", "shoes", "arm", "sleeve", "armor", "glove", "torso", "hand", "hat"}},
             {"legs_access", new List<string> {"armor", "man_bdt_belt_d_pouches_a", "hair", "chainmail", "bracken_bandage", "man_bdt_belt_g", "man_bdt_belt_c_addon_a", "man_bdt_belt_c", "man_bzr_belt_c", "man_bdt_belt_d", "man_bzr_belt_a", "man_srv_belt_bags_a", "torso", "elbow", "decal_logo", "shoes", "arm", "sleeve", "armor", "glove", "torso", "hand", "hat"}},
@@ -132,11 +136,11 @@ public class JsonCreatorWindow : EditorWindow
             {"armor_torso_upperleft", new List<string> {"legs", "pants", "leg"}},
             {"armor_torso_lowerright", new List<string> {"legs", "pants", "leg"}},
             {"armor_torso_lowerleft", new List<string> {"legs", "pants", "leg"}},
-            {"armor_legs", new List<string> {"torso"}},
-            {"armor_legs_upperright", new List<string> {"torso", "arm", "arms"}},
-            {"armor_legs_upperleft", new List<string> {"torso", "arm", "arms"}},
-            {"armor_legs_lowerright", new List<string> {"torso", "arm", "arms"}},
-            {"armor_legs_lowerleft", new List<string> {"torso", "arm", "arms"}}
+            {"armor_legs", new List<string> {"mask"}},
+            {"armor_legs_upperright", new List<string> { "lowerleft", "lowerright", "upperleft", "arm", "arms"}},
+            {"armor_legs_upperleft", new List<string> { "lowerleft", "lowerright", "upperright", "mask", "arm", "arms" }},
+            {"armor_legs_lowerright", new List<string> { "lowerleft", "upperright", "upperleft", "mask", "arm", "arms" }},
+            {"armor_legs_lowerleft", new List<string> { "upperright", "lowerright", "upperleft", "mask", "arm", "arms" }}
         };
     }
 
@@ -165,7 +169,7 @@ public class JsonCreatorWindow : EditorWindow
 
         EditorGUILayout.Space();
 
-        if (GUILayout.Button("Reorganize JSONS"))
+        if (GUILayout.Button("Create ALL jsons"))
         {
             ReorganizeAndCombineJsonFiles();
         }
@@ -414,31 +418,6 @@ public class JsonCreatorWindow : EditorWindow
         // Create Human and Infected folders
         string humanPath = Path.Combine(slotDataPath, "Human");
         string infectedPath = Path.Combine(slotDataPath, "Infected");
-        CreateDirectoryIfNotExists(humanPath);
-        CreateDirectoryIfNotExists(infectedPath);
-
-        // Define the mapping of existing folders to new parent folders
-        var folderMappings = new Dictionary<string, string>
-    {
-        {"Player", humanPath},
-        {"Man", humanPath},
-        {"Wmn", humanPath},
-        {"Child", humanPath},
-        {"Biter", infectedPath},
-        {"Viral", infectedPath},
-        {"Special Infected", infectedPath}
-    };
-
-        // Move existing folders into the new Human or Infected folders
-        foreach (var mapping in folderMappings)
-        {
-            string sourcePath = Path.Combine(slotDataPath, mapping.Key);
-            string destPath = Path.Combine(mapping.Value, mapping.Key);
-            if (Directory.Exists(sourcePath))
-            {
-                MergeDirectories(sourcePath, destPath);
-            }
-        }
 
         // Combine ALL_{filters}.json files
         CombineJsonFiles(humanPath);
@@ -492,6 +471,12 @@ public class JsonCreatorWindow : EditorWindow
 
         foreach (var folder in subFolders)
         {
+            // Skip the "Child" folder
+            if (Path.GetFileName(folder).Equals("Child", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
             var jsonFiles = Directory.GetFiles(folder, "ALL_*.json");
             foreach (var file in jsonFiles)
             {
@@ -506,6 +491,7 @@ public class JsonCreatorWindow : EditorWindow
                 combinedData[fileName].AddRange(allFiltersModelData.meshes);
             }
         }
+
 
         // Write combined data to new JSON files
         foreach (var entry in combinedData)
