@@ -48,6 +48,7 @@ public class JsonCreatorWindow : EditorWindow
             {"facial_hair", new List<string> {"facial_hair", "beard", "jaw_"}},
             {"cape", new List<string> {"cape", "scarf", "chainmail", "sweater", "shawl", "shalw", "choker", "cloak", "npc_man_torso_g_hood_b"}},
             {"torso", new List<string> {"torso", "npc_anderson", "player_reload_outfit", "singer_top", "npc_frank", "bolter", "goon", "charger_body", "corruptor", "screamer", "spitter", "viral", "volatile", "zmb_suicider_corpse"}},
+            {"torso_2", new List<string> { "torso", "centre", "vest", "wmn_torso_e", "wmn_torso_i", "center", "top", "fronttop", "front", "dress", "coat", "jacket", "bubbles", "horns", "guts", "gastank"}},
             {"torso_extra", new List<string> {"torso", "addon", "wpntmp", "centre", "detail", "vest", "wmn_torso_e", "wmn_torso_i", "stethoscope", "center", "top", "fronttop", "front", "dress", "machete_tpp", "coat", "plates", "vest", "jacket", "bubbles", "horns", "guts", "gastank"}},
             {"torso_access", new List<string> {"belt", "bumbag", "wpntmp", "centre", "detail", "vest", "wmn_torso_e", "wmn_torso_i", "stethoscope", "center", "top", "fronttop", "front", "torso_b_cape_spikes", "spikes", "knife", "add_", "wrap", "npc_colonel_feathers_a", "axe", "npc_wmn_pants_b_torso_g_tank_top_bumbag_a", "zipper", "rag", "pouch", "collar", "neck", "pocket", "waist_shirt", "chain_armour", "skull_", "plates", "sport_bag", "gastank", "walkietalkie", "man_bdt_belt_c_addon_a", "chain", "battery", "torso_a_pk_top", "man_bdt_torso_d_shirt_c", "wrench", "suspenders", "turtleneck", "npc_waltz_torso_a_glasses_addon", "apron"}},
             {"tattoo", new List<string> {"tatoo", "tattoo"}},
@@ -83,9 +84,9 @@ public class JsonCreatorWindow : EditorWindow
             {"Biter", new[] {"biter", "man_zmb_", "wmn_zmb_", "_zmb"}},
             {"Viral", new[] {"viral", "wmn_viral"}},
             {"Special Infected", new[] { "volatile", "suicider", "spitter", "goon", "demolisher", "screamer", "bolter", "corruptor", "banshee", "charger" }},
-            {"Player", new[] { "sh_npc_aiden", "player", "player_outfit_lubu_tpp", "player_outfit_brecken", "player_outfit_gunslinger_tpp"}},
-            {"Man", new[] {"man", "man_srv_craftmaster", "npc_carl", "npc_alberto_paganini", "npc_outpost_guard", "npc_callum", "npc_abandon_srv_emmett", "npc_abandon_pk_master_brewer", "npc_feliks", "npc_marcus", "npc_mq_stan", "npc_hank", "npc_jack", "npc_colonel", "npc_pilgrim", "sh_baker", "npc_simon", "npc_juan", "npc_rowe", "npc_vincente", "sh_bruce",  "sh_frank", "sh_dlc_opera_npc_tetsuo", "sh_dlc_opera_npc_ogar", "sh_dlc_opera_npc_ciro", "sh_dlc_opera_npc_andrew", "npc_dylan", "npc_waltz", "dlc_opera_man", "npc_skullface", "sh_johnson", "npc_hakon", "npc_steve", "npc_barney", "multihead007_npc_carl_"}},
-            {"Wmn", new[] {"wmn", "dlc_opera_wmn", "npc_anderson", "sh_mother", "npc_thalia", "npc_hilda", "npc_lola", "npc_mq_singer", "npc_astrid", "npc_dr_veronika", "npc_lawan", "npc_meredith", "npc_mia", "npc_nuwa", "npc_plaguewitch", "npc_sophie"}},
+            {"Player", new[] { "sh_npc_aiden", "player", "player_outfit_lubu_tpp", "player_outfit_carrier_leader_tpp", "player_outfit_brecken", "player_outfit_gunslinger_tpp"}},
+            {"Man", new[] {"man", "man_srv_craftmaster", "dlc_opera_man_shopkeeper_special", "npc_pipsqueak", "dlc_opera_man_npc_ciro", "npc_mc_dispatcher", "dlc_opera_man_npc_ferka", "dlc_opera_man_npc_hideo", "dlc_opera_man_npc_ogar", "npc_carl", "npc_alberto_paganini", "npc_outpost_guard", "npc_callum", "npc_abandon_srv_emmett", "npc_abandon_pk_master_brewer", "npc_feliks", "npc_marcus", "npc_mq_stan", "npc_hank", "npc_jack", "npc_colonel", "npc_pilgrim", "sh_baker", "npc_simon", "npc_juan", "npc_rowe", "npc_vincente", "sh_bruce",  "sh_frank", "sh_dlc_opera_npc_tetsuo", "sh_dlc_opera_npc_ogar", "sh_dlc_opera_npc_ciro", "sh_dlc_opera_npc_andrew", "npc_dylan", "npc_waltz", "dlc_opera_man", "npc_skullface", "sh_johnson", "npc_hakon", "npc_steve", "npc_barney", "multihead007_npc_carl_"}},
+            {"Wmn", new[] {"wmn", "dlc_opera_wmn", "npc_anderson", "dlc_opera_man_wmn_brienne", "sh_mother", "npc_thalia", "npc_hilda", "npc_lola", "npc_mq_singer", "npc_astrid", "npc_dr_veronika", "npc_lawan", "npc_meredith", "npc_mia", "npc_nuwa", "npc_plaguewitch", "npc_sophie"}},
             {"Child", new[] {"child", "kid", "girl", "boy", "young", "chld"}}
         };
 
@@ -107,9 +108,10 @@ public class JsonCreatorWindow : EditorWindow
             {"facial_hair", new List<string> {"hat", "cap", "headwear", "mask", "decal", "glasses" }},
             {"cape", new List<string> {"mask", "spikes", "belts", "scarf_a_part_d", "bags", "scarf_a_part_c"}},
             {"torso", new List<string> {"armor", "sleeve", "plates", "wrench", "detail", "vest", "skirt", "center",  "wmn_torso_e", "bracer", "bracers", "sh_npc_anderson", "wmn_torso_i", "bottom", "base", "front_", "fronttop",  "torso_c_sweater", "rag", "stethoscope", "plaguewitch", "centre", "nuwa_torso_a", "horns", "wpntmp", "equipment", "head", "hair", "shoulderpad", "player_camo_torso_a_tpp", "hat", "mask", "player_inquisitor_torso_a_tpp", "player_torso_tpp_a", "addon", "machete_tpp", "skull", "chain_armour", "hands", "battery", "arms", "cape", "turtleneck", "apron", "pants", "backpack", "bag", "parachute", "suspenders", "legs", "hood", "spikes", "chain", "decal", "collar", "scarf", "pouch", "zipper", "belt", "part", "patch", "bag", "pocket", "jewelry", "necklace", "ring"}},
+            {"torso_2", new List<string> {"armor", "sleeve", "plates", "wrench", "detail", "bracer", "bracers", "sh_npc_anderson", "bottom", "base", "torso_c_sweater", "stethoscope", "plaguewitch", "horns", "wpntmp", "equipment", "head", "hair", "shoulderpad", "player_camo_torso_a_tpp", "hat", "mask", "player_inquisitor_torso_a_tpp", "player_torso_tpp_a", "addon", "machete_tpp", "skull", "chain_armour", "hands", "battery", "arms", "cape", "turtleneck", "apron", "pants", "backpack", "bag", "parachute", "suspenders", "legs", "hood", "spikes", "chain", "decal", "collar", "scarf", "pouch", "zipper", "belt", "part", "patch", "bag", "pocket", "jewelry", "necklace", "ring"}},
             {"torso_extra", new List<string> {"armor", "mask", "gloves", "sleeve", "hands", "battery", "arms", "cape", "pants", "backpack", "bag", "parachute", "legs", "hood", "spikes", "chain", "decal", "collar", "scarf", "pouch", "zipper", "belt", "bag", "pocket", "jewelry", "necklace", "ring"}},
             {"torso_access", new List<string> {"pants", "leg", "legs", "shoes", "man_bdt_chain_i", "bracken_bandage", "man_bdt_chain_g", "man_bdt_chain_h", "man_bdt_chain_f"}},
-            {"hands", new List<string> {"sleeve", "upper_arms", "pk", "_left", "belts", "chains", "elbow", "_right", "armor", "decal_tattoo", "decal"}},
+            {"hands", new List<string> {"sleeve", "upper_arms", "pk", "man_srv_arms_a", "_left", "belts", "chains", "elbow", "_right", "armor", "decal_tattoo", "decal"}},
             {"lhand", new List<string> {"_right", "upper", "headwear", "belts", "wrapper", "bracer", "bracers", "chains", "elbow", "balaclava", "shoes", "sleeve", "armor", "glove", "decal_tattoo", "tattoo", "torso", "leg", "legs", "pants", "hand", "decal"}},
             {"rhand", new List<string> {"_left", "upper", "headwear", "belts", "wrapper", "bracer", "bracers", "chains", "elbow", "balaclava", "shoes", "sleeve", "armor", "glove", "decal_tattoo", "tattoo", "torso", "leg", "legs", "pants", "hand", "decal"}},
             {"tattoo", new List<string> {"mask"}},
@@ -191,7 +193,8 @@ public class JsonCreatorWindow : EditorWindow
 {
     { "young", "Child" },
     { "destroyed", "Biter" },
-    { "waltz_young", "Man" }
+    { "waltz_young", "Man" },
+    { "npc_mq_kiddie", "Man" }
     // Add more terms as needed
 };
 

@@ -109,12 +109,8 @@ public class ModelLoader : MonoBehaviour
                         loadedModels.Add(modelInstance);
 
                         //SetupModelRigConstraints(modelInstance, mapper.BoneDictionary);
-                        AttachToRiggedSkeleton(modelInstance);
+                        //AttachToRiggedSkeleton(modelInstance);
                         //helper.SetupModelRigConstraints(modelInstance, mapper.BoneDictionary);
-                    }
-                    else
-                    {
-                        Debug.LogError($"PrefabSkeletonMapper not found on instantiated model: {modelPrefab.name}");
                     }
                 }
                 else
@@ -125,29 +121,29 @@ public class ModelLoader : MonoBehaviour
         }
     }
 
-    private void AttachToRiggedSkeleton(GameObject modelInstance)
-    {
-        SkinnedMeshRenderer modelRenderer = modelInstance.GetComponent<SkinnedMeshRenderer>();
-        if (modelRenderer != null)
-        {
-            Transform[] boneTransforms = new Transform[modelRenderer.bones.Length];
-            for (int i = 0; i < modelRenderer.bones.Length; i++)
-            {
-                string boneName = modelRenderer.bones[i].name;
-                Transform boneInSkeleton = loadedSkeleton.transform.FindDeepChild(boneName);
-                if (boneInSkeleton != null)
-                {
-                    boneTransforms[i] = boneInSkeleton;
-                }
-                else
-                {
-                    Debug.LogWarning($"Bone '{boneName}' not found in rigged skeleton.");
-                }
-            }
-            modelRenderer.bones = boneTransforms;
-            modelRenderer.rootBone = loadedSkeleton.transform; // Set the root bone if needed
-        }
-    }
+    //private void AttachToRiggedSkeleton(GameObject modelInstance)
+    //{
+    //    SkinnedMeshRenderer modelRenderer = modelInstance.GetComponent<SkinnedMeshRenderer>();
+    //    if (modelRenderer != null)
+    //    {
+    //        Transform[] boneTransforms = new Transform[modelRenderer.bones.Length];
+    //        for (int i = 0; i < modelRenderer.bones.Length; i++)
+    //        {
+    //            string boneName = modelRenderer.bones[i].name;
+    //            Transform boneInSkeleton = loadedSkeleton.transform.FindDeepChild(boneName);
+    //            if (boneInSkeleton != null)
+    //            {
+    //                boneTransforms[i] = boneInSkeleton;
+    //            }
+    //            else
+    //            {
+    //                Debug.LogWarning($"Bone '{boneName}' not found in rigged skeleton.");
+    //            }
+    //        }
+    //        modelRenderer.bones = boneTransforms;
+    //        modelRenderer.rootBone = loadedSkeleton.transform; // Set the root bone if needed
+    //    }
+    //}
 
     private void ApplyMaterials(GameObject modelInstance, ModelData.ModelInfo modelInfo)
     {

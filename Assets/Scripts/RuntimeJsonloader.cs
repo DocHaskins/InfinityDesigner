@@ -13,7 +13,7 @@ namespace doppelganger
     {
         public CharacterBuilder characterBuilder;
 
-        //public TMP_Text modelName;
+        public TMP_Text modelName;
         public TMP_Dropdown filterCustomDropdown;
         public TMP_Dropdown filterClassDropdown;
         public TMP_Dropdown filterSexDropdown;
@@ -43,7 +43,7 @@ namespace doppelganger
         void Start()
         {
             LoadJsonData();
-            characterBuilder = FindObjectOfType<CharacterBuilder>();
+            PopulateDropdowns();
             AddButtonListeners();
             cameraTool = FindObjectOfType<CinemachineCameraZoomTool>();
         }
@@ -119,7 +119,7 @@ namespace doppelganger
         void AddButtonListeners()
         {
             loadButton.onClick.AddListener(LoadSelectedModel);
-            //unloadButton.onClick.AddListener(UnloadAllObjects);
+            unloadButton.onClick.AddListener(UnloadAllObjects);
         }
 
 
@@ -163,20 +163,23 @@ namespace doppelganger
 
         void UpdateFilteredJsonFiles()
         {
-            string selectedType = characterBuilder.GetSelectedType();
-            string selectedClass = characterBuilder.GetSelectedClass();
+            // Update selectedClass, selectedSex, selectedRace based on dropdown selections
+            selectedClass = GetDropdownSelectedValue(filterClassDropdown);
+            selectedSex = GetDropdownSelectedValue(filterSexDropdown);
+            selectedRace = GetDropdownSelectedValue(filterRaceDropdown);
             searchTerm = searchInputField.text;
 
             filteredJsonFiles = minimalModelInfos.Where(info =>
             {
-                bool typeMatch = true; // Adjust this logic based on available data
                 bool classMatch = selectedClass == "All" || info.Properties.@class == selectedClass;
+                bool sexMatch = selectedSex == "All" || info.Properties.sex == selectedSex;
+                bool raceMatch = selectedRace == "All" || info.Properties.race == selectedRace;
+                bool searchMatch = string.IsNullOrEmpty(searchTerm) || info.FileName.ToLower().Contains(searchTerm.ToLower());
 
-                return typeMatch && classMatch;
+                return classMatch && sexMatch && raceMatch && searchMatch;
             })
-    .Select(info => info.FileName)
-    .ToList();
-
+            .Select(info => info.FileName)
+            .ToList();
             UpdateModelSelectionDropdown();
         }
 
@@ -199,7 +202,7 @@ namespace doppelganger
                 }
             }
             loadedObjects.Clear();
-            //modelName.text = "";
+            modelName.text = "";
         }
 
         private void UpdateCameraTarget(Transform loadedModelTransform)
@@ -297,8 +300,14 @@ namespace doppelganger
             string genderProperty = modelData.modelProperties != null ? modelData.modelProperties.sex : null;
             if (!string.IsNullOrEmpty(genderProperty))
             {
-                // Map gender property to folder names correctly
-                genderProperty = genderProperty.Equals("female", StringComparison.OrdinalIgnoreCase) ? "Wmn" : "Man";
+                if (genderProperty.Equals("female", StringComparison.OrdinalIgnoreCase))
+                {
+                    genderProperty = "Wmn";
+                }
+                else if (genderProperty.Equals("male", StringComparison.OrdinalIgnoreCase))
+                {
+                    genderProperty = "Man";
+                }
 
                 Debug.Log("gender_property: " + genderProperty);
                 characterBuilder.SetCurrentType(genderProperty);

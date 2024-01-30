@@ -19,11 +19,15 @@ public class JsonLoaderWindow : EditorWindow
     private int currentJsonIndex = 0;
     private bool isProcessing = false;
     private bool cancelRequested = false;
+    private string selectedType = "All";
+    private string selectedCategory = "All";
     private string selectedClass = "All";
     private string selectedSex = "All";
     private string selectedRace = "All";
     private string searchTerm = "";
     private bool enableCustomContent = false;
+    private HashSet<string> types = new HashSet<string>();
+    private HashSet<string> categories = new HashSet<string>();
     private HashSet<string> classes = new HashSet<string>();
     private HashSet<string> sexes = new HashSet<string>();
     private HashSet<string> races = new HashSet<string>();
@@ -54,6 +58,8 @@ public class JsonLoaderWindow : EditorWindow
         classes.Clear();
         sexes.Clear();
         races.Clear();
+        types.Clear();
+        categories.Clear();
 
         string jsonsFolderPath = Path.Combine(Application.streamingAssetsPath, "Jsons");
         if (!Directory.Exists(jsonsFolderPath))
@@ -62,17 +68,53 @@ public class JsonLoaderWindow : EditorWindow
             return;
         }
 
-        foreach (var file in Directory.GetFiles(jsonsFolderPath, "*.json"))
+        foreach (var typeDir in Directory.GetDirectories(jsonsFolderPath))
         {
-            string jsonPath = Path.Combine(jsonsFolderPath, file);
-            string jsonData = File.ReadAllText(jsonPath);
+            string typeName = Path.GetFileName(typeDir);
+            types.Add(typeName);
+
+            foreach (var categoryDir in Directory.GetDirectories(typeDir))
+            {
+                string categoryName = Path.GetFileName(categoryDir);
+                categories.Add(categoryName);
+
+                foreach (var file in Directory.GetFiles(categoryDir, "*.json", SearchOption.AllDirectories))
+                {
+                    string relativePath = $"{typeName}/{categoryName}/{Path.GetFileName(file)}";
+                    ProcessJsonFile(relativePath);  // Pass the relative path
+                }
+            }
+        }
+
+        types.Add("All");
+        categories.Add("All");
+
+        // Call UpdateFilteredOptions to populate classes, sexes, and races based on type and category
+        UpdateFilteredJsonFiles();
+    }
+
+    void ProcessJsonFile(string relativeJsonFilePath)
+    {
+        // Replace %20 with spaces in the relative JSON file path
+        relativeJsonFilePath = relativeJsonFilePath.Replace("%20", " ");
+
+        // Correct the base path for JSON files
+        string jsonsBasePath = Path.Combine(Application.streamingAssetsPath, "Jsons");
+
+        // Construct the full JSON file path
+        string jsonFilePath = Path.Combine(jsonsBasePath, relativeJsonFilePath);
+
+        // Check if the JSON file exists before attempting to read it
+        if (File.Exists(jsonFilePath))
+        {
+            string jsonData = File.ReadAllText(jsonFilePath);
             ModelData modelData = JsonUtility.FromJson<ModelData>(jsonData);
 
             if (modelData.modelProperties != null)
             {
                 minimalModelInfos.Add(new MinimalModelData
                 {
-                    FileName = Path.GetFileName(file),
+                    FileName = relativeJsonFilePath, // Use the relative path directly
                     Properties = modelData.modelProperties
                 });
 
@@ -81,44 +123,51 @@ public class JsonLoaderWindow : EditorWindow
                 races.Add(modelData.modelProperties.race ?? "Unknown");
             }
         }
+        else
+        {
+            UnityEngine.Debug.LogError("JSON file not found: " + jsonFilePath);
+        }
+    }
 
-        classes.Add("All");
-        sexes.Add("All");
-        races.Add("All");
+    string GetRelativePath(string fullPath, string basePath)
+    {
+        Uri fullUri = new Uri(fullPath);
+        Uri baseUri = new Uri(basePath);
+        string relativePath = baseUri.MakeRelativeUri(fullUri).ToString();
 
-        UpdateFilteredJsonFiles();
+        // Replace backslashes with forward slashes
+        return relativePath.Replace('\\', '/');
     }
 
     void UpdateFilteredJsonFiles()
     {
-        filteredJsonFiles = minimalModelInfos.Where(info =>
+        filteredJsonFiles.Clear();
+
+        foreach (var info in minimalModelInfos)
         {
-            // Exclude files that start with "db_"
-            if (info.FileName.StartsWith("db_", StringComparison.OrdinalIgnoreCase))
-            {
-                return false;
-            }
-
-            if (!enableCustomContent && info.FileName.StartsWith("ialr_", StringComparison.OrdinalIgnoreCase))
-            {
-                return false;
-            }
-
-            if (!enableCustomContent && (info.FileName.EndsWith("_clown", StringComparison.OrdinalIgnoreCase) ||
-                                         info.FileName.EndsWith("_vampire", StringComparison.OrdinalIgnoreCase)))
-            {
-                return false;
-            }
-
+            bool typeMatch = selectedType == "All" || info.FileName.StartsWith(selectedType + "/", StringComparison.OrdinalIgnoreCase);
+            bool categoryMatch = selectedCategory == "All" || info.FileName.Contains("/" + selectedCategory + "/");
             bool classMatch = selectedClass == "All" || info.Properties.@class == selectedClass;
             bool sexMatch = selectedSex == "All" || info.Properties.sex == selectedSex;
             bool raceMatch = selectedRace == "All" || info.Properties.race == selectedRace;
-            bool searchMatch = string.IsNullOrEmpty(searchTerm) || info.FileName.ToLower().Contains(searchTerm.ToLower());
 
-            return classMatch && sexMatch && raceMatch && searchMatch;
-        })
-        .Select(info => info.FileName)
-        .ToList();
+            if (typeMatch && categoryMatch && classMatch && sexMatch && raceMatch)
+            {
+                filteredJsonFiles.Add(info.FileName);
+            }
+        }
+
+        // Automatically select the first file in the list if any files are available
+        if (filteredJsonFiles.Count > 0)
+        {
+            selectedIndex = 0;
+            selectedJson = filteredJsonFiles[0];
+        }
+        else
+        {
+            selectedIndex = -1;
+            selectedJson = null;
+        }
     }
 
     void OnGUI()
@@ -164,6 +213,21 @@ public class JsonLoaderWindow : EditorWindow
             filtersChanged = true;
         }
         GUILayout.Space(2);
+
+        string prevSelectedType = selectedType;
+        selectedType = DropdownField("Filter by Type", selectedType, types);
+        if (prevSelectedType != selectedType)
+        {
+            filtersChanged = true;
+        }
+
+        // Dropdown for Category
+        string prevSelectedCategory = selectedCategory;
+        selectedCategory = DropdownField("Filter by Category", selectedCategory, categories);
+        if (prevSelectedCategory != selectedCategory)
+        {
+            filtersChanged = true;
+        }
 
         // Dropdown for Class
         string prevSelectedClass = selectedClass;
@@ -243,115 +307,38 @@ public class JsonLoaderWindow : EditorWindow
             }
         }
         GUILayout.Space(20);
-        GUILayout.Label("Additional Options", EditorStyles.boldLabel);
-
-        if (GUILayout.Button("Load All and Take Screenshots"))
-        {
-            if (!isProcessing)
-            {
-                cancelRequested = false; // Reset cancellation flag
-                currentJsonIndex = 0;
-                isProcessing = true;
-                EditorApplication.update += ProcessCurrentJson;
-            }
-        }
-
-        // New button to request cancellation
-        if (GUILayout.Button("Cancel Process"))
-        {
-            cancelRequested = true;
-        }
-        
-    }
-    private void ProcessCurrentJson()
-    {
-        if (cancelRequested)
-        {
-            // Abort the process if cancellation is requested
-            isProcessing = false;
-            EditorApplication.update -= ProcessCurrentJson;
-            UnityEngine.Debug.Log("Processing canceled by user.");
-            return;
-        }
-        if (currentJsonIndex < filteredJsonFiles.Count)
-        {
-            string jsonFile = filteredJsonFiles[currentJsonIndex];
-            ProcessJsonCoroutine = ProcessJson(jsonFile, OnJsonProcessed);
-            EditorApplication.update += ExecuteProcessJsonCoroutine;
-        }
-        else
-        {
-            isProcessing = false;
-            EditorApplication.update -= ProcessCurrentJson;
-            UnityEngine.Debug.Log("Finished processing all JSON files.");
-        }
-    }
-
-    private void OnJsonProcessed()
-    {
-        currentJsonIndex++;
-        ProcessCurrentJson(); // Move to the next JSON file
-    }
-
-    private IEnumerator ProcessJson(string jsonFileName, Action onCompleted)
-    {
-        UnityEngine.Debug.Log("Starting to process JSON: " + jsonFileName);
-
-        GameObject loaderObject = new GameObject("ModelLoaderObject");
-        ModelLoader loader = loaderObject.AddComponent<ModelLoader>();
-        loader.jsonFileName = jsonFileName;
-        loader.LoadModelFromJson();
-        yield return new WaitForSeconds(1240.5f);
-
-        UnityEngine.Debug.Log("Waiting for model to load: " + jsonFileName);
-        yield return new WaitUntil(() => loader.IsModelLoaded);
-        yield return new WaitForSeconds(1240.5f);
-
-        UnityEngine.Debug.Log("Model loaded. Taking screenshot: " + jsonFileName);
-        TakeScreenshotAndSave(jsonFileName);
-
-        UnityEngine.Debug.Log("Screenshot taken. Waiting before unload: " + jsonFileName);
-        yield return new WaitForSeconds(1240.5f);
-
-        UnityEngine.Debug.Log("Unloading model: " + jsonFileName);
-        loader.UnloadModel();
-
-        UnityEngine.Debug.Log("Model unloaded. Waiting before next JSON: " + jsonFileName);
-        yield return new WaitForSeconds(1240.5f);
-
-        UnityEngine.Debug.Log("Destroying loader object: " + jsonFileName);
-        DestroyImmediate(loaderObject);
-        yield return new WaitForSeconds(1240.5f);
-
-        UnityEngine.Debug.Log("JSON processing completed: " + jsonFileName);
-        onCompleted?.Invoke();
-    }
-
-    private void ExecuteProcessJsonCoroutine()
-    {
-        if (ProcessJsonCoroutine != null && !ProcessJsonCoroutine.MoveNext())
-        {
-            UnityEngine.Debug.Log("Coroutine completed for JSON index: " + currentJsonIndex);
-            EditorApplication.update -= ExecuteProcessJsonCoroutine;
-            ProcessJsonCoroutine = null; // Clear the coroutine
-        }
-    }
-
-    private void TakeScreenshotAndSave(string jsonFileName)
-    {
-        string screenshotName = Path.GetFileNameWithoutExtension(jsonFileName) + ".png";
-        string screenshotPath = Path.Combine(screenshotsFolderPath, screenshotName);
-
-        ScreenCapture.CaptureScreenshot(screenshotPath);
-        UnityEngine.Debug.Log("Saved screenshot: " + screenshotPath);
+        GUILayout.Label("Additional Options", EditorStyles.boldLabel);        
     }
 
     private string DropdownField(string label, string selectedValue, HashSet<string> options)
     {
         string[] optionArray = options.ToArray();
         int index = Array.IndexOf(optionArray, selectedValue);
+
+        // Handle case where selectedValue is not in options
+        if (index == -1)
+        {
+            if (optionArray.Length > 0)
+            {
+                index = 0; 
+            }
+            else
+            {
+                return selectedValue;
+            }
+        }
+
         index = EditorGUILayout.Popup(label, index, optionArray);
-        return optionArray[index];
+
+        // Safeguard against empty optionArray
+        if (optionArray.Length > 0)
+        {
+            return optionArray[index];
+        }
+        else
+        {
+            return selectedValue;
+        }
     }
 
     private void OpenSelectedJsonFile()
