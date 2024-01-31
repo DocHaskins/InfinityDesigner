@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using static ModelData;
 using System.Linq;
 using System.Collections;
+using Michsky.UI.Heat;
 
 [Serializable]
 public class CharacterConfig
@@ -37,7 +38,9 @@ namespace doppelganger
         public Button TypeManButton, TypeWmnButton, TypePlayerButton, TypeInfectedButton, TypeChildButton;
         private string currentType;
         private string currentPath;
-        public TMP_Dropdown typeDropdown;
+        
+        [SerializeField] 
+        private HorizontalSelector typeSelector;
         public TMP_Dropdown categoryDropdown;
         public TMP_Dropdown classDropdown;
         public TMP_Dropdown presetDropdown;
@@ -54,6 +57,7 @@ namespace doppelganger
 
         private string lastFilterCategoryKey = "";
         private Dictionary<string, float> slotWeights;
+        
         public Dictionary<string, float> sliderValues = new Dictionary<string, float>();
         private Dictionary<string, bool> sliderSetStatus = new Dictionary<string, bool>();
         private Dictionary<GameObject, List<int>> disabledRenderers = new Dictionary<GameObject, List<int>>();
@@ -108,9 +112,7 @@ namespace doppelganger
 
         void Start()
         {
-            currentType = "Human";
-
-            PopulateDropdown(typeDropdown, Application.streamingAssetsPath + "/SlotData", "Human");
+            string initialType = GetTypeFromSelector();
             PopulateDropdown(categoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", "Human"), "ALL", true);
 
             StartCoroutine(SetInitialDropdownValues());
@@ -140,19 +142,18 @@ namespace doppelganger
                 Debug.LogError("Player type not found in dropdown options.");
             }
 
-            // Update dropdowns based on the selected 'Player' type
-            OnTypeChanged(typeDropdown.value);
+            // Manually trigger the interface update as if the dropdown values were changed
+            UpdateInterfaceBasedOnDropdownSelection();
+
+            typeSelector.onValueChanged.AddListener((index) => OnTypeChanged(index));
+
+            // Manually update preset dropdown based on initial dropdown selections
+            UpdatePresetDropdown();
 
             // Load default JSON file and set sliders
             string defaultJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Jsons", "Human", "Player", "player_tpp_skeleton.json");
             LoadJsonAndSetSliders(defaultJsonFilePath);
             slotWeights = LoadSlotWeights();
-
-            // Manually trigger the interface update as if the dropdown values were changed
-            UpdateInterfaceBasedOnDropdownSelection();
-
-            // Manually update preset dropdown based on initial dropdown selections
-            UpdatePresetDropdown();
         }
 
         IEnumerator SetInitialDropdownValues()
@@ -161,16 +162,12 @@ namespace doppelganger
             yield return new WaitForEndOfFrame();
 
             // Set initial values for Type, Category, and Class dropdowns
-            typeDropdown.value = typeDropdown.options.FindIndex(option => option.text == "Human");
+
             categoryDropdown.value = categoryDropdown.options.FindIndex(option => option.text == "Player");
             classDropdown.value = classDropdown.options.FindIndex(option => option.text == "ALL");
 
-            // Trigger updates
-            OnTypeChanged(typeDropdown.value);
             OnCategoryChanged(categoryDropdown.value);
 
-            // Add listeners to dropdowns after setting the initial values
-            typeDropdown.onValueChanged.AddListener(OnTypeChanged);
             categoryDropdown.onValueChanged.AddListener(OnCategoryChanged);
             classDropdown.onValueChanged.AddListener(OnClassChanged);
         }
@@ -326,7 +323,7 @@ namespace doppelganger
 
         string GetJsonFilePath(string presetName)
         {
-            string type = typeDropdown.options[typeDropdown.value].text;
+            string type = GetTypeFromSelector();
             string category = categoryDropdown.options[categoryDropdown.value].text;
             string classSelection = classDropdown.options[classDropdown.value].text;
             string jsonsBasePath = Path.Combine(Application.streamingAssetsPath, "Jsons");
@@ -470,7 +467,7 @@ namespace doppelganger
         public string FindSlotForModel(string modelName)
         {
             //Debug.Log($"FindSlotForModel for {modelName}");
-            string type = typeDropdown.options[typeDropdown.value].text;
+            string type = GetTypeFromSelector();
             string category = categoryDropdown.options[categoryDropdown.value].text;
             string classSelection = classDropdown.options[classDropdown.value].text;
 
@@ -519,7 +516,7 @@ namespace doppelganger
         public int GetModelIndex(string slotName, string modelName)
         {
             //Debug.Log($"GetModelIndex for slot {slotName} and model {modelName}");
-            string type = typeDropdown.options[typeDropdown.value].text;
+            string type = GetTypeFromSelector();
             string category = categoryDropdown.options[categoryDropdown.value].text;
             string classSelection = classDropdown.options[classDropdown.value].text;
 
@@ -644,15 +641,39 @@ namespace doppelganger
 
         void OnTypeChanged(int index)
         {
-            string selectedType = typeDropdown.options[index].text;
+            // Assuming you have a way to map the index to a type
+            string selectedType = GetTypeBasedOnIndex(index);
             PopulateDropdown(categoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType), "ALL", true);
             UpdateInterfaceBasedOnDropdownSelection();
         }
 
+        string GetTypeFromSelector()
+        {
+            return GetTypeBasedOnIndex(typeSelector.index);
+        }
+
+        string GetTypeBasedOnIndex(int index)
+        {
+            string[] types = { "Human", "Infected" };
+            if (index >= 0 && index < types.Length)
+            {
+                return types[index];
+            }
+            else
+            {
+                Debug.LogError("Index out of range: " + index);
+                return string.Empty;
+            }
+        }
+
         void OnCategoryChanged(int index)
         {
+            string selectedType = GetTypeFromSelector();
             string selectedCategory = categoryDropdown.options[index].text;
-            PopulateDropdown(classDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", typeDropdown.options[typeDropdown.value].text, selectedCategory), "ALL");
+
+            // Use the selectedType to populate the classDropdown based on the selected category
+            PopulateDropdown(classDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType, selectedCategory), "ALL");
+
             UpdateInterfaceBasedOnDropdownSelection();
         }
 
@@ -663,7 +684,7 @@ namespace doppelganger
 
         void UpdatePresetDropdown()
         {
-            string type = typeDropdown.options[typeDropdown.value].text;
+            string type = GetTypeFromSelector();
             string category = categoryDropdown.options[categoryDropdown.value].text;
             string classSelection = classDropdown.options[classDropdown.value].text;
 
@@ -713,7 +734,7 @@ namespace doppelganger
         {
             UpdateSlidersBasedOnSelection();
 
-            string type = typeDropdown.options[typeDropdown.value].text;
+            string type = GetTypeFromSelector();
             string category = categoryDropdown.options[categoryDropdown.value].text;
             string classSelection = classDropdown.options[classDropdown.value].text;
 
@@ -744,7 +765,7 @@ namespace doppelganger
 
         void UpdateSlidersBasedOnSelection()
         {
-            string type = typeDropdown.options[typeDropdown.value].text;
+            string type = GetTypeFromSelector();
             string category = categoryDropdown.options[categoryDropdown.value].text;
             string classSelection = classDropdown.options[classDropdown.value].text;
 
@@ -814,7 +835,7 @@ namespace doppelganger
 
         public void UpdateInterfaceBasedOnType()
         {
-            string currentType = GetCurrentType();
+            string currentType = GetTypeFromSelector();
             if (string.IsNullOrEmpty(currentType) || !slotData.ContainsKey(currentType))
             {
                 Debug.LogError($"Invalid or missing type: {currentType}");
@@ -829,16 +850,11 @@ namespace doppelganger
             CreateDynamicButtons(allFilters);
         }
 
-        public string GetCurrentType()
-        {
-            return currentType;
-        }
-
         void FilterSlidersForSlot(string slotName)
         {
             ClearExistingSliders();
 
-            string type = typeDropdown.options[typeDropdown.value].text;
+            string type = GetTypeFromSelector();
             string category = categoryDropdown.options[categoryDropdown.value].text;
             string classSelection = classDropdown.options[classDropdown.value].text;
 
@@ -879,7 +895,7 @@ namespace doppelganger
                 Destroy(child.gameObject);
             }
 
-            string type = typeDropdown.options[typeDropdown.value].text;
+            string type = GetTypeFromSelector();
             string category = categoryDropdown.options[categoryDropdown.value].text;
             string classSelection = classDropdown.options[classDropdown.value].text;
 
@@ -1130,7 +1146,7 @@ namespace doppelganger
 
         string GetModelNameFromIndex(string slotName, int modelIndex)
         {
-            string type = typeDropdown.options[typeDropdown.value].text;
+            string type = GetTypeFromSelector();
             string category = categoryDropdown.options[categoryDropdown.value].text;
             string classSelection = classDropdown.options[classDropdown.value].text;
 
@@ -1169,7 +1185,7 @@ namespace doppelganger
             // Declare modelInstance at the start of the method
             GameObject modelInstance = null;
 
-            string type = typeDropdown.options[typeDropdown.value].text;
+            string type = GetTypeFromSelector();
             string category = categoryDropdown.options[categoryDropdown.value].text;
             string classSelection = classDropdown.options[classDropdown.value].text;
 
