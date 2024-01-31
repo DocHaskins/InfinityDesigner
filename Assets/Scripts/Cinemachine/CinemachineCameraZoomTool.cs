@@ -155,7 +155,7 @@ public class CinemachineCameraZoomTool : MonoBehaviour
 
         private readonly List<string> pointNames = new List<string>
     {
-        "neck", "spine3", "legs", "r_hand", "l_hand", "l_foot", "r_foot"
+        "spine1", "head", "legs", "r_hand", "l_hand", "l_foot", "r_foot"
     };
 
         public void UpdateTargetPoints()

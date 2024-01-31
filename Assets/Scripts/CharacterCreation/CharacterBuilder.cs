@@ -35,7 +35,6 @@ namespace doppelganger
     public class CharacterBuilder : MonoBehaviour
     {
         public CinemachineCameraZoomTool cameraTool;
-        public Button TypeManButton, TypeWmnButton, TypePlayerButton, TypeInfectedButton, TypeChildButton;
         private string currentType;
         private string currentPath;
         
@@ -174,39 +173,31 @@ namespace doppelganger
 
         public void Reroll()
         {
-            // Iterate through each child of slidersPanel which is expected to be a slider container
             foreach (Transform sliderContainer in slidersPanel.transform)
             {
-                // Find the child object named "LockToggle" in the sliderContainer
-                Transform lockToggleTransform = sliderContainer.Find("LockToggle");
-                Toggle lockToggle = lockToggleTransform ? lockToggleTransform.GetComponent<Toggle>() : null;
+                ChildLockToggle lockToggleScript = sliderContainer.Find("LockToggle")?.GetComponent<ChildLockToggle>();
 
-                // Skip this slider if the toggle is set to true
-                if (lockToggle != null && lockToggle.isOn)
+                // Proceed only if either the lock toggle doesn't exist or it exists and is off
+                if (lockToggleScript != null && lockToggleScript.childToggle.isOn)
                 {
                     Debug.Log("Skipping locked slider: " + sliderContainer.name);
                     continue;
                 }
 
-                // Find the child object named "primarySlider" in the sliderContainer
-                Transform primarySliderTransform = sliderContainer.Find("primarySlider");
-                if (primarySliderTransform != null)
+                Slider slider = sliderContainer.Find("primarySlider")?.GetComponent<Slider>();
+                if (slider != null)
                 {
-                    Slider slider = primarySliderTransform.GetComponent<Slider>();
-                    if (slider != null)
-                    {
-                        float randomValue = UnityEngine.Random.Range(slider.minValue, slider.maxValue + 1);
-                        Debug.Log("Random value for " + sliderContainer.name + ": " + randomValue);
+                    float randomValue = UnityEngine.Random.Range(slider.minValue, slider.maxValue + 1);
+                    Debug.Log($"Random value for {sliderContainer.name}: {randomValue}");
+                    slider.value = randomValue;
 
-                        slider.value = randomValue;
-
-                        string slotName = sliderContainer.name.Replace("Slider", "");
-                        OnSliderValueChanged(slotName, randomValue, true);
-                    }
-                    else
-                    {
-                        Debug.LogWarning("No slider component found in primarySlider of: " + sliderContainer.name);
-                    }
+                    string slotName = sliderContainer.name.Replace("Slider", "");
+                    // Assuming OnSliderValueChanged is a method that handles the slider's value change.
+                    OnSliderValueChanged(slotName, randomValue, true);
+                }
+                else
+                {
+                    Debug.LogWarning($"No slider component found in primarySlider of: {sliderContainer.name}");
                 }
             }
         }
@@ -313,12 +304,46 @@ namespace doppelganger
             }
         }
 
+        public class DropdownValueMapper : MonoBehaviour
+        {
+            public Dictionary<string, string> ValueMap { get; set; } = new Dictionary<string, string>();
+
+            // Method to update the mapping
+            public void UpdateValueMap(Dictionary<string, string> newValueMap)
+            {
+                ValueMap = newValueMap;
+            }
+        }
+
+        string GetActualValueFromDropdown(TMPro.TMP_Dropdown dropdown)
+        {
+            DropdownValueMapper mapper = dropdown.gameObject.GetComponent<DropdownValueMapper>();
+            if (mapper != null && mapper.ValueMap.TryGetValue(dropdown.options[dropdown.value].text, out string actualValue))
+            {
+                return actualValue;
+            }
+            else
+            {
+                Debug.LogError("No mapping found for selected dropdown value");
+                return null;
+            }
+        }
+
         void OnPresetLoadButtonPressed()
         {
-            string selectedPreset = presetDropdown.options[presetDropdown.value].text;
-            string jsonPath = GetJsonFilePath(selectedPreset);
-            Debug.Log("Loading JSON from path: " + jsonPath);
-            LoadJsonAndSetSliders(jsonPath);
+            // Use GetActualValueFromDropdown to get the original file name
+            string selectedPreset = GetActualValueFromDropdown(presetDropdown);
+
+            if (!string.IsNullOrEmpty(selectedPreset))
+            {
+                string jsonPath = GetJsonFilePath(selectedPreset);
+                Debug.Log("Loading JSON from path: " + jsonPath);
+                LoadJsonAndSetSliders(jsonPath);
+            }
+            else
+            {
+                Debug.LogError("Selected preset is invalid or not found");
+            }
         }
 
         string GetJsonFilePath(string presetName)
@@ -586,7 +611,7 @@ namespace doppelganger
             if (cameraTool != null && loadedModelTransform != null)
             {
                 cameraTool.targets.Clear();
-                string[] pointNames = { "spine3", "neck", "legs", "r_hand", "l_hand", "l_foot", "r_foot" };
+                string[] pointNames = { "pelvis", "head", "legs", "r_hand", "l_hand", "l_foot", "r_foot" };
                 foreach (var pointName in pointNames)
                 {
                     Transform targetTransform = DeepFind(loadedModelTransform, pointName);
@@ -711,12 +736,44 @@ namespace doppelganger
         void PopulatePresetDropdown(TMPro.TMP_Dropdown dropdown, string path)
         {
             var jsonFiles = GetJsonFiles(path);
-            var filteredFiles = jsonFiles.Where(file => !file.StartsWith("db_")).ToList();
-            var options = filteredFiles.Select(fileName => new TMPro.TMP_Dropdown.OptionData(fileName)).ToList();
+            var filteredFiles = jsonFiles.Where(file => !file.StartsWith("db_") && !file.EndsWith("_fpp")).ToList();
+
+            List<TMPro.TMP_Dropdown.OptionData> options = new List<TMPro.TMP_Dropdown.OptionData>();
+            Dictionary<string, string> fileDisplayNames = new Dictionary<string, string>();
+
+            foreach (var file in filteredFiles)
+            {
+                string displayName = ConvertToReadableName(file);
+                options.Add(new TMPro.TMP_Dropdown.OptionData(displayName));
+                fileDisplayNames[displayName] = file; // Map the display name to the original file name
+            }
 
             dropdown.ClearOptions();
             dropdown.AddOptions(options);
+
+            // Update existing DropdownValueMapper or add a new one if it doesn't exist
+            DropdownValueMapper mapper = dropdown.gameObject.GetComponent<DropdownValueMapper>();
+            if (mapper == null)
+            {
+                mapper = dropdown.gameObject.AddComponent<DropdownValueMapper>();
+            }
+            mapper.UpdateValueMap(fileDisplayNames);
+
             dropdown.RefreshShownValue();
+        }
+
+        string ConvertToReadableName(string fileName)
+        {
+            // Remove specific terms
+            string[] termsToRemove = { "_test_", "_outfit_opera", "dlc_opera_", "zmb_", "player_", "outfit_", "enemy", "fh_", "tpp" };
+            foreach (var term in termsToRemove)
+            {
+                fileName = fileName.Replace(term, "");
+            }
+
+            // Replace underscores with spaces
+            fileName = fileName.Replace("_", " ");
+            return fileName;
         }
 
         List<string> GetJsonFiles(string path)
