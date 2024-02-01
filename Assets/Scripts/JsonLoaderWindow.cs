@@ -16,9 +16,6 @@ public class JsonLoaderWindow : EditorWindow
     private List<string> jsonFiles = new List<string>();
     private List<string> filteredJsonFiles = new List<string>();
     private int selectedIndex = 0;
-    private int currentJsonIndex = 0;
-    private bool isProcessing = false;
-    private bool cancelRequested = false;
     private string selectedType = "All";
     private string selectedCategory = "All";
     private string selectedClass = "All";

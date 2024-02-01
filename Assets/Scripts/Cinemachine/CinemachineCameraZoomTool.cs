@@ -16,9 +16,11 @@ public class CinemachineCameraZoomTool : MonoBehaviour
         public List<Transform> targets = new List<Transform>();
         private int currentTargetIndex = 0;
         private float initialCameraOffsetY;
+        
 
         [Tooltip("Speed of vertical camera movement")]
         public float verticalSpeed = 10f; // Speed of vertical movement
+        private float horizontalSpeed = 10f;
 
         [Tooltip("Minimum Y position for the camera")]
         public float minY = -10f; // Minimum Y value
@@ -26,8 +28,6 @@ public class CinemachineCameraZoomTool : MonoBehaviour
         [Tooltip("Maximum Y position for the camera")]
         public float maxY = 10f; // Maximum Y value
 
-        private float initialY;
-        private float accumulatedVerticalMovement = 0f;
         private bool isDragging = false;
 
         [Tooltip("The minimum scale for the orbits")]
@@ -37,6 +37,20 @@ public class CinemachineCameraZoomTool : MonoBehaviour
         [Tooltip("The maximum scale for the orbits")]
         [Range(1f, 50f)]
         public float maxScale = 1.0f;
+
+        [Tooltip("Default Field of View")]
+        public float defaultFOV = 60f;
+
+        [Tooltip("Default Radius for the Middle Rig")]
+        public float defaultMiddleRigRadius = 3f;
+
+        [Tooltip("Default Height for the Middle Rig")]
+        public float defaultMiddleRigHeight = 0.75f;
+
+        [SerializeField] private float transitionDuration = 1.0f;
+        private bool isTransitioning = false;
+        private float transitionStartTime;
+        private Vector3 initialTargetPosition;
 
         [Tooltip("The vertical Axis. Value is 0...1. How much to scale the orbits")]
         [AxisStateProperty]
@@ -103,25 +117,35 @@ public class CinemachineCameraZoomTool : MonoBehaviour
             }
             if (Input.GetMouseButtonDown(2)) // Middle mouse button pressed
             {
-                initialCameraOffsetY = freelook.GetRig(1).GetCinemachineComponent<CinemachineComposer>().m_TrackedObjectOffset.y;
-                accumulatedVerticalMovement = 0f; // Reset accumulated movement
-                isDragging = true; // Set dragging flag to true
+                isDragging = true;
             }
 
             if (Input.GetMouseButtonUp(2)) // Middle mouse button released
             {
-                isDragging = false; // Set dragging flag to false
+                isDragging = false;
             }
 
-            if (isDragging) // If dragging
+            if (isDragging)
             {
-                // Increment vertical movement by mouse Y axis
-                accumulatedVerticalMovement += Input.GetAxis("Mouse Y") * verticalSpeed * Time.deltaTime;
-                float newOffsetY = Mathf.Clamp(initialCameraOffsetY + accumulatedVerticalMovement, minY, maxY);
-
-                // Update the camera offset for each rig
-                UpdateCameraRigsOffset(newOffsetY);
+                // Calculate horizontal input for rotation
+                float mouseXInput = Input.GetAxis("Mouse X") * horizontalSpeed * Time.deltaTime;
+                // Rotate the camera or its target around the Y axis
+                RotateCameraY(mouseXInput);
             }
+            if (Input.GetKeyDown(KeyCode.Alpha0))
+            {
+                SetDefaultRigSettings();
+            }
+        }
+
+        private void RotateCameraY(float rotationAmount)
+        {
+            // Assuming freelook follows a target, rotate the target. Otherwise, adjust freelook's GameObject rotation.
+            Vector3 currentRotation = freelook.transform.eulerAngles;
+            currentRotation.y += rotationAmount;
+            freelook.transform.eulerAngles = currentRotation;
+
+            // Optionally, if clamping X and Z positions is required at this step, ensure they are reset to initial values
         }
 
         private void UpdateCameraRigsOffset(float newOffsetY)
@@ -155,8 +179,54 @@ public class CinemachineCameraZoomTool : MonoBehaviour
 
         private readonly List<string> pointNames = new List<string>
     {
-        "spine1", "head", "legs", "r_hand", "l_hand", "l_foot", "r_foot"
+        "pelvis", "spine2", "legs", "r_hand", "l_hand", "l_foot", "r_foot"
     };
+
+        public void SetDefaultRigSettings()
+        {
+            if (freelook != null)
+            {
+                isTransitioning = true;
+                transitionStartTime = Time.time;
+
+                // Store the initial target position
+                initialTargetPosition = freelook.Follow.position;
+
+                // Start coroutine to smoothly adjust settings
+                StartCoroutine(SmoothlyAdjustCameraSettings());
+            }
+        }
+
+        private IEnumerator SmoothlyAdjustCameraSettings()
+        {
+            float initialFOV = freelook.m_Lens.FieldOfView;
+            CinemachineFreeLook.Orbit initialOrbit = freelook.m_Orbits[1];
+            float elapsedTime = 0;
+
+            while (elapsedTime < transitionDuration)
+            {
+                elapsedTime = Time.time - transitionStartTime;
+                float t = elapsedTime / transitionDuration;
+
+                // Smoothly interpolate the field of view and orbit settings
+                freelook.m_Lens.FieldOfView = Mathf.Lerp(initialFOV, defaultFOV, t);
+                freelook.m_Orbits[1].m_Radius = Mathf.Lerp(initialOrbit.m_Radius, defaultMiddleRigRadius, t);
+                freelook.m_Orbits[1].m_Height = Mathf.Lerp(initialOrbit.m_Height, defaultMiddleRigHeight, t);
+
+                yield return null; // Wait for the next frame
+            }
+
+            // Ensure final values are set
+            freelook.m_Lens.FieldOfView = defaultFOV;
+            freelook.m_Orbits[1].m_Radius = defaultMiddleRigRadius;
+            freelook.m_Orbits[1].m_Height = defaultMiddleRigHeight;
+            isTransitioning = false;
+
+            // Set the camera's position to the new target position
+            freelook.Follow.position = initialTargetPosition;
+
+            // Optionally update the camera target here if necessary
+        }
 
         public void UpdateTargetPoints()
         {

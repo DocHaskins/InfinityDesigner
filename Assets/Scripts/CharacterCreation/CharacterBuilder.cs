@@ -56,7 +56,9 @@ namespace doppelganger
 
         private string lastFilterCategoryKey = "";
         private Dictionary<string, float> slotWeights;
-        
+        private string selectedCategory;
+        private string selectedClass;
+
         public Dictionary<string, float> sliderValues = new Dictionary<string, float>();
         private Dictionary<string, bool> sliderSetStatus = new Dictionary<string, bool>();
         private Dictionary<GameObject, List<int>> disabledRenderers = new Dictionary<GameObject, List<int>>();
@@ -64,6 +66,89 @@ namespace doppelganger
         private Dictionary<string, List<Material>> originalMaterials = new Dictionary<string, List<Material>>();
         private Dictionary<string, List<string>> slotData = new Dictionary<string, List<string>>();
         public Dictionary<string, GameObject> currentlyLoadedModels = new Dictionary<string, GameObject>();
+
+        private Dictionary<string, Dictionary<string, string>> skeletonMapping = new Dictionary<string, Dictionary<string, string>>
+{
+    {
+        "ALL", new Dictionary<string, string>
+        {
+            {"ALL", "man_basic_skeleton"},
+            {"Biter", "man_zmb_skeleton"},
+            {"Special Infected", "player_skeleton"},
+            {"Viral", "viral_skeleton"}
+        }
+    },
+    {
+        "Player", new Dictionary<string, string>
+        {
+            {"ALL", "player_skeleton"}
+        }
+    },
+    {
+        "Man", new Dictionary<string, string>
+        {
+            {"ALL", "man_basic_skeleton"},
+            {"bandit", "man_bdt_medium_skeleton"},
+            {"peacekeeper", "man_pk_medium_skeleton"},
+            {"renegade", "man_bdt_heavy_torso_d_skeleton"},
+            {"scavenger", "man_sc_medium_skeleton"},
+            {"survivor", "man_srv_medium_skeleton"}
+        }
+    },
+    {
+        "Wmn", new Dictionary<string, string>
+        {
+            {"ALL", "woman_basic_skeleton"},
+            {"bandit", "woman_basic_skeleton"},
+            {"peacekeeper", "woman_basic_skeleton"},
+            {"renegade", "woman_basic_skeleton"},
+            {"scavenger", "woman_sc_skeleton"},
+            {"survivor", "woman_srv_skeleton"}
+        }
+    },
+    {
+        "Child", new Dictionary<string, string>
+        {
+            {"ALL", "child_skeleton"}
+        }
+    },
+    {
+        "Biter", new Dictionary<string, string>
+        {
+            {"ALL", "man_zmb_skeleton"},
+            {"bandit", "man_zmb_skeleton"},
+            {"peacekeeper", "man_zmb_skeleton"},
+            {"renegade", "man_zmb_skeleton"},
+            {"scavenger", "man_zmb_skeleton"},
+            {"survivor", "man_zmb_skeleton"}
+        }
+    },
+    {
+        "Special Infected", new Dictionary<string, string>
+        {
+            {"banshee", "zmb_banshee_skeleton"},
+            {"bolter", "zmb_bolter_skeleton"},
+            {"charger", "zmb_charger_skeleton"},
+            {"corruptor", "zmb_corruptor_skeleton"},
+            {"demolisher", "zmb_demolisher_skeleton"},
+            {"goon", "zmb_goon_skeleton"},
+            {"screamer", "zmb_screamer_skeleton"},
+            {"spitter", "zmb_spitter_skeleton"},
+            {"suicider", "zmb_suicider_skeleton"},
+            {"volatile", "zmb_volataile_skeleton"},
+            {"ALL", "player_skeleton"}
+        }
+    },
+    {
+        "Viral", new Dictionary<string, string>
+        {
+            {"scavenger", "viral_skeleton"},
+            {"survivor", "viral_skeleton"},
+            {"ALL", "viral_skeleton"}
+        }
+    },
+};
+
         private Dictionary<string, List<string>> filterSets = new Dictionary<string, List<string>>
 {
     { "BodyButton", new List<string> { "ALL_head", "ALL_facial_hair", "ALL_hair", "ALL_hair_base", "ALL_hair_2", "ALL_hair_3", "ALL_hands", "ALL_tattoo" } },
@@ -227,7 +312,7 @@ namespace doppelganger
 
             if (File.Exists(iniPath))
             {
-                Debug.Log("Reading ini file: " + iniPath);
+                //Debug.Log("Reading ini file: " + iniPath);
                 string[] lines = File.ReadAllLines(iniPath);
                 bool readingWeightsSection = false;
                 foreach (string line in lines)
@@ -257,7 +342,7 @@ namespace doppelganger
                             if (float.TryParse(parts[1], out float weight))
                             {
                                 slotWeights[slotName] = weight;
-                                Debug.Log($"Loaded weight for {slotName}: {weight}");
+                                //Debug.Log($"Loaded weight for {slotName}: {weight}");
                             }
                             else
                             {
@@ -413,18 +498,18 @@ namespace doppelganger
                                         }
                                         else
                                         {
-                                            Debug.LogWarning($"Model instance not found for {modelNameWithClone}");
-                                            PrintCurrentlyLoadedModels();
+                                            Debug.LogError($"Model instance not found for {modelNameWithClone}");
+                                            //PrintCurrentlyLoadedModels();
                                         }
                                     }
                                     else
                                     {
-                                        Debug.LogWarning($"Model index not found for {modelInfo.name} in slot {slotName}");
+                                        Debug.LogError($"Model index not found for {modelInfo.name} in slot {slotName}");
                                     }
                                 }
                                 else
                                 {
-                                    Debug.LogWarning($"Slot not found for model {modelInfo.name}");
+                                    Debug.LogError($"Slot not found for model {modelInfo.name}");
                                 }
                                 
                             }
@@ -523,7 +608,7 @@ namespace doppelganger
                         if (string.Equals(meshName.Trim(), modelName, StringComparison.OrdinalIgnoreCase))
                         {
                             string slotName = Path.GetFileNameWithoutExtension(slotFile);
-                            Debug.Log($"Found slot {slotName} for model {modelName}");
+                            //Debug.Log($"Found slot {slotName} for model {modelName}");
                             return slotName;
                         }
                     }
@@ -534,7 +619,7 @@ namespace doppelganger
                 }
             }
 
-            Debug.Log($"Model {modelName} not found in any slot");
+            Debug.LogError($"Model {modelName} not found in any slot");
             return null;
         }
 
@@ -567,7 +652,7 @@ namespace doppelganger
                     {
                         // Increment index by 1 so 0 can represent "off"
                         int adjustedIndex = i + 1;
-                        Debug.Log($"Model {modelName} found at index {i}, adjusted index: {adjustedIndex}, in slot {slotName}");
+                        //Debug.Log($"Model {modelName} found at index {i}, adjusted index: {adjustedIndex}, in slot {slotName}");
                         return adjustedIndex;
                     }
                 }
@@ -604,6 +689,15 @@ namespace doppelganger
             {
                 Debug.Log($"Slider index not found for {sliderName}");
             }
+            ResetCameraToDefaultView();
+        }
+
+        public void ResetCameraToDefaultView()
+        {
+            if (cameraTool != null)
+            {
+                cameraTool.SetDefaultRigSettings();
+            }
         }
 
         private void UpdateCameraTarget(Transform loadedModelTransform)
@@ -611,7 +705,7 @@ namespace doppelganger
             if (cameraTool != null && loadedModelTransform != null)
             {
                 cameraTool.targets.Clear();
-                string[] pointNames = { "pelvis", "head", "legs", "r_hand", "l_hand", "l_foot", "r_foot" };
+                string[] pointNames = { "pelvis", "spine3", "legs", "r_hand", "l_hand", "l_foot", "r_foot" };
                 foreach (var pointName in pointNames)
                 {
                     Transform targetTransform = DeepFind(loadedModelTransform, pointName);
@@ -817,6 +911,72 @@ namespace doppelganger
             UpdateInterfaceBasedOnType();
             UpdateSlidersBasedOnSelection();
             UpdatePresetDropdown();
+            LoadSkeletonBasedOnSelection();
+        }
+
+        private string GetSelectedSkeleton()
+        {
+            string selectedCategory = categoryDropdown.options[categoryDropdown.value].text;
+            string selectedClass = classDropdown.options[classDropdown.value].text;
+
+            if (skeletonMapping.ContainsKey(selectedCategory) && skeletonMapping[selectedCategory].ContainsKey(selectedClass))
+            {
+                Debug.Log("Selected Category: " + selectedCategory + ", Selected Class: " + selectedClass);
+                string selectedSkeleton = skeletonMapping[selectedCategory][selectedClass];
+                Debug.Log("Selected Skeleton: " + selectedSkeleton);
+                return selectedSkeleton;
+            }
+            else
+            {
+                Debug.LogError("Skeleton mapping not found for Category: " + selectedCategory + ", Class: " + selectedClass);
+                return "default_skeleton";
+            }
+        }
+
+        private void LoadSkeletonBasedOnSelection()
+        {
+            // Get the selected skeleton name based on category and class
+            string selectedSkeleton = GetSelectedSkeleton();
+
+            // Destroy the current skeleton (if any)
+            GameObject currentSkeleton = GameObject.FindGameObjectWithTag("Skeleton");
+            if (currentSkeleton != null)
+            {
+                Destroy(currentSkeleton);
+            }
+
+            // Load and instantiate the new skeleton
+            string resourcePath = "Prefabs/" + selectedSkeleton.Replace(".msh", "");
+            GameObject skeletonPrefab = Resources.Load<GameObject>(resourcePath);
+            Debug.Log("Loading skeleton prefab from resource path: " + resourcePath);
+            if (skeletonPrefab != null)
+            {
+                GameObject loadedSkeleton = Instantiate(skeletonPrefab, Vector3.zero, Quaternion.Euler(-90, 0, 0));
+                loadedSkeleton.tag = "Skeleton";
+
+                // Find the 'pelvis' child in the loaded skeleton
+                Transform pelvis = loadedSkeleton.transform.Find("pelvis");
+                if (pelvis != null)
+                {
+                    // Create a new GameObject named 'Legs'
+                    GameObject legs = new GameObject("legs");
+
+                    // Set 'Legs' as a child of 'pelvis'
+                    legs.transform.SetParent(pelvis);
+
+                    // Set the local position of 'Legs' with the specified offset
+                    legs.transform.localPosition = new Vector3(0, 0, -0.005f);
+                }
+                else
+                {
+                    Debug.LogError("Pelvis not found in the skeleton prefab: " + selectedSkeleton);
+                }
+                UpdateCameraTarget(loadedSkeleton.transform);
+            }
+            else
+            {
+                Debug.LogError("Skeleton prefab not found in Resources: " + resourcePath);
+            }
         }
 
 
@@ -873,7 +1033,7 @@ namespace doppelganger
             }
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(slidersPanel.GetComponent<RectTransform>());
-            CreateDynamicButtons(filters);
+            //CreateDynamicButtons(filters);
         }
 
         public void SetCurrentType(string type)
@@ -893,18 +1053,13 @@ namespace doppelganger
         public void UpdateInterfaceBasedOnType()
         {
             string currentType = GetTypeFromSelector();
-            if (string.IsNullOrEmpty(currentType) || !slotData.ContainsKey(currentType))
-            {
-                Debug.LogError($"Invalid or missing type: {currentType}");
-                return;
-            }
 
             string path = Path.Combine(Application.streamingAssetsPath, "SlotData", currentType);
             PopulateSliders(path);
 
             // Create a list to store all filters
             List<string> allFilters = filterSets.SelectMany(pair => pair.Value).Distinct().ToList();
-            CreateDynamicButtons(allFilters);
+            //CreateDynamicButtons(allFilters);
         }
 
         void FilterSlidersForSlot(string slotName)
@@ -940,6 +1095,7 @@ namespace doppelganger
 
         void CreateDynamicButtons(List<string> filters)
         {
+            Debug.Log("CreateDynamicButtons");
             if (subButtonsPanel == null || buttonPrefab == null)
             {
                 Debug.LogError("CreateDynamicButtons: subButtonsPanel or buttonPrefab is null");

@@ -34,7 +34,6 @@ namespace doppelganger
         private HashSet<string> classes = new HashSet<string> { "All" };
         private HashSet<string> sexes = new HashSet<string> { "All" };
         private HashSet<string> races = new HashSet<string> { "All" };
-        private int selectedIndex = -1;
         private Vector2 scrollPos;
         private GameObject loadedSkeleton;
         private List<GameObject> loadedObjects = new List<GameObject>();
