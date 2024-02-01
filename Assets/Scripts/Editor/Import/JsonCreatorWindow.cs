@@ -8,6 +8,8 @@ using System.IO;
 using static ModelData;
 using System;
 using System.Linq;
+using static PlasticGui.LaunchDiffParameters;
+using System.Text;
 
 public class JsonCreatorWindow : EditorWindow
 {
@@ -172,6 +174,13 @@ public class JsonCreatorWindow : EditorWindow
         if (GUILayout.Button("Create ALL jsons"))
         {
             ReorganizeAndCombineJsonFiles();
+        }
+
+        EditorGUILayout.Space();
+
+        if (GUILayout.Button("Build Unique Skeleton Jsons"))
+        {
+            BuildUniqueSkeletonJsons();
         }
     }
 
@@ -398,6 +407,144 @@ public class JsonCreatorWindow : EditorWindow
             string filePath = Path.Combine(outputDir, "None_found.json");
             string jsonContent = JsonConvert.SerializeObject(new { unsortedMeshes = unsortedModels }, Formatting.Indented);
             File.WriteAllText(filePath, jsonContent);
+        }
+    }
+
+    private void BuildUniqueSkeletonJsons()
+    {
+        Debug.Log($"Started Building Unique Skeleton Jsons");
+        // Initialize storeClassData based on your needs
+        storeClassData = EditorGUILayout.Toggle("Store Class Data", storeClassData);
+
+        // Define the directory and gather JSON files
+        string jsonsDir = Path.Combine(Application.dataPath, "StreamingAssets/Jsons");
+        List<string> jsonFiles = new List<string>();
+        Dictionary<string, HashSet<string>> allSkeletonMeshes = new Dictionary<string, HashSet<string>>();
+        Dictionary<string, List<string>> meshOccurrences = new Dictionary<string, List<string>>();
+        foreach (var typeDir in Directory.GetDirectories(jsonsDir))
+        {
+            foreach (var categoryDir in Directory.GetDirectories(typeDir))
+            {
+                jsonFiles.AddRange(Directory.GetFiles(categoryDir, "*.json"));
+            }
+        }
+
+        Debug.Log($"jsonsDir {jsonsDir}");
+
+        string outputDir = Path.Combine(Application.dataPath, "StreamingAssets/Skeleton Data/");
+        // Ensure the output directory exists
+        if (!Directory.Exists(outputDir))
+        {
+            Directory.CreateDirectory(outputDir);
+        }
+
+        // List of target skeleton names
+        HashSet<string> targetSkeletonNames = new HashSet<string>
+    {
+        "man_bdt_heavy_coat_skeleton.msh",
+        "man_bdt_heavy_skeleton.msh",
+        "man_bdt_heavy_torso_d_skeleton.msh",
+        "man_bdt_medium_skeleton.msh",
+        "man_pk_heavy_skeleton.msh",
+        "man_pk_medium_skeleton.msh",
+        "man_sc_heavy_skeleton.msh",
+        "man_sc_medium_skeleton.msh",
+        "man_srv_heavy_skeleton.msh",
+        "man_srv_medium_skeleton.msh",
+        "man_srv_skinybiter_skeleton.msh",
+        "man_zmb_heavy_skeleton.msh",
+        "man_zmb_medium_skeleton.msh",
+        "woman_npc_meredith_skeleton.msh",
+        "woman_npc_singer_skeleton.msh"
+    };
+
+        // Dictionary to store meshes for each of the target skeletons
+        Dictionary<string, HashSet<string>> skeletonMeshes = new Dictionary<string, HashSet<string>>();
+
+        // Process each JSON file
+        foreach (var file in jsonFiles)
+        {
+            try
+            {
+                string jsonData = File.ReadAllText(file);
+                ModelData modelData = JsonConvert.DeserializeObject<ModelData>(jsonData);
+
+                if (modelData.modelProperties == null || modelData.slotPairs == null)
+                {
+                    Debug.LogWarning($"Skipped file {file} due to missing properties or slotPairs.");
+                    continue;
+                }
+
+                string skeletonName = modelData.skeletonName;
+
+                foreach (var slotPair in modelData.slotPairs)
+                {
+                    foreach (var model in slotPair.slotData.models)
+                    {
+                        string modelName = model.name.ToLower();
+
+                        // Update mesh occurrences without filtering by targetSkeletonNames
+                        if (!meshOccurrences.ContainsKey(modelName))
+                        {
+                            meshOccurrences[modelName] = new List<string>();
+                        }
+                        if (!meshOccurrences[modelName].Contains(skeletonName))
+                        {
+                            meshOccurrences[modelName].Add(skeletonName);
+                        }
+
+                        // Only add to allSkeletonMeshes if skeleton is a target
+                        if (targetSkeletonNames.Contains(skeletonName))
+                        {
+                            if (!allSkeletonMeshes.ContainsKey(skeletonName))
+                            {
+                                allSkeletonMeshes[skeletonName] = new HashSet<string>();
+                            }
+                            allSkeletonMeshes[skeletonName].Add(modelName);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Error processing file {file}: {ex.Message}");
+            }
+        }
+
+        // Dictionary to store unique meshes for each target skeleton
+        Dictionary<string, HashSet<string>> uniqueSkeletonMeshes = new Dictionary<string, HashSet<string>>();
+
+        // Determine unique meshes for each target skeleton
+        foreach (var targetSkeleton in targetSkeletonNames)
+        {
+            uniqueSkeletonMeshes[targetSkeleton] = new HashSet<string>();
+
+            if (allSkeletonMeshes.ContainsKey(targetSkeleton))
+            {
+                foreach (var mesh in allSkeletonMeshes[targetSkeleton])
+                {
+                    // A mesh is unique if it is only associated with the current target skeleton
+                    if (meshOccurrences.ContainsKey(mesh) && meshOccurrences[mesh].Count == 1 && meshOccurrences[mesh][0] == targetSkeleton)
+                    {
+                        uniqueSkeletonMeshes[targetSkeleton].Add(mesh);
+                    }
+                }
+            }
+        }
+
+        // Write unique meshes for each target skeleton to files
+        foreach (var skeleton in uniqueSkeletonMeshes.Keys)
+        {
+            var sortedMeshes = uniqueSkeletonMeshes[skeleton].OrderBy(mesh => mesh).ToList();
+            string outputFile = Path.Combine(outputDir, $"{skeleton}.json");
+
+            var meshData = new { mesh = sortedMeshes };
+
+            string jsonContent = JsonConvert.SerializeObject(meshData, Formatting.Indented);
+
+            File.WriteAllText(outputFile, jsonContent);
+
+            Debug.Log($"Unique meshes for skeleton '{skeleton}' written to: {outputFile}");
         }
     }
 
