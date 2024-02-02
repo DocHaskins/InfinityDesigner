@@ -1,32 +1,32 @@
 using UnityEngine;
-using System.IO;
 using System.Collections.Generic;
-using UnityEngine.Networking;
-using System.Collections;
 
-public class RandomWavPlayer : MonoBehaviour
+namespace doppelganger
 {
-    private List<AudioClip> wavFiles;
-    private AudioSource audioSource;
-
-    void Start()
+    public class RandomWavPlayer : MonoBehaviour
     {
-        audioSource = GetComponent<AudioSource>();
-        LoadWavFiles();
-        PlayRandomWavFile();
-    }
+        private List<AudioClip> wavFiles;
+        private AudioSource audioSource;
 
-    void LoadWavFiles()
-    {
-        wavFiles = new List<AudioClip>(Resources.LoadAll<AudioClip>("Audio"));
-    }
+        void Start()
+        {
+            audioSource = GetComponent<AudioSource>();
+            LoadWavFiles();
+            PlayRandomWavFile();
+        }
 
-    void PlayRandomWavFile()
-    {
-        if (wavFiles.Count == 0) return;
+        void LoadWavFiles()
+        {
+            wavFiles = new List<AudioClip>(Resources.LoadAll<AudioClip>("Audio"));
+        }
 
-        int randomIndex = Random.Range(0, wavFiles.Count);
-        audioSource.clip = wavFiles[randomIndex];
-        audioSource.Play();
+        void PlayRandomWavFile()
+        {
+            if (wavFiles.Count == 0) return;
+
+            int randomIndex = Random.Range(0, wavFiles.Count);
+            audioSource.clip = wavFiles[randomIndex];
+            audioSource.Play();
+        }
     }
 }

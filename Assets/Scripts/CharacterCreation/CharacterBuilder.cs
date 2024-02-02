@@ -10,36 +10,25 @@ using System.Linq;
 using System.Collections;
 using Michsky.UI.Heat;
 
-[Serializable]
-public class CharacterConfig
-{
-    public string gender_property;
-    public List<ModelConfiguration> models;
-}
-
-[Serializable]
-public class SlotModelData
-{
-    public List<string> meshes;
-}
-
-[Serializable]
-public class ModelConfiguration
-{
-    public string modelName;
-    public List<string> materialsResources;
-}
+/// <summary>
+/// Facilitates the loading and application of different character components based on selections made through a UI, managing categories such as type, class, and race. 
+/// The script also handles the instantiation of sliders for fine-tuned character customization, supports preset configurations for quick loading, and integrates with Cinemachine for camera adjustments. 
+/// It utilizes a combination of JSON data for model properties and dynamically generated UI elements to allow users to build and customize characters in real-time.
+/// </summary>
 
 namespace doppelganger
 {
     public class CharacterBuilder : MonoBehaviour
     {
+        [Header("Managers")]
         public SkeletonLookup skeletonLookup;
-        
+        public FilterMapping filterMapping;
         public CinemachineCameraZoomTool cameraTool;
+        
         private string currentType;
         private string currentPath;
-        
+
+        [Header("Interface")]
         [SerializeField] 
         private HorizontalSelector typeSelector;
         public TMP_Dropdown categoryDropdown;
@@ -53,10 +42,6 @@ namespace doppelganger
         public GameObject variationSliderPrefab;
         public GameObject loadedSkeleton;
         public GameObject buttonPrefab;
-        public Transform subButtonsPanel;
-        public Button bodyButton;
-        public Button armorButton;
-        public Button clothesButton;
         public Button presetLoadButton;
 
         private string lastFilterCategoryKey = "";
@@ -72,13 +57,6 @@ namespace doppelganger
         private Dictionary<string, List<string>> slotData = new Dictionary<string, List<string>>();
         public Dictionary<string, GameObject> currentlyLoadedModels = new Dictionary<string, GameObject>();
 
-        private Dictionary<string, List<string>> filterSets = new Dictionary<string, List<string>>
-{
-    { "BodyButton", new List<string> { "ALL_head", "ALL_facial_hair", "ALL_hair", "ALL_hair_base", "ALL_hair_2", "ALL_hair_3", "ALL_hands", "ALL_tattoo" } },
-    { "ClothesButton", new List<string> { "ALL_backpack", "ALL_cape", "ALL_decals", "ALL_earrings", "ALL_glasses", "ALL_gloves", "ALL_hat", "ALL_leg_access", "ALL_legs", "ALL_mask", "ALL_necklace", "ALL_rings", "ALL_shoes", "ALL_sleeve", "ALL_torso", "ALL_torso_extra", "ALL_torso_access" } },
-    { "ArmorButton", new List<string> { "ALL_armor_helmet", "ALL_armor_helmet_access", "ALL_armor_torso", "ALL_armor_torso_access", "ALL_armor_torso_lowerleft", "ALL_armor_torso_lowerright", "ALL_armor_torso_upperleft", "ALL_armor_torso_upperright", "ALL_armor_legs", "ALL_armor_legs_upperright", "ALL_armor_legs_upperleft", "ALL_armor_legs_lowerright", "ALL_armor_legs_lowerleft" } }
-};
-
         void Start()
         {
             string initialType = "Human";
@@ -91,9 +69,6 @@ namespace doppelganger
             StartCoroutine(SetInitialDropdownValues());
 
             // Set up button listeners
-            if (bodyButton != null) bodyButton.onClick.AddListener(() => FilterCategory("BodyButton"));
-            if (armorButton != null) armorButton.onClick.AddListener(() => FilterCategory("ArmorButton"));
-            if (clothesButton != null) clothesButton.onClick.AddListener(() => FilterCategory("ClothesButton"));
             if (presetLoadButton != null)
             {
                 presetLoadButton.onClick.AddListener(OnPresetLoadButtonPressed);
@@ -802,31 +777,28 @@ namespace doppelganger
 
         void UpdateInterfaceBasedOnDropdownSelection()
         {
-            UpdateSlidersBasedOnSelection();
-
-            string type = GetTypeFromSelector();
             string category = categoryDropdown.options[categoryDropdown.value].text;
-            string classSelection = classDropdown.options[classDropdown.value].text;
 
-            // Create a list to store filters based on dropdown selections
+            // New approach to determine filters based on the selected category
             List<string> filters = new List<string>();
-
-            // Populate filters based on dropdown selections
             if (category != "ALL")
             {
-                filters.Add(category);
-                if (classSelection != "ALL")
+                // Assume 'buttonMappings' contains keys that match dropdown options
+                if (filterMapping.buttonMappings.TryGetValue("Button_" + category, out List<string> categoryFilters))
                 {
-                    filters.Add(classSelection);
+                    filters.AddRange(categoryFilters);
                 }
             }
             else
             {
-                // If category is "ALL", add all filters
-                filters.AddRange(filterSets.SelectMany(pair => pair.Value).Distinct());
+                // If category is "ALL", add all filters from buttonMappings
+                filters.AddRange(filterMapping.buttonMappings.SelectMany(pair => pair.Value).Distinct());
             }
 
-            CreateDynamicButtons(filters);
+            // Assuming PopulateSlidersWithFilters does the actual update
+            PopulateSlidersWithFilters(currentPath, filters);
+
+            // Presumed existing functionality
             UpdateInterfaceBasedOnType();
             UpdateSlidersBasedOnSelection();
             UpdatePresetDropdown();
@@ -900,14 +872,12 @@ namespace doppelganger
             PopulateSliders(currentPath);
         }
 
-        void FilterCategory(string categoryKey)
+        public void FilterCategory(string categoryKey)
         {
-            lastFilterCategoryKey = categoryKey;
-
-            if (filterSets.TryGetValue(categoryKey, out List<string> filters))
+            // Assuming 'buttonMappings' is now part of this script or accessible through a reference
+            if (filterMapping.buttonMappings.TryGetValue(categoryKey, out List<string> filters))
             {
                 PopulateSlidersWithFilters(currentPath, filters);
-                //CreateDynamicButtons(filters);
             }
             else
             {
@@ -958,7 +928,7 @@ namespace doppelganger
             PopulateSliders(path);
 
             // Create a list to store all filters
-            List<string> allFilters = filterSets.SelectMany(pair => pair.Value).Distinct().ToList();
+            List<string> allFilters = filterMapping.buttonMappings.SelectMany(pair => pair.Value).Distinct().ToList();
             //CreateDynamicButtons(allFilters);
         }
 
@@ -990,69 +960,6 @@ namespace doppelganger
             else
             {
                 Debug.LogWarning($"FilterSlidersForSlot: Slot file '{slotPath}' not found");
-            }
-        }
-
-        void CreateDynamicButtons(List<string> filters)
-        {
-            Debug.Log("CreateDynamicButtons");
-            if (subButtonsPanel == null || buttonPrefab == null)
-            {
-                Debug.LogError("CreateDynamicButtons: subButtonsPanel or buttonPrefab is null");
-                return; // Early exit if essential components are missing
-            }
-
-            // Clear existing buttons in the panel
-            foreach (Transform child in subButtonsPanel)
-            {
-                Destroy(child.gameObject);
-            }
-
-            string type = GetTypeFromSelector();
-            string category = categoryDropdown.options[categoryDropdown.value].text;
-            string classSelection = classDropdown.options[classDropdown.value].text;
-
-            // Construct the path based on the dropdown selections
-            string path = Path.Combine(Application.streamingAssetsPath, "SlotData", type);
-
-            if (category != "ALL")
-            {
-                path = Path.Combine(path, category);
-                if (classSelection != "ALL")
-                {
-                    path = Path.Combine(path, classSelection);
-                }
-            }
-
-            // Ensure the path exists before trying to access it
-            if (Directory.Exists(path))
-            {
-                string[] files = Directory.GetFiles(path, "*.json");
-                foreach (var file in files)
-                {
-                    string slotName = Path.GetFileNameWithoutExtension(file);
-                    GameObject newButton = Instantiate(buttonPrefab, subButtonsPanel);
-
-                    string imageName = "Character_Builder_" + slotName.Replace("ALL_", "");
-                    Sprite buttonImage = Resources.Load<Sprite>("UI/" + imageName);
-
-                    if (buttonImage != null)
-                    {
-                        Image buttonImageComponent = newButton.GetComponent<Image>();
-                        buttonImageComponent.sprite = buttonImage;
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"CreateDynamicButtons: Image not found for '{imageName}'");
-                    }
-
-                    Button buttonComponent = newButton.GetComponent<Button>();
-                    buttonComponent.onClick.AddListener(() => FilterSlidersForSlot(slotName));
-                }
-            }
-            else
-            {
-                Debug.LogWarning("Path not found for creating buttons: " + path);
             }
         }
 
@@ -1762,13 +1669,6 @@ namespace doppelganger
 #else
     Debug.LogError("SaveDuplicatedMaterial can only be used in the Unity Editor.");
 #endif
-        }
-
-        private bool ShouldDisableRenderer(string gameObjectName)
-        {
-            return gameObjectName.Contains("sh_eye_shadow") ||
-                   gameObjectName.Contains("sh_wet_eye") ||
-                   gameObjectName.Contains("_null");
         }
 
         public Dictionary<string, float> GetSliderValues()

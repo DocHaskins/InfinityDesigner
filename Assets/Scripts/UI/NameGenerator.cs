@@ -4,67 +4,70 @@ using UnityEngine;
 using TMPro;
 using System.IO;
 
-public class NameGenerator : MonoBehaviour
+namespace doppelganger
 {
-    public TMP_InputField saveName;
-    public TMP_Dropdown saveCategoryDropdown;
-
-    // Start is called before the first frame update
-    void Start()
+    public class NameGenerator : MonoBehaviour
     {
-        saveCategoryDropdown.onValueChanged.AddListener(delegate { GenerateName(); });
-    }
+        [Header("Interface")]
+        public TMP_InputField saveName;
+        public TMP_Dropdown saveCategoryDropdown;
 
-    public void GenerateName()
-    {
-        string selectedCategory = saveCategoryDropdown.options[saveCategoryDropdown.value].text;
-        string filePath = "";
-
-        if (selectedCategory == "Man")
+        void Start()
         {
-            filePath = Path.Combine(Application.streamingAssetsPath, "male_names.json");
-        }
-        else if (selectedCategory == "Wmn")
-        {
-            filePath = Path.Combine(Application.streamingAssetsPath, "female_names.json");
+            saveCategoryDropdown.onValueChanged.AddListener(delegate { GenerateName(); });
         }
 
-        if (selectedCategory == "Player")
+        public void GenerateName()
         {
-            saveName.text = "Aiden";
-        }
+            string selectedCategory = saveCategoryDropdown.options[saveCategoryDropdown.value].text;
+            string filePath = "";
 
-        if (!string.IsNullOrEmpty(filePath))
-        {
-            string dataAsJson = File.ReadAllText(filePath);
-            Names names = JsonUtility.FromJson<Names>(dataAsJson);
-
-            if (names != null)
+            if (selectedCategory == "Man")
             {
-                List<string> nameList = null;
+                filePath = Path.Combine(Application.streamingAssetsPath, "male_names.json");
+            }
+            else if (selectedCategory == "Wmn")
+            {
+                filePath = Path.Combine(Application.streamingAssetsPath, "female_names.json");
+            }
 
-                if (selectedCategory == "Man")
-                {
-                    nameList = new List<string>(names.male);
-                }
-                else if (selectedCategory == "Wmn")
-                {
-                    nameList = new List<string>(names.female);
-                }
+            if (selectedCategory == "Player")
+            {
+                saveName.text = "Aiden";
+            }
 
-                if (nameList != null && nameList.Count > 0)
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                string dataAsJson = File.ReadAllText(filePath);
+                Names names = JsonUtility.FromJson<Names>(dataAsJson);
+
+                if (names != null)
                 {
-                    string randomName = nameList[Random.Range(0, nameList.Count)];
-                    saveName.text = randomName;
+                    List<string> nameList = null;
+
+                    if (selectedCategory == "Man")
+                    {
+                        nameList = new List<string>(names.male);
+                    }
+                    else if (selectedCategory == "Wmn")
+                    {
+                        nameList = new List<string>(names.female);
+                    }
+
+                    if (nameList != null && nameList.Count > 0)
+                    {
+                        string randomName = nameList[Random.Range(0, nameList.Count)];
+                        saveName.text = randomName;
+                    }
                 }
             }
         }
-    }
 
-    [System.Serializable]
-    private class Names
-    {
-        public string[] male;
-        public string[] female;
+        [System.Serializable]
+        private class Names
+        {
+            public string[] male;
+            public string[] female;
+        }
     }
 }

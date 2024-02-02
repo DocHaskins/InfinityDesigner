@@ -85,13 +85,13 @@ public class JsonCreatorWindow : EditorWindow
 
         categoryPrefixes = new Dictionary<string, string[]>
         {
-            {"Biter", new[] {"biter", "man_zmb_", "wmn_zmb_", "_zmb"}},
-            {"Viral", new[] {"viral", "wmn_viral"}},
+            {"Biter", new[] {"biter", "ialr_zmb_", "man_zmb_", "wmn_zmb_", "_zmb"}},
+            {"Viral", new[] {"viral", "ialr_viral_", "wmn_viral"}},
             {"Special Infected", new[] { "volatile", "suicider", "spitter", "goon", "demolisher", "screamer", "bolter", "corruptor", "banshee", "charger" }},
             {"Player", new[] { "sh_npc_aiden", "player", "player_outfit_lubu_tpp", "player_outfit_carrier_leader_tpp", "player_outfit_brecken", "player_outfit_gunslinger_tpp"}},
             {"Man", new[] {"man", "man_srv_craftmaster", "dlc_opera_man_shopkeeper_special", "npc_pipsqueak", "dlc_opera_man_npc_ciro", "npc_mc_dispatcher", "dlc_opera_man_npc_ferka", "dlc_opera_man_npc_hideo", "dlc_opera_man_npc_ogar", "npc_carl", "npc_alberto_paganini", "npc_outpost_guard", "npc_callum", "npc_abandon_srv_emmett", "npc_abandon_pk_master_brewer", "npc_feliks", "npc_marcus", "npc_mq_stan", "npc_hank", "npc_jack", "npc_colonel", "npc_pilgrim", "sh_baker", "npc_simon", "npc_juan", "npc_rowe", "npc_vincente", "sh_bruce",  "sh_frank", "sh_dlc_opera_npc_tetsuo", "sh_dlc_opera_npc_ogar", "sh_dlc_opera_npc_ciro", "sh_dlc_opera_npc_andrew", "npc_dylan", "npc_waltz", "dlc_opera_man", "npc_skullface", "sh_johnson", "npc_hakon", "npc_steve", "npc_barney", "multihead007_npc_carl_"}},
             {"Wmn", new[] {"wmn", "dlc_opera_wmn", "npc_anderson", "dlc_opera_man_wmn_brienne", "sh_mother", "npc_thalia", "npc_hilda", "npc_lola", "npc_mq_singer", "npc_astrid", "npc_dr_veronika", "npc_lawan", "npc_meredith", "npc_mia", "npc_nuwa", "npc_plaguewitch", "npc_sophie"}},
-            {"Child", new[] {"child", "kid", "girl", "boy", "young", "chld"}}
+            {"Child", new[] {"child", "kid", "girl", "ialr_viral_child", "ialr_zmb_child_", "boy", "young", "chld"}}
         };
 
         exclude_filters = new Dictionary<string, List<string>>()
@@ -198,7 +198,7 @@ public class JsonCreatorWindow : EditorWindow
         }
         Dictionary<string, Dictionary<string, List<string>>> modelsSortedByCategory = new Dictionary<string, Dictionary<string, List<string>>>();
         HashSet<string> unsortedModels = new HashSet<string>();
-        HashSet<string> ignoreList = new HashSet<string> { "player_legs_a.msh", "player_camo_bracers_a_tpp.msh",  "man_bdt_torso_c_shawl_b.msh", "chr_player_healer_mask.msh", "reporter_woman_old_skeleton.msh", "player_camo_gloves_a_tpp.msh", "player_camo_headwear_a_tpp.msh", "player_camo_hood_a_tpp.msh", "player_camo_pants_a_tpp.msh", "npc_colonel_coat_b.msh" };
+        HashSet<string> ignoreList = new HashSet<string> { "player_legs_a.msh", "player_camo_bracers_a_tpp.msh", "player_camo_bracers_a_fpp.msh",  "man_bdt_torso_c_shawl_b.msh", "chr_player_healer_mask.msh", "reporter_woman_old_skeleton.msh", "player_camo_gloves_a_tpp.msh", "player_camo_headwear_a_tpp.msh", "player_camo_hood_a_tpp.msh", "player_camo_pants_a_tpp.msh", "npc_colonel_coat_b.msh" };
         Dictionary<string, List<string>> modelToFilterLookup = new Dictionary<string, List<string>>();
         Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>> modelsByClassAndFilter = new Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>>();
 

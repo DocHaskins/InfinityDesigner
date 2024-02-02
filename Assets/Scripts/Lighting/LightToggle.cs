@@ -2,65 +2,74 @@ using UnityEngine;
 using UnityEngine.Rendering.HighDefinition;
 using System.Collections.Generic;
 
-public class LightToggle : MonoBehaviour
+/// <summary>
+/// The LightToggle script dims specified HDRP lights to a lower intensity and toggles other lights on or off when the space key is pressed. 
+/// It preserves the original intensities of the excluded lights to restore them later. 
+/// This functionality allows for dynamic lighting changes in the scene, enhancing visual effects or signaling events within a Unity game developed using HDRP.
+/// </summary>
+
+namespace doppelganger
 {
-    [Tooltip("HDRP Lights in this list will have their intensity set to 0.25 lumens when space is pressed.")]
-    public HDAdditionalLightData[] excludedLights; // Array to hold HDRP lights that should not be toggled
-
-    private Dictionary<HDAdditionalLightData, float> originalIntensities = new Dictionary<HDAdditionalLightData, float>();
-    private bool isDimmed = false;
-
-    void Start()
+    public class LightToggle : MonoBehaviour
     {
-        // Store the original intensities of the excluded lights
-        foreach (HDAdditionalLightData light in excludedLights)
+        [Tooltip("HDRP Lights in this list will have their intensity set to 0.25 lumens when space is pressed.")]
+        public HDAdditionalLightData[] excludedLights; // Array to hold HDRP lights that should not be toggled
+
+        private Dictionary<HDAdditionalLightData, float> originalIntensities = new Dictionary<HDAdditionalLightData, float>();
+        private bool isDimmed = false;
+
+        void Start()
         {
-            if (light != null)
+            // Store the original intensities of the excluded lights
+            foreach (HDAdditionalLightData light in excludedLights)
             {
-                originalIntensities[light] = light.intensity;
+                if (light != null)
+                {
+                    originalIntensities[light] = light.intensity;
+                }
             }
         }
-    }
 
-    void Update()
-    {
-        // Check if the space bar was pressed down this frame
-        if (Input.GetKeyDown(KeyCode.Space))
+        void Update()
         {
-            // Toggle the state between dimmed and original intensity
-            isDimmed = !isDimmed;
-
-            if (isDimmed)
+            // Check if the space bar was pressed down this frame
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                // Dim the excluded lights to 0.25 lumens
-                foreach (HDAdditionalLightData excludedLight in excludedLights)
+                // Toggle the state between dimmed and original intensity
+                isDimmed = !isDimmed;
+
+                if (isDimmed)
                 {
-                    if (excludedLight != null)
+                    // Dim the excluded lights to 0.25 lumens
+                    foreach (HDAdditionalLightData excludedLight in excludedLights)
                     {
-                        excludedLight.intensity = 3.5f;
+                        if (excludedLight != null)
+                        {
+                            excludedLight.intensity = 3.5f;
+                        }
                     }
                 }
-            }
-            else
-            {
-                // Restore the original intensity of the excluded lights
-                foreach (HDAdditionalLightData excludedLight in excludedLights)
+                else
                 {
-                    if (excludedLight != null && originalIntensities.ContainsKey(excludedLight))
+                    // Restore the original intensity of the excluded lights
+                    foreach (HDAdditionalLightData excludedLight in excludedLights)
                     {
-                        excludedLight.intensity = originalIntensities[excludedLight];
+                        if (excludedLight != null && originalIntensities.ContainsKey(excludedLight))
+                        {
+                            excludedLight.intensity = originalIntensities[excludedLight];
+                        }
                     }
                 }
-            }
 
-            // Toggle the enabled state for each light that is not in the exclusion list
-            Light[] lights = FindObjectsOfType<Light>();
-            foreach (Light light in lights)
-            {
-                HDAdditionalLightData hdLight = light.GetComponent<HDAdditionalLightData>();
-                if (hdLight != null && System.Array.IndexOf(excludedLights, hdLight) < 0) // If not in the excluded list
+                // Toggle the enabled state for each light that is not in the exclusion list
+                Light[] lights = FindObjectsOfType<Light>();
+                foreach (Light light in lights)
                 {
-                    light.enabled = !light.enabled; // Toggle light
+                    HDAdditionalLightData hdLight = light.GetComponent<HDAdditionalLightData>();
+                    if (hdLight != null && System.Array.IndexOf(excludedLights, hdLight) < 0) // If not in the excluded list
+                    {
+                        light.enabled = !light.enabled; // Toggle light
+                    }
                 }
             }
         }

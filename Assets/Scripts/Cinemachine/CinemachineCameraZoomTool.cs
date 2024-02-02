@@ -2,9 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Cinemachine;
 
-namespace Cinemachine 
+/// <summary>
+/// The CinemachineCameraZoomTool script enhances the CinemachineFreeLook component with zoom and target cycling capabilities. 
+/// It allows dynamic adjustment of the camera's orbits through user input, effectively scaling the camera's view. 
+/// The script supports cycling through predefined targets, vertical movement restrictions, and smooth transitions between camera settings. 
+/// It utilizes custom speed settings for vertical and horizontal movements and incorporates a feature for setting the camera back to its default field of view and orbit configurations.
+/// </summary>
+
+namespace Cinemachine
 {
     [SaveDuringPlay]
     [RequireComponent(typeof(CinemachineFreeLook))]

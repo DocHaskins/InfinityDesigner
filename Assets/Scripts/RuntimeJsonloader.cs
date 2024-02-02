@@ -7,12 +7,21 @@ using Cinemachine;
 using TMPro;
 using UnityEngine.UI;
 
+/// <summary>
+/// RuntimeJsonLoader dynamically loads character models and their configurations at runtime based on user-selected filters and search terms. 
+/// It interfaces with CharacterBuilder for model instantiation, supports filtering by class, sex, race, and name, and offers functionality for loading and unloading models. 
+/// Dropdowns and input fields enable dynamic querying and selection from available JSON data.
+/// </summary>
+
 namespace doppelganger
 {
     public class RuntimeJsonLoader : MonoBehaviour
     {
+        [Header("Managers")]
         public CharacterBuilder characterBuilder;
+        private CinemachineCameraZoomTool cameraTool;
 
+        [Header("Interface")]
         public TMP_Text modelName;
         public TMP_Dropdown filterCustomDropdown;
         public TMP_Dropdown filterClassDropdown;
@@ -23,21 +32,19 @@ namespace doppelganger
         public Button loadButton;
         public Button unloadButton;
 
-        private List<MinimalModelData> minimalModelInfos = new List<MinimalModelData>();
-        private Dictionary<string, string> displayNameToFileMap = new Dictionary<string, string>();
-        private List<string> filteredJsonFiles = new List<string>();
         private string selectedJson;
         private string searchTerm = "";
         private string selectedClass = "All";
         private string selectedSex = "All";
         private string selectedRace = "All";
+        private GameObject loadedSkeleton;
         private HashSet<string> classes = new HashSet<string> { "All" };
         private HashSet<string> sexes = new HashSet<string> { "All" };
         private HashSet<string> races = new HashSet<string> { "All" };
-        private Vector2 scrollPos;
-        private GameObject loadedSkeleton;
+        private Dictionary<string, string> displayNameToFileMap = new Dictionary<string, string>();
         private List<GameObject> loadedObjects = new List<GameObject>();
-        private CinemachineCameraZoomTool cameraTool;
+        private List<string> filteredJsonFiles = new List<string>();
+        private List<MinimalModelData> minimalModelInfos = new List<MinimalModelData>();
 
         void Start()
         {

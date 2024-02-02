@@ -37,14 +37,12 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: player_plague_torso_a_alpha_a_tpp
-  m_Shader: {fileID: -6465566751694194690, guid: 0cf98c43b16dd6e4abfc0e3e03e66cd6, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 921ad4346783ba24a9c2e29a817e4c4e, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _ENABLE_FOG_ON_TRANSPARENT
-  - _SURFACE_TYPE_TRANSPARENT
-  m_InvalidKeywords:
   - _ALPHATEST_ON
+  m_InvalidKeywords:
   - _BACK_THEN_FRONT_RENDERING
   - _MASKMAP
   - _NORMALMAP
@@ -52,15 +50,16 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: 2475
   stringTagMap:
     MotionVector: User
-    RenderType: Transparent
+    RenderType: TransparentCutout
   disabledShaderPasses:
   - MOTIONVECTORS
   - TransparentDepthPostpass
   - TransparentBackface
   - RayTracingPrepass
+  - TransparentDepthPrepass
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -225,6 +224,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: aa04bff62867b924fb66a5d1141432a4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _opc:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _rgh:
         m_Texture: {fileID: 2800000, guid: 3bc14132dea882946b4c2a9eee5fa2c4, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -259,7 +262,7 @@ Material:
     - _AlphaCutoffPostpass: 0.5
     - _AlphaCutoffPrepass: 0.5
     - _AlphaCutoffShadow: 0.5
-    - _AlphaDstBlend: 10
+    - _AlphaDstBlend: 0
     - _AlphaRemapMax: 1
     - _AlphaRemapMin: 0
     - _AlphaSrcBlend: 1
@@ -291,7 +294,7 @@ Material:
     - _DoubleSidedEnable: 0
     - _DoubleSidedGIMode: 0
     - _DoubleSidedNormalMode: 1
-    - _DstBlend: 10
+    - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EmissiveColorMode: 1
     - _EmissiveExposureWeight: 1
@@ -330,6 +333,7 @@ Material:
     - _ObjectSpaceUVMappingEmissive: 0
     - _OcclusionStrength: 1
     - _OpaqueCullMode: 2
+    - _Override_Color: 0
     - _PPDLodThreshold: 5
     - _PPDMaxSamples: 15
     - _PPDMinSamples: 5
@@ -367,7 +371,7 @@ Material:
     - _SubsurfaceMask: 1
     - _SupportDecals: 1
     - _Surface: 0
-    - _SurfaceType: 1
+    - _SurfaceType: 0
     - _TexWorldScale: 1
     - _TexWorldScaleEmissive: 1
     - _Thickness: 1
@@ -386,10 +390,11 @@ Material:
     - _UseEmissiveIntensity: 0
     - _UseShadowThreshold: 0
     - _WorkflowMode: 1
-    - _ZTestDepthEqualForOpaque: 4
+    - _ZTestDepthEqualForOpaque: 3
     - _ZTestGBuffer: 3
     - _ZTestTransparent: 4
-    - _ZWrite: 0
+    - _ZWrite: 1
+    - _ems_scale: 5
     - _metallic_default: 0
     - _spc_default: 0
     m_Colors:
@@ -410,6 +415,7 @@ Material:
     - _UVDetailsMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMaskEmissive: {r: 1, g: 0, b: 0, a: 0}
+    - _color: {r: 1, g: 0, b: 0, a: 0}
     - _idx_Tiling: {r: 0.5, g: 1, b: 0, a: 0}
     - _idx_offset: {r: 1, g: 0.25, b: 0, a: 0}
   m_BuildTextureStacks: []

@@ -3,12 +3,21 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class SkeletonLookup : MonoBehaviour
-{
-    public TMP_Dropdown categoryDropdown;
-    public TMP_Dropdown classDropdown;
+/// <summary>
+/// SkeletonLookup is a Unity script that maps character categories and classes to specific skeleton models using dropdown selections. 
+/// It holds a comprehensive dictionary mapping each category and class to a skeleton name, supporting a wide range of characters from players to various infected types. 
+/// The script provides functionality to retrieve the correct skeleton model based on the current selections in the category and class dropdowns, ensuring the appropriate skeleton is used for character customization and instantiation.
+/// </summary>
 
-    private Dictionary<string, Dictionary<string, string>> skeletonMapping = new Dictionary<string, Dictionary<string, string>>
+namespace doppelganger
+{
+    public class SkeletonLookup : MonoBehaviour
+    {
+        [Header("Interface")]
+        public TMP_Dropdown categoryDropdown;
+        public TMP_Dropdown classDropdown;
+
+        private Dictionary<string, Dictionary<string, string>> skeletonMapping = new Dictionary<string, Dictionary<string, string>>
 {
     {
         "ALL", new Dictionary<string, string>
@@ -90,39 +99,40 @@ public class SkeletonLookup : MonoBehaviour
     },
 };
 
-    public string GetSelectedSkeleton()
-    {
-        string selectedCategory = categoryDropdown.options[categoryDropdown.value].text;
-        string selectedClass = classDropdown.options[classDropdown.value].text;
+        public string GetSelectedSkeleton()
+        {
+            string selectedCategory = categoryDropdown.options[categoryDropdown.value].text;
+            string selectedClass = classDropdown.options[classDropdown.value].text;
 
-        if (skeletonMapping.ContainsKey(selectedCategory) && skeletonMapping[selectedCategory].ContainsKey(selectedClass))
-        {
-            Debug.Log("Selected Category: " + selectedCategory + ", Selected Class: " + selectedClass);
-            string selectedSkeleton = skeletonMapping[selectedCategory][selectedClass];
-            Debug.Log("Selected Skeleton: " + selectedSkeleton);
-            return selectedSkeleton + ".msh";
+            if (skeletonMapping.ContainsKey(selectedCategory) && skeletonMapping[selectedCategory].ContainsKey(selectedClass))
+            {
+                Debug.Log("Selected Category: " + selectedCategory + ", Selected Class: " + selectedClass);
+                string selectedSkeleton = skeletonMapping[selectedCategory][selectedClass];
+                Debug.Log("Selected Skeleton: " + selectedSkeleton);
+                return selectedSkeleton + ".msh";
+            }
+            else
+            {
+                Debug.LogError("Skeleton mapping not found for Category: " + selectedCategory + ", Class: " + selectedClass);
+                return "default_skeleton";
+            }
         }
-        else
-        {
-            Debug.LogError("Skeleton mapping not found for Category: " + selectedCategory + ", Class: " + selectedClass);
-            return "default_skeleton";
-        }
-    }
 
-    public string LookupSkeleton(string selectedCategory, string selectedClass)
-    {
-        // Directly use the provided selectedCategory and selectedClass parameters
-        if (skeletonMapping.ContainsKey(selectedCategory) && skeletonMapping[selectedCategory].ContainsKey(selectedClass))
+        public string LookupSkeleton(string selectedCategory, string selectedClass)
         {
-            Debug.Log("Selected Category: " + selectedCategory + ", Selected Class: " + selectedClass);
-            string selectedSkeleton = skeletonMapping[selectedCategory][selectedClass];
-            Debug.Log("Selected Skeleton: " + selectedSkeleton);
-            return selectedSkeleton + ".msh";
-        }
-        else
-        {
-            Debug.LogError("Skeleton mapping not found for Category: " + selectedCategory + ", Class: " + selectedClass);
-            return "default_skeleton";
+            // Directly use the provided selectedCategory and selectedClass parameters
+            if (skeletonMapping.ContainsKey(selectedCategory) && skeletonMapping[selectedCategory].ContainsKey(selectedClass))
+            {
+                Debug.Log("Selected Category: " + selectedCategory + ", Selected Class: " + selectedClass);
+                string selectedSkeleton = skeletonMapping[selectedCategory][selectedClass];
+                Debug.Log("Selected Skeleton: " + selectedSkeleton);
+                return selectedSkeleton + ".msh";
+            }
+            else
+            {
+                Debug.LogError("Skeleton mapping not found for Category: " + selectedCategory + ", Class: " + selectedClass);
+                return "default_skeleton";
+            }
         }
     }
 }
