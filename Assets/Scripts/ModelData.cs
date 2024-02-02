@@ -7,7 +7,6 @@ using UnityEngine;
 public class ModelData
 {
     public string skeletonName;
-    public string sex;
     public ModelProperties modelProperties;
     public List<SlotDataPair> slotPairs;
 

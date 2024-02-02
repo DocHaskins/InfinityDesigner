@@ -8,8 +8,6 @@ using System.IO;
 using static ModelData;
 using System;
 using System.Linq;
-using static PlasticGui.LaunchDiffParameters;
-using System.Text;
 
 public class JsonCreatorWindow : EditorWindow
 {
@@ -85,13 +83,13 @@ public class JsonCreatorWindow : EditorWindow
 
         categoryPrefixes = new Dictionary<string, string[]>
         {
-            {"Biter", new[] {"biter", "ialr_zmb_", "man_zmb_", "wmn_zmb_", "_zmb"}},
-            {"Viral", new[] {"viral", "ialr_viral_", "wmn_viral"}},
-            {"Special Infected", new[] { "volatile", "suicider", "spitter", "goon", "demolisher", "screamer", "bolter", "corruptor", "banshee", "charger" }},
+            {"Biter", new[] {"biter", "ialr_zmb_", "zmb_man", "zmb_wmn", "man_zmb_", "wmn_zmb_", "_zmb"}},
+            {"Viral", new[] {"viral", "viral_man", "ialr_viral_", "wmn_viral"}},
             {"Player", new[] { "sh_npc_aiden", "player", "player_outfit_lubu_tpp", "player_outfit_carrier_leader_tpp", "player_outfit_brecken", "player_outfit_gunslinger_tpp"}},
             {"Man", new[] {"man", "man_srv_craftmaster", "dlc_opera_man_shopkeeper_special", "npc_pipsqueak", "dlc_opera_man_npc_ciro", "npc_mc_dispatcher", "dlc_opera_man_npc_ferka", "dlc_opera_man_npc_hideo", "dlc_opera_man_npc_ogar", "npc_carl", "npc_alberto_paganini", "npc_outpost_guard", "npc_callum", "npc_abandon_srv_emmett", "npc_abandon_pk_master_brewer", "npc_feliks", "npc_marcus", "npc_mq_stan", "npc_hank", "npc_jack", "npc_colonel", "npc_pilgrim", "sh_baker", "npc_simon", "npc_juan", "npc_rowe", "npc_vincente", "sh_bruce",  "sh_frank", "sh_dlc_opera_npc_tetsuo", "sh_dlc_opera_npc_ogar", "sh_dlc_opera_npc_ciro", "sh_dlc_opera_npc_andrew", "npc_dylan", "npc_waltz", "dlc_opera_man", "npc_skullface", "sh_johnson", "npc_hakon", "npc_steve", "npc_barney", "multihead007_npc_carl_"}},
             {"Wmn", new[] {"wmn", "dlc_opera_wmn", "npc_anderson", "dlc_opera_man_wmn_brienne", "sh_mother", "npc_thalia", "npc_hilda", "npc_lola", "npc_mq_singer", "npc_astrid", "npc_dr_veronika", "npc_lawan", "npc_meredith", "npc_mia", "npc_nuwa", "npc_plaguewitch", "npc_sophie"}},
-            {"Child", new[] {"child", "kid", "girl", "ialr_viral_child", "ialr_zmb_child_", "boy", "young", "chld"}}
+            {"Child", new[] {"child", "kid", "girl", "npc_arya", "npc_kevin", "npc_dominik", "prologue_npc_theo", "npc_rose", "npc_mq_maya", "npc_mq_zapalka", "npc_liam", "npc_moe", "ialr_viral_child", "ialr_zmb_child_", "boy", "young", "chld"}},
+            {"Special Infected", new[] { "volatile", "suicider", "spitter", "goon", "demolisher", "screamer", "bolter", "corruptor", "banshee", "charger" }},
         };
 
         exclude_filters = new Dictionary<string, List<string>>()
@@ -189,55 +187,58 @@ public class JsonCreatorWindow : EditorWindow
         storeClassData = EditorGUILayout.Toggle("Store Class Data", storeClassData);
         string jsonsDir = Path.Combine(Application.dataPath, "StreamingAssets/Jsons");
         List<string> jsonFiles = new List<string>();
-        foreach (var typeDir in Directory.GetDirectories(jsonsDir))
-        {
-            foreach (var categoryDir in Directory.GetDirectories(typeDir))
-            {
-                jsonFiles.AddRange(Directory.GetFiles(categoryDir, "*.json"));
-            }
-        }
         Dictionary<string, Dictionary<string, List<string>>> modelsSortedByCategory = new Dictionary<string, Dictionary<string, List<string>>>();
         HashSet<string> unsortedModels = new HashSet<string>();
-        HashSet<string> ignoreList = new HashSet<string> { "player_legs_a.msh", "player_camo_bracers_a_tpp.msh", "player_camo_bracers_a_fpp.msh",  "man_bdt_torso_c_shawl_b.msh", "chr_player_healer_mask.msh", "reporter_woman_old_skeleton.msh", "player_camo_gloves_a_tpp.msh", "player_camo_headwear_a_tpp.msh", "player_camo_hood_a_tpp.msh", "player_camo_pants_a_tpp.msh", "npc_colonel_coat_b.msh" };
+        HashSet<string> ignoreList = new HashSet<string> { "player_legs_a.msh", "player_camo_bracers_a_tpp.msh", "player_camo_bracers_a_fpp.msh", "man_bdt_torso_c_shawl_b.msh", "chr_player_healer_mask.msh", "reporter_woman_old_skeleton.msh", "player_camo_gloves_a_tpp.msh", "player_camo_headwear_a_tpp.msh", "player_camo_hood_a_tpp.msh", "player_camo_pants_a_tpp.msh", "npc_colonel_coat_b.msh" };
         Dictionary<string, List<string>> modelToFilterLookup = new Dictionary<string, List<string>>();
         Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>> modelsByClassAndFilter = new Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>>();
 
         Dictionary<string, string> specificTermsToCategory = new Dictionary<string, string>
 {
-    { "young", "Child" },
-    { "destroyed", "Biter" },
-    { "waltz_young", "Man" },
-    { "npc_mq_kiddie", "Man" }
+    { "young", "Human/Child" },
+    { "destroyed", "Infected/Biter" },
+    { "waltz_young", "Human/Man" },
+    { "npc_mq_kiddie", "Human/Man" }
     // Add more terms as needed
 };
 
-        foreach (var file in jsonFiles)
+        foreach (var typeDir in Directory.GetDirectories(jsonsDir))
         {
-            try
+            foreach (var categoryDir in Directory.GetDirectories(typeDir))
             {
-                string jsonData = File.ReadAllText(file);
-                ModelData modelData = JsonConvert.DeserializeObject<ModelData>(jsonData);
-
-                if (modelData.modelProperties == null || modelData.slotPairs == null)
+                jsonFiles.AddRange(Directory.GetFiles(categoryDir, "*.json"));
+                foreach (var file in jsonFiles)
                 {
-                    Debug.LogWarning($"Skipped file {file} due to missing properties or slotPairs.");
-                    continue;
-                }
-
-                string modelClass = modelData.modelProperties.@class;
-
-                foreach (var slotPair in modelData.slotPairs)
-                {
-                    foreach (var model in slotPair.slotData.models)
+                    try
                     {
-                        string modelName = model.name.ToLower();
-                        SortModel(modelName, modelsSortedByCategory, unsortedModels, modelToFilterLookup, ignoreList, specificTermsToCategory, modelData, modelsByClassAndFilter);
+                        string jsonData = File.ReadAllText(file);
+                        ModelData modelData = JsonConvert.DeserializeObject<ModelData>(jsonData);
+
+                        if (modelData.modelProperties == null || modelData.slotPairs == null)
+                        {
+                            Debug.LogWarning($"Skipped file {file} due to missing properties or slotPairs.");
+                            continue;
+                        }
+
+                        // Extracting category from the file path
+                        string relativePath = file.Substring(jsonsDir.Length).Replace("\\", "/").TrimStart('/');
+                        string[] pathParts = relativePath.Split('/');
+                        string initialCategory = String.Join("/", pathParts.Take(pathParts.Length - 1));
+
+                        foreach (var slotPair in modelData.slotPairs)
+                        {
+                            foreach (var model in slotPair.slotData.models)
+                            {
+                                string modelName = model.name.ToLower();
+                                SortModel(modelName, modelsSortedByCategory, unsortedModels, modelToFilterLookup, ignoreList, specificTermsToCategory, initialCategory, modelData, modelsByClassAndFilter);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError($"Error processing file {file}: {ex.Message}");
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"Error processing file {file}: {ex.Message}");
             }
         }
 
@@ -248,34 +249,35 @@ public class JsonCreatorWindow : EditorWindow
         Debug.Log("JSON files organized and saved.");
     }
 
-    void SortModel(string modelName, Dictionary<string, Dictionary<string, List<string>>> modelsSortedByCategory, HashSet<string> unsortedModels, Dictionary<string, List<string>> modelToFilterLookup, HashSet<string> ignoreList, Dictionary<string, string> specificTermsToCategory, ModelData modelData, Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>> modelsByClassAndFilter)
+    void SortModel(string modelName, Dictionary<string, Dictionary<string, List<string>>> modelsSortedByCategory,  HashSet<string> unsortedModels, Dictionary<string, List<string>> modelToFilterLookup, HashSet<string> ignoreList, Dictionary<string, string> specificTermsToCategory, string initialCategory, ModelData modelData, Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>> modelsByClassAndFilter)
     {
-
         if (ignoreList.Contains(modelName))
         {
             Debug.Log($"Model '{modelName}' is in the ignore list and will be skipped.");
             return;
         }
 
-        string category = specificTermsToCategory.FirstOrDefault(pair => modelName.Contains(pair.Key)).Value ?? DetermineModelCategory(modelName, categoryPrefixes);
-        if (!modelsSortedByCategory.ContainsKey(category))
+        // Determine if the model's name matches specific terms to override the category
+        var overrideCategory = specificTermsToCategory.FirstOrDefault(pair => modelName.Contains(pair.Key)).Value;
+        string finalCategory = overrideCategory ?? initialCategory;
+
+        if (!modelsSortedByCategory.ContainsKey(finalCategory))
         {
-            modelsSortedByCategory[category] = new Dictionary<string, List<string>>();
+            modelsSortedByCategory[finalCategory] = new Dictionary<string, List<string>>();
         }
 
         bool matchedAnyFilter = false;
-
         string modelClass = string.Empty;
         if (storeClassData && !string.IsNullOrEmpty(modelData.modelProperties.@class))
         {
             modelClass = modelData.modelProperties.@class.ToLower();
-            if (!modelsByClassAndFilter.ContainsKey(category))
+            if (!modelsByClassAndFilter.ContainsKey(finalCategory))
             {
-                modelsByClassAndFilter[category] = new Dictionary<string, Dictionary<string, List<string>>>();
+                modelsByClassAndFilter[finalCategory] = new Dictionary<string, Dictionary<string, List<string>>>();
             }
-            if (!modelsByClassAndFilter[category].ContainsKey(modelClass))
+            if (!modelsByClassAndFilter[finalCategory].ContainsKey(modelClass))
             {
-                modelsByClassAndFilter[category][modelClass] = new Dictionary<string, List<string>>();
+                modelsByClassAndFilter[finalCategory][modelClass] = new Dictionary<string, List<string>>();
             }
         }
 
@@ -287,11 +289,11 @@ public class JsonCreatorWindow : EditorWindow
             {
                 if (modelName.Contains(filterTerm) && !(exclude_filters.ContainsKey(filterName) && exclude_filters[filterName].Any(excludeTerm => modelName.Contains(excludeTerm))))
                 {
-                    if (!modelsSortedByCategory[category].ContainsKey(filterName))
+                    if (!modelsSortedByCategory[finalCategory].ContainsKey(filterName))
                     {
-                        modelsSortedByCategory[category][filterName] = new List<string>();
+                        modelsSortedByCategory[finalCategory][filterName] = new List<string>();
                     }
-                    modelsSortedByCategory[category][filterName].Add(modelName);
+                    modelsSortedByCategory[finalCategory][filterName].Add(modelName);
                     if (!modelToFilterLookup.ContainsKey(modelName))
                     {
                         modelToFilterLookup[modelName] = new List<string>();
@@ -303,11 +305,11 @@ public class JsonCreatorWindow : EditorWindow
 
                     if (storeClassData)
                     {
-                        if (!modelsByClassAndFilter[category][modelClass].ContainsKey(filterName))
+                        if (!modelsByClassAndFilter[finalCategory][modelClass].ContainsKey(filterName))
                         {
-                            modelsByClassAndFilter[category][modelClass][filterName] = new List<string>();
+                            modelsByClassAndFilter[finalCategory][modelClass][filterName] = new List<string>();
                         }
-                        modelsByClassAndFilter[category][modelClass][filterName].Add(modelName);
+                        modelsByClassAndFilter[finalCategory][modelClass][filterName].Add(modelName);
                     }
 
                     matchedAnyFilter = true;
@@ -317,7 +319,7 @@ public class JsonCreatorWindow : EditorWindow
 
         if (!matchedAnyFilter)
         {
-            Debug.LogWarning($"Model '{modelName}' did not match any filters or was excluded in category '{category}'");
+            Debug.LogWarning($"Model '{modelName}' did not match any filters or was excluded in category '{finalCategory}'");
             unsortedModels.Add(modelName);
         }
     }
@@ -346,16 +348,15 @@ public class JsonCreatorWindow : EditorWindow
 };
 
         // Iterate through each category
-        foreach (var category in modelsSortedByCategory.Keys)
+        foreach (var categoryKey in modelsSortedByCategory.Keys)
         {
-            string type = DetermineType(category);
-            string categoryDir = Path.Combine(Application.dataPath, $"StreamingAssets/SlotData/{type}/{category}");
+            // Directly use the categoryKey as part of the path, assuming it's structured like "Category/Subcategory"
+            string categoryDir = Path.Combine(Application.dataPath, $"StreamingAssets/SlotData/{categoryKey}");
             Directory.CreateDirectory(categoryDir);
 
-            // Save general category models
-            foreach (var filter in modelsSortedByCategory[category].Keys)
+            foreach (var filter in modelsSortedByCategory[categoryKey].Keys)
             {
-                List<string> sortedModels = modelsSortedByCategory[category][filter].Distinct().ToList();
+                List<string> sortedModels = modelsSortedByCategory[categoryKey][filter].Distinct().ToList();
                 sortedModels.Sort();
 
                 string filePath = Path.Combine(categoryDir, $"ALL_{filter}.json");
@@ -363,10 +364,9 @@ public class JsonCreatorWindow : EditorWindow
                 File.WriteAllText(filePath, jsonContent);
             }
 
-            // Save class-specific models if storeClassData is true
-            if (storeClassData && modelsByClassAndFilter.ContainsKey(category))
+            if (storeClassData && modelsByClassAndFilter.ContainsKey(categoryKey))
             {
-                foreach (var classEntry in modelsByClassAndFilter[category])
+                foreach (var classEntry in modelsByClassAndFilter[categoryKey])
                 {
                     if (classSkipList.Contains(classEntry.Key))
                     {

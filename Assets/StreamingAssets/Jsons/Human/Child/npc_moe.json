@@ -1,0 +1,456 @@
+{
+  "skeletonName": "child_skeleton.msh",
+  "modelProperties": {
+    "class": "none",
+    "race": "caucasian",
+    "sex": "male"
+  },
+  "slotPairs": [
+    {
+      "key": "HEAD",
+      "slotData": {
+        "slotUid": 100,
+        "name": "HEAD",
+        "filterText": "multihead",
+        "models": [
+          {
+            "name": "sh_scan_boy_001.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "sh_scan_boy_001.mat"
+              },
+              {
+                "number": 2,
+                "name": "sh_eye.mat"
+              },
+              {
+                "number": 3,
+                "name": "sh_mouth_interior.mat"
+              },
+              {
+                "number": 4,
+                "name": "sh_eyelashes.mat"
+              },
+              {
+                "number": 5,
+                "name": "sh_eye_shadow.mat"
+              },
+              {
+                "number": 6,
+                "name": "sh_wet_eye.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "sh_scan_boy_001.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "msk_1_tex",
+                        "type": 7,
+                        "val_str": "sh_man_hair_system_b_base_b_msk.png"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "sh_eye_green.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "sh_mouth_interior.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 4,
+                "resources": [
+                  {
+                    "name": "sh_eyelashes.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 5,
+                "resources": [
+                  {
+                    "name": "sh_eye_shadow.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 6,
+                "resources": [
+                  {
+                    "name": "sh_wet_eye.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "HEADCOVER",
+      "slotData": {
+        "slotUid": 200,
+        "name": "HEADCOVER",
+        "filterText": "head",
+        "models": [
+          {
+            "name": "child_hat_f.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "man_bdt_headcover_i.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "man_bdt_headcover_i_b.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "HAT",
+      "slotData": {
+        "slotUid": 300,
+        "name": "HAT",
+        "filterText": "hat",
+        "models": []
+      }
+    },
+    {
+      "key": "HANDS",
+      "slotData": {
+        "slotUid": 500,
+        "name": "HANDS",
+        "filterText": "hands",
+        "models": [
+          {
+            "name": "child_hands_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "wmn_hands_white_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "wmn_hands_white_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "TORSO",
+      "slotData": {
+        "slotUid": 600,
+        "name": "TORSO",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "child_torso_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "child_torso_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "child_torso_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "TORSO_PART_1",
+      "slotData": {
+        "slotUid": 601,
+        "name": "TORSO_PART_1",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "child_torso_a_decal_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "chr_decal_logo_child_b.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "chr_decal_logo_child_b.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "TORSO_PART_2",
+      "slotData": {
+        "slotUid": 602,
+        "name": "TORSO_PART_2",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "child_scarf_a_torso_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "man_srv_scarf_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "man_srv_scarf_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "LEGS",
+      "slotData": {
+        "slotUid": 700,
+        "name": "LEGS",
+        "filterText": "legs",
+        "models": [
+          {
+            "name": "child_pants_a_belt_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "man_bdt_belt_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "man_bdt_belt_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "dif_0_val",
+                        "type": 4,
+                        "val_str": null
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "PANTS",
+      "slotData": {
+        "slotUid": 800,
+        "name": "PANTS",
+        "filterText": "pants",
+        "models": [
+          {
+            "name": "child_pants_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "child_pants_a.mat"
+              },
+              {
+                "number": 2,
+                "name": "child_shoe_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "child_pants_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "det_0_a_opacity_factor",
+                        "type": 2,
+                        "val_str": null
+                      },
+                      {
+                        "name": "det_0_a_scale_factor",
+                        "type": 2,
+                        "val_str": null
+                      },
+                      {
+                        "name": "det_0_clr_a_tex",
+                        "type": 7,
+                        "val_str": "srf_denim_b_ch_dtt.png"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "child_shoe_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "OTHER",
+      "slotData": {
+        "slotUid": 900,
+        "name": "OTHER",
+        "filterText": "",
+        "models": [
+          {
+            "name": "child_sleeves_c.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "child_sleeve_sock.mat"
+              },
+              {
+                "number": 2,
+                "name": "child_torso_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "child_sleeve_sock.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "child_torso_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
