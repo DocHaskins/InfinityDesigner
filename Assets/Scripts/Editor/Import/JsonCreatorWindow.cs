@@ -198,7 +198,7 @@ public class JsonCreatorWindow : EditorWindow
         }
         Dictionary<string, Dictionary<string, List<string>>> modelsSortedByCategory = new Dictionary<string, Dictionary<string, List<string>>>();
         HashSet<string> unsortedModels = new HashSet<string>();
-        HashSet<string> ignoreList = new HashSet<string> { "player_legs_a.msh", "man_bdt_torso_c_shawl_b.msh", "chr_player_healer_mask.msh", "reporter_woman_old_skeleton.msh", "player_camo_gloves_a_tpp.msh", "player_camo_headwear_a_tpp.msh", "player_camo_hood_a_tpp.msh", "player_camo_pants_a_tpp.msh", "npc_colonel_coat_b.msh" };
+        HashSet<string> ignoreList = new HashSet<string> { "player_legs_a.msh", "player_camo_bracers_a_tpp.msh",  "man_bdt_torso_c_shawl_b.msh", "chr_player_healer_mask.msh", "reporter_woman_old_skeleton.msh", "player_camo_gloves_a_tpp.msh", "player_camo_headwear_a_tpp.msh", "player_camo_hood_a_tpp.msh", "player_camo_pants_a_tpp.msh", "npc_colonel_coat_b.msh" };
         Dictionary<string, List<string>> modelToFilterLookup = new Dictionary<string, List<string>>();
         Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>> modelsByClassAndFilter = new Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>>();
 
@@ -536,7 +536,8 @@ public class JsonCreatorWindow : EditorWindow
         foreach (var skeleton in uniqueSkeletonMeshes.Keys)
         {
             var sortedMeshes = uniqueSkeletonMeshes[skeleton].OrderBy(mesh => mesh).ToList();
-            string outputFile = Path.Combine(outputDir, $"{skeleton}.json");
+            string skeletonFileName = Path.GetFileNameWithoutExtension(skeleton);
+            string outputFile = Path.Combine(outputDir, $"{skeletonFileName}.json");
 
             var meshData = new { mesh = sortedMeshes };
 

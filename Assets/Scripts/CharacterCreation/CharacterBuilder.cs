@@ -34,6 +34,8 @@ namespace doppelganger
 {
     public class CharacterBuilder : MonoBehaviour
     {
+        public SkeletonLookup skeletonLookup;
+        
         public CinemachineCameraZoomTool cameraTool;
         private string currentType;
         private string currentPath;
@@ -42,6 +44,9 @@ namespace doppelganger
         private HorizontalSelector typeSelector;
         public TMP_Dropdown categoryDropdown;
         public TMP_Dropdown classDropdown;
+        public TMP_Dropdown saveTypeDropdown;
+        public TMP_Dropdown saveCategoryDropdown;
+        public TMP_Dropdown saveClassDropdown;
         public TMP_Dropdown presetDropdown;
         public GameObject slidersPanel;
         public GameObject sliderPrefab;
@@ -67,137 +72,21 @@ namespace doppelganger
         private Dictionary<string, List<string>> slotData = new Dictionary<string, List<string>>();
         public Dictionary<string, GameObject> currentlyLoadedModels = new Dictionary<string, GameObject>();
 
-        private Dictionary<string, Dictionary<string, string>> skeletonMapping = new Dictionary<string, Dictionary<string, string>>
-{
-    {
-        "ALL", new Dictionary<string, string>
-        {
-            {"ALL", "man_basic_skeleton"},
-            {"Biter", "man_zmb_skeleton"},
-            {"Special Infected", "player_skeleton"},
-            {"Viral", "viral_skeleton"}
-        }
-    },
-    {
-        "Player", new Dictionary<string, string>
-        {
-            {"ALL", "player_skeleton"}
-        }
-    },
-    {
-        "Man", new Dictionary<string, string>
-        {
-            {"ALL", "man_basic_skeleton"},
-            {"bandit", "man_bdt_medium_skeleton"},
-            {"peacekeeper", "man_pk_medium_skeleton"},
-            {"renegade", "man_bdt_heavy_torso_d_skeleton"},
-            {"scavenger", "man_sc_medium_skeleton"},
-            {"survivor", "man_srv_medium_skeleton"}
-        }
-    },
-    {
-        "Wmn", new Dictionary<string, string>
-        {
-            {"ALL", "woman_basic_skeleton"},
-            {"bandit", "woman_basic_skeleton"},
-            {"peacekeeper", "woman_basic_skeleton"},
-            {"renegade", "woman_basic_skeleton"},
-            {"scavenger", "woman_sc_skeleton"},
-            {"survivor", "woman_srv_skeleton"}
-        }
-    },
-    {
-        "Child", new Dictionary<string, string>
-        {
-            {"ALL", "child_skeleton"}
-        }
-    },
-    {
-        "Biter", new Dictionary<string, string>
-        {
-            {"ALL", "man_zmb_skeleton"},
-            {"bandit", "man_zmb_skeleton"},
-            {"peacekeeper", "man_zmb_skeleton"},
-            {"renegade", "man_zmb_skeleton"},
-            {"scavenger", "man_zmb_skeleton"},
-            {"survivor", "man_zmb_skeleton"}
-        }
-    },
-    {
-        "Special Infected", new Dictionary<string, string>
-        {
-            {"banshee", "zmb_banshee_skeleton"},
-            {"bolter", "zmb_bolter_skeleton"},
-            {"charger", "zmb_charger_skeleton"},
-            {"corruptor", "zmb_corruptor_skeleton"},
-            {"demolisher", "zmb_demolisher_skeleton"},
-            {"goon", "zmb_goon_skeleton"},
-            {"screamer", "zmb_screamer_skeleton"},
-            {"spitter", "zmb_spitter_skeleton"},
-            {"suicider", "zmb_suicider_skeleton"},
-            {"volatile", "zmb_volataile_skeleton"},
-            {"ALL", "player_skeleton"}
-        }
-    },
-    {
-        "Viral", new Dictionary<string, string>
-        {
-            {"scavenger", "viral_skeleton"},
-            {"survivor", "viral_skeleton"},
-            {"ALL", "viral_skeleton"}
-        }
-    },
-};
-
         private Dictionary<string, List<string>> filterSets = new Dictionary<string, List<string>>
 {
     { "BodyButton", new List<string> { "ALL_head", "ALL_facial_hair", "ALL_hair", "ALL_hair_base", "ALL_hair_2", "ALL_hair_3", "ALL_hands", "ALL_tattoo" } },
     { "ClothesButton", new List<string> { "ALL_backpack", "ALL_cape", "ALL_decals", "ALL_earrings", "ALL_glasses", "ALL_gloves", "ALL_hat", "ALL_leg_access", "ALL_legs", "ALL_mask", "ALL_necklace", "ALL_rings", "ALL_shoes", "ALL_sleeve", "ALL_torso", "ALL_torso_extra", "ALL_torso_access" } },
-    { "ArmorButton", new List<string> { "ALL_armor_helmet", "ALL_armor_torso", "ALL_armor_torso_lowerleft", "ALL_armor_torso_lowerright", "ALL_armor_torso_upperleft", "ALL_armor_torso_upperright", "armor_legs", "armor_legs_upperright", "armor_legs_upperleft", "armor_legs_lowerright", "armor_legs_lowerleft" } },
-    { "HeadButton", new List<string> { "ALL_head"} },
-    { "HairButton", new List<string> { "ALL_hair", "ALL_hair_base", "ALL_hair_2", "ALL_hair_3" } },
-    { "HairBaseButton", new List<string> { "ALL_hair_base"} },
-    { "Hair2Button", new List<string> { "ALL_hair_2" } },
-    { "Hair3Button", new List<string> { "ALL_hair_3" } },
-    { "HatButton", new List<string> { "ALL_hat" } },
-    { "MaskButton", new List<string> { "ALL_mask" } },
-    { "GlassesButton", new List<string> { "ALL_glasses" } },
-    { "NecklaceButton", new List<string> { "ALL_necklace" } },
-    { "EarringsButton", new List<string> { "ALL_earrings" } },
-    { "RingsButton", new List<string> { "ALL_rings" } },
-    { "FacialHairButton", new List<string> { "ALL_facial_hair" } },
-    { "CapeButton", new List<string> { "ALL_cape" } },
-    { "TorsoButton", new List<string> { "ALL_torso", "ALL_torso_extra", "ALL_torso_access" } },
-    { "TorsoExtraButton", new List<string> { "ALL_torso_extra" } },
-    { "TorsoAccessButton", new List<string> { "ALL_torso_access" } },
-    { "TattooButton", new List<string> { "ALL_tattoo" } },
-    { "HandsButton", new List<string> { "ALL_hands" } },
-    { "LhandButton", new List<string> { "ALL_lhand" } },
-    { "RhandButton", new List<string> { "ALL_rhand" } },
-    { "GlovesButton", new List<string> { "ALL_gloves" } },
-    { "SleeveButton", new List<string> { "ALL_sleeve" } },
-    { "BackpackButton", new List<string> { "ALL_backpack" } },
-    { "DecalsButton", new List<string> { "ALL_decals" } },
-    { "LegsButton", new List<string> { "ALL_legs" } },
-    { "LegAccessButton", new List<string> { "ALL_leg_access" } },
-    { "ShoesButton", new List<string> { "ALL_shoes" } },
-    { "ArmorHelmetButton", new List<string> { "ALL_armor_helmet" } },
-    { "ArmorTorsoButton", new List<string> { "ALL_armor_torso" } },
-    { "ArmorTorsoUpperRightButton", new List<string> { "ALL_armor_torso_upperright" } },
-    { "ArmorTorsoUpperLeftButton", new List<string> { "ALL_armor_torso_upperleft" } },
-    { "ArmorTorsoLowerRightButton", new List<string> { "ALL_armor_torso_lowerright" } },
-    { "ArmorTorsoLowerLeftButton", new List<string> { "ALL_armor_torso_lowerleft" } },
-    { "ArmorLegsButton", new List<string> { "ALL_armor_legs" } },
-    { "ArmorLegsUpperRightButton", new List<string> { "ALL_armor_legs_upperright" } },
-    { "ArmorLegsUpperLeftButton", new List<string> { "ALL_armor_legs_upperleft" } },
-    { "ArmorLegsLowerRightButton", new List<string> { "ALL_armor_legs_lowerright" } },
-    { "ArmorLegsLowerLeftButton", new List<string> { "ALL_armor_legs_lowerleft" } }
+    { "ArmorButton", new List<string> { "ALL_armor_helmet", "ALL_armor_helmet_access", "ALL_armor_torso", "ALL_armor_torso_access", "ALL_armor_torso_lowerleft", "ALL_armor_torso_lowerright", "ALL_armor_torso_upperleft", "ALL_armor_torso_upperright", "ALL_armor_legs", "ALL_armor_legs_upperright", "ALL_armor_legs_upperleft", "ALL_armor_legs_lowerright", "ALL_armor_legs_lowerleft" } }
 };
 
         void Start()
         {
-            string initialType = GetTypeFromSelector();
+            string initialType = "Human";
+            string initialCategory = "Player";
             PopulateDropdown(categoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", "Human"), "ALL", true);
+            PopulateDropdown(saveTypeDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData"), "Human", false);
+            PopulateDropdown(saveCategoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", "Human"), "Player", false);
+            PopulateDropdown(saveClassDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", initialType, initialCategory), "ALL", true);
 
             StartCoroutine(SetInitialDropdownValues());
 
@@ -249,11 +138,16 @@ namespace doppelganger
 
             categoryDropdown.value = categoryDropdown.options.FindIndex(option => option.text == "Player");
             classDropdown.value = classDropdown.options.FindIndex(option => option.text == "ALL");
+            saveTypeDropdown.value = categoryDropdown.options.FindIndex(option => option.text == "Human");
+            saveCategoryDropdown.value = categoryDropdown.options.FindIndex(option => option.text == "Player");
+            saveClassDropdown.value = classDropdown.options.FindIndex(option => option.text == "ALL");
 
             OnCategoryChanged(categoryDropdown.value);
 
             categoryDropdown.onValueChanged.AddListener(OnCategoryChanged);
             classDropdown.onValueChanged.AddListener(OnClassChanged);
+            saveTypeDropdown.onValueChanged.AddListener(OnSaveTypeChanged);
+            saveCategoryDropdown.onValueChanged.AddListener(OnSaveCategoryChanged);
         }
 
         public void Reroll()
@@ -273,7 +167,7 @@ namespace doppelganger
                 if (slider != null)
                 {
                     float randomValue = UnityEngine.Random.Range(slider.minValue, slider.maxValue + 1);
-                    Debug.Log($"Random value for {sliderContainer.name}: {randomValue}");
+                    //Debug.Log($"Random value for {sliderContainer.name}: {randomValue}");
                     slider.value = randomValue;
 
                     string slotName = sliderContainer.name.Replace("Slider", "");
@@ -282,7 +176,7 @@ namespace doppelganger
                 }
                 else
                 {
-                    Debug.LogWarning($"No slider component found in primarySlider of: {sliderContainer.name}");
+                    //Debug.LogWarning($"No slider component found in primarySlider of: {sliderContainer.name}");
                 }
             }
         }
@@ -737,6 +631,12 @@ namespace doppelganger
                 options.Insert(0, new TMPro.TMP_Dropdown.OptionData("ALL"));
             }
 
+            if (!includeAllOption && options.Any(o => o.text == "ALL"))
+            {
+                // Remove the "ALL" option if it's not supposed to be included
+                options.RemoveAll(o => o.text == "ALL");
+            }
+
             if (defaultValue != null && !options.Any(o => o.text == defaultValue))
             {
                 options.Insert(0, new TMPro.TMP_Dropdown.OptionData(defaultValue));
@@ -758,11 +658,20 @@ namespace doppelganger
             return new List<string>();
         }
 
+        void OnSaveTypeChanged(int index)
+        {
+            // Assuming you have a way to map the index to a type
+            string selectedType = GetTypeBasedOnIndex(index);
+            PopulateDropdown(saveCategoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType), "ALL", false);
+            string selectedCategory = saveCategoryDropdown.options[index].text;
+            PopulateDropdown(saveClassDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType, selectedCategory), "ALL", true);
+        }
         void OnTypeChanged(int index)
         {
             // Assuming you have a way to map the index to a type
             string selectedType = GetTypeBasedOnIndex(index);
             PopulateDropdown(categoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType), "ALL", true);
+            PopulateDropdown(saveCategoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType), "ALL", true);
             UpdateInterfaceBasedOnDropdownSelection();
         }
 
@@ -785,6 +694,15 @@ namespace doppelganger
             }
         }
 
+        void OnSaveCategoryChanged(int index)
+        {
+            string selectedType = GetTypeFromSelector();
+            string selectedCategory = saveCategoryDropdown.options[index].text;
+
+            // Use the selectedType to populate the classDropdown based on the selected category
+            PopulateDropdown(saveClassDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType, selectedCategory), "ALL");
+        }
+
         void OnCategoryChanged(int index)
         {
             string selectedType = GetTypeFromSelector();
@@ -792,6 +710,7 @@ namespace doppelganger
 
             // Use the selectedType to populate the classDropdown based on the selected category
             PopulateDropdown(classDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType, selectedCategory), "ALL");
+            PopulateDropdown(saveClassDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType, selectedCategory), "ALL");
 
             UpdateInterfaceBasedOnDropdownSelection();
         }
@@ -914,29 +833,10 @@ namespace doppelganger
             LoadSkeletonBasedOnSelection();
         }
 
-        private string GetSelectedSkeleton()
-        {
-            string selectedCategory = categoryDropdown.options[categoryDropdown.value].text;
-            string selectedClass = classDropdown.options[classDropdown.value].text;
-
-            if (skeletonMapping.ContainsKey(selectedCategory) && skeletonMapping[selectedCategory].ContainsKey(selectedClass))
-            {
-                Debug.Log("Selected Category: " + selectedCategory + ", Selected Class: " + selectedClass);
-                string selectedSkeleton = skeletonMapping[selectedCategory][selectedClass];
-                Debug.Log("Selected Skeleton: " + selectedSkeleton);
-                return selectedSkeleton;
-            }
-            else
-            {
-                Debug.LogError("Skeleton mapping not found for Category: " + selectedCategory + ", Class: " + selectedClass);
-                return "default_skeleton";
-            }
-        }
-
         private void LoadSkeletonBasedOnSelection()
         {
             // Get the selected skeleton name based on category and class
-            string selectedSkeleton = GetSelectedSkeleton();
+            string selectedSkeleton = skeletonLookup.GetSelectedSkeleton();
 
             // Destroy the current skeleton (if any)
             GameObject currentSkeleton = GameObject.FindGameObjectWithTag("Skeleton");

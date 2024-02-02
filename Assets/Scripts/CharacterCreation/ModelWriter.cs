@@ -47,8 +47,8 @@ public class ModelWriter : MonoBehaviour
             sb.AppendLine($"      \"slotUid\": {slotPair.slotData.slotUid},");
             sb.AppendLine($"      \"name\": \"{slotPair.slotData.name}\",");
             sb.AppendLine("      \"filterText\": \"" + GetFilterText(slotPair.slotData.name) + "\",");
-            sb.AppendLine("      \"tagsBits\": 0,");  // Assuming a default value of 0
-            sb.AppendLine("      \"shadowMaps\": 15,");  // Assuming a default value of 15
+            sb.AppendLine("      \"tagsBits\": 0,"); 
+            sb.AppendLine("      \"shadowMaps\": 15,");
             sb.AppendLine("      \"meshResources\": {");
             sb.AppendLine("        \"resources\": [");
 

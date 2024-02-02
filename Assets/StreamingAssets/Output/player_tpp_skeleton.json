@@ -1,6 +1,11 @@
 {
-  "skeletonName": null,
-  "modelProperties": null,
+  "skeletonName": "player_skeleton.msh",
+  "sex": null,
+  "modelProperties": {
+    "class": "NPC",
+    "race": "Unknown",
+    "sex": "Male"
+  },
   "slotPairs": [
     {
       "key": "HEAD",
@@ -10,11 +15,11 @@
         "filterText": null,
         "models": [
           {
-            "name": "sh_bruce.msh",
+            "name": "sh_npc_aiden.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "sh_bruce.mat"
+                "name": "sh_npc_aiden.mat"
               },
               {
                 "number": 2,
@@ -42,7 +47,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "sh_bruce.mat",
+                    "name": "sh_npc_aiden.mat",
                     "selected": false,
                     "layoutId": 0,
                     "loadFlags": null,
@@ -149,9 +154,42 @@
       }
     },
     {
-      "key": "TORSO",
+      "key": "HANDS_PART_1",
       "slotData": {
         "slotUid": 102,
+        "name": "HANDS_PART_1",
+        "filterText": null,
+        "models": [
+          {
+            "name": "player_forearm_left_long_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_hands_tpp_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_hands_tpp_a.mat",
+                    "selected": false,
+                    "layoutId": 0,
+                    "loadFlags": null,
+                    "rttiValues": null
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "TORSO",
+      "slotData": {
+        "slotUid": 103,
         "name": "TORSO",
         "filterText": null,
         "models": [
@@ -232,7 +270,7 @@
     {
       "key": "LEGS",
       "slotData": {
-        "slotUid": 103,
+        "slotUid": 104,
         "name": "LEGS",
         "filterText": null,
         "models": [
@@ -265,7 +303,7 @@
     {
       "key": "TORSO_PART_1",
       "slotData": {
-        "slotUid": 104,
+        "slotUid": 105,
         "name": "TORSO_PART_1",
         "filterText": null,
         "models": [
@@ -296,9 +334,75 @@
       }
     },
     {
+      "key": "HANDS_PART_2",
+      "slotData": {
+        "slotUid": 106,
+        "name": "HANDS_PART_2",
+        "filterText": null,
+        "models": [
+          {
+            "name": "player_forearm_right_long_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_hands_tpp_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_hands_tpp_a.mat",
+                    "selected": false,
+                    "layoutId": 0,
+                    "loadFlags": null,
+                    "rttiValues": null
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "HANDS_PART_2",
+      "slotData": {
+        "slotUid": 107,
+        "name": "HANDS_PART_2",
+        "filterText": null,
+        "models": [
+          {
+            "name": "player_default_bracelet_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_default_bracelet_tpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_default_bracelet_tpp.mat",
+                    "selected": false,
+                    "layoutId": 0,
+                    "loadFlags": null,
+                    "rttiValues": null
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "key": "HEAD_PART_1",
       "slotData": {
-        "slotUid": 105,
+        "slotUid": 108,
         "name": "HEAD_PART_1",
         "filterText": null,
         "models": [
@@ -331,7 +435,7 @@
     {
       "key": "HANDS",
       "slotData": {
-        "slotUid": 106,
+        "slotUid": 109,
         "name": "HANDS",
         "filterText": null,
         "models": [
