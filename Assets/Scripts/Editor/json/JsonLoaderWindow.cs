@@ -277,7 +277,7 @@ public class JsonLoaderWindow : EditorWindow
                 var cameraTool = FindObjectOfType<CinemachineCameraZoomTool>();
                 if (cameraTool != null)
                 {
-                    cameraTool.UpdateTargetPoints();
+                    //cameraTool.UpdateTargetPoints();
                 }
             }
         }

@@ -558,15 +558,7 @@ namespace doppelganger
             {
                 Debug.Log($"Slider index not found for {sliderName}");
             }
-            ResetCameraToDefaultView();
-        }
-
-        public void ResetCameraToDefaultView()
-        {
-            if (cameraTool != null)
-            {
-                cameraTool.SetDefaultRigSettings();
-            }
+            //ResetCameraToDefaultView();
         }
 
         private void UpdateCameraTarget(Transform loadedModelTransform)
@@ -574,7 +566,7 @@ namespace doppelganger
             if (cameraTool != null && loadedModelTransform != null)
             {
                 cameraTool.targets.Clear();
-                string[] pointNames = { "pelvis", "spine3", "legs", "r_hand", "l_hand", "l_foot", "r_foot" };
+                string[] pointNames = { "pelvis", "spine1", "spine3", "neck", "legs", "r_hand", "l_hand", "l_foot", "r_foot" };
                 foreach (var pointName in pointNames)
                 {
                     Transform targetTransform = DeepFind(loadedModelTransform, pointName);

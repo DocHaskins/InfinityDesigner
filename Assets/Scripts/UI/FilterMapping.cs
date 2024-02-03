@@ -1,3 +1,4 @@
+using Cinemachine;
 using doppelganger;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,9 +9,25 @@ namespace doppelganger
 {
     public class FilterMapping : MonoBehaviour
     {
+        [Header("Managers")]
         public CharacterBuilder characterBuilder;
+        public CinemachineCameraZoomTool cameraZoomTool;
 
+        [Header("Interface")]
         public GameObject filtersPanel;
+
+        public static Dictionary<string, string> buttonToCameraTargetMapping = new Dictionary<string, string>()
+{
+    { "Button_All", "pelvis" },
+    { "Button_Face", "neck" },
+    { "Button_Face_access", "neck" },
+    { "Button_UpperBody", "spine1" },
+    { "Button_UpperBody_armor", "spine1" },
+    { "Button_UpperBody_access", "spine1" },
+    { "Button_Hands", "pelvis" },
+    { "Button_Legs", "legs" },
+    { "Button_Legs_armor", "legs" }
+};
 
         public Dictionary<string, List<string>> buttonMappings = new Dictionary<string, List<string>>()
     {
@@ -152,6 +169,84 @@ namespace doppelganger
             GetFilterButtons();
         }
 
+        private Transform FindTransformRecursive(Transform parent, string name)
+        {
+            if (parent.name == name)
+            {
+                Debug.Log($"Found target transform '{name}'");
+                return parent;
+            }
+
+            foreach (Transform child in parent)
+            {
+                Transform result = FindTransformRecursive(child, name);
+                if (result != null) return result;
+            }
+
+            return null; // Not found
+        }
+
+        private FocusPoint GetFocusPointForButton(string buttonName)
+        {
+            GameObject loadedSkeleton = GameObject.FindGameObjectWithTag("Skeleton");
+            if (loadedSkeleton == null)
+            {
+                Debug.LogError("No GameObject with the tag 'Skeleton' found in the scene.");
+                return null;
+            }
+
+            Transform FindTransformByName(string name)
+            {
+                Debug.Log($"Searching for '{name}' in the loaded skeleton.");
+                return FindTransformRecursive(loadedSkeleton.transform, name);
+            }
+
+            Transform targetTransform = null; // Initialize to null
+            float radiusAdjustment = 0;
+            float heightAdjustment = 0;
+
+            // Example, adjust based on actual implementation
+            switch (buttonName)
+            {
+                case "Button_Face":
+                case "Button_Face_access":
+                    targetTransform = FindTransformByName("neck1");
+                    radiusAdjustment = 0.0f;
+                    break;
+                case "Button_UpperBody":
+                case "Button_UpperBody_armor":
+                case "Button_UpperBody_access":
+                    targetTransform = FindTransformByName("spine3");
+                    radiusAdjustment = 0.0f;
+                    break;
+                case "Button_Hands":
+                    targetTransform = FindTransformByName("pelvis");
+                    radiusAdjustment = 0.0f;
+                    break;
+                case "Button_Legs":
+                case "Button_Legs_armor":
+                    targetTransform = FindTransformByName("legs");
+                    radiusAdjustment = 0.0f;
+                    break;
+                case "Button_All":
+                    targetTransform = FindTransformByName("pelvis");
+                    radiusAdjustment = 0.0f;
+                    break;
+            }
+
+            if (targetTransform == null)
+            {
+                Debug.LogError($"Target transform for button {buttonName} not found.");
+                return null;
+            }
+            else
+            {
+                Debug.Log($"Creating FocusPoint for '{buttonName}' with adjustments: radius {radiusAdjustment}, height {heightAdjustment}.");
+            }
+
+            return new FocusPoint(targetTransform, radiusAdjustment, heightAdjustment);
+        }
+
         void GetFilterButtons()
         {
             foreach (var mapping in buttonMappings)
@@ -160,11 +255,25 @@ namespace doppelganger
                 var button = filtersPanel.transform.Find(buttonName)?.GetComponent<Button>();
                 if (button != null)
                 {
-                    button.onClick.AddListener(() => characterBuilder.FilterCategory(mapping.Key));
+                    button.onClick.AddListener(() =>
+                    {
+                        Debug.Log($"Button '{buttonName}' pressed. Attempting to focus.");
+                        characterBuilder.FilterCategory(mapping.Key);
+                        FocusPoint focusPoint = GetFocusPointForButton(buttonName);
+                        if (cameraZoomTool != null && focusPoint != null)
+                        {
+                            Debug.Log($"Focusing on '{focusPoint.targetTransform.name}' with duration 1.0f.");
+                            cameraZoomTool.FocusOn(focusPoint);
+                        }
+                        else
+                        {
+                            Debug.LogError("FocusPoint is null or CameraZoomTool is not assigned.");
+                        }
+                    });
                 }
                 else
                 {
-                    Debug.LogWarning("Button not found in filters panel: " + buttonName);
+                    Debug.LogWarning($"Button '{buttonName}' not found in filters panel.");
                 }
             }
         }

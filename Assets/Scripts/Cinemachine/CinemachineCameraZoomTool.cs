@@ -17,9 +17,16 @@ namespace Cinemachine
 public class CinemachineCameraZoomTool : MonoBehaviour
     {
 
+        private bool isAdjusting = false;
+        private bool manualOrbitAdjustmentsMade = false;
+        private float initialYAxisValue = 0.5f;
         private CinemachineFreeLook freelook;
         public CinemachineFreeLook.Orbit[] originalOrbits = new CinemachineFreeLook.Orbit[0];
         public List<Transform> targets = new List<Transform>();
+        private readonly List<string> pointNames = new List<string>
+    {
+        "pelvis", "spine3", "neck1", "legs", "r_hand", "l_hand", "l_foot", "r_foot"
+    };
         private int currentTargetIndex = 0;
         private float initialCameraOffsetY;
         
@@ -66,6 +73,7 @@ public class CinemachineCameraZoomTool : MonoBehaviour
             zAxis.Value = 0.2f;
             minScale = Mathf.Max(0.01f, minScale);
             maxScale = Mathf.Max(minScale, maxScale);
+            UpdateCameraTarget();
         }
 
         void Awake()
@@ -81,14 +89,16 @@ public class CinemachineCameraZoomTool : MonoBehaviour
                     freelook.m_Orbits[i].m_Radius = originalOrbits[i].m_Radius * scale;
                 }
             }
-            UpdateCameraTarget();
         }
 
         void Update()
         {
+            if (isAdjusting)
+                return;
+
             if (freelook != null)
             {
-                if (originalOrbits.Length != freelook.m_Orbits.Length)
+                if (!manualOrbitAdjustmentsMade && originalOrbits.Length != freelook.m_Orbits.Length)
                 {
                     originalOrbits = new CinemachineFreeLook.Orbit[freelook.m_Orbits.Length];
                     Array.Copy(freelook.m_Orbits, originalOrbits, freelook.m_Orbits.Length);
@@ -138,10 +148,6 @@ public class CinemachineCameraZoomTool : MonoBehaviour
                 // Rotate the camera or its target around the Y axis
                 RotateCameraY(mouseXInput);
             }
-            if (Input.GetKeyDown(KeyCode.Alpha0))
-            {
-                SetDefaultRigSettings();
-            }
         }
 
         private void RotateCameraY(float rotationAmount)
@@ -150,21 +156,6 @@ public class CinemachineCameraZoomTool : MonoBehaviour
             Vector3 currentRotation = freelook.transform.eulerAngles;
             currentRotation.y += rotationAmount;
             freelook.transform.eulerAngles = currentRotation;
-
-            // Optionally, if clamping X and Z positions is required at this step, ensure they are reset to initial values
-        }
-
-        private void UpdateCameraRigsOffset(float newOffsetY)
-        {
-            for (int i = 0; i < freelook.m_Orbits.Length; i++)
-            {
-                var rig = freelook.GetRig(i);
-                var composer = rig.GetCinemachineComponent<CinemachineComposer>();
-                if (composer != null)
-                {
-                    composer.m_TrackedObjectOffset.y = newOffsetY;
-                }
-            }
         }
 
         public int CurrentTargetIndex
@@ -179,84 +170,59 @@ public class CinemachineCameraZoomTool : MonoBehaviour
             currentTargetIndex += direction;
             if (currentTargetIndex >= targets.Count) currentTargetIndex = 0;
             if (currentTargetIndex < 0) currentTargetIndex = targets.Count - 1;
-
-            UpdateCameraTarget();
         }
 
-        private readonly List<string> pointNames = new List<string>
-    {
-        "pelvis", "spine2", "legs", "r_hand", "l_hand", "l_foot", "r_foot"
-    };
-
-        public void SetDefaultRigSettings()
+        public void FocusOn(FocusPoint focusPoint)
         {
-            if (freelook != null)
+            if (focusPoint == null) return;
+            Debug.Log($"Adjusting camera to focus on: {focusPoint.targetTransform.name} with radius adjustment: {focusPoint.targetRadiusAdjustment}");
+
+            // Directly setting the LookAt target without moving the GameObject.
+            freelook.LookAt = focusPoint.targetTransform;
+            //freelook.Follow = focusPoint.targetTransform;
+
+            //If there's a radius adjustment, apply it to the orbits.
+            if (Mathf.Abs(focusPoint.targetRadiusAdjustment) > 0f)
             {
-                isTransitioning = true;
-                transitionStartTime = Time.time;
-
-                // Store the initial target position
-                initialTargetPosition = freelook.Follow.position;
-
-                // Start coroutine to smoothly adjust settings
-                StartCoroutine(SmoothlyAdjustCameraSettings());
+                StartCoroutine(AdjustOrbitRadiusCoroutine(focusPoint.targetRadiusAdjustment));
             }
         }
 
-        private IEnumerator SmoothlyAdjustCameraSettings()
+        private IEnumerator AdjustOrbitRadiusCoroutine(float targetRadiusAdjustment)
         {
-            float initialFOV = freelook.m_Lens.FieldOfView;
-            CinemachineFreeLook.Orbit initialOrbit = freelook.m_Orbits[1];
-            float elapsedTime = 0;
+            float adjustmentDuration = 1.0f; // Duration over which to apply the adjustment, for smoothness.
+            float elapsedTime = 0f;
 
-            while (elapsedTime < transitionDuration)
+            // Save the initial radius of each orbit to smoothly interpolate from.
+            float[] initialRadii = new float[freelook.m_Orbits.Length];
+            for (int i = 0; i < freelook.m_Orbits.Length; i++)
             {
-                elapsedTime = Time.time - transitionStartTime;
-                float t = elapsedTime / transitionDuration;
-
-                // Smoothly interpolate the field of view and orbit settings
-                freelook.m_Lens.FieldOfView = Mathf.Lerp(initialFOV, defaultFOV, t);
-                freelook.m_Orbits[1].m_Radius = Mathf.Lerp(initialOrbit.m_Radius, defaultMiddleRigRadius, t);
-                freelook.m_Orbits[1].m_Height = Mathf.Lerp(initialOrbit.m_Height, defaultMiddleRigHeight, t);
-
-                yield return null; // Wait for the next frame
+                initialRadii[i] = freelook.m_Orbits[i].m_Radius;
             }
 
-            // Ensure final values are set
-            freelook.m_Lens.FieldOfView = defaultFOV;
-            freelook.m_Orbits[1].m_Radius = defaultMiddleRigRadius;
-            freelook.m_Orbits[1].m_Height = defaultMiddleRigHeight;
-            isTransitioning = false;
-
-            // Set the camera's position to the new target position
-            freelook.Follow.position = initialTargetPosition;
-
-            // Optionally update the camera target here if necessary
-        }
-
-        public void UpdateTargetPoints()
-        {
-            // Check if the application is in play mode
-            if (Application.isPlaying)
+            while (elapsedTime < adjustmentDuration)
             {
-                targets.Clear();
-                foreach (var pointName in pointNames)
+                elapsedTime += Time.deltaTime;
+                float t = elapsedTime / adjustmentDuration;
+                for (int i = 0; i < freelook.m_Orbits.Length; i++)
                 {
-                    var targetObject = GameObject.Find(pointName);
-                    if (targetObject != null)
-                    {
-                        targets.Add(targetObject.transform);
-                    }
-                    else
-                    {
-                        Debug.LogWarning("Target not found in the scene: " + pointName);
-                    }
+                    // Smoothly adjust the radius of each orbit.
+                    freelook.m_Orbits[i].m_Radius = Mathf.Lerp(initialRadii[i], initialRadii[i] + targetRadiusAdjustment, t);
+                    freelook.m_YAxis.Value = Mathf.Lerp(initialYAxisValue, 0.5f, t);
                 }
-
-                // Reset the current target index and update the camera target
-                currentTargetIndex = 0;
-                UpdateCameraTarget();
+                freelook.m_YAxis.Value = 0.5f;
+                yield return null;
             }
+
+            // After completing the adjustment, update the originalOrbits to reflect the new radius values.
+            for (int i = 0; i < freelook.m_Orbits.Length; i++)
+            {
+                originalOrbits[i].m_Radius = freelook.m_Orbits[i].m_Radius;
+                // If you also adjust height or other parameters, update them similarly here.
+            }
+
+            // Optionally, log the update for debugging purposes
+            Debug.Log("Original orbits updated with new radius values.");
         }
 
         public void UpdateCameraTarget()
@@ -266,8 +232,8 @@ public class CinemachineCameraZoomTool : MonoBehaviour
             {
                 if (targets.Count > 0 && currentTargetIndex < targets.Count)
                 {
-                    freelook.Follow = targets[currentTargetIndex];
-                    freelook.LookAt = targets[currentTargetIndex];
+                    freelook.LookAt = targets[0];
+                    freelook.Follow = targets[0];
                 }
             }
         }
