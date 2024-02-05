@@ -180,6 +180,66 @@ public class JsonCreatorWindow : EditorWindow
         {
             BuildUniqueSkeletonJsons();
         }
+
+        EditorGUILayout.Space();
+
+        if (GUILayout.Button("Create Skeleton Lookup"))
+        {
+            BuildSkeletonLookup();
+        }
+    }
+
+    
+    public static void BuildSkeletonLookup()
+    {
+        // Open file dialog to select the models_metadata.scr file
+        string filePath = EditorUtility.OpenFilePanel("Select models_metadata.scr", "", "scr");
+        if (string.IsNullOrEmpty(filePath))
+        {
+            Debug.Log("File selection canceled or invalid.");
+            return;
+        }
+
+        try
+        {
+            // Read the contents of the file
+            string[] lines = File.ReadAllLines(filePath);
+            var lookup = new Dictionary<string, string>();
+
+            // Simple state machine for parsing the .scr file content
+            string currentModel = null;
+            foreach (var line in lines)
+            {
+                if (line.Contains("model("))
+                {
+                    // Extract model name
+                    currentModel = line.Split('"')[1].Split('.')[0]; // Gets the name before the first dot
+                }
+                else if (line.Contains("skeleton(") && currentModel != null)
+                {
+                    // Extract skeleton name and add to dictionary
+                    string skeletonName = line.Split('"')[1];
+                    lookup[currentModel] = skeletonName;
+                    currentModel = null; // Reset current model as we only want the first skeleton encountered per model
+                }
+            }
+
+            // Convert the lookup dictionary to JSON
+            string json = JsonConvert.SerializeObject(lookup, Formatting.Indented);
+
+            // Ensure the target directory exists
+            string outputDir = Path.Combine(Application.dataPath, "StreamingAssets/skeletons");
+            Directory.CreateDirectory(outputDir);
+
+            // Write the JSON to the skeleton_lookup.json file
+            File.WriteAllText(Path.Combine(outputDir, "skeleton_lookup.json"), json);
+
+            Debug.Log("Skeleton lookup JSON successfully created.");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"Error processing file: {ex.Message}");
+        }
     }
 
     void OrganizeJsonFiles()

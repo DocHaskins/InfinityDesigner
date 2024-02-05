@@ -5,6 +5,10 @@ using Newtonsoft.Json;
 using doppelganger;
 using System;
 using TMPro;
+using SFB;
+using System.Text;
+using System.Linq;
+
 
 /// <summary>
 /// CharacterWriter facilitates character customization saving to JSON/model formats. 
@@ -24,9 +28,13 @@ namespace doppelganger
 
         [Header("Save Fields")]
         public TMP_InputField saveName;
+        public TMP_InputField pathInputField;
         public TMP_Dropdown saveTypeDropdown;
         public TMP_Dropdown saveCategoryDropdown;
         public TMP_Dropdown saveClassDropdown;
+
+        [Header("Options")]
+        public bool createAdditionalModel = false;
 
         private Dictionary<string, string> sliderToSlotMapping = new Dictionary<string, string>()
     {
@@ -89,9 +97,22 @@ namespace doppelganger
     {
         "sh_npc_mia_young.msh","sh_scan_girl_001.msh","sh_scan_girl_002.msh","sh_scan_girl_003.msh","sh_scan_girl_004.msh","sh_chld_girl_srv_a.msh","sh_dlc_opera_npc_astrid.msh", "sh_dlc_opera_wmn_fighter_a.msh", "sh_mother_3.msh", "sh_npc_anderson.msh", "sh_npc_dr_veronika.msh", "sh_npc_hilda.msh", "sh_npc_lawan.msh", "sh_npc_meredith.msh", "sh_npc_mia_old.msh", "sh_npc_nuwa.msh", "sh_npc_plaguewitch.msh", "sh_npc_sophie.msh", "sh_npc_sophie_b.msh", "sh_npc_thalia.msh", "sh_scan_wmn_001.msh", "sh_scan_wmn_002.msh", "sh_scan_wmn_003.msh", "sh_scan_wmn_004.msh", "sh_scan_wmn_005.msh", "sh_scan_wmn_006.msh", "sh_scan_wmn_007.msh", "sh_scan_wmn_008.msh", "sh_scan_wmn_009.msh", "sh_scan_wmn_010.msh", "sh_scan_wmn_011.msh", "sh_scan_wmn_012.msh", "sh_scan_wmn_013.msh", "sh_scan_wmn_014.msh", "sh_scan_wmn_015.msh", "sh_scan_wmn_016.msh", "sh_scan_wmn_017.msh", "sh_scan_wmn_019.msh", "sh_scan_wmn_020.msh", "sh_scan_wmn_021.msh", "sh_scan_wmn_022.msh", "sh_scan_wmn_026.msh", "sh_scan_wmn_027.msh", "sh_scan_wmn_18.msh", "sh_scan_wmn_infl_001.msh", "sh_wmn_a.msh", "sh_wmn_b.msh", "sh_wmn_c.msh", "sh_wmn_d.msh", "sh_wmn_e.msh", "sh_wmn_pk_a.msh", "sh_wmn_pk_b.msh", "sh_wmn_pk_c.msh", "sh_wmn_sc_a.msh", "sh_wmn_sc_b.msh", "sh_wmn_srv_a.msh", "sh_wmn_srv_b.msh"
     };
+        
+        private readonly List<string> ExcludedSliders = new List<string>
+{
+    "ALL_head", "ALL_armor_helmet", "ALL_earrings", "ALL_facial_hair",
+    "ALL_glasses", "ALL_hair", "ALL_hair_2", "ALL_hair_3", "ALL_hair_base",
+    "ALL_hat", "ALL_hat_access", "ALL_mask", "ALL_mask_access"
+};
 
         void Start()
         {
+            string savedPath = LoadPathFromConfig();
+            if (!string.IsNullOrEmpty(savedPath))
+            {
+                pathInputField.text = savedPath;
+            }
+
             if (characterBuilder == null)
             {
                 characterBuilder = FindObjectOfType<CharacterBuilder>();
@@ -99,23 +120,146 @@ namespace doppelganger
             }
         }
 
+        public void OpenSetPathDialog()
+        {
+            // Open folder browser and then save the selected path
+            var paths = StandaloneFileBrowser.OpenFolderPanel("Select Dying Light 2 Root Folder", "", false);
+            if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
+            {
+                string path = paths[0];
+                SavePathToConfig(path);
+                pathInputField.text = path; // Update the input field with the selected path
+                Debug.Log($"Path set and saved: {path}");
+            }
+            else
+            {
+                Debug.LogError("No path selected.");
+            }
+        }
+
+        private void SavePathToConfig(string newPath)
+        {
+            string configPath = Path.Combine(Application.streamingAssetsPath, "config.ini");
+            List<string> lines = File.Exists(configPath) ? new List<string>(File.ReadAllLines(configPath)) : new List<string>();
+            bool sectionFound = false;
+            bool pathUpdated = false;
+
+            for (int i = 0; i < lines.Count; i++)
+            {
+                if (lines[i].Trim().Equals("[SavePath]", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    sectionFound = true;
+                    if (i + 1 < lines.Count && !lines[i + 1].StartsWith("["))
+                    {
+                        lines[i + 1] = newPath;
+                        pathUpdated = true;
+                    }
+                    else
+                    {
+                        lines.Insert(i + 1, newPath);
+                        pathUpdated = true;
+                    }
+                    break;
+                }
+            }
+
+            if (!sectionFound)
+            {
+                lines.Add("[SavePath]");
+                lines.Add(newPath);
+                pathUpdated = true;
+            }
+
+            if (pathUpdated)
+            {
+                try
+                {
+                    File.WriteAllLines(configPath, lines);
+                    Debug.Log($"Path saved to config: {newPath}");
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Failed to save path to config: {e.Message}");
+                }
+            }
+        }
+
+        private string LoadPathFromConfig()
+        {
+            string configPath = Path.Combine(Application.streamingAssetsPath, "config.ini");
+            bool savePathSectionFound = false;
+
+            if (File.Exists(configPath))
+            {
+                foreach (var line in File.ReadLines(configPath))
+                {
+                    if (savePathSectionFound)
+                    {
+                        if (!line.StartsWith("["))
+                        {
+                            return line;
+                        }
+                        break;
+                    }
+
+                    if (line.Trim().Equals("[SavePath]", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        savePathSectionFound = true;
+                    }
+                }
+            }
+
+            Debug.Log("No saved path in config.");
+            return null; // Return null if no path found
+        }
+
         public void WriteCurrentConfigurationToJson()
         {
-            if (characterBuilder == null)
+            if (characterBuilder == null || skeletonLookup == null)
             {
-                Debug.LogError("CharacterBuilder is null. Cannot write configuration.");
+                Debug.LogError("Dependencies are null. Cannot write configuration.");
                 return;
+            }
+
+            string customBasePath = LoadPathFromConfig();
+            string targetPath = Path.Combine(customBasePath, "ph/source");
+
+            if (!Directory.Exists(targetPath))
+            {
+                Directory.CreateDirectory(targetPath);
             }
 
             // Extracting values from the UI components
             string saveType = saveTypeDropdown.options[saveTypeDropdown.value].text;
             string saveCategory = saveCategoryDropdown.options[saveCategoryDropdown.value].text;
             string saveClass = saveClassDropdown.options[saveClassDropdown.value].text;
+            string saveNameText = saveName.text;
+            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(saveNameText);
 
-            string skeletonName = skeletonLookup.LookupSkeleton(saveCategory, saveClass);
+            string dateSubfolder = DateTime.Now.ToString("yyyy_MM_dd");
+            string jsonOutputDirectory = Path.Combine(Application.streamingAssetsPath, "Output", dateSubfolder);
+            Directory.CreateDirectory(jsonOutputDirectory);
+
+            Dictionary<string, string> skeletonDictLookup = ReadSkeletonLookup();
+            string skeletonName;
+
+            // First, attempt to find the skeleton name directly in the skeletonDictLookup.
+            if (skeletonDictLookup.ContainsKey(fileNameWithoutExtension))
+            {
+                skeletonName = skeletonDictLookup[fileNameWithoutExtension];
+                Debug.Log($"Skeleton name {skeletonName} found in lookup for {fileNameWithoutExtension}.");
+            }
+            else
+            {
+                // If not found, fallback to using the SkeletonLookup component's method.
+                skeletonName = skeletonLookup.LookupSkeleton(saveCategory, saveClass);
+                Debug.Log($"Fallback skeleton name {skeletonName} obtained using the LookupSkeleton method for {saveCategory}, {saveClass}.");
+            }
+
+            bool skeletonUpdated = false;
 
             // Overwrite fileName if saveCategory is "Player"
-            string fileName = saveCategory.Equals("Player", StringComparison.OrdinalIgnoreCase) ? "player_tpp_skeleton" : saveName.text;
+            string fileName = saveCategory.Equals("Player", StringComparison.OrdinalIgnoreCase) ? (string.IsNullOrWhiteSpace(saveName.text) || saveName.text.Equals("Aiden", StringComparison.OrdinalIgnoreCase) ? "player_tpp_skeleton" : saveName.text) : saveName.text;
 
             // Ensure fileName is valid
             if (string.IsNullOrWhiteSpace(fileName))
@@ -125,8 +269,8 @@ namespace doppelganger
             }
 
             // Constructing the JSON and .model file paths dynamically based on the fileName
-            string jsonOutputPath = Path.Combine(Application.streamingAssetsPath, "Output", $"{fileName}.json");
-            string modelOutputPath = Path.Combine(Application.streamingAssetsPath, "Output", $"{fileName}.model");
+            string jsonOutputPath = Path.Combine(jsonOutputDirectory, $"{saveName.text}.json");
+            string modelOutputPath = Path.Combine(targetPath, $"{fileName}.model");
 
             var sliderValues = characterBuilder.GetSliderValues();
             var currentlyLoadedModels = characterBuilder.GetCurrentlyLoadedModels();
@@ -154,9 +298,8 @@ namespace doppelganger
                             if (slotKey == "HEAD")
                             {
                                 slotPair = CreateSlotDataPair(model, slotKey);
-                                slotPair.slotData.slotUid = 100; // HEAD slotUid remains 100
-                                slotPairs.Insert(0, slotPair); // Insert HEAD at the beginning
-                                                               //Debug.Log("Assigned HEAD slot for " + slider.Key);
+                                slotPair.slotData.slotUid = 100;
+                                slotPairs.Insert(0, slotPair);
                             }
                             else
                             {
@@ -168,13 +311,22 @@ namespace doppelganger
                                 }
 
                                 slotPair = CreateSlotDataPair(model, assignedSlot);
-                                slotPair.slotData.slotUid = nextSlotUid++; // Assign and increment slotUid for non-HEAD slots
+                                slotPair.slotData.slotUid = nextSlotUid++;
                                 slotPairs.Add(slotPair);
 
                                 //Debug.Log($"Assigned {assignedSlot} slot for {slider.Key}");
                             }
 
-                            usedSlots.Add(slotKey); // Mark this slot as used
+                            usedSlots.Add(slotKey);
+                            string modelName = model.name;
+                            string potentialSkeletonName = skeletonLookup.FindMatchingSkeleton(modelName);
+                            if (!string.IsNullOrEmpty(potentialSkeletonName) && potentialSkeletonName != "default_skeleton.msh" && potentialSkeletonName != skeletonName)
+                            {
+                                skeletonName = potentialSkeletonName;
+                                skeletonUpdated = true;
+                                Debug.Log($"Skeleton updated to {skeletonName} based on loaded models.");
+                                break; // If you prefer the first match; otherwise, remove this to check all models
+                            }
                         }
                         else
                         {
@@ -215,17 +367,101 @@ namespace doppelganger
             Directory.CreateDirectory(Path.GetDirectoryName(jsonOutputPath));
             File.WriteAllText(jsonOutputPath, json);
             Debug.Log($"Character configuration saved to {jsonOutputPath}");
+            string outputPakPath = Path.Combine(targetPath, "Data4.pak");
 
             // After writing the JSON, call ModelWriter to convert it to .model format
             if (modelWriter != null)
             {
                 modelWriter.ConvertJsonToModelFormat(jsonOutputPath, modelOutputPath);
                 Debug.Log($"Model configuration saved to {modelOutputPath}");
+
+                // Update the .pak file with the .model file
+                ZipUtility.AddOrUpdateFilesInZip(modelOutputPath, outputPakPath);
+                Debug.Log($"Data4.pak updated with model data at {outputPakPath}");
+
+                // Cleanup: Delete the .model file after it has been added to the .pak
+                try
+                {
+                    if (File.Exists(modelOutputPath))
+                    {
+                        File.Delete(modelOutputPath);
+                        Debug.Log($"{modelOutputPath} was successfully deleted.");
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Failed to delete {modelOutputPath}: {e.Message}");
+                }
             }
             else
             {
                 Debug.LogError("ModelWriter not set in CharacterWriter.");
             }
+
+            if (modelWriter != null)
+            {
+                modelWriter.ConvertJsonToModelFormat(jsonOutputPath, modelOutputPath);
+                Debug.Log($"Model configuration saved to {modelOutputPath}");
+
+                // Update the .pak file with the .model file
+                ZipUtility.AddOrUpdateFilesInZip(modelOutputPath, outputPakPath);
+                Debug.Log($"Data4.pak updated with model data at {outputPakPath}");
+
+                // Conditionally create an additional model if the flag is true
+                if (createAdditionalModel)
+                {
+                    // Define a modified list of slot pairs excluding specified sliders
+                    var modifiedSlotPairs = slotPairs.Where(pair => !ExcludedSliders.Contains(pair.slotData.name)).ToList();
+                    var modifiedOutputData = new ModelData
+                    {
+                        skeletonName = "player_fpp_skeleton.msh", // Use the specific skeleton
+                        slotPairs = modifiedSlotPairs,
+                        modelProperties = outputData.modelProperties // Copy other properties
+                    };
+
+                    string modifiedJson = JsonConvert.SerializeObject(modifiedOutputData, Formatting.Indented);
+                    string fppModelPath = modelOutputPath.Replace(".model", "_fpp.model");
+
+                    // Directly convert to .model format without saving the JSON
+                    modelWriter.ConvertJsonToModelFormat(modifiedJson, fppModelPath);
+                    Debug.Log($"Additional model configuration saved to {fppModelPath}");
+
+                    // Add the additional .model file to the .pak
+                    ZipUtility.AddOrUpdateFilesInZip(fppModelPath, outputPakPath);
+                    Debug.Log($"Data4.pak updated with additional model data at {outputPakPath}");
+
+                    // Cleanup: Delete the additional .model file
+                    if (File.Exists(fppModelPath))
+                    {
+                        File.Delete(fppModelPath);
+                        Debug.Log($"{fppModelPath} was successfully deleted.");
+                    }
+                }
+
+                // Cleanup: Delete the original .model file
+                if (File.Exists(modelOutputPath))
+                {
+                    File.Delete(modelOutputPath);
+                    Debug.Log($"{modelOutputPath} was successfully deleted.");
+                }
+            }
+            else
+            {
+                Debug.LogError("ModelWriter not set in CharacterWriter.");
+            }
+        }
+
+        private Dictionary<string, string> ReadSkeletonLookup()
+        {
+            string path = Path.Combine(Application.streamingAssetsPath, "Skeletons", "skeleton_lookup.json");
+            if (!File.Exists(path))
+            {
+                Debug.LogError("Skeleton lookup file not found.");
+                return new Dictionary<string, string>();
+            }
+
+            string json = File.ReadAllText(path);
+            return JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
         }
 
         private string DetermineCharacterSex(List<ModelData.SlotDataPair> slotPairs)

@@ -12,11 +12,6 @@ namespace doppelganger
         public TMP_InputField saveName;
         public TMP_Dropdown saveCategoryDropdown;
 
-        void Start()
-        {
-            saveCategoryDropdown.onValueChanged.AddListener(delegate { GenerateName(); });
-        }
-
         public void GenerateName()
         {
             string selectedCategory = saveCategoryDropdown.options[saveCategoryDropdown.value].text;

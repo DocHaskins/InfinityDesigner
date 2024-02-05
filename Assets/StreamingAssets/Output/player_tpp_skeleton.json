@@ -1,6 +1,5 @@
 {
   "skeletonName": "player_skeleton.msh",
-  "sex": null,
   "modelProperties": {
     "class": "NPC",
     "race": "Unknown",
@@ -268,9 +267,42 @@
       }
     },
     {
-      "key": "LEGS",
+      "key": "HANDS_PART_2",
       "slotData": {
         "slotUid": 104,
+        "name": "HANDS_PART_2",
+        "filterText": null,
+        "models": [
+          {
+            "name": "player_default_bracelet_tpp.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "player_default_bracelet_tpp.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "player_default_bracelet_tpp.mat",
+                    "selected": false,
+                    "layoutId": 0,
+                    "loadFlags": null,
+                    "rttiValues": null
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "LEGS",
+      "slotData": {
+        "slotUid": 105,
         "name": "LEGS",
         "filterText": null,
         "models": [
@@ -303,7 +335,7 @@
     {
       "key": "TORSO_PART_1",
       "slotData": {
-        "slotUid": 105,
+        "slotUid": 106,
         "name": "TORSO_PART_1",
         "filterText": null,
         "models": [
@@ -336,7 +368,7 @@
     {
       "key": "HANDS_PART_2",
       "slotData": {
-        "slotUid": 106,
+        "slotUid": 107,
         "name": "HANDS_PART_2",
         "filterText": null,
         "models": [
@@ -354,39 +386,6 @@
                 "resources": [
                   {
                     "name": "player_hands_tpp_a.mat",
-                    "selected": false,
-                    "layoutId": 0,
-                    "loadFlags": null,
-                    "rttiValues": null
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "key": "HANDS_PART_2",
-      "slotData": {
-        "slotUid": 107,
-        "name": "HANDS_PART_2",
-        "filterText": null,
-        "models": [
-          {
-            "name": "player_default_bracelet_tpp.msh",
-            "materialsData": [
-              {
-                "number": 1,
-                "name": "player_default_bracelet_tpp.mat"
-              }
-            ],
-            "materialsResources": [
-              {
-                "number": 1,
-                "resources": [
-                  {
-                    "name": "player_default_bracelet_tpp.mat",
                     "selected": false,
                     "layoutId": 0,
                     "loadFlags": null,

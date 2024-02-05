@@ -1,5 +1,7 @@
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using UnityEngine;
 
@@ -106,9 +108,9 @@ namespace doppelganger
 
             if (skeletonMapping.ContainsKey(selectedCategory) && skeletonMapping[selectedCategory].ContainsKey(selectedClass))
             {
-                Debug.Log("Selected Category: " + selectedCategory + ", Selected Class: " + selectedClass);
+                //Debug.Log("Selected Category: " + selectedCategory + ", Selected Class: " + selectedClass);
                 string selectedSkeleton = skeletonMapping[selectedCategory][selectedClass];
-                Debug.Log("Selected Skeleton: " + selectedSkeleton);
+                //Debug.Log("Selected Skeleton: " + selectedSkeleton);
                 return selectedSkeleton + ".msh";
             }
             else
@@ -133,6 +135,41 @@ namespace doppelganger
                 Debug.LogError("Skeleton mapping not found for Category: " + selectedCategory + ", Class: " + selectedClass);
                 return "default_skeleton";
             }
+        }
+
+        public string FindMatchingSkeleton(string modelName)
+        {
+            string directoryPath = Path.Combine(Application.dataPath, "StreamingAssets/Skeleton Data");
+
+            // Check if directory exists
+            if (!Directory.Exists(directoryPath))
+            {
+                Debug.LogError("Directory does not exist: " + directoryPath);
+                return null;
+            }
+
+            // Get all .json files in the directory
+            string[] files = Directory.GetFiles(directoryPath, "*.json");
+
+            foreach (string file in files)
+            {
+                string jsonContent = File.ReadAllText(file);
+                // Assuming the json structure is a Dictionary or similar; adjust according to your actual json structure
+                var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonContent);
+
+                if (data != null && data.ContainsKey("mesh"))
+                {
+                    List<string> meshNames = JsonConvert.DeserializeObject<List<string>>(data["mesh"].ToString());
+                    if (meshNames.Contains(modelName))
+                    {
+                        // Found the matching skeleton, return its name without the extension
+                        return Path.GetFileNameWithoutExtension(file) + ".msh";
+                    }
+                }
+            }
+
+            // If no match was found
+            return "default_skeleton.msh";
         }
     }
 }

@@ -33,6 +33,7 @@ namespace doppelganger
         private HorizontalSelector typeSelector;
         public TMP_Dropdown categoryDropdown;
         public TMP_Dropdown classDropdown;
+        public TMP_InputField saveName;
         public TMP_Dropdown saveTypeDropdown;
         public TMP_Dropdown saveCategoryDropdown;
         public TMP_Dropdown saveClassDropdown;
@@ -56,6 +57,16 @@ namespace doppelganger
         private Dictionary<string, List<Material>> originalMaterials = new Dictionary<string, List<Material>>();
         private Dictionary<string, List<string>> slotData = new Dictionary<string, List<string>>();
         public Dictionary<string, GameObject> currentlyLoadedModels = new Dictionary<string, GameObject>();
+
+        Dictionary<string, string> classConversions = new Dictionary<string, string>
+{
+    { "peacekeeper", "pk" },
+    { "scavenger", "sc" },
+    { "survivor", "sv" },
+    { "bandit", "bdt" },
+    { "volatile", "volatile" }
+    // Add other class conversions as needed
+};
 
         void Start()
         {
@@ -113,9 +124,9 @@ namespace doppelganger
 
             categoryDropdown.value = categoryDropdown.options.FindIndex(option => option.text == "Player");
             classDropdown.value = classDropdown.options.FindIndex(option => option.text == "ALL");
-            saveTypeDropdown.value = categoryDropdown.options.FindIndex(option => option.text == "Human");
-            saveCategoryDropdown.value = categoryDropdown.options.FindIndex(option => option.text == "Player");
-            saveClassDropdown.value = classDropdown.options.FindIndex(option => option.text == "ALL");
+            SetDropdownByValue(saveTypeDropdown, "Human");
+            SetDropdownByValue(saveCategoryDropdown, "Player");
+            SetDropdownByValue(saveClassDropdown, "ALL");
 
             OnCategoryChanged(categoryDropdown.value);
 
@@ -123,6 +134,22 @@ namespace doppelganger
             classDropdown.onValueChanged.AddListener(OnClassChanged);
             saveTypeDropdown.onValueChanged.AddListener(OnSaveTypeChanged);
             saveCategoryDropdown.onValueChanged.AddListener(OnSaveCategoryChanged);
+
+            UpdateInterfaceBasedOnDropdownSelection();
+        }
+
+        void SetDropdownByValue(TMP_Dropdown dropdown, string value)
+        {
+            int index = dropdown.options.FindIndex(option => string.Equals(option.text, value, StringComparison.OrdinalIgnoreCase));
+            if (index != -1)
+            {
+                dropdown.value = index;
+                dropdown.RefreshShownValue();
+            }
+            else
+            {
+                Debug.LogError($"Option '{value}' not found in dropdown.");
+            }
         }
 
         public void Reroll()
@@ -285,14 +312,19 @@ namespace doppelganger
 
         void OnPresetLoadButtonPressed()
         {
-            // Use GetActualValueFromDropdown to get the original file name
             string selectedPreset = GetActualValueFromDropdown(presetDropdown);
-
+            saveName.text = selectedPreset; // Assuming you want to display the actual preset name
             if (!string.IsNullOrEmpty(selectedPreset))
             {
-                string jsonPath = GetJsonFilePath(selectedPreset);
-                Debug.Log("Loading JSON from path: " + jsonPath);
-                LoadJsonAndSetSliders(jsonPath);
+                // Assuming GetTypeFromSelector and categoryDropdown provide correct values
+                string type = GetTypeFromSelector();
+                string category = categoryDropdown.options[categoryDropdown.value].text;
+
+                // Build the correct path without appending the class as a directory
+                string presetsPath = Path.Combine(Application.streamingAssetsPath, "Jsons", type.Equals("ALL") ? "" : type, category.Equals("ALL") ? "" : category, $"{selectedPreset}.json");
+
+                Debug.Log("Loading JSON from path: " + presetsPath);
+                LoadJsonAndSetSliders(presetsPath);
             }
             else
             {
@@ -329,14 +361,30 @@ namespace doppelganger
                     string skeletonName = modelData.skeletonName;
                     if (!string.IsNullOrEmpty(skeletonName))
                     {
-                        // Find and destroy the currently loaded skeleton
+                        // Find any existing skeleton
                         GameObject currentSkeleton = GameObject.FindGameObjectWithTag("Skeleton");
+                        bool shouldLoadSkeleton = true;
+
+                        // Check if the found skeleton's name matches the required skeletonName
                         if (currentSkeleton != null)
                         {
-                            Destroy(currentSkeleton);
+                            if (currentSkeleton.name == skeletonName || currentSkeleton.name == skeletonName + "(Clone)")
+                            {
+                                // If names match, no need to load a new skeleton
+                                shouldLoadSkeleton = false;
+                            }
+                            else
+                            {
+                                // If names don't match, destroy the existing skeleton
+                                Destroy(currentSkeleton);
+                            }
                         }
 
-                        LoadSkeleton(skeletonName);
+                        // Load the skeleton only if needed
+                        if (shouldLoadSkeleton)
+                        {
+                            LoadSkeleton(skeletonName);
+                        }
                     }
                     else
                     {
@@ -629,9 +677,9 @@ namespace doppelganger
         {
             // Assuming you have a way to map the index to a type
             string selectedType = GetTypeBasedOnIndex(index);
-            PopulateDropdown(saveCategoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType), "ALL", false);
+            //PopulateDropdown(saveCategoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType), "ALL", false);
             string selectedCategory = saveCategoryDropdown.options[index].text;
-            PopulateDropdown(saveClassDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType, selectedCategory), "ALL", true);
+            //PopulateDropdown(saveClassDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType, selectedCategory), "ALL", true);
         }
         void OnTypeChanged(int index)
         {
@@ -689,41 +737,50 @@ namespace doppelganger
 
         void UpdatePresetDropdown()
         {
-            string type = GetTypeFromSelector();
+            string type = GetTypeFromSelector(); // Assuming this method retrieves the selected type
             string category = categoryDropdown.options[categoryDropdown.value].text;
             string classSelection = classDropdown.options[classDropdown.value].text;
 
+            // Normalize case for comparison, but use original case for path and filtering
+            string normalizedClassSelection = classSelection.ToLower();
+
             string presetsPath = Path.Combine(Application.streamingAssetsPath, "Jsons");
 
-            // Generate the path based on dropdown selections
-            string searchPath = presetsPath;
-            if (type != "ALL")
-            {
-                searchPath = Path.Combine(searchPath, type);
-                if (category != "ALL")
-                {
-                    searchPath = Path.Combine(searchPath, category);
-                    if (classSelection != "ALL")
-                    {
-                        searchPath = Path.Combine(searchPath, classSelection);
-                    }
-                }
-            }
+            // The path is now only based on Type and Category selections
+            string searchPath = Path.Combine(presetsPath, type.Equals("ALL") ? "" : type, category.Equals("ALL") ? "" : category);
 
-            PopulatePresetDropdown(presetDropdown, searchPath);
+            // Class abbreviation is used solely for file filtering, not path construction
+            string classAbbreviation = normalizedClassSelection != "all" && classConversions.ContainsKey(normalizedClassSelection) ? classConversions[normalizedClassSelection] : "";
+
+            PopulatePresetDropdown(presetDropdown, searchPath, classAbbreviation);
         }
 
-        void PopulatePresetDropdown(TMPro.TMP_Dropdown dropdown, string path)
+        void PopulatePresetDropdown(TMPro.TMP_Dropdown dropdown, string path, string classAbbreviation)
         {
-            var jsonFiles = GetJsonFiles(path);
-            var filteredFiles = jsonFiles.Where(file => !file.StartsWith("db_") && !file.EndsWith("_fpp")).ToList();
+            // Ensure the directory exists
+            if (!Directory.Exists(path))
+            {
+                Debug.LogError($"Directory does not exist: {path}");
+                dropdown.ClearOptions();
+                return;
+            }
+
+            var jsonFiles = Directory.GetFiles(path, "*.json").Select(Path.GetFileNameWithoutExtension);
+
+            // Filter files by class abbreviation if not empty
+            var filteredFiles = string.IsNullOrEmpty(classAbbreviation)
+                ? jsonFiles
+                : jsonFiles.Where(file => file.ToLower().Contains(classAbbreviation)).ToList();
+
+            // Further exclude specific files based on naming conventions
+            filteredFiles = filteredFiles.Where(file => !file.StartsWith("db_") && !file.EndsWith("_fpp")).ToList();
 
             List<TMPro.TMP_Dropdown.OptionData> options = new List<TMPro.TMP_Dropdown.OptionData>();
             Dictionary<string, string> fileDisplayNames = new Dictionary<string, string>();
 
             foreach (var file in filteredFiles)
             {
-                string displayName = ConvertToReadableName(file);
+                string displayName = ConvertToReadableName(file); // Convert file names to a readable format
                 options.Add(new TMPro.TMP_Dropdown.OptionData(displayName));
                 fileDisplayNames[displayName] = file; // Map the display name to the original file name
             }
@@ -740,6 +797,12 @@ namespace doppelganger
             mapper.UpdateValueMap(fileDisplayNames);
 
             dropdown.RefreshShownValue();
+        }
+
+        public List<TMP_Dropdown.OptionData> GetCurrentPresetOptions()
+        {
+            List<TMP_Dropdown.OptionData> options = new List<TMP_Dropdown.OptionData>();
+            return options;
         }
 
         string ConvertToReadableName(string fileName)
@@ -801,45 +864,57 @@ namespace doppelganger
         {
             // Get the selected skeleton name based on category and class
             string selectedSkeleton = skeletonLookup.GetSelectedSkeleton();
+            string resourcePath = "Prefabs/" + selectedSkeleton.Replace(".msh", "");
 
-            // Destroy the current skeleton (if any)
+            // Check for the current skeleton in the scene
             GameObject currentSkeleton = GameObject.FindGameObjectWithTag("Skeleton");
-            if (currentSkeleton != null)
+            bool shouldLoadSkeleton = true;
+
+            // If there is a current skeleton, check its prefab name against the selected skeleton
+            if (currentSkeleton != null && currentSkeleton.name.StartsWith(selectedSkeleton))
             {
+                // If names match (considering "(Clone)" suffix Unity adds to instantiated objects), skip loading a new one
+                shouldLoadSkeleton = false;
+            }
+            else if (currentSkeleton != null)
+            {
+                // If there is a skeleton but with a wrong name, destroy it
                 Destroy(currentSkeleton);
             }
 
-            // Load and instantiate the new skeleton
-            string resourcePath = "Prefabs/" + selectedSkeleton.Replace(".msh", "");
-            GameObject skeletonPrefab = Resources.Load<GameObject>(resourcePath);
-            Debug.Log("Loading skeleton prefab from resource path: " + resourcePath);
-            if (skeletonPrefab != null)
+            // Load and instantiate the new skeleton if needed
+            if (shouldLoadSkeleton)
             {
-                GameObject loadedSkeleton = Instantiate(skeletonPrefab, Vector3.zero, Quaternion.Euler(-90, 0, 0));
-                loadedSkeleton.tag = "Skeleton";
-
-                // Find the 'pelvis' child in the loaded skeleton
-                Transform pelvis = loadedSkeleton.transform.Find("pelvis");
-                if (pelvis != null)
+                Debug.Log("Loading skeleton prefab from resource path: " + resourcePath);
+                GameObject skeletonPrefab = Resources.Load<GameObject>(resourcePath);
+                if (skeletonPrefab != null)
                 {
-                    // Create a new GameObject named 'Legs'
-                    GameObject legs = new GameObject("legs");
+                    GameObject loadedSkeleton = Instantiate(skeletonPrefab, Vector3.zero, Quaternion.Euler(-90, 0, 0));
+                    loadedSkeleton.tag = "Skeleton";
+                    loadedSkeleton.name = selectedSkeleton; // Optionally set the name to manage future checks
 
-                    // Set 'Legs' as a child of 'pelvis'
-                    legs.transform.SetParent(pelvis);
-
-                    // Set the local position of 'Legs' with the specified offset
-                    legs.transform.localPosition = new Vector3(0, 0, -0.005f);
+                    // Find the 'pelvis' child in the loaded skeleton and handle 'legs' creation
+                    Transform pelvis = loadedSkeleton.transform.Find("pelvis");
+                    if (pelvis != null)
+                    {
+                        GameObject legs = new GameObject("legs");
+                        legs.transform.SetParent(pelvis);
+                        legs.transform.localPosition = new Vector3(0, 0, -0.005f);
+                    }
+                    else
+                    {
+                        Debug.LogError("Pelvis not found in the skeleton prefab: " + selectedSkeleton);
+                    }
+                    UpdateCameraTarget(loadedSkeleton.transform);
                 }
                 else
                 {
-                    Debug.LogError("Pelvis not found in the skeleton prefab: " + selectedSkeleton);
+                    Debug.LogError("Skeleton prefab not found in Resources: " + resourcePath);
                 }
-                UpdateCameraTarget(loadedSkeleton.transform);
             }
             else
             {
-                Debug.LogError("Skeleton prefab not found in Resources: " + resourcePath);
+                Debug.Log("Skeleton with the name " + selectedSkeleton + " is already loaded. Skipping.");
             }
         }
 
