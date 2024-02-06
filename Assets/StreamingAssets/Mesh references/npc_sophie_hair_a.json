@@ -1,40 +1,109 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "npc_hair_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "npc_sophie_hairband_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "npc_hair_a.mat"
+          "number": 1,
+          "name": "npc_hair_a.mat"
         },
         {
-            "number": 2,
-            "name": "npc_sophie_hairband_a.mat"
+          "number": 2,
+          "name": "npc_sophie_hairband_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_hair_a_dark_blonde.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "npc_hair_a_dark_blonde.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "npc_sophie_hairband_a.mat"
+                  "name": "dif_0_val",
+                  "type": 4,
+                  "val_str": null
                 }
-            ]
+              ]
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
+          "number": 2,
+          "resources": [
+            {
+              "name": "npc_sophie_hairband_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_hair_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "npc_sophie_hairband_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_hair_a_dark_brown.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "npc_hair_a_dark_brown.mat"
+                  "name": "dif_0_val",
+                  "type": 4,
+                  "val_str": null
                 },
                 {
-                    "number": 2,
-                    "name": "npc_sophie_hairband_a.mat"
+                  "name": "spc_0_val",
+                  "type": 4,
+                  "val_str": null
                 }
-            ]
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "npc_sophie_hairband_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

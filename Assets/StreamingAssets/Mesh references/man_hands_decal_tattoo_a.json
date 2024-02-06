@@ -1,46 +1,102 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "chr_decal_tattoo_npc_grady.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "chr_decal_tattoo_npc_grady.mat"
+          "number": 1,
+          "name": "chr_decal_tattoo_npc_grady.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "chr_decal_tattoo_b.mat"
-                }
-            ]
-        },
-        {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "chr_decal_tattoo_c.mat"
-                }
-            ]
-        },
-        {
-            "id": "3",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "chr_decal_tattoo_a.mat"
-                }
-            ]
-        },
-        {
-            "id": "4",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "chr_decal_tattoo_f.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "chr_decal_tattoo_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "chr_decal_tattoo_npc_grady.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "chr_decal_tattoo_c.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "chr_decal_tattoo_npc_grady.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "chr_decal_tattoo_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "chr_decal_tattoo_npc_grady.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "chr_decal_tattoo_f.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

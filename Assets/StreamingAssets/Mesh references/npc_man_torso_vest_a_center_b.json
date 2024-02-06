@@ -1,27 +1,53 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "npc_man_torso_vest_a_center_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_sc_worker_torso_a_center_b.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "npc_man_torso_vest_a_center_a.mat"
+          "number": 1,
+          "name": "npc_man_torso_vest_a_center_a.mat"
         },
         {
-            "number": 2,
-            "name": "man_sc_worker_torso_a_center_b.mat"
+          "number": 2,
+          "name": "man_sc_worker_torso_a_center_b.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "npc_man_torso_vest_a_center_a_vincente.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_sc_worker_torso_a_center_b.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_man_torso_vest_a_center_a_vincente.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_sc_worker_torso_a_center_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

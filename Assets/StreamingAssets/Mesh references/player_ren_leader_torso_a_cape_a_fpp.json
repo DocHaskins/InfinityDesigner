@@ -1,31 +1,164 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "chr_feathers_b.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_bdt_headcover_m_threads.mat"
+    },
+    {
+      "number": 3,
+      "name": "man_bdt_torso_c_armor_b_cape_a.mat"
+    },
+    {
+      "number": 4,
+      "name": "chr_leather_string_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "chr_feathers_b.mat"
+          "number": 1,
+          "name": "chr_feathers_b.mat"
         },
         {
-            "number": 2,
-            "name": "man_bdt_headcover_m_threads.mat"
+          "number": 2,
+          "name": "man_bdt_headcover_m_threads.mat"
         },
         {
-            "number": 3,
-            "name": "man_bdt_torso_c_armor_b_cape_a.mat"
+          "number": 3,
+          "name": "man_bdt_torso_c_armor_b_cape_a.mat"
         },
         {
-            "number": 4,
-            "name": "chr_leather_string_a.mat"
+          "number": 4,
+          "name": "chr_leather_string_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 2,
-                    "name": "null.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "chr_feathers_b_red_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "null.mat",
+              "selected": true,
+              "layoutId": 1,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "player_easter_chicken_torso_a_cape_a_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "resources": [
+            {
+              "name": "chr_leather_string_a_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "chr_feathers_b.mat"
+        },
+        {
+          "number": 2,
+          "name": "man_bdt_headcover_m_threads.mat"
+        },
+        {
+          "number": 3,
+          "name": "man_bdt_torso_c_armor_b_cape_a.mat"
+        },
+        {
+          "number": 4,
+          "name": "chr_leather_string_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "chr_feathers_b_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "null.mat",
+              "selected": true,
+              "layoutId": 1,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "man_bdt_torso_c_armor_b_cape_a_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "resources": [
+            {
+              "name": "chr_leather_string_a_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

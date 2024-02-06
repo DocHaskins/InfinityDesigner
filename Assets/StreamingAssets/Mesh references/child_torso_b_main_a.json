@@ -1,35 +1,94 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "wmn_ren_torso_b_main_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "wmn_ren_torso_b_main_a_nylon_a.mat"
+    },
+    {
+      "number": 3,
+      "name": "child_torso_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "wmn_ren_torso_b_main_a.mat"
+          "number": 1,
+          "name": "wmn_ren_torso_b_main_a.mat"
         },
         {
-            "number": 2,
-            "name": "wmn_ren_torso_b_main_a_nylon_a.mat"
+          "number": 2,
+          "name": "wmn_ren_torso_b_main_a_nylon_a.mat"
         },
         {
-            "number": 3,
-            "name": "child_torso_a.mat"
+          "number": 3,
+          "name": "child_torso_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "wmn_ren_torso_b_main_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "wmn_ren_torso_b_main_a_nylon_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "child_torso_a_pattern_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "wmn_ren_torso_b_main_a.mat"
+                  "name": "det_0_a_scale_factor",
+                  "type": 2,
+                  "val_str": null
                 },
                 {
-                    "number": 2,
-                    "name": "wmn_ren_torso_b_main_a_nylon_a.mat"
+                  "name": "det_0_b_bri_blending",
+                  "type": 2,
+                  "val_str": null
                 },
                 {
-                    "number": 3,
-                    "name": "child_torso_a_pattern_a.mat"
+                  "name": "det_0_b_opacity_factor",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_b_scale_factor",
+                  "type": 2,
+                  "val_str": null
                 }
-            ]
+              ]
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

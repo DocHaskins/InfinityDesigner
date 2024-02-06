@@ -1,19 +1,62 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_facial_hair_black.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_facial_hair_black.mat"
+          "number": 1,
+          "name": "man_facial_hair_black.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_facial_hair_black.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "man_facial_hair_grey.mat"
+                  "name": "dif_0_val",
+                  "type": 4,
+                  "val_str": null
                 }
-            ]
+              ]
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_facial_hair_black.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_facial_hair_grey.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

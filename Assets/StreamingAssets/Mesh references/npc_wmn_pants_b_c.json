@@ -1,37 +1,85 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "npc_wmn_pants_b.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "npc_wmn_pants_b.mat"
+          "number": 1,
+          "name": "npc_wmn_pants_b.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_wmn_pants_b_shiny_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "npc_wmn_pants_b_torn.mat"
+                  "name": "grf_dif_tex",
+                  "type": 7,
+                  "val_str": "shiny_polyester_a_grf.png"
                 }
-            ]
-        },
-        {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "npc_wmn_pants_b_stripes.mat"
-                }
-            ]
-        },
-        {
-            "id": "3",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "npc_wmn_pants_b_shiny_b.mat"
-                }
-            ]
+              ]
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_wmn_pants_b.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_wmn_pants_b_torn.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_wmn_pants_b.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_wmn_pants_b_stripes.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

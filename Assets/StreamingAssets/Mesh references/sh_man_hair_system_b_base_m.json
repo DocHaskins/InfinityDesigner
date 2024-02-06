@@ -1,13 +1,59 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "sh_man_hair_system_b_dark.mat"
+    },
+    {
+      "number": 2,
+      "name": "npc_hairband_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "sh_man_hair_system_b_dark.mat"
+          "number": 1,
+          "name": "sh_man_hair_system_b_dark.mat"
         },
         {
-            "number": 2,
-            "name": "npc_hairband_a.mat"
+          "number": 2,
+          "name": "npc_hairband_a.mat"
         }
-    ],
-    "variations": []
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "sh_man_hair_system_b_dark.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "npc_hairband_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_0_val",
+                  "type": 4,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

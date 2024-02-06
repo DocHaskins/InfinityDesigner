@@ -1,40 +1,92 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_wrestler_arm_wrapper_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_wrestler_arm_wrapper_a_belt.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_wrestler_arm_wrapper_a.mat"
+          "number": 1,
+          "name": "man_wrestler_arm_wrapper_a.mat"
         },
         {
-            "number": 2,
-            "name": "man_wrestler_arm_wrapper_a_belt.mat"
+          "number": 2,
+          "name": "man_wrestler_arm_wrapper_a_belt.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_wrestler_arm_wrapper_a_leather.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_wrestler_arm_wrapper_a_belt_leather.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_wrestler_arm_wrapper_a_leather.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_wrestler_arm_wrapper_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_wrestler_arm_wrapper_a_belt_leather.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_wrestler_arm_wrapper_a_belt_leather.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_wrestler_arm_wrapper_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "man_wrestler_arm_wrapper_a_belt.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_wrestler_arm_wrapper_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_wrestler_arm_wrapper_a_belt_leather.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

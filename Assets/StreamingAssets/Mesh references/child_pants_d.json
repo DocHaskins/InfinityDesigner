@@ -1,53 +1,272 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "child_pants_d.mat"
+    },
+    {
+      "number": 2,
+      "name": "child_shoe_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "child_pants_d.mat"
+          "number": 1,
+          "name": "child_pants_d.mat"
         },
         {
-            "number": 2,
-            "name": "child_shoe_a.mat"
+          "number": 2,
+          "name": "child_shoe_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "child_pants_d_aiden.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "child_shoe_a.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "child_pants_d_aiden.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "child_pants_d_pattern.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "child_shoe_a.mat"
-                }
-            ]
-        },
-        {
-            "id": "3",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_bdt_pants_f_melange.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "child_shoe_a.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "child_shoe_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "child_pants_d.mat"
+        },
+        {
+          "number": 2,
+          "name": "child_shoe_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "child_pants_d_pattern.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "det_0_b_bri_blending",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_a_dtm_dif",
+                  "type": 2,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "child_shoe_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "child_pants_d.mat"
+        },
+        {
+          "number": 2,
+          "name": "child_shoe_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_pants_f_melange.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "child_shoe_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "child_pants_d.mat"
+        },
+        {
+          "number": 2,
+          "name": "child_shoe_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "child_pants_d_pattern.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "det_0_b_bri_blending",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_a_dtm_tex",
+                  "type": 7,
+                  "val_str": "srf_cotton_shirt_pattern_checker_dtm.png"
+                },
+                {
+                  "name": "det_0_a_scale_factor",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_a_dtm_dif",
+                  "type": 2,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "child_shoe_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "child_pants_d.mat"
+        },
+        {
+          "number": 2,
+          "name": "child_shoe_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "child_pants_d.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "det_0_b_opacity_factor",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_b_scale_factor",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_clr_b_tex",
+                  "type": 7,
+                  "val_str": "srf_cotton_shorn_dtt.png"
+                },
+                {
+                  "name": "det_0_dif_b_tex",
+                  "type": 7,
+                  "val_str": "srf_ch_cotton_a_micro_dif.png"
+                },
+                {
+                  "name": "grd_tex",
+                  "type": 7,
+                  "val_str": "chr_white_dif.png"
+                },
+                {
+                  "name": "grf_dif_tex",
+                  "type": 7,
+                  "val_str": "gradual_subtle_d_grf.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "child_shoe_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

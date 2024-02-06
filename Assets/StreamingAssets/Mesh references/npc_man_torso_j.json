@@ -1,28 +1,153 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "npc_man_torso_j.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "npc_man_torso_j.mat"
+          "number": 1,
+          "name": "npc_man_torso_j.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_man_torso_j.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "npc_man_torso_j_a.mat"
+                  "name": "grf_dif_tex",
+                  "type": 7,
+                  "val_str": "shiny_polyester_d_grf.png"
                 }
-            ]
-        },
-        {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "npc_man_torso_j_snake_skin.mat"
-                }
-            ]
+              ]
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_man_torso_j.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_man_torso_j_snake_skin.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_man_torso_j.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_man_torso_j_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_man_torso_j.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_man_torso_j_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "det_0_a_bri_blending",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_a_hue_blending",
+                  "type": 2,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_man_torso_j.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_man_torso_j_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "det_0_a_bri_blending",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_a_opacity_factor",
+                  "type": 2,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

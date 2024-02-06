@@ -1,27 +1,53 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_pk_torso_a_empty.mat"
+    },
+    {
+      "number": 2,
+      "name": "chr_decal_logo_pk_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_pk_torso_a_empty.mat"
+          "number": 1,
+          "name": "man_pk_torso_a_empty.mat"
         },
         {
-            "number": 2,
-            "name": "chr_decal_logo_pk_a.mat"
+          "number": 2,
+          "name": "chr_decal_logo_pk_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_pk_torso_a_empty.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "chr_decal_pk_logo_a.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_pk_torso_a_empty.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "chr_decal_pk_logo_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

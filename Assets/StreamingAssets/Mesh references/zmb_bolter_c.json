@@ -1,69 +1,205 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "zmb_bolter_body_c.mat"
+    },
+    {
+      "number": 2,
+      "name": "zmb_bolter_pants_c.mat"
+    },
+    {
+      "number": 3,
+      "name": "zmb_bolter_rags_b.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "zmb_bolter_body_c.mat"
+          "number": 1,
+          "name": "zmb_bolter_body_c.mat"
         },
         {
-            "number": 2,
-            "name": "zmb_bolter_pants_c.mat"
+          "number": 2,
+          "name": "zmb_bolter_pants_c.mat"
         },
         {
-            "number": 3,
-            "name": "zmb_bolter_rags_b.mat"
+          "number": 3,
+          "name": "zmb_bolter_rags_b.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "zmb_bolter_body_c.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zmb_bolter_pants_c.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "zmb_bolter_rags_c.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "zmb_bolter_body_c.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "zmb_bolter_body_c.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zmb_bolter_pants_c.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "null.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "zmb_bolter_pants_c.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "3",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "zmb_bolter_c_christmas_a_body.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zmb_bolter_c_christmas_a_body.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "zmb_bolter_c_christmas_a_rags.mat"
-                }
-            ]
+          "number": 3,
+          "resources": [
+            {
+              "name": "zmb_bolter_rags_c.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "zmb_bolter_body_c.mat"
+        },
+        {
+          "number": 2,
+          "name": "zmb_bolter_pants_c.mat"
+        },
+        {
+          "number": 3,
+          "name": "zmb_bolter_rags_b.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "zmb_bolter_c_christmas_a_body.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zmb_bolter_c_christmas_a_body.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "zmb_bolter_c_christmas_a_rags.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "zmb_bolter_body_c.mat"
+        },
+        {
+          "number": 2,
+          "name": "zmb_bolter_pants_c.mat"
+        },
+        {
+          "number": 3,
+          "name": "zmb_bolter_rags_b.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "zmb_bolter_body_c.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "ems_0_tex",
+                  "type": 7,
+                  "val_str": "zmb_bolter_body_c_dead_ems.png"
+                },
+                {
+                  "name": "ems_0_scale",
+                  "type": 2,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zmb_bolter_pants_c.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "ems_0_tex",
+                  "type": 7,
+                  "val_str": "zmb_bolter_body_c_dead_ems.png"
+                },
+                {
+                  "name": "ems_0_scale",
+                  "type": 2,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "null.mat",
+              "selected": true,
+              "layoutId": 1,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

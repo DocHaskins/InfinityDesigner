@@ -1,19 +1,39 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "npc_man_torso_shirt.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "npc_man_torso_shirt.mat"
+          "number": 1,
+          "name": "npc_man_torso_shirt.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_man_torso_shirt_pattern.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "npc_man_torso_shirt_pattern.mat"
+                  "name": "det_0_a_dtm_tex",
+                  "type": 7,
+                  "val_str": "srf_cotton_shirt_pattern_checker_dtm.png"
                 }
-            ]
+              ]
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

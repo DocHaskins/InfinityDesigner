@@ -1,43 +1,93 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "wmn_viral_torso_h_sleeves_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "zipper_a.mat"
+    },
+    {
+      "number": 3,
+      "name": "viral_torso_b.mat"
+    },
+    {
+      "number": 4,
+      "name": "wmn_viral_torso_h_torn_b.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "wmn_viral_torso_h_sleeves_a.mat"
+          "number": 1,
+          "name": "wmn_viral_torso_h_sleeves_a.mat"
         },
         {
-            "number": 2,
-            "name": "zipper_a.mat"
+          "number": 2,
+          "name": "zipper_a.mat"
         },
         {
-            "number": 3,
-            "name": "viral_torso_b.mat"
+          "number": 3,
+          "name": "viral_torso_b.mat"
         },
         {
-            "number": 4,
-            "name": "wmn_viral_torso_h_torn_b.mat"
+          "number": 4,
+          "name": "wmn_viral_torso_h_torn_b.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "wmn_viral_torso_h_sleeves_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zipper_a.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "viral_torso_a.mat"
-                },
-                {
-                    "number": 4,
-                    "name": "wmn_viral_torso_h_torn_b.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "wmn_viral_torso_h_sleeves_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zipper_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "viral_torso_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "resources": [
+            {
+              "name": "wmn_viral_torso_h_torn_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

@@ -1,28 +1,56 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "npc_wmn_torso_g_tank_top.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "npc_wmn_torso_g_tank_top.mat"
+          "number": 1,
+          "name": "npc_wmn_torso_g_tank_top.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "npc_wmn_torso_g_tank_top_lycra.mat"
-                }
-            ]
-        },
-        {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "npc_wmn_torso_g_tank_top_npc_alex.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_wmn_torso_g_tank_top_lycra.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_wmn_torso_g_tank_top.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_wmn_torso_g_tank_top_npc_alex.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

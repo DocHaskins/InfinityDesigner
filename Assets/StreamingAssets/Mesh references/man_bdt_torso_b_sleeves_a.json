@@ -1,103 +1,481 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_bdt_torso_b_sleeve_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "zipper_a.mat"
+    },
+    {
+      "number": 3,
+      "name": "cloth_trim_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_bdt_torso_b_sleeve_a.mat"
+          "number": 1,
+          "name": "man_bdt_torso_b_sleeve_a.mat"
         },
         {
-            "number": 2,
-            "name": "zipper_a.mat"
+          "number": 2,
+          "name": "zipper_a.mat"
         },
         {
-            "number": 3,
-            "name": "cloth_trim_a.mat"
+          "number": 3,
+          "name": "cloth_trim_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_bdt_torso_b_sleeve_a_jeans.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zipper_a.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "cloth_trim_a.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_torso_b_sleeve_a_jeans.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_bdt_torso_b_sleeve_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zipper.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "cloth_trim_a.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "zipper_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "3",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_bdt_torso_b_sleeve_a_corduroy.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zipper_a.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "cloth_trim_a.mat"
-                }
-            ]
-        },
-        {
-            "id": "4",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_bdt_torso_b_sleeve_a_jeans.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zipper.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "cloth_trim_a.mat"
-                }
-            ]
-        },
-        {
-            "id": "5",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_bdt_torso_b_sleeve_a_corduroy_stripes.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zipper_a.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "cloth_trim_a.mat"
-                }
-            ]
+          "number": 3,
+          "resources": [
+            {
+              "name": "cloth_trim_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_bdt_torso_b_sleeve_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "zipper_a.mat"
+        },
+        {
+          "number": 3,
+          "name": "cloth_trim_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_torso_b_sleeve_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zipper.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "cloth_trim_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_bdt_torso_b_sleeve_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "zipper_a.mat"
+        },
+        {
+          "number": 3,
+          "name": "cloth_trim_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_torso_b_sleeve_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "grd_1_tex",
+                  "type": 7,
+                  "val_str": "chr_white.png"
+                },
+                {
+                  "name": "msk_1_tex",
+                  "type": 7,
+                  "val_str": "man_bdt_torso_b_sleeve_a_paint_c_msk.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zipper_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "cloth_trim_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_bdt_torso_b_sleeve_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "zipper_a.mat"
+        },
+        {
+          "number": 3,
+          "name": "cloth_trim_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_torso_b_sleeve_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "msk_1_tex",
+                  "type": 7,
+                  "val_str": "man_bdt_torso_b_sleeve_a_paint_c_msk.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zipper_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "cloth_trim_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_bdt_torso_b_sleeve_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "zipper_a.mat"
+        },
+        {
+          "number": 3,
+          "name": "cloth_trim_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_torso_b_sleeve_a_corduroy_stripes.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zipper_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "cloth_trim_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_bdt_torso_b_sleeve_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "zipper_a.mat"
+        },
+        {
+          "number": 3,
+          "name": "cloth_trim_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_torso_b_sleeve_a_corduroy.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zipper_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "cloth_trim_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_bdt_torso_b_sleeve_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "zipper_a.mat"
+        },
+        {
+          "number": 3,
+          "name": "cloth_trim_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_torso_b_sleeve_a_jeans.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zipper.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "cloth_trim_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_bdt_torso_b_sleeve_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "zipper_a.mat"
+        },
+        {
+          "number": 3,
+          "name": "cloth_trim_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_torso_b_sleeve_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "msk_1_tex",
+                  "type": 7,
+                  "val_str": "chr_black_dif.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zipper_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "cloth_trim_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

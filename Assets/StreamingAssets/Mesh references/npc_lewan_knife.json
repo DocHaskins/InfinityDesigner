@@ -1,27 +1,53 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "npc_lewan_knife.mat"
+    },
+    {
+      "number": 2,
+      "name": "npc_lewan_knife_cover.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "npc_lewan_knife.mat"
+          "number": 1,
+          "name": "npc_lewan_knife.mat"
         },
         {
-            "number": 2,
-            "name": "npc_lewan_knife_cover.mat"
+          "number": 2,
+          "name": "npc_lewan_knife_cover.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "npc_lewan_knife.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "npc_plaguewitch_knife_cover.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_lewan_knife.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "npc_plaguewitch_knife_cover.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

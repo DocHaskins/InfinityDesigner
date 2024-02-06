@@ -1,28 +1,202 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_bandana_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_bandana_a.mat"
+          "number": 1,
+          "name": "man_bandana_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_bandana_a_pattern.mat"
-                }
-            ]
-        },
-        {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_bandana_a_pattern_b.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bandana_a_pattern_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_bandana_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bandana_a_pattern.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_bandana_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bandana_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "det_0_b_bri_blending",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_b_scale_factor",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_dif_b_tex",
+                  "type": 7,
+                  "val_str": "srf_camo_b_dif.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_bandana_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bandana_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "det_0_a_dtm_dif",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_a_dtm_tex",
+                  "type": 7,
+                  "val_str": "srf_rag_a_ch_dtm.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_bandana_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bandana_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "det_0_dif_b_tex",
+                  "type": 7,
+                  "val_str": "srf_fabric_pattern_a_b_dif.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_bandana_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bandana_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_1_tex",
+                  "type": 7,
+                  "val_str": "chr_bright_gold_dif.png"
+                },
+                {
+                  "name": "msk_1_tex",
+                  "type": 7,
+                  "val_str": "man_bandana_a_pattern_a_msk.png"
+                },
+                {
+                  "name": "rgh_1_tex",
+                  "type": 7,
+                  "val_str": "chr_grey_75_rgh.png"
+                },
+                {
+                  "name": "spc_1_tex",
+                  "type": 7,
+                  "val_str": "chr_dark_gold_spc.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

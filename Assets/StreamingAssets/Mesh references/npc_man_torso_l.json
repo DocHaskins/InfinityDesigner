@@ -1,64 +1,99 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "npc_man_torso_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "npc_man_torso_a_sleeves.mat"
+    },
+    {
+      "number": 3,
+      "name": "man_hands_white_a.mat"
+    },
+    {
+      "number": 4,
+      "name": "tpp_biomarker.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "npc_man_torso_a.mat"
+          "number": 1,
+          "name": "npc_man_torso_a.mat"
         },
         {
-            "number": 2,
-            "name": "npc_man_torso_a_sleeves.mat"
+          "number": 2,
+          "name": "npc_man_torso_a_sleeves.mat"
         },
         {
-            "number": 3,
-            "name": "man_hands_white_a.mat"
+          "number": 3,
+          "name": "man_hands_white_a.mat"
         },
         {
-            "number": 4,
-            "name": "tpp_biomarker.mat"
+          "number": 4,
+          "name": "tpp_biomarker.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "npc_man_torso_a_pattern.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "npc_man_torso_a_sleeves_pattern.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "man_hands_white_a.mat"
-                },
-                {
-                    "number": 4,
-                    "name": "tpp_biomarker.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_man_torso_a_pattern.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
+          "number": 2,
+          "resources": [
+            {
+              "name": "npc_man_torso_a_sleeves_pattern.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "man_hands_white_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "npc_man_torso_a_pattern.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "npc_man_torso_a_sleeves_pattern.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "man_zmb_arm_leg.mat"
-                },
-                {
-                    "number": 4,
-                    "name": "tpp_biomarker.mat"
+                  "name": "msk_1_tex",
+                  "type": 7,
+                  "val_str": "npc_cliff_tattoo_msk.png"
                 }
-            ]
+              ]
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "resources": [
+            {
+              "name": "tpp_biomarker.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

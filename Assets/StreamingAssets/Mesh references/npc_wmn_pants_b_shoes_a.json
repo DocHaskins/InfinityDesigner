@@ -1,40 +1,92 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "npc_wmn_pants_b_shoes_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "npc_wmn_pants_b.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "npc_wmn_pants_b_shoes_a.mat"
+          "number": 1,
+          "name": "npc_wmn_pants_b_shoes_a.mat"
         },
         {
-            "number": 2,
-            "name": "npc_wmn_pants_b.mat"
+          "number": 2,
+          "name": "npc_wmn_pants_b.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "npc_wmn_pants_b_shoes_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "npc_wmn_pants_b_stripes_denim.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_wmn_pants_b_shoes_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "npc_wmn_pants_b_shoes_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "npc_wmn_pants_b_stripes.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "npc_wmn_pants_b_stripes_denim.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_wmn_pants_b_shoes_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "npc_wmn_pants_b.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_wmn_pants_b_shoes_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "npc_wmn_pants_b_stripes.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

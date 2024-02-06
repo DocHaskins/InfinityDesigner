@@ -1,40 +1,194 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_hands_white_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_hands_white_b.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_hands_white_a.mat"
+          "number": 1,
+          "name": "man_hands_white_a.mat"
         },
         {
-            "number": 2,
-            "name": "man_hands_white_b.mat"
+          "number": 2,
+          "name": "man_hands_white_b.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_hands_white_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_hands_white_a.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_hands_white_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_hands_muscular_viral_white_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_hands_muscular_viral_white_a.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_hands_white_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_hands_white_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "man_hands_white_b.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_hands_white_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "msk_1_tex",
+                  "type": 7,
+                  "val_str": "man_hands_a_francis_tattoo_a_msk.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_hands_white_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "msk_1_tex",
+                  "type": 7,
+                  "val_str": "man_hands_a_francis_tattoo_b_msk.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_hands_white_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "man_hands_white_b.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_hands_white_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "msk_1_tex",
+                  "type": 7,
+                  "val_str": "npc_cliff_tattoo_msk.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_hands_white_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "msk_1_tex",
+                  "type": 7,
+                  "val_str": "npc_cliff_tattoo_msk.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_hands_white_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "man_hands_white_b.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_hands_muscular_viral_white_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_hands_muscular_viral_white_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

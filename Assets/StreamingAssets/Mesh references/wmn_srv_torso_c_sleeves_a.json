@@ -1,27 +1,53 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "wmn_srv_torso_c_sleeves_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "wmn_hands_white_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "wmn_srv_torso_c_sleeves_a.mat"
+          "number": 1,
+          "name": "wmn_srv_torso_c_sleeves_a.mat"
         },
         {
-            "number": 2,
-            "name": "wmn_hands_white_a.mat"
+          "number": 2,
+          "name": "wmn_hands_white_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "wmn_srv_torso_c_sleeves_a_stripes.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "wmn_hands_white_a.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "wmn_srv_torso_c_sleeves_a_stripes.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "wmn_hands_white_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

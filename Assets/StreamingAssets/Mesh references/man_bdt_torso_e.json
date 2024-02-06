@@ -1,28 +1,90 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_bdt_torso_e.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_bdt_torso_e.mat"
+          "number": 1,
+          "name": "man_bdt_torso_e.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_bdt_torso_e_camo_b.mat"
-                }
-            ]
-        },
-        {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_bdt_torso_e_camo.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_torso_e_camo_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_bdt_torso_e.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_torso_e_camo.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_bdt_torso_e.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_torso_e.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "grd_1_tex",
+                  "type": 7,
+                  "val_str": "man_green_a_gra.dds"
+                },
+                {
+                  "name": "msk_1_tex",
+                  "type": 7,
+                  "val_str": "man_bdt_torso_e_zeek_msk.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

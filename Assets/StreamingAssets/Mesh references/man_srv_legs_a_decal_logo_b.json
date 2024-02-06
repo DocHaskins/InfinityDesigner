@@ -1,37 +1,114 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "chr_decal_logo_catchcreation.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "chr_decal_logo_catchcreation.mat"
+          "number": 1,
+          "name": "chr_decal_logo_catchcreation.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "chr_decal_logo_arty.mat"
-                }
-            ]
-        },
-        {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "chr_decal_logo_graphic_d.mat"
-                }
-            ]
-        },
-        {
-            "id": "3",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "chr_decal_logo_sport.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "chr_decal_logo_arty.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "chr_decal_logo_catchcreation.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "chr_decal_logo_graphic_d.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "chr_decal_logo_catchcreation.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "chr_decal_logo_sport.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_0_val",
+                  "type": 4,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "chr_decal_logo_catchcreation.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "chr_decal_logo_catchcreation.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_0_tex",
+                  "type": 7,
+                  "val_str": "chr_white_dif.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

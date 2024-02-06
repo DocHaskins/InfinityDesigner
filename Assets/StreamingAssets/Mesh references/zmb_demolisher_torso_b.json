@@ -1,69 +1,484 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "zmb_demolisher_torso_b.mat"
+    },
+    {
+      "number": 2,
+      "name": "zmb_demolisher_arms_b.mat"
+    },
+    {
+      "number": 3,
+      "name": "zmb_demolisher_armor_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "zmb_demolisher_torso_b.mat"
+          "number": 1,
+          "name": "zmb_demolisher_torso_b.mat"
         },
         {
-            "number": 2,
-            "name": "zmb_demolisher_arms_b.mat"
+          "number": 2,
+          "name": "zmb_demolisher_arms_b.mat"
         },
         {
-            "number": 3,
-            "name": "zmb_demolisher_armor_a.mat"
+          "number": 3,
+          "name": "zmb_demolisher_armor_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "zmb_demolisher_torso_c.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zmb_demolisher_arms_c.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "zmb_demolisher_armor_a.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "zmb_demolisher_gorilla_torso_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "zmb_demolisher_torso_c_christmas_snowman_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zmb_demolisher_arms_c_christmas_snowman_a.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "zmb_demolisher_armor_a_christmas_snowman_a.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "zmb_demolisher_gorilla_arms_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "3",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "zmb_demolisher_gorilla_torso_b.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zmb_demolisher_gorilla_arms_b.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "null.mat"
-                }
-            ]
+          "number": 3,
+          "resources": [
+            {
+              "name": "null.mat",
+              "selected": true,
+              "layoutId": 1,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "zmb_demolisher_torso_b.mat"
+        },
+        {
+          "number": 2,
+          "name": "zmb_demolisher_arms_b.mat"
+        },
+        {
+          "number": 3,
+          "name": "zmb_demolisher_armor_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "zmb_demolisher_torso_c.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "ems_0_tex",
+                  "type": 7,
+                  "val_str": "zmb_demolisher_torso_c_red_ems.png"
+                },
+                {
+                  "name": "ems_0_scale",
+                  "type": 2,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zmb_demolisher_arms_c.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "ems_0_tex",
+                  "type": 7,
+                  "val_str": "zmb_demolisher_arms_c_red_ems.png"
+                },
+                {
+                  "name": "ems_0_scale",
+                  "type": 2,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "zmb_demolisher_armor_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "ems_0_tex",
+                  "type": 7,
+                  "val_str": "zmb_demolisher_armor_a_red_ems.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "zmb_demolisher_torso_b.mat"
+        },
+        {
+          "number": 2,
+          "name": "zmb_demolisher_arms_b.mat"
+        },
+        {
+          "number": 3,
+          "name": "zmb_demolisher_armor_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "zmb_demolisher_torso_c.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "ems_0_tex",
+                  "type": 7,
+                  "val_str": "chr_black_dif.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zmb_demolisher_arms_c.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "ems_0_tex",
+                  "type": 7,
+                  "val_str": "chr_black_dif.png"
+                },
+                {
+                  "name": "ems_scale",
+                  "type": 2,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "zmb_demolisher_armor_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "ems_0_tex",
+                  "type": 7,
+                  "val_str": "chr_black_dif.png"
+                },
+                {
+                  "name": "ems_scale",
+                  "type": 2,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "zmb_demolisher_torso_b.mat"
+        },
+        {
+          "number": 2,
+          "name": "zmb_demolisher_arms_b.mat"
+        },
+        {
+          "number": 3,
+          "name": "zmb_demolisher_armor_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "zmb_demolisher_torso_c_christmas_snowman_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zmb_demolisher_arms_c_christmas_snowman_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "zmb_demolisher_armor_a_christmas_snowman_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "zmb_demolisher_torso_b.mat"
+        },
+        {
+          "number": 2,
+          "name": "zmb_demolisher_arms_b.mat"
+        },
+        {
+          "number": 3,
+          "name": "zmb_demolisher_armor_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "zmb_demolisher_torso_c.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "ems_0_tex",
+                  "type": 7,
+                  "val_str": "zmb_demolisher_torso_c_red_ems.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zmb_demolisher_arms_c.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "ems_0_tex",
+                  "type": 7,
+                  "val_str": "zmb_demolisher_arms_c_red_ems.png"
+                },
+                {
+                  "name": "ems_scale",
+                  "type": 2,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "zmb_demolisher_armor_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "ems_0_tex",
+                  "type": 7,
+                  "val_str": "zmb_demolisher_armor_a_red_ems.png"
+                },
+                {
+                  "name": "ems_scale",
+                  "type": 2,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "zmb_demolisher_torso_b.mat"
+        },
+        {
+          "number": 2,
+          "name": "zmb_demolisher_arms_b.mat"
+        },
+        {
+          "number": 3,
+          "name": "zmb_demolisher_armor_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "zmb_demolisher_torso_c.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_0_tex",
+                  "type": 7,
+                  "val_str": "zmb_demolisher_torso_c_dif.png"
+                },
+                {
+                  "name": "ems_0_tex",
+                  "type": 7,
+                  "val_str": "zmb_demolisher_torso_c_ems.png"
+                },
+                {
+                  "name": "nrm_0_tex",
+                  "type": 7,
+                  "val_str": "zmb_demolisher_torso_c_nrm.png"
+                },
+                {
+                  "name": "rgh_0_tex",
+                  "type": 7,
+                  "val_str": "zmb_demolisher_torso_c_rgh.png"
+                },
+                {
+                  "name": "spc_0_tex",
+                  "type": 7,
+                  "val_str": "zmb_demolisher_torso_c_spc.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zmb_demolisher_arms_c.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_0_tex",
+                  "type": 7,
+                  "val_str": "zmb_demolisher_arms_c_dif.png"
+                },
+                {
+                  "name": "ems_0_tex",
+                  "type": 7,
+                  "val_str": "zmb_demolisher_arms_c_ems.png"
+                },
+                {
+                  "name": "nrm_0_tex",
+                  "type": 7,
+                  "val_str": "zmb_demolisher_arms_c_nrm.png"
+                },
+                {
+                  "name": "rgh_0_tex",
+                  "type": 7,
+                  "val_str": "zmb_demolisher_arms_c_rgh.png"
+                },
+                {
+                  "name": "spc_0_tex",
+                  "type": 7,
+                  "val_str": "zmb_demolisher_arms_c_spc.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "zmb_demolisher_armor_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

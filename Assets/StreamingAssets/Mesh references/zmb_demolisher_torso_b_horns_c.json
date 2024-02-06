@@ -1,28 +1,82 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "zmb_demolisher_arms_b.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "zmb_demolisher_arms_b.mat"
+          "number": 1,
+          "name": "zmb_demolisher_arms_b.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "zmb_demolisher_arms_c.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "zmb_demolisher_arms_c_christmas_snowman_a.mat"
-                }
-            ]
-        },
-        {
-            "id": "2",
-            "materials": [
+                  "name": "dif_0_tex",
+                  "type": 7,
+                  "val_str": "zmb_demolisher_arms_c_dif.png"
+                },
                 {
-                    "number": 1,
-                    "name": "zmb_demolisher_arms_c.mat"
+                  "name": "ems_0_tex",
+                  "type": 7,
+                  "val_str": "chr_black_dif.png"
+                },
+                {
+                  "name": "nrm_0_tex",
+                  "type": 7,
+                  "val_str": "zmb_demolisher_arms_c_nrm.png"
+                },
+                {
+                  "name": "rgh_0_tex",
+                  "type": 7,
+                  "val_str": "zmb_demolisher_arms_c_rgh.png"
+                },
+                {
+                  "name": "spc_0_tex",
+                  "type": 7,
+                  "val_str": "zmb_demolisher_arms_c_spc.png"
                 }
-            ]
+              ]
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "zmb_demolisher_arms_b.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "zmb_demolisher_arms_c_christmas_snowman_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

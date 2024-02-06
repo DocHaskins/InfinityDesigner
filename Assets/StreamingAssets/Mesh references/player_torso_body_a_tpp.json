@@ -1,40 +1,98 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "player_torso_body_a_tpp.mat"
+    },
+    {
+      "number": 2,
+      "name": "chr_chain_b.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "player_torso_body_a_tpp.mat"
+          "number": 1,
+          "name": "player_torso_body_a_tpp.mat"
         },
         {
-            "number": 2,
-            "name": "chr_chain_b.mat"
+          "number": 2,
+          "name": "chr_chain_b.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "player_torso_body_a_tpp.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "chr_chain_a.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_torso_body_a_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_torso_muscular_white_a_skullface.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "chr_chain_b.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "chr_chain_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "player_torso_body_a_tpp.mat"
+        },
+        {
+          "number": 2,
+          "name": "chr_chain_b.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_torso_muscular_white_a_skullface.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_0_val",
+                  "type": 4,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "chr_chain_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

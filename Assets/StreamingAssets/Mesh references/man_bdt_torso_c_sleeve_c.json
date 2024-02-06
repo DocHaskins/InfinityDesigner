@@ -1,27 +1,65 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_bdt_torso_c_sleeve_c.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_bdt_torso_c_sleeve_c_torn.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_bdt_torso_c_sleeve_c.mat"
+          "number": 1,
+          "name": "man_bdt_torso_c_sleeve_c.mat"
         },
         {
-            "number": 2,
-            "name": "man_bdt_torso_c_sleeve_c_torn.mat"
+          "number": 2,
+          "name": "man_bdt_torso_c_sleeve_c_torn.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_torso_c_sleeve_c_sweater.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "man_bdt_torso_c_sleeve_c_sweater.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_bdt_torso_c_sleeve_c_torn.mat"
+                  "name": "grd_tex",
+                  "type": 7,
+                  "val_str": "man_ren_scarf_a_grd.png"
                 }
-            ]
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_torso_c_sleeve_c_torn.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "grd_0_tex",
+                  "type": 7,
+                  "val_str": "man_bdt_torso_c_nomad_gra.png"
+                }
+              ]
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

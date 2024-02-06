@@ -1,40 +1,190 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "npc_meredith_hair_b.mat"
+    },
+    {
+      "number": 2,
+      "name": "npc_meredith_hair_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "npc_meredith_hair_b.mat"
+          "number": 1,
+          "name": "npc_meredith_hair_b.mat"
         },
         {
-            "number": 2,
-            "name": "npc_meredith_hair_a.mat"
+          "number": 2,
+          "name": "npc_meredith_hair_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_hair_a_dark_brown.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "npc_hair_a_dark_brown.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "npc_hair_a_dark_brown.mat"
+                  "name": "dif_0_val",
+                  "type": 4,
+                  "val_str": null
                 }
-            ]
+              ]
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
+          "number": 2,
+          "resources": [
+            {
+              "name": "npc_hair_a_dark_brown.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "npc_hair_a_grey.mat"
+                  "name": "dif_0_val",
+                  "type": 4,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_meredith_hair_b.mat"
+        },
+        {
+          "number": 2,
+          "name": "npc_meredith_hair_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_meredith_hair_b.mat",
+              "selected": true,
+              "layoutId": 7,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "aniso_spc2",
+                  "type": 2,
+                  "val_str": null
                 },
                 {
-                    "number": 2,
-                    "name": "npc_meredith_hair_a.mat"
+                  "name": "aniso_spc2_offset",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "dif",
+                  "type": 4,
+                  "val_str": null
+                },
+                {
+                  "name": "spc",
+                  "type": 4,
+                  "val_str": null
                 }
-            ]
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "npc_meredith_hair_a.mat",
+              "selected": true,
+              "layoutId": 7,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "aniso_rotation",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "aniso_spc2",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "dif",
+                  "type": 4,
+                  "val_str": null
+                },
+                {
+                  "name": "grf_dif_tex",
+                  "type": 7,
+                  "val_str": "chr_hair_bright_neutral_a_grf.png"
+                },
+                {
+                  "name": "spc",
+                  "type": 4,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_meredith_hair_b.mat"
+        },
+        {
+          "number": 2,
+          "name": "npc_meredith_hair_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_hair_a_grey.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "npc_meredith_hair_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

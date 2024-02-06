@@ -409,15 +409,15 @@ namespace doppelganger
                                     if (modelIndex != -1)
                                     {
                                         SetSliderValue(slotName, modelIndex);
-                                        if (currentlyLoadedModels.TryGetValue(modelNameWithClone, out GameObject modelInstance))
-                                        {
-                                            ApplyMaterials(modelInstance, modelInfo);
-                                        }
-                                        else
-                                        {
-                                            Debug.LogError($"Model instance not found for {modelNameWithClone}");
-                                            //PrintCurrentlyLoadedModels();
-                                        }
+                                        //if (currentlyLoadedModels.TryGetValue(modelNameWithClone, out GameObject modelInstance))
+                                        //{
+                                        //    ApplyMaterials(modelInstance, modelInfo);
+                                        //}
+                                        //else
+                                        //{
+                                        //    Debug.LogError($"Model instance not found for {modelNameWithClone}");
+                                        //    //PrintCurrentlyLoadedModels();
+                                        //}
                                     }
                                     else
                                     {
@@ -1175,7 +1175,7 @@ namespace doppelganger
 
         void OnVariationSliderValueChanged(string slotName, float value)
         {
-            //Debug.Log($"OnVariationSliderValueChanged for slot: {slotName} with value: {value}");
+            Debug.Log($"OnVariationSliderValueChanged for slot: {slotName} with value: {value}");
             if (!currentlyLoadedModels.TryGetValue(slotName, out GameObject currentModel))
             {
                 Debug.LogError($"No model currently loaded for slot: {slotName}");
@@ -1184,44 +1184,46 @@ namespace doppelganger
 
             if (value == 0 && originalMaterials.TryGetValue(slotName, out List<Material> mats))
             {
-                // Apply original materials
-                var skinnedMeshRenderers = currentModel.GetComponentsInChildren<SkinnedMeshRenderer>(true);
-                for (int i = 0; i < skinnedMeshRenderers.Length; i++)
-                {
-                    if (i < mats.Count)
-                    {
-                        skinnedMeshRenderers[i].sharedMaterial = mats[i];
-                    }
-                }
+                ApplyOriginalMaterials(currentModel, mats);
                 return;
             }
 
             // Retrieve the model index from the primary slider
             int modelIndex = Mathf.Clamp((int)sliderValues[slotName] - 1, 0, int.MaxValue);
-
-            // Get the modelName using the modelIndex
             string modelName = GetModelNameFromIndex(slotName, modelIndex);
-
             string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");
 
             if (File.Exists(materialJsonFilePath))
             {
                 string materialJsonData = File.ReadAllText(materialJsonFilePath);
                 ModelData.ModelInfo modelInfo = JsonUtility.FromJson<ModelData.ModelInfo>(materialJsonData);
-                if (modelInfo != null && modelInfo.variations != null)
+                if (modelInfo != null && modelInfo.variations != null && modelInfo.variations.Count > 0)
                 {
-                    // Correctly determine the variation index
                     int variationIndex = Mathf.Clamp((int)value - 1, 0, modelInfo.variations.Count - 1);
-                    var variationMaterials = modelInfo.variations[variationIndex].materials;
-                    if (variationMaterials != null)
+                    var variationResources = modelInfo.variations[variationIndex].materialsResources;
+
+                    if (variationResources != null)
                     {
-                        ApplyVariationMaterials(currentModel, variationMaterials);
+                        ApplyVariationMaterials(currentModel, variationResources);
                     }
                 }
             }
             else
             {
                 Debug.LogError("Material JSON file not found: " + materialJsonFilePath);
+            }
+        }
+
+        private void ApplyOriginalMaterials(GameObject modelInstance, List<Material> originalMats)
+        {
+            var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+            for (int i = 0; i < skinnedMeshRenderers.Length; i++)
+            {
+                // Ensure there's an original material for this renderer before applying
+                if (i < originalMats.Count)
+                {
+                    skinnedMeshRenderers[i].sharedMaterial = originalMats[i];
+                }
             }
         }
 
@@ -1376,42 +1378,33 @@ namespace doppelganger
             }
         }
 
-        private void ApplyVariationMaterials(GameObject modelInstance, List<MaterialData> variationMaterials)
+        private void ApplyVariationMaterials(GameObject modelInstance, List<ModelData.MaterialResource> materialsResources)
         {
             var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
 
             // Reset to initial state before applying new variation
-            if (initialRendererStates.TryGetValue(modelInstance, out var initialState))
+            ResetRenderersToInitialState(modelInstance, skinnedMeshRenderers);
+
+            // Apply each materialResource to the appropriate renderer
+            foreach (var materialResource in materialsResources)
             {
-                for (int i = 0; i < skinnedMeshRenderers.Length; i++)
+                foreach (var resource in materialResource.resources)
                 {
-                    if (i < initialState.Length)
+                    int rendererIndex = materialResource.number - 1; // Assuming 'number' indicates the renderer's index
+                    if (rendererIndex >= 0 && rendererIndex < skinnedMeshRenderers.Length)
                     {
-                        skinnedMeshRenderers[i].enabled = initialState[i];
+                        var renderer = skinnedMeshRenderers[rendererIndex];
+                        // Here, you may decide to apply the first resource, or a specific one based on conditions
+                        ApplyMaterialToRenderer(renderer, resource.name, modelInstance, resource.rttiValues);
+                    }
+                    else
+                    {
+                        Debug.LogError($"Renderer index out of bounds: {rendererIndex} for material resource number {materialResource.number} in model '{modelInstance.name}'");
                     }
                 }
             }
-
-            // Clear the list of disabled renderers for this modelInstance
-            if (disabledRenderers.ContainsKey(modelInstance))
-            {
-                disabledRenderers[modelInstance].Clear();
-            }
-
-            foreach (var materialData in variationMaterials)
-            {
-                int rendererIndex = materialData.number - 1;
-                if (rendererIndex >= 0 && rendererIndex < skinnedMeshRenderers.Length)
-                {
-                    var renderer = skinnedMeshRenderers[rendererIndex];
-                    ApplyMaterialToRenderer(renderer, materialData.name, modelInstance);
-                }
-                else
-                {
-                    Debug.LogError($"Renderer index out of bounds: {rendererIndex} for material number {materialData.number} in model '{modelInstance.name}'");
-                }
-            }
         }
+
 
         public GameObject LoadModelPrefab(string modelName, string slotName) // Add slotName as parameter
         {
@@ -1547,6 +1540,26 @@ namespace doppelganger
             }
         }
 
+        private void ResetRenderersToInitialState(GameObject modelInstance, SkinnedMeshRenderer[] skinnedMeshRenderers)
+        {
+            if (initialRendererStates.TryGetValue(modelInstance, out var initialState))
+            {
+                for (int i = 0; i < skinnedMeshRenderers.Length; i++)
+                {
+                    if (i < initialState.Length)
+                    {
+                        skinnedMeshRenderers[i].enabled = initialState[i];
+                    }
+                }
+            }
+
+            // Clear the list of disabled renderers for this modelInstance
+            if (disabledRenderers.ContainsKey(modelInstance))
+            {
+                disabledRenderers[modelInstance].Clear();
+            }
+        }
+
         private void AddToDisabledRenderers(GameObject modelInstance, SkinnedMeshRenderer renderer)
         {
             if (!disabledRenderers.ContainsKey(modelInstance))
@@ -1562,109 +1575,67 @@ namespace doppelganger
             {
                 Debug.Log($"Applying texture. RTTI Value Name: {rttiValueName}, Texture Name: {textureName}");
 
-                if (rttiValueName == "ems_scale")
-                {
-                    return;
-                }
-
                 string texturePath = "textures/" + Path.GetFileNameWithoutExtension(textureName);
                 Texture2D texture = Resources.Load<Texture2D>(texturePath);
-                string difTextureName = null;
-                string modifierTextureName = null;
 
                 if (texture != null)
                 {
-                    if (useCustomShader)
+                    // Define mapping from RTTI names to shader properties
+                    Dictionary<string, string> customShaderMapping = new Dictionary<string, string>
+            {
+                {"msk_0_tex", "_msk"},
+                {"msk_1_tex", "_msk"},
+                {"msk_1_add_tex", "_msk"},
+                {"idx_0_tex", "_idx"},
+                {"idx_1_tex", "_idx"},
+                {"grd_0_tex", "_gra"},
+                {"grd_1_tex", "_gra"},
+                {"spc_0_tex", "_spc"},
+                {"spc_1_tex", "_spc"},
+                {"clp_0_tex", "_clp"},
+                {"clp_1_tex", "_clp"},
+                {"rgh_0_tex", "_rgh"},
+                {"rgh_1_tex", "_rgh"},
+                {"ocl_0_tex", "_ocl"},
+                {"ocl_1_tex", "_ocl"},
+                {"ems_0_tex", "_ems"},
+                {"ems_1_tex", "_ems"},
+                {"dif_1_tex", "_dif"},
+                {"dif_0_tex", "_dif"},
+                {"nrm_1_tex", "_nrm"},
+                {"nrm_0_tex", "_nrm"}
+            };
+
+                    // Define mapping for HDRP/Lit shader properties if custom shader not used or mapping fails
+                    Dictionary<string, string> hdrpMapping = new Dictionary<string, string>
+            {
+                {"dif_1_tex", "_BaseColorMap"},
+                {"dif_0_tex", "_BaseColorMap"},
+                {"nrm_1_tex", "_NormalMap"},
+                {"nrm_0_tex", "_NormalMap"},
+                {"msk_1_tex", "_MaskMap"},
+                {"ems_0_tex", "_EmissiveColorMap"},
+                {"ems_1_tex", "_EmissiveColorMap"}
+            };
+
+                    // Attempt to apply texture using custom shader mapping first
+                    if (customShaderMapping.TryGetValue(rttiValueName, out var shaderProp))
                     {
-                        bool difTextureApplied = false;
-                        switch (rttiValueName)
+                        material.SetTexture(shaderProp, texture);
+                    }
+                    else if (hdrpMapping.TryGetValue(rttiValueName, out var hdrpProp))
+                    {
+                        // Fallback to HDRP/Lit shader properties
+                        material.SetTexture(hdrpProp, texture);
+                        if (rttiValueName.StartsWith("ems"))
                         {
-                            case "msk_0_tex":
-                            case "msk_1_tex":
-                            case "msk_1_add_tex":
-                                material.SetTexture("_msk", texture);
-                                break;
-                            case "idx_0_tex":
-                            case "idx_1_tex":
-                                material.SetTexture("_idx", texture);
-                                break;
-                            case "grd_0_tex":
-                            case "grd_1_tex":
-                                material.SetTexture("_gra", texture);
-                                break;
-                            case "spc_0_tex":
-                            case "spc_1_tex":
-                                material.SetTexture("_spc", texture);
-                                break;
-                            case "clp_0_tex":
-                            case "clp_1_tex":
-                                material.SetTexture("_clp", texture);
-                                break;
-                            case "rgh_0_tex":
-                            case "rgh_1_tex":
-                                material.SetTexture("_rgh", texture);
-                                break;
-                            case "ocl_0_tex":
-                            case "ocl_1_tex":
-                                material.SetTexture("_ocl", texture);
-                                break;
-                            case "ems_0_tex":
-                            case "ems_1_tex":
-                                material.SetTexture("_ems", texture);
-                                break;
-                            case "dif_1_tex":
-                            case "dif_0_tex":
-                                material.SetTexture("_dif", texture);
-                                difTextureName = textureName;
-                                difTextureApplied = true;
-                                break;
-                            case "nrm_1_tex":
-                            case "nrm_0_tex":
-                                material.SetTexture("_nrm", texture);
-                                break;
-                        }
-
-                        if (difTextureApplied && textureName.StartsWith("chr_"))
-                        {
-                            material.SetTexture("_modifier", texture);
-                            modifierTextureName = textureName;
-                        }
-
-                        // Check if _dif and _modifier textures have the same name
-                        if (difTextureName != null && modifierTextureName != null && difTextureName == modifierTextureName)
-                        {
-                            material.SetFloat("_Modifier", 0);
-                        }
-                        else if (difTextureApplied)
-                        {
-                            material.SetFloat("_Modifier", 1);
+                            material.SetColor("_EmissiveColor", Color.white * 2);
+                            material.EnableKeyword("_EMISSION");
                         }
                     }
                     else
                     {
-                        // HDRP/Lit shader texture assignments
-                        switch (rttiValueName)
-                        {
-                            case "dif_1_tex":
-                            case "dif_0_tex":
-                                material.SetTexture("_BaseColorMap", texture);
-                                break;
-                            case "nrm_1_tex":
-                            case "nrm_0_tex":
-                                material.SetTexture("_NormalMap", texture);
-                                break;
-                            case "msk_1_tex":
-                                // Assuming msk_1_tex corresponds to the mask map in HDRP/Lit shader
-                                material.SetTexture("_MaskMap", texture);
-                                break;
-                            case "ems_0_tex":
-                            case "ems_1_tex":
-                                material.SetTexture("_EmissiveColorMap", texture);
-                                material.SetColor("_EmissiveColor", Color.white * 2);
-                                material.EnableKeyword("_EMISSION");
-                                break;
-                                // Add other cases for HDRP/Lit shader
-                        }
+                        Debug.LogError($"Unsupported RTTI Value Name: {rttiValueName} for texture application.");
                     }
                 }
                 else
@@ -1674,7 +1645,7 @@ namespace doppelganger
             }
             else
             {
-                //Debug.LogWarning($"Texture name is empty for RTTI Value Name: {rttiValueName}");
+                Debug.LogWarning($"Texture name is empty for RTTI Value Name: {rttiValueName}");
             }
         }
 

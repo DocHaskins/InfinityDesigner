@@ -1,19 +1,33 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_zmb_arm_leg.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_zmb_arm_leg.mat"
+          "number": 1,
+          "name": "man_zmb_arm_leg.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_deg_arm_leg.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_deg_arm_leg.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

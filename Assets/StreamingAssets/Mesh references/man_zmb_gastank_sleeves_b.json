@@ -1,69 +1,183 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_zmb_gastank_torso.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_zmb_gastank_torns.mat"
+    },
+    {
+      "number": 3,
+      "name": "man_zmb_arm_leg.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_zmb_gastank_torso.mat"
+          "number": 1,
+          "name": "man_zmb_gastank_torso.mat"
         },
         {
-            "number": 2,
-            "name": "man_zmb_gastank_torns.mat"
+          "number": 2,
+          "name": "man_zmb_gastank_torns.mat"
         },
         {
-            "number": 3,
-            "name": "man_zmb_arm_leg.mat"
+          "number": 3,
+          "name": "man_zmb_arm_leg.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_zmb_gastank_torso_chemical.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_zmb_gastank_torns_chemical.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "man_zmb_arm_leg.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_zmb_gastank_torso_chemical.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_zmb_gastank_torso_red.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_zmb_gastank_torns_red.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "man_zmb_arm_leg.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_zmb_gastank_torns_chemical.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "3",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_zmb_gastank_torso_gre.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_zmb_gastank_torns_gre.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "man_zmb_arm_leg.mat"
-                }
-            ]
+          "number": 3,
+          "resources": [
+            {
+              "name": "man_zmb_arm_leg.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_zmb_gastank_torso.mat"
+        },
+        {
+          "number": 2,
+          "name": "man_zmb_gastank_torns.mat"
+        },
+        {
+          "number": 3,
+          "name": "man_zmb_arm_leg.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_zmb_gastank_torso_red.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_zmb_gastank_torns_red.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "man_zmb_arm_leg.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_zmb_gastank_torso.mat"
+        },
+        {
+          "number": 2,
+          "name": "man_zmb_gastank_torns.mat"
+        },
+        {
+          "number": 3,
+          "name": "man_zmb_arm_leg.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_zmb_gastank_torso_gre.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_zmb_gastank_torns_gre.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "man_zmb_arm_leg.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

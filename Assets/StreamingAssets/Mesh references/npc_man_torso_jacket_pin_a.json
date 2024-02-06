@@ -1,9 +1,54 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "chr_pin_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "chr_pin_a.mat"
+          "number": 1,
+          "name": "chr_pin_a.mat"
         }
-    ],
-    "variations": []
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "chr_pin_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_0_val",
+                  "type": 4,
+                  "val_str": null
+                },
+                {
+                  "name": "spc_1_tex",
+                  "type": 7,
+                  "val_str": "specular_150_spc.png"
+                },
+                {
+                  "name": "msk_1_tex",
+                  "type": 7,
+                  "val_str": "chr_pin_a_mask_b_msk.png"
+                },
+                {
+                  "name": "dif_1_tex",
+                  "type": 7,
+                  "val_str": "chr_gradient_teal_dif.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

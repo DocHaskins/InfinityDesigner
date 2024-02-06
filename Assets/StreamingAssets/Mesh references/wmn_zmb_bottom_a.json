@@ -1,35 +1,73 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "wmn_zmb_bottom_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "wmn_zmb_belt_a.mat"
+    },
+    {
+      "number": 3,
+      "name": "wmn_zmb_threads.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "wmn_zmb_bottom_a.mat"
+          "number": 1,
+          "name": "wmn_zmb_bottom_a.mat"
         },
         {
-            "number": 2,
-            "name": "wmn_zmb_belt_a.mat"
+          "number": 2,
+          "name": "wmn_zmb_belt_a.mat"
         },
         {
-            "number": 3,
-            "name": "wmn_zmb_threads.mat"
+          "number": 3,
+          "name": "wmn_zmb_threads.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "wmn_zmb_deg_bottom_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "wmn_zmb_belt_a.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "wmn_zmb_threads.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "wmn_zmb_deg_bottom_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "wmn_zmb_belt_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "wmn_zmb_threads.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

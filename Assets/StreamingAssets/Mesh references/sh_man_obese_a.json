@@ -1,88 +1,139 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "sh_man_obese_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "sh_eye.mat"
+    },
+    {
+      "number": 3,
+      "name": "sh_mouth_interior.mat"
+    },
+    {
+      "number": 4,
+      "name": "sh_eyelashes.mat"
+    },
+    {
+      "number": 5,
+      "name": "sh_eye_shadow.mat"
+    },
+    {
+      "number": 6,
+      "name": "sh_wet_eye.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "sh_man_obese_a.mat"
+          "number": 1,
+          "name": "sh_man_obese_a.mat"
         },
         {
-            "number": 2,
-            "name": "sh_eye.mat"
+          "number": 2,
+          "name": "sh_eye.mat"
         },
         {
-            "number": 3,
-            "name": "sh_mouth_interior.mat"
+          "number": 3,
+          "name": "sh_mouth_interior.mat"
         },
         {
-            "number": 4,
-            "name": "sh_eyelashes.mat"
+          "number": 4,
+          "name": "sh_eyelashes.mat"
         },
         {
-            "number": 5,
-            "name": "sh_eye_shadow.mat"
+          "number": 5,
+          "name": "sh_eye_shadow.mat"
         },
         {
-            "number": 6,
-            "name": "sh_wet_eye.mat"
+          "number": 6,
+          "name": "sh_wet_eye.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "sh_man_obese_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "sh_man_obese_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "sh_eye_green.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "sh_mouth_interior.mat"
-                },
-                {
-                    "number": 4,
-                    "name": "sh_eyelashes.mat"
-                },
-                {
-                    "number": 5,
-                    "name": "sh_eye_shadow.mat"
-                },
-                {
-                    "number": 6,
-                    "name": "sh_wet_eye.mat"
+                  "name": "msk_1_tex",
+                  "type": 7,
+                  "val_str": "sh_man_hair_system_b_base_i_addon_c_msk.png"
                 }
-            ]
+              ]
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "sh_biter_b.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "sh_eye_zombie.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "sh_mouth_interior.mat"
-                },
-                {
-                    "number": 4,
-                    "name": "sh_eyelashes.mat"
-                },
-                {
-                    "number": 5,
-                    "name": "sh_eye_shadow.mat"
-                },
-                {
-                    "number": 6,
-                    "name": "sh_wet_eye.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "sh_eye_green.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "sh_mouth_interior.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "resources": [
+            {
+              "name": "sh_eyelashes.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "resources": [
+            {
+              "name": "sh_eye_shadow.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "resources": [
+            {
+              "name": "sh_wet_eye.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

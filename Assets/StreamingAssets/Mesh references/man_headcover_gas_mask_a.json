@@ -1,9 +1,44 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_headcover_gas_mask_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_headcover_gas_mask_a.mat"
+          "number": 1,
+          "name": "man_headcover_gas_mask_a.mat"
         }
-    ],
-    "variations": []
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_headcover_gas_mask_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_1_tex",
+                  "type": 7,
+                  "val_str": "chr_orange_dif.png"
+                },
+                {
+                  "name": "rgh_1_tex",
+                  "type": 7,
+                  "val_str": "grey50_rgh.dds"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

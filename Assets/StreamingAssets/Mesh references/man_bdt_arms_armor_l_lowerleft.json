@@ -1,27 +1,53 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_bdt_arms_armor_l_lower.mat"
+    },
+    {
+      "number": 2,
+      "name": "chr_rope_b.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_bdt_arms_armor_l_lower.mat"
+          "number": 1,
+          "name": "man_bdt_arms_armor_l_lower.mat"
         },
         {
-            "number": 2,
-            "name": "chr_rope_b.mat"
+          "number": 2,
+          "name": "chr_rope_b.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_bdt_arms_armor_l_lower_gold.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "chr_rope_b.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_arms_armor_l_lower_gold.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "chr_rope_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

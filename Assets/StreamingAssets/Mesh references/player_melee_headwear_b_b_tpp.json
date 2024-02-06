@@ -1,27 +1,53 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "player_melee_headwear_b_mask_tpp.mat"
+    },
+    {
+      "number": 2,
+      "name": "player_melee_headwear_b_tpp.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "player_melee_headwear_b_mask_tpp.mat"
+          "number": 1,
+          "name": "player_melee_headwear_b_mask_tpp.mat"
         },
         {
-            "number": 2,
-            "name": "player_melee_headwear_b_tpp.mat"
+          "number": 2,
+          "name": "player_melee_headwear_b_tpp.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "player_melee_headwear_b_mask_peacekeeper_tpp.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "player_melee_headwear_b_peacekeeper_tpp.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_melee_headwear_b_mask_peacekeeper_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_melee_headwear_b_peacekeeper_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

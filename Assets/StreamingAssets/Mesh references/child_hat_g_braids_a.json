@@ -1,27 +1,59 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "npc_hair_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "npc_hairband_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "npc_hair_a.mat"
+          "number": 1,
+          "name": "npc_hair_a.mat"
         },
         {
-            "number": 2,
-            "name": "npc_hairband_a.mat"
+          "number": 2,
+          "name": "npc_hairband_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_hair_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "npc_hairband_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "viral_hair_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "npc_hairband_a.mat"
+                  "name": "dif_0_val",
+                  "type": 4,
+                  "val_str": null
                 }
-            ]
+              ]
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

@@ -1,27 +1,154 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "player_hunter_scarf_a_hood_a_basic.mat"
+    },
+    {
+      "number": 2,
+      "name": "player_hunter_scarf_a_threads_basic_tpp.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "player_hunter_scarf_a_hood_a_basic.mat"
+          "number": 1,
+          "name": "player_hunter_scarf_a_hood_a_basic.mat"
         },
         {
-            "number": 2,
-            "name": "player_hunter_scarf_a_threads_basic_tpp.mat"
+          "number": 2,
+          "name": "player_hunter_scarf_a_threads_basic_tpp.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_hunter_scarf_a_hood_a_elite.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_hunter_scarf_a_threads_elite_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "player_hunter_scarf_a_hood_a_basic.mat"
+        },
+        {
+          "number": 2,
+          "name": "player_hunter_scarf_a_threads_basic_tpp.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_hunter_scarf_a_hood_a_basic.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "player_hunter_scarf_a_hood_a_elite.mat"
+                  "name": "dif_0_val",
+                  "type": 4,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_hunter_scarf_a_threads_basic_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "player_hunter_scarf_a_hood_a_basic.mat"
+        },
+        {
+          "number": 2,
+          "name": "player_hunter_scarf_a_threads_basic_tpp.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_hunter_scarf_a_hood_a_elite.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_0_val",
+                  "type": 4,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_hunter_scarf_a_threads_elite_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_0_tex",
+                  "type": 7,
+                  "val_str": "chr_white_dif.png"
                 },
                 {
-                    "number": 2,
-                    "name": "player_hunter_scarf_a_threads_elite_tpp.mat"
+                  "name": "dif_0_val",
+                  "type": 4,
+                  "val_str": null
                 }
-            ]
+              ]
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

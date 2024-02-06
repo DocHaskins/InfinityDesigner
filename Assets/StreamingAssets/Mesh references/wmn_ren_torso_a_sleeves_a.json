@@ -1,19 +1,77 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "wmn_ren_torso_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "wmn_ren_torso_a.mat"
+          "number": 1,
+          "name": "wmn_ren_torso_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "wmn_ren_torso_a_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "wmn_ren_torso_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "wmn_ren_torso_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "wmn_ren_torso_a_b.mat"
+                  "name": "det_0_b_scale_factor",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_clr_b_tex",
+                  "type": 7,
+                  "val_str": "srf_corduroy_a_ch_dtt.png"
+                },
+                {
+                  "name": "det_0_dif_b_tex",
+                  "type": 7,
+                  "val_str": "srf_corduroy_a_ch_dif.png"
+                },
+                {
+                  "name": "grf_dif_tex",
+                  "type": 7,
+                  "val_str": "gradual_subtle_d_grf.png"
                 }
-            ]
+              ]
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

@@ -1,53 +1,131 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_bdt_torso_c_armor_a_addon_b.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_bdt_torso_c_armor_b_addon_b.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_bdt_torso_c_armor_a_addon_b.mat"
+          "number": 1,
+          "name": "man_bdt_torso_c_armor_a_addon_b.mat"
         },
         {
-            "number": 2,
-            "name": "man_bdt_torso_c_armor_b_addon_b.mat"
+          "number": 2,
+          "name": "man_bdt_torso_c_armor_b_addon_b.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_bdt_torso_c_armor_a_addon_b.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_bdt_torso_c_armor_b_addon_b_yellow.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_torso_c_armor_a_addon_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_bdt_torso_c_armor_a_addon_b.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_bdt_torso_c_armor_b_addon_b_red.mat"
-                }
-            ]
-        },
-        {
-            "id": "3",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_bdt_torso_c_armor_a_addon_b.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_bdt_torso_c_armor_b_addon_b_green.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_torso_c_armor_b_addon_b_yellow.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_bdt_torso_c_armor_a_addon_b.mat"
+        },
+        {
+          "number": 2,
+          "name": "man_bdt_torso_c_armor_b_addon_b.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_torso_c_armor_a_addon_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_torso_c_armor_b_addon_b_red.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_bdt_torso_c_armor_a_addon_b.mat"
+        },
+        {
+          "number": 2,
+          "name": "man_bdt_torso_c_armor_b_addon_b.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_torso_c_armor_a_addon_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_torso_c_armor_b_addon_b_green.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

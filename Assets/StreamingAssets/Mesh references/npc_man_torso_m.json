@@ -1,40 +1,137 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "npc_man_torso_m.mat"
+    },
+    {
+      "number": 2,
+      "name": "zipper_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "npc_man_torso_m.mat"
+          "number": 1,
+          "name": "npc_man_torso_m.mat"
         },
         {
-            "number": 2,
-            "name": "zipper_a.mat"
+          "number": 2,
+          "name": "zipper_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_man_torso_m.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "npc_man_torso_m_pattern_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zipper_a.mat"
+                  "name": "det_0_b_bri_blending",
+                  "type": 2,
+                  "val_str": null
                 }
-            ]
+              ]
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "npc_man_torso_m_tweed_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zipper_a.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "zipper_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_man_torso_m.mat"
+        },
+        {
+          "number": 2,
+          "name": "zipper_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_man_torso_m_pattern_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zipper_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_man_torso_m.mat"
+        },
+        {
+          "number": 2,
+          "name": "zipper_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_man_torso_m_tweed_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zipper_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

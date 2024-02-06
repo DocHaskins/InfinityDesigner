@@ -1,31 +1,93 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "player_camo_torso_a_tpp.mat"
+    },
+    {
+      "number": 2,
+      "name": "player_camo_torso_a_sleeves_a_tpp.mat"
+    },
+    {
+      "number": 3,
+      "name": "man_bdt_armor_d_rope.mat"
+    },
+    {
+      "number": 4,
+      "name": "player_camo_torso_a_add_a_tpp.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "player_camo_torso_a_tpp.mat"
+          "number": 1,
+          "name": "player_camo_torso_a_tpp.mat"
         },
         {
-            "number": 2,
-            "name": "player_camo_torso_a_sleeves_a_tpp.mat"
+          "number": 2,
+          "name": "player_camo_torso_a_sleeves_a_tpp.mat"
         },
         {
-            "number": 3,
-            "name": "man_bdt_armor_d_rope.mat"
+          "number": 3,
+          "name": "man_bdt_armor_d_rope.mat"
         },
         {
-            "number": 4,
-            "name": "player_camo_torso_a_add_a_tpp.mat"
+          "number": 4,
+          "name": "player_camo_torso_a_add_a_tpp.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 3,
-                    "name": "man_bdt_armor_d_rope.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_camo_torso_a_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_camo_torso_a_sleeves_a_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "man_bdt_armor_d_rope.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "resources": [
+            {
+              "name": "player_camo_torso_a_add_a_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

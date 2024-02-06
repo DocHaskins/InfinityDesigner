@@ -1,27 +1,53 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_pk_gloves_b.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_pk_gloves_b_add.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_pk_gloves_b.mat"
+          "number": 1,
+          "name": "man_pk_gloves_b.mat"
         },
         {
-            "number": 2,
-            "name": "man_pk_gloves_b_add.mat"
+          "number": 2,
+          "name": "man_pk_gloves_b_add.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_pk_gloves_b.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "null.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_pk_gloves_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "null.mat",
+              "selected": true,
+              "layoutId": 1,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

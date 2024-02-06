@@ -1,43 +1,110 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_hands_fat_white_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_bdt_gloves_d.mat"
+    },
+    {
+      "number": 3,
+      "name": "man_bdt_gloves_d_b.mat"
+    },
+    {
+      "number": 4,
+      "name": "chr_decal_scar_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_hands_fat_white_a.mat"
+          "number": 1,
+          "name": "man_hands_fat_white_a.mat"
         },
         {
-            "number": 2,
-            "name": "man_bdt_gloves_d.mat"
+          "number": 2,
+          "name": "man_bdt_gloves_d.mat"
         },
         {
-            "number": 3,
-            "name": "man_bdt_gloves_d_b.mat"
+          "number": 3,
+          "name": "man_bdt_gloves_d_b.mat"
         },
         {
-            "number": 4,
-            "name": "chr_decal_scar_a.mat"
+          "number": 4,
+          "name": "chr_decal_scar_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_hands_fat_tan_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "man_hands_fat_tan_a.mat"
+                  "name": "msk_1_tex",
+                  "type": 7,
+                  "val_str": "npc_ogar_tattoo_msk.png"
                 },
                 {
-                    "number": 2,
-                    "name": "man_bdt_gloves_d.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "man_bdt_gloves_d_b.mat"
-                },
-                {
-                    "number": 4,
-                    "name": "chr_decal_scar_a.mat"
+                  "name": "dif_1_tex",
+                  "type": 7,
+                  "val_str": "chr_dark_grey_dif.png"
                 }
-            ]
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_gloves_d.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "man_bdt_gloves_d_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "resources": [
+            {
+              "name": "chr_decal_scar_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_0_val",
+                  "type": 4,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

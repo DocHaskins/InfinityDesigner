@@ -1,79 +1,92 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "zmb_charger_head_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "zmb_charger_eyes_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "zmb_charger_head_a.mat"
+          "number": 1,
+          "name": "zmb_charger_head_a.mat"
         },
         {
-            "number": 2,
-            "name": "zmb_charger_eyes_a.mat"
+          "number": 2,
+          "name": "zmb_charger_eyes_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "zmb_charger_head_b.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zmb_charger_eyes_b.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "zmb_charger_head_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "zmb_charger_head_c.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zmb_charger_eyes_c.mat"
-                }
-            ]
-        },
-        {
-            "id": "3",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "zmb_charger_head_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zmb_banshee_b_eye.mat"
-                }
-            ]
-        },
-        {
-            "id": "4",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "zmb_charger_head_b.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zmb_banshee_b_eye.mat"
-                }
-            ]
-        },
-        {
-            "id": "5",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "zmb_charger_head_c.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zmb_banshee_b_eye.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "zmb_charger_eyes_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "zmb_charger_head_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "zmb_charger_eyes_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "zmb_charger_head_c.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zmb_charger_eyes_c.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

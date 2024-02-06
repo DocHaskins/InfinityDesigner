@@ -1,17 +1,79 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_bdt_belt_c.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_bdt_belt_a.mat"
+    },
+    {
+      "number": 3,
+      "name": "chr_wrench_b.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_bdt_belt_c.mat"
+          "number": 1,
+          "name": "man_bdt_belt_c.mat"
         },
         {
-            "number": 2,
-            "name": "man_bdt_belt_a.mat"
+          "number": 2,
+          "name": "man_bdt_belt_a.mat"
         },
         {
-            "number": 3,
-            "name": "chr_wrench_b.mat"
+          "number": 3,
+          "name": "chr_wrench_b.mat"
         }
-    ],
-    "variations": []
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_belt_c.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_belt_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_0_val",
+                  "type": 4,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "chr_wrench_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

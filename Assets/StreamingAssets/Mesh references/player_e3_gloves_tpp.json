@@ -1,53 +1,131 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "player_outfit_figurine_gloves_a_tpp.mat"
+    },
+    {
+      "number": 2,
+      "name": "player_hands_tpp_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "player_outfit_figurine_gloves_a_tpp.mat"
+          "number": 1,
+          "name": "player_outfit_figurine_gloves_a_tpp.mat"
         },
         {
-            "number": 2,
-            "name": "player_hands_tpp_a.mat"
+          "number": 2,
+          "name": "player_hands_tpp_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "player_outfit_crane_gloves_a_tpp.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "player_hands_tpp_a.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_outfit_crane_gloves_a_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "player_e3_glove_elite_tpp.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "player_hands_tpp_a.mat"
-                }
-            ]
-        },
-        {
-            "id": "3",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "player_game_over_gloves_a_tpp.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "player_hands_tpp_a.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_hands_tpp_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "player_outfit_figurine_gloves_a_tpp.mat"
+        },
+        {
+          "number": 2,
+          "name": "player_hands_tpp_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_e3_glove_elite_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_hands_tpp_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "player_outfit_figurine_gloves_a_tpp.mat"
+        },
+        {
+          "number": 2,
+          "name": "player_hands_tpp_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_game_over_gloves_a_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_hands_tpp_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

@@ -1,37 +1,212 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "npc_man_torso_h.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "npc_man_torso_h.mat"
+          "number": 1,
+          "name": "npc_man_torso_h.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "npc_man_torso_h_destroyed.mat"
-                }
-            ]
-        },
-        {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "npc_man_torso_h_wool.mat"
-                }
-            ]
-        },
-        {
-            "id": "3",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "npc_man_torso_h_melange.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_man_torso_h_destroyed.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_man_torso_h.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_man_torso_h.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "det_0_b_dtm_tex",
+                  "type": 7,
+                  "val_str": "srf_chr_cotton_b_dtm.png"
+                },
+                {
+                  "name": "det_0_b_dtm_dif",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_b_dtm_nrm",
+                  "type": 2,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_man_torso_h.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_man_torso_h_wool.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_man_torso_h.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_man_torso_h_melange.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "det_0_b_dtm_dif",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_b_dtm_nrm",
+                  "type": 2,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_man_torso_h.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_man_torso_h_melange.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "det_0_b_bri_blending",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_b_opacity_factor",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_b_scale_factor",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_dif_b_tex",
+                  "type": 7,
+                  "val_str": "srf_fabric_melange_b_dif.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_man_torso_h.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_man_torso_h_melange.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "det_0_b_bri_blending",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_b_opacity_factor",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_dif_b_tex",
+                  "type": 7,
+                  "val_str": "srf_fabric_melange_b_dif.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

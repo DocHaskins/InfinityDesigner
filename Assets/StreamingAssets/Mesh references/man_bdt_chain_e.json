@@ -1,40 +1,149 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "chr_chain_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "chr_chain_a_addon_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "chr_chain_a.mat"
+          "number": 1,
+          "name": "chr_chain_a.mat"
         },
         {
-            "number": 2,
-            "name": "chr_chain_a_addon_a.mat"
+          "number": 2,
+          "name": "chr_chain_a_addon_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "chr_chain_b.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "chr_chain_a_addon_a.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "chr_chain_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "chr_chain_b_rusty.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "chr_chain_a_addon_a.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "chr_chain_a_addon_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "chr_chain_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "chr_chain_a_addon_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "chr_chain_b_rusty.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "chr_chain_a_addon_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "spc_0_tex",
+                  "type": 7,
+                  "val_str": "chr_chain_a_rusty_spc.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "chr_chain_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "chr_chain_a_addon_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "chr_chain_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "spc_0_tex",
+                  "type": 7,
+                  "val_str": "chr_dark_gold_spc.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "chr_chain_a_addon_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "spc_0_tex",
+                  "type": 7,
+                  "val_str": "chr_dark_gold_spc.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

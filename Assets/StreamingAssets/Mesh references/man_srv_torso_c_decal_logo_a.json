@@ -1,28 +1,119 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "chr_decal_logo_coachcoat.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "chr_decal_logo_coachcoat.mat"
+          "number": 1,
+          "name": "chr_decal_logo_coachcoat.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "chr_decal_logo_coachcoat.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "chr_decal_blood_a.mat"
-                }
-            ]
-        },
-        {
-            "id": "2",
-            "materials": [
+                  "name": "dif_0_tex",
+                  "type": 7,
+                  "val_str": "chr_dark_khaki_dif.png"
+                },
                 {
-                    "number": 1,
-                    "name": "chr_decal_logo_sign_j.mat"
+                  "name": "grf_dif_tex",
+                  "type": 7,
+                  "val_str": "shiny_polyester_a_grf.png"
                 }
-            ]
+              ]
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "chr_decal_logo_coachcoat.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "chr_decal_blood_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "chr_decal_logo_coachcoat.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "chr_decal_logo_sign_j.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "chr_decal_logo_coachcoat.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "chr_decal_logo_coachcoat.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_0_tex",
+                  "type": 7,
+                  "val_str": "chr_white_dif.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

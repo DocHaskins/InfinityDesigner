@@ -1,69 +1,128 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "viral_legs_h.mat"
+    },
+    {
+      "number": 2,
+      "name": "viral_legs_h_torn.mat"
+    },
+    {
+      "number": 3,
+      "name": "viral_legs_c.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "viral_legs_h.mat"
+          "number": 1,
+          "name": "viral_legs_h.mat"
         },
         {
-            "number": 2,
-            "name": "viral_legs_h_torn.mat"
+          "number": 2,
+          "name": "viral_legs_h_torn.mat"
         },
         {
-            "number": 3,
-            "name": "viral_legs_c.mat"
+          "number": 3,
+          "name": "viral_legs_c.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "viral_legs_h.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "viral_legs_h_torn.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "zmb_swamp_viral_a.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "viral_legs_h.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "viral_legs_h.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "viral_legs_h_torn.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "viral_legs_a.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "viral_legs_h_torn.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "3",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "viral_legs_h.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "viral_legs_h_torn.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "viral_legs_a_christmas.mat"
-                }
-            ]
+          "number": 3,
+          "resources": [
+            {
+              "name": "viral_legs_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "viral_legs_h.mat"
+        },
+        {
+          "number": 2,
+          "name": "viral_legs_h_torn.mat"
+        },
+        {
+          "number": 3,
+          "name": "viral_legs_c.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "viral_legs_h.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "viral_legs_h_torn.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "viral_legs_a_christmas.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

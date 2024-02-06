@@ -1,19 +1,49 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "chr_decal_logo_sign_g.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "chr_decal_logo_sign_g.mat"
+          "number": 1,
+          "name": "chr_decal_logo_sign_g.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "chr_decal_logo_sign_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "chr_decal_logo_sign_a.mat"
+                  "name": "dif_0_tex",
+                  "type": 7,
+                  "val_str": "chr_khaki_dif.png"
+                },
+                {
+                  "name": "grf_dif_tex",
+                  "type": 7,
+                  "val_str": "shiny_polyester_e_grf.png"
+                },
+                {
+                  "name": "rgh_0_tex",
+                  "type": 7,
+                  "val_str": "roughness_220_rgh.png"
                 }
-            ]
+              ]
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

@@ -1,40 +1,137 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_bdt_torso_b_base.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_bdt_torso_b_button.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_bdt_torso_b_base.mat"
+          "number": 1,
+          "name": "man_bdt_torso_b_base.mat"
         },
         {
-            "number": 2,
-            "name": "man_bdt_torso_b_button.mat"
+          "number": 2,
+          "name": "man_bdt_torso_b_button.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_bdt_torso_b_base_jeans.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_bdt_torso_b_button.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_torso_b_base_jeans.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_bdt_torso_b_base_corduroy.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_bdt_torso_b_button.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_torso_b_button.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_bdt_torso_b_base.mat"
+        },
+        {
+          "number": 2,
+          "name": "man_bdt_torso_b_button.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_torso_b_base_corduroy.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_torso_b_button.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_bdt_torso_b_base.mat"
+        },
+        {
+          "number": 2,
+          "name": "man_bdt_torso_b_button.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_torso_b_base.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "det_0_clr_a_tex",
+                  "type": 7,
+                  "val_str": "srf_leather_b_ch_dtt.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_torso_b_button.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

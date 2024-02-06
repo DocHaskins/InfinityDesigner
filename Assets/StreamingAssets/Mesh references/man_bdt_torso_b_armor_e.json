@@ -1,13 +1,114 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_bdt_belt_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_bdt_torso_e_armor_f.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_bdt_belt_a.mat"
+          "number": 1,
+          "name": "man_bdt_belt_a.mat"
         },
         {
-            "number": 2,
-            "name": "man_bdt_torso_e_armor_f.mat"
+          "number": 2,
+          "name": "man_bdt_torso_e_armor_f.mat"
         }
-    ],
-    "variations": []
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_belt_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_torso_e_armor_f.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "msk_1_tex",
+                  "type": 7,
+                  "val_str": "man_bdt_torso_e_armor_f_paint_b_msk.png"
+                },
+                {
+                  "name": "dif_1_tex",
+                  "type": 7,
+                  "val_str": "chr_bright_red_c_dif.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_bdt_belt_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "man_bdt_torso_e_armor_f.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_belt_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_torso_e_armor_f.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_1_tex",
+                  "type": 7,
+                  "val_str": "chr_bright_red_b_dif.png"
+                },
+                {
+                  "name": "msk_1_tex",
+                  "type": 7,
+                  "val_str": "man_bdt_torso_e_armor_f_paint_b_msk.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

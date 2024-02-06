@@ -1,27 +1,53 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_bdt_headcover_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_bdt_headcover_a_glass_black.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_bdt_headcover_a.mat"
+          "number": 1,
+          "name": "man_bdt_headcover_a.mat"
         },
         {
-            "number": 2,
-            "name": "man_bdt_headcover_a_glass_black.mat"
+          "number": 2,
+          "name": "man_bdt_headcover_a_glass_black.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_bdt_headcover_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "null.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_headcover_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "null.mat",
+              "selected": true,
+              "layoutId": 1,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

@@ -1,13 +1,59 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "wmn_zmb_torso_f.mat"
+    },
+    {
+      "number": 2,
+      "name": "wmn_zmb_torso_f_threads.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "wmn_zmb_torso_f.mat"
+          "number": 1,
+          "name": "wmn_zmb_torso_f.mat"
         },
         {
-            "number": 2,
-            "name": "wmn_zmb_torso_f_threads.mat"
+          "number": 2,
+          "name": "wmn_zmb_torso_f_threads.mat"
         }
-    ],
-    "variations": []
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "wmn_zmb_torso_f.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "wmn_zmb_torso_f_threads.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "grd_0_tex",
+                  "type": 7,
+                  "val_str": "wmn_zmb_torso_f_gra.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

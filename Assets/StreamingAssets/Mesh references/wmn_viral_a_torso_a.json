@@ -1,35 +1,73 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "viral_torso_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "viral_tshirt_a.mat"
+    },
+    {
+      "number": 3,
+      "name": "viral_bandage_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "viral_torso_a.mat"
+          "number": 1,
+          "name": "viral_torso_a.mat"
         },
         {
-            "number": 2,
-            "name": "viral_tshirt_a.mat"
+          "number": 2,
+          "name": "viral_tshirt_a.mat"
         },
         {
-            "number": 3,
-            "name": "viral_bandage_a.mat"
+          "number": 3,
+          "name": "viral_bandage_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "viral_torso_a_christmas.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "viral_tshirt_a.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "viral_bandage_a.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "viral_torso_a_christmas.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "viral_tshirt_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "viral_bandage_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

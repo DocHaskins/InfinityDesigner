@@ -1,27 +1,148 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_bdt_pants_f.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_bdt_shoe_c_b.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_bdt_pants_f.mat"
+          "number": 1,
+          "name": "man_bdt_pants_f.mat"
         },
         {
-            "number": 2,
-            "name": "man_bdt_shoe_c_b.mat"
+          "number": 2,
+          "name": "man_bdt_shoe_c_b.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_pants_f.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "man_bdt_pants_f_melange.mat"
+                  "name": "det_0_b_scale_factor",
+                  "type": 2,
+                  "val_str": null
                 },
                 {
-                    "number": 2,
-                    "name": "man_bdt_shoe_c_scott.mat"
+                  "name": "det_0_clr_b_tex",
+                  "type": 7,
+                  "val_str": "srf_fabric_diamond_b_dtt.png"
                 }
-            ]
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_shoe_c_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_bdt_pants_f.mat"
+        },
+        {
+          "number": 2,
+          "name": "man_bdt_shoe_c_b.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_pants_f.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "grf_dif_tex",
+                  "type": 7,
+                  "val_str": "gradual_subtle_d_grf.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_shoe_c_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_bdt_pants_f.mat"
+        },
+        {
+          "number": 2,
+          "name": "man_bdt_shoe_c_b.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_pants_f_melange.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_shoe_c_scott.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

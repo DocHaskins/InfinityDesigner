@@ -1,35 +1,134 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "npc_dylan_trousers_b.mat"
+    },
+    {
+      "number": 2,
+      "name": "npc_dylan_trousers_b_knee.mat"
+    },
+    {
+      "number": 3,
+      "name": "npc_dylan_trousers_b_torn.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "npc_dylan_trousers_b.mat"
+          "number": 1,
+          "name": "npc_dylan_trousers_b.mat"
         },
         {
-            "number": 2,
-            "name": "npc_dylan_trousers_b_knee.mat"
+          "number": 2,
+          "name": "npc_dylan_trousers_b_knee.mat"
         },
         {
-            "number": 3,
-            "name": "npc_dylan_trousers_b_torn.mat"
+          "number": 3,
+          "name": "npc_dylan_trousers_b_torn.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_dylan_trousers_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "npc_dylan_trousers_b_knee.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "npc_dylan_trousers_b.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_zmb_torso_skin.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "npc_dylan_trousers_b_torn.mat"
+                  "name": "dif_0_tex",
+                  "type": 7,
+                  "val_str": "man_hands_black_a_dif.png"
                 }
-            ]
+              ]
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "npc_dylan_trousers_b_torn.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_dylan_trousers_b.mat"
+        },
+        {
+          "number": 2,
+          "name": "npc_dylan_trousers_b_knee.mat"
+        },
+        {
+          "number": 3,
+          "name": "npc_dylan_trousers_b_torn.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_dylan_trousers_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_zmb_torso_skin.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "npc_dylan_trousers_b_torn.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

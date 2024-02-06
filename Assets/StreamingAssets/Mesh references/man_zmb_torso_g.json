@@ -1,27 +1,53 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_zmb_torso_g.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_zmb_torso_g_bottom.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_zmb_torso_g.mat"
+          "number": 1,
+          "name": "man_zmb_torso_g.mat"
         },
         {
-            "number": 2,
-            "name": "man_zmb_torso_g_bottom.mat"
+          "number": 2,
+          "name": "man_zmb_torso_g_bottom.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_zmb_torso_g_orange.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_zmb_torso_g_bottom_orange.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_zmb_torso_g_orange.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_zmb_torso_g_bottom_orange.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

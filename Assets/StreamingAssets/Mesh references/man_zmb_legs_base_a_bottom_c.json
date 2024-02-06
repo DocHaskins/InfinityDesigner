@@ -1,40 +1,137 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_zmb_legs_a_bottom_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_zmb_arm_leg.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_zmb_legs_a_bottom_a.mat"
+          "number": 1,
+          "name": "man_zmb_legs_a_bottom_a.mat"
         },
         {
-            "number": 2,
-            "name": "man_zmb_arm_leg.mat"
+          "number": 2,
+          "name": "man_zmb_arm_leg.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_zmb_legs_a_bottom_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "man_zmb_deg_legs_a_bottom_b.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_deg_arm_leg.mat"
+                  "name": "grd_tex",
+                  "type": 7,
+                  "val_str": "man_zmb_legs_a_base_a_gre_grd.dds"
                 }
-            ]
+              ]
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_zmb_legs_a_bottom_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_deg_arm_leg.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_zmb_arm_leg.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_zmb_legs_a_bottom_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "man_zmb_arm_leg.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_zmb_deg_legs_a_bottom_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_deg_arm_leg.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_zmb_legs_a_bottom_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "man_zmb_arm_leg.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_zmb_legs_a_bottom_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_deg_arm_leg.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

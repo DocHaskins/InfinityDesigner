@@ -1,40 +1,137 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "default.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_bdt_torso_c_hood_b.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "default.mat"
+          "number": 1,
+          "name": "default.mat"
         },
         {
-            "number": 2,
-            "name": "man_bdt_torso_c_hood_b.mat"
+          "number": 2,
+          "name": "man_bdt_torso_c_hood_b.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_torso_c_twine.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "man_bdt_torso_c_twine.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_bdt_torso_c_hood_b.mat"
+                  "name": "idx_0_tex",
+                  "type": 7,
+                  "val_str": "man_bdt_torso_c_twine_a_idx.png"
                 }
-            ]
+              ]
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "null.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_bdt_torso_c_hood_b.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_torso_c_hood_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "default.mat"
+        },
+        {
+          "number": 2,
+          "name": "man_bdt_torso_c_hood_b.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_torso_c_twine.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_torso_c_hood_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "default.mat"
+        },
+        {
+          "number": 2,
+          "name": "man_bdt_torso_c_hood_b.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "null.mat",
+              "selected": true,
+              "layoutId": 1,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_torso_c_hood_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

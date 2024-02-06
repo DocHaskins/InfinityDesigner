@@ -1,27 +1,59 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "npc_opera_shopkeeper_special_legs.mat"
+    },
+    {
+      "number": 2,
+      "name": "npc_man_worker_equipment_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "npc_opera_shopkeeper_special_legs.mat"
+          "number": 1,
+          "name": "npc_opera_shopkeeper_special_legs.mat"
         },
         {
-            "number": 2,
-            "name": "npc_man_worker_equipment_a.mat"
+          "number": 2,
+          "name": "npc_man_worker_equipment_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_opera_shopkeeper_special_legs.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "npc_man_worker_equipment_a_gold.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "npc_opera_shopkeeper_special_legs.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "npc_man_worker_equipment_a_gold.mat"
+                  "name": "spc_0_val",
+                  "type": 4,
+                  "val_str": null
                 }
-            ]
+              ]
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

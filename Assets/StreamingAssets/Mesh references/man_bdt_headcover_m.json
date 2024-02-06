@@ -1,35 +1,73 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_bdt_headcover_m.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_bdt_headcover_m_threads.mat"
+    },
+    {
+      "number": 3,
+      "name": "chr_feathers_b.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_bdt_headcover_m.mat"
+          "number": 1,
+          "name": "man_bdt_headcover_m.mat"
         },
         {
-            "number": 2,
-            "name": "man_bdt_headcover_m_threads.mat"
+          "number": 2,
+          "name": "man_bdt_headcover_m_threads.mat"
         },
         {
-            "number": 3,
-            "name": "chr_feathers_b.mat"
+          "number": 3,
+          "name": "chr_feathers_b.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "player_easter_chicken_headwear_a_tpp.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_bdt_headcover_m_threads.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "chr_feathers_b_red.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_easter_chicken_headwear_a_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_headcover_m_threads.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "chr_feathers_b_red.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

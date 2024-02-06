@@ -1,35 +1,79 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_bdt_torso_b_chain_armour.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_bdt_belt_a.mat"
+    },
+    {
+      "number": 3,
+      "name": "man_bdt_torso_b_fronttop_d.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_bdt_torso_b_chain_armour.mat"
+          "number": 1,
+          "name": "man_bdt_torso_b_chain_armour.mat"
         },
         {
-            "number": 2,
-            "name": "man_bdt_belt_a.mat"
+          "number": 2,
+          "name": "man_bdt_belt_a.mat"
         },
         {
-            "number": 3,
-            "name": "man_bdt_torso_b_fronttop_d.mat"
+          "number": 3,
+          "name": "man_bdt_torso_b_fronttop_d.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_ren_torso_b_chain_armour.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "man_ren_torso_b_chain_armour.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_bdt_belt_a.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "man_bdt_torso_b_fronttop_d.mat"
+                  "name": "dif_0_tex",
+                  "type": 7,
+                  "val_str": "npc_bdt_jack_chain_armour_dif.png"
                 }
-            ]
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_belt_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "man_bdt_torso_b_fronttop_d.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

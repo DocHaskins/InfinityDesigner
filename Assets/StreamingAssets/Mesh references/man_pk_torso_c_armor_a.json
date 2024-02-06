@@ -1,40 +1,53 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_pk_torso_c_armor_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "chr_decal_pk_armor_04_n.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_pk_torso_c_armor_a.mat"
+          "number": 1,
+          "name": "man_pk_torso_c_armor_a.mat"
         },
         {
-            "number": 2,
-            "name": "chr_decal_pk_armor_04_n.mat"
+          "number": 2,
+          "name": "chr_decal_pk_armor_04_n.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_pk_torso_c_armor_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "chr_decal_pk_armor_4_04.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_pk_torso_c_armor_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_pk_torso_c_armor_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "null.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "chr_decal_pk_armor_4_04.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

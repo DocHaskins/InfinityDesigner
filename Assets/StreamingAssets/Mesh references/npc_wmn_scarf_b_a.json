@@ -1,13 +1,85 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "npc_meredith_hood_boot.mat"
+    },
+    {
+      "number": 2,
+      "name": "npc_meredith_detail.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "npc_meredith_hood_boot.mat"
+          "number": 1,
+          "name": "npc_meredith_hood_boot.mat"
         },
         {
-            "number": 2,
-            "name": "npc_meredith_detail.mat"
+          "number": 2,
+          "name": "npc_meredith_detail.mat"
         }
-    ],
-    "variations": []
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_meredith_hood_boot.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "det_0_a_opacity_factor",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_b_opacity_factor",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_b_scale_factor",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_dif_b_tex",
+                  "type": 7,
+                  "val_str": "srf_fabric_pattern_d_dif.png"
+                },
+                {
+                  "name": "dif_0_tex",
+                  "type": 7,
+                  "val_str": "chr_128_dif.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "npc_meredith_detail.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_0_tex",
+                  "type": 7,
+                  "val_str": "chr_dark_grey_dif.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

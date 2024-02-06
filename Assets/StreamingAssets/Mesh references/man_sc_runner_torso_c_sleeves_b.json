@@ -1,35 +1,79 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_sc_runner_torso_c_sleeves_b.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_sc_runner_torso_c.mat"
+    },
+    {
+      "number": 3,
+      "name": "man_hands_white_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_sc_runner_torso_c_sleeves_b.mat"
+          "number": 1,
+          "name": "man_sc_runner_torso_c_sleeves_b.mat"
         },
         {
-            "number": 2,
-            "name": "man_sc_runner_torso_c.mat"
+          "number": 2,
+          "name": "man_sc_runner_torso_c.mat"
         },
         {
-            "number": 3,
-            "name": "man_hands_white_a.mat"
+          "number": 3,
+          "name": "man_hands_white_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_sc_runner_torso_c_sleeves_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "man_sc_runner_torso_c_sleeves_b.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_sc_runner_torso_c.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "man_hands_black_a.mat"
+                  "name": "spc_0_tex",
+                  "type": 7,
+                  "val_str": "chr_dark_grey_spc.png"
                 }
-            ]
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_sc_runner_torso_c.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "man_hands_white_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

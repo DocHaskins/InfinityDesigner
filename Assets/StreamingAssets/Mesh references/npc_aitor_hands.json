@@ -1,35 +1,73 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "npc_aitor_glove.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_hands_white_a.mat"
+    },
+    {
+      "number": 3,
+      "name": "chr_decal_tattoo_pk_rank_5.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "npc_aitor_glove.mat"
+          "number": 1,
+          "name": "npc_aitor_glove.mat"
         },
         {
-            "number": 2,
-            "name": "man_hands_white_a.mat"
+          "number": 2,
+          "name": "man_hands_white_a.mat"
         },
         {
-            "number": 3,
-            "name": "chr_decal_tattoo_pk_rank_5.mat"
+          "number": 3,
+          "name": "chr_decal_tattoo_pk_rank_5.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "npc_aitor_glove.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "man_hands_black_a.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "chr_decal_tattoo_pk_rank_5.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_aitor_glove.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_hands_black_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "chr_decal_tattoo_pk_rank_5.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

@@ -187,6 +187,13 @@ public class JsonCreatorWindow : EditorWindow
         {
             BuildSkeletonLookup();
         }
+
+        EditorGUILayout.Space();
+
+        if (GUILayout.Button("Create Variation Jsons"))
+        {
+            CreateVariationJsons();
+        }
     }
 
     
@@ -809,6 +816,149 @@ public class JsonCreatorWindow : EditorWindow
     };
         return folderMappings.TryGetValue(category, out string typePath) ? Path.GetFileName(typePath) : "Unknown";
     }
+
+    public static void CreateVariationJsons()
+    {
+        string jsonsDir = Path.Combine(Application.dataPath, "StreamingAssets/Jsons");
+        string outputDir = Path.Combine(Application.dataPath, "StreamingAssets/Mesh References");
+
+        Dictionary<string, VariationOutput> existingVariations = new Dictionary<string, VariationOutput>();
+
+        var jsonFiles = Directory.GetFiles(jsonsDir, "*.json", SearchOption.AllDirectories);
+        foreach (var file in jsonFiles)
+        {
+            string jsonContent = File.ReadAllText(file);
+            ModelData modelData = JsonConvert.DeserializeObject<ModelData>(jsonContent);
+
+            foreach (var slotPair in modelData.slotPairs)
+            {
+                foreach (var model in slotPair.slotData.models)
+                {
+                    if (string.IsNullOrWhiteSpace(model.name)) continue;
+                    string baseMeshName = Path.GetFileNameWithoutExtension(model.name);
+                    string sanitizedMeshName = SanitizeFilename(baseMeshName);
+                    string outputFilePath = Path.Combine(outputDir, $"{sanitizedMeshName}.json");
+
+                    VariationOutput variationOutput;
+                    if (File.Exists(outputFilePath))
+                    {
+                        // Read existing file and parse into VariationOutput
+                        string existingJson = File.ReadAllText(outputFilePath);
+                        variationOutput = JsonConvert.DeserializeObject<VariationOutput>(existingJson);
+                    }
+                    else
+                    {
+                        variationOutput = new VariationOutput();
+                    }
+
+                    // Update or add new variations here based on your logic
+                    UpdateVariations(variationOutput, model);
+
+                    // Write updated or new JSON file
+                    string outputJson = JsonConvert.SerializeObject(variationOutput, Formatting.Indented);
+                    File.WriteAllText(outputFilePath, outputJson);
+                }
+            }
+        }
+    }
+
+    private static string SanitizeFilename(string filename)
+    {
+        foreach (char c in Path.GetInvalidFileNameChars())
+        {
+            filename = filename.Replace(c, '_');
+        }
+        return filename;
+    }
+
+    private static void UpdateVariations(VariationOutput variationOutput, ModelInfo model)
+    {
+        if (variationOutput.materialsData == null || variationOutput.materialsData.Count == 0)
+        {
+            variationOutput.materialsData = model.materialsData;
+        }
+
+        // HashSet to keep track of unique variation signatures to prevent adding duplicates
+        HashSet<string> existingVariationSignatures = new HashSet<string>();
+
+        // Populate existingVariationSignatures with signatures of already processed variations
+        foreach (var existingVariation in variationOutput.variations)
+        {
+            string existingSignature = GenerateVariationSignature(existingVariation);
+            existingVariationSignatures.Add(existingSignature);
+        }
+
+        Variation newVariation = CreateNewVariationWithAllMaterials(variationOutput, model);
+
+        if (DoesVariationIntroduceChanges(newVariation, model, existingVariationSignatures))
+        {
+            variationOutput.variations.Add(newVariation);
+        }
+    }
+
+    private static string GenerateVariationSignature(Variation variation)
+    {
+        // Concatenate material names and RTTI values to form a unique signature for the variation
+        return string.Join("|", variation.materialsResources.SelectMany(mr => mr.resources.Select(r =>
+            $"{r.name}:{string.Join(",", r.rttiValues.Select(rtti => $"{rtti.name}={rtti.val_str}"))}")).OrderBy(name => name));
+    }
+
+    private static bool DoesVariationIntroduceChanges(Variation newVariation, ModelInfo model, HashSet<string> existingVariationSignatures)
+    {
+        // First, check if the variation matches the original materialsData without any RTTI modifications.
+        if (DoesVariationMatchOriginalMaterialsWithoutRTTI(newVariation, model))
+        {
+            // If it matches and doesn't introduce new RTTI values, it's not considered a new variation.
+            return false;
+        }
+
+        // Generate a signature for the new variation based on material names and RTTI values.
+        string variationSignature = GenerateVariationSignature(newVariation);
+
+        // Check if this variation signature has already been processed.
+        if (existingVariationSignatures.Contains(variationSignature))
+        {
+            // This variation does not introduce changes since its signature matches one that's already processed.
+            return false;
+        }
+
+        // The variation is new or introduces changes, add its signature to the set for future comparisons.
+        existingVariationSignatures.Add(variationSignature);
+
+        // Since the variation is new, it introduces changes.
+        return true;
+    }
+
+    private static bool DoesVariationMatchOriginalMaterialsWithoutRTTI(Variation variation, ModelInfo model)
+    {
+        // Check if all material names in the variation's materialsResources match the original materialsData names.
+        bool allNamesMatch = model.materialsData.All(md =>
+            variation.materialsResources.SelectMany(mr => mr.resources).Any(r => r.name == md.name));
+
+        // Check if there are no RTTI values in the variation's materialsResources that match the original materialsData names.
+        bool noRTTIValues = variation.materialsResources.SelectMany(mr => mr.resources).All(r =>
+            !r.rttiValues.Any() && model.materialsData.Any(md => md.name == r.name));
+
+        return allNamesMatch && noRTTIValues;
+    }
+
+    private static Variation CreateNewVariationWithAllMaterials(VariationOutput variationOutput, ModelInfo model)
+    {
+        int nextVariationId = GetNextVariationId(variationOutput);
+
+        return new Variation
+        {
+            id = nextVariationId.ToString(),
+            materialsData = new List<MaterialData>(model.materialsData),
+            materialsResources = new List<MaterialResource>(model.materialsResources)
+        };
+    }
+
+    private static int GetNextVariationId(VariationOutput variationOutput)
+    {
+        return variationOutput.variations.Any() ? variationOutput.variations.Max(v => int.TryParse(v.id, out int id) ? id : 0) + 1 : 1;
+    }
+
 
     ModelData ProcessModelData(JObject modelObject)
     {

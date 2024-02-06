@@ -1,27 +1,98 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_sc_runner_torso_c_hood_b.mat"
+    },
+    {
+      "number": 2,
+      "name": "zipper.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_sc_runner_torso_c_hood_b.mat"
+          "number": 1,
+          "name": "man_sc_runner_torso_c_hood_b.mat"
         },
         {
-            "number": 2,
-            "name": "zipper.mat"
+          "number": 2,
+          "name": "zipper.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_sc_runner_torso_c_hood_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "man_sc_runner_torso_c_hood_b_b.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zipper.mat"
+                  "name": "spc_0_tex",
+                  "type": 7,
+                  "val_str": "chr_dark_grey_spc.png"
                 }
-            ]
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zipper.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_sc_runner_torso_c_hood_b.mat"
+        },
+        {
+          "number": 2,
+          "name": "zipper.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_sc_runner_torso_c_hood_b_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zipper.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

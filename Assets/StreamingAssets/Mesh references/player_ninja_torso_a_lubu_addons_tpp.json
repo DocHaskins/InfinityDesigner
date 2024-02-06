@@ -1,27 +1,73 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "player_lubu_torso_a_addons_a_tpp.mat"
+    },
+    {
+      "number": 2,
+      "name": "chr_belt_f.mat"
+    },
+    {
+      "number": 3,
+      "name": "player_lubu_classic_shoulderpad_a_tpp.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "player_lubu_torso_a_addons_a_tpp.mat"
+          "number": 1,
+          "name": "player_lubu_torso_a_addons_a_tpp.mat"
         },
         {
-            "number": 2,
-            "name": "chr_belt_f.mat"
+          "number": 2,
+          "name": "chr_belt_f.mat"
         },
         {
-            "number": 3,
-            "name": "player_lubu_classic_shoulderpad_a_tpp.mat"
+          "number": 3,
+          "name": "player_lubu_classic_shoulderpad_a_tpp.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 3,
-                    "name": "null.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_lubu_torso_a_addons_a_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "chr_belt_f_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "null.mat",
+              "selected": true,
+              "layoutId": 1,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

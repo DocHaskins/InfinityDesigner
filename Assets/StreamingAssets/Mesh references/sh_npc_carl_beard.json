@@ -1,19 +1,33 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "sh_npc_carl_beard.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "sh_npc_carl_beard.mat"
+          "number": 1,
+          "name": "sh_npc_carl_beard.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_facial_hair_red.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_facial_hair_red.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

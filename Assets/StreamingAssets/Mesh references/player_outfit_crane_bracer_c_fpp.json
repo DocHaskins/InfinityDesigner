@@ -1,36 +1,92 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "player_cutting_edge_bracer_a_fpp.mat"
+    },
+    {
+      "number": 2,
+      "name": "player_cutting_edge_bracer_a_chainmail_fpp.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "player_cutting_edge_bracer_a_fpp.mat"
+          "number": 1,
+          "name": "player_cutting_edge_bracer_a_fpp.mat"
         },
         {
-            "number": 2,
-            "name": "player_cutting_edge_bracer_a_chainmail_fpp.mat"
+          "number": 2,
+          "name": "player_cutting_edge_bracer_a_chainmail_fpp.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "player_cutting_edge_bracer_a_tpp.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "player_cutting_edge_bracer_a_chainmail_tpp.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_cutting_edge_bracer_a_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "player_cutting_edge_bracer_a_tpp.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_cutting_edge_bracer_a_chainmail_tpp.mat",
+              "selected": true,
+              "layoutId": 0,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "player_cutting_edge_bracer_a_fpp.mat"
+        },
+        {
+          "number": 2,
+          "name": "player_cutting_edge_bracer_a_chainmail_fpp.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_cutting_edge_bracer_a_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_cutting_edge_bracer_a_chainmail_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

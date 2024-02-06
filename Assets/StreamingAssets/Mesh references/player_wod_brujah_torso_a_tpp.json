@@ -1,39 +1,113 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "player_wod_brujah_torso_a_tpp.mat"
+    },
+    {
+      "number": 2,
+      "name": "player_wod_brujah_torso_a_sleeves_a_tpp.mat"
+    },
+    {
+      "number": 3,
+      "name": "zipper_a.mat"
+    },
+    {
+      "number": 4,
+      "name": "chr_chain_a.mat"
+    },
+    {
+      "number": 5,
+      "name": "player_wod_brujah_torso_skin_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "player_wod_brujah_torso_a_tpp.mat"
+          "number": 1,
+          "name": "player_wod_brujah_torso_a_tpp.mat"
         },
         {
-            "number": 2,
-            "name": "player_wod_brujah_torso_a_sleeves_a_tpp.mat"
+          "number": 2,
+          "name": "player_wod_brujah_torso_a_sleeves_a_tpp.mat"
         },
         {
-            "number": 3,
-            "name": "zipper_a.mat"
+          "number": 3,
+          "name": "zipper_a.mat"
         },
         {
-            "number": 4,
-            "name": "chr_chain_a.mat"
+          "number": 4,
+          "name": "chr_chain_a.mat"
         },
         {
-            "number": 5,
-            "name": "player_wod_brujah_torso_skin_a.mat"
+          "number": 5,
+          "name": "player_wod_brujah_torso_skin_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 4,
-                    "name": "null.mat"
-                },
-                {
-                    "number": 5,
-                    "name": "null.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_wod_brujah_torso_a_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_wod_brujah_torso_a_sleeves_a_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "zipper_a_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "resources": [
+            {
+              "name": "null.mat",
+              "selected": true,
+              "layoutId": 1,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "resources": [
+            {
+              "name": "null.mat",
+              "selected": true,
+              "layoutId": 1,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

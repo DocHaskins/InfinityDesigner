@@ -1,35 +1,128 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "npc_hakon_hand_r.mat"
+    },
+    {
+      "number": 2,
+      "name": "npc_hakon_hand_l.mat"
+    },
+    {
+      "number": 3,
+      "name": "npc_hakon_glove.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "npc_hakon_hand_r.mat"
+          "number": 1,
+          "name": "npc_hakon_hand_r.mat"
         },
         {
-            "number": 2,
-            "name": "npc_hakon_hand_l.mat"
+          "number": 2,
+          "name": "npc_hakon_hand_l.mat"
         },
         {
-            "number": 3,
-            "name": "npc_hakon_glove.mat"
+          "number": 3,
+          "name": "npc_hakon_glove.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "benchmark_npc_hakon_hand_r.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "benchmark_npc_hakon_hand_l.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "benchmark_npc_hakon_glove.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "benchmark_npc_hakon_hand_r.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "benchmark_npc_hakon_hand_l.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "benchmark_npc_hakon_glove.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_hakon_hand_r.mat"
+        },
+        {
+          "number": 2,
+          "name": "npc_hakon_hand_l.mat"
+        },
+        {
+          "number": 3,
+          "name": "npc_hakon_glove.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_hakon_hand_r_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "npc_hakon_hand_l_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "npc_hakon_glove_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

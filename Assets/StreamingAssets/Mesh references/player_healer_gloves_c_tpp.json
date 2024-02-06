@@ -1,27 +1,53 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "player_healer_gloves_c_tpp.mat"
+    },
+    {
+      "number": 2,
+      "name": "player_hands_tpp_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "player_healer_gloves_c_tpp.mat"
+          "number": 1,
+          "name": "player_healer_gloves_c_tpp.mat"
         },
         {
-            "number": 2,
-            "name": "player_hands_tpp_a.mat"
+          "number": 2,
+          "name": "player_hands_tpp_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "player_healer_gloves_c_nightrunner_tpp.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "player_hands_tpp_a.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_healer_gloves_c_nightrunner_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_hands_tpp_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

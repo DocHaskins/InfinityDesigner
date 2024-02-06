@@ -1,53 +1,131 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "wmn_hands_white_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "npc_man_gloves_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "wmn_hands_white_a.mat"
+          "number": 1,
+          "name": "wmn_hands_white_a.mat"
         },
         {
-            "number": 2,
-            "name": "npc_man_gloves_a.mat"
+          "number": 2,
+          "name": "npc_man_gloves_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "wmn_hands_tan_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "npc_man_gloves_a.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "wmn_hands_tan_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "wmn_hands_sophie.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "npc_man_gloves_a.mat"
-                }
-            ]
-        },
-        {
-            "id": "3",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "wmn_hands_black_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "npc_man_gloves_a.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "npc_man_gloves_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "wmn_hands_white_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "npc_man_gloves_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "wmn_hands_sophie.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "npc_man_gloves_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "wmn_hands_white_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "npc_man_gloves_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "wmn_hands_black_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "npc_man_gloves_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

@@ -1,32 +1,92 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "player_opera_gladiator_gloves_a_fpp.mat"
+    },
+    {
+      "number": 2,
+      "name": "player_hands_fpp_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "player_opera_gladiator_gloves_a_fpp.mat"
+          "number": 1,
+          "name": "player_opera_gladiator_gloves_a_fpp.mat"
         },
         {
-            "number": 2,
-            "name": "player_hands_fpp_a.mat"
+          "number": 2,
+          "name": "player_hands_fpp_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 2,
-                    "name": "player_hands_fpp_a.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_wrestler_gloves_a_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 2,
-                    "name": "player_hands_tpp_a.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_hands_fpp_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "player_opera_gladiator_gloves_a_fpp.mat"
+        },
+        {
+          "number": 2,
+          "name": "player_hands_fpp_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_wrestler_gloves_a_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_hands_tpp_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

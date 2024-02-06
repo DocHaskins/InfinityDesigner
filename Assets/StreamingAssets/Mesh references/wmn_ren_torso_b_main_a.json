@@ -1,35 +1,145 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "wmn_ren_torso_b_main_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "wmn_ren_torso_b_main_a_nylon_a.mat"
+    },
+    {
+      "number": 3,
+      "name": "wmn_ren_torso_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "wmn_ren_torso_b_main_a.mat"
+          "number": 1,
+          "name": "wmn_ren_torso_b_main_a.mat"
         },
         {
-            "number": 2,
-            "name": "wmn_ren_torso_b_main_a_nylon_a.mat"
+          "number": 2,
+          "name": "wmn_ren_torso_b_main_a_nylon_a.mat"
         },
         {
-            "number": 3,
-            "name": "wmn_ren_torso_a.mat"
+          "number": 3,
+          "name": "wmn_ren_torso_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "wmn_ren_torso_b_main_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "wmn_ren_torso_b_main_a_nylon_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "wmn_ren_torso_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "wmn_ren_torso_b_main_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "wmn_ren_torso_b_main_a_nylon_a.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "wmn_ren_torso_a_b.mat"
+                  "name": "grd_0_tex",
+                  "type": 7,
+                  "val_str": "wmn_ren_torso_a_nerys_gra.png"
                 }
-            ]
+              ]
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "wmn_ren_torso_b_main_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "wmn_ren_torso_b_main_a_nylon_a.mat"
+        },
+        {
+          "number": 3,
+          "name": "wmn_ren_torso_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "wmn_ren_torso_b_main_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "wmn_ren_torso_b_main_a_nylon_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "det_0_a_opacity_factor",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_a_scale_factor",
+                  "type": 2,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "wmn_ren_torso_a_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

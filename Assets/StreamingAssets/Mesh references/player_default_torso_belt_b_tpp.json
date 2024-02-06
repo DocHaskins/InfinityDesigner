@@ -1,31 +1,73 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "player_default_torso_belt_tpp.mat"
+    },
+    {
+      "number": 2,
+      "name": "chr_pouch_c.mat"
+    },
+    {
+      "number": 3,
+      "name": "chr_pouch_d.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "player_default_torso_belt_tpp.mat"
+          "number": 1,
+          "name": "player_default_torso_belt_tpp.mat"
         },
         {
-            "number": 2,
-            "name": "chr_pouch_c.mat"
+          "number": 2,
+          "name": "chr_pouch_c.mat"
         },
         {
-            "number": 3,
-            "name": "chr_pouch_d.mat"
+          "number": 3,
+          "name": "chr_pouch_d.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 2,
-                    "name": "null.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "null.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_default_torso_belt_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "null.mat",
+              "selected": true,
+              "layoutId": 1,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "null.mat",
+              "selected": true,
+              "layoutId": 1,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

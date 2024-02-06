@@ -1,21 +1,104 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "chr_rope_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "chr_addons_a.mat"
+    },
+    {
+      "number": 3,
+      "name": "wmn_srv_torso_c_addon_a.mat"
+    },
+    {
+      "number": 4,
+      "name": "man_sc_ov_torso_a_detail_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "chr_rope_a.mat"
+          "number": 1,
+          "name": "chr_rope_a.mat"
         },
         {
-            "number": 2,
-            "name": "chr_addons_a.mat"
+          "number": 2,
+          "name": "chr_addons_a.mat"
         },
         {
-            "number": 3,
-            "name": "wmn_srv_torso_c_addon_a.mat"
+          "number": 3,
+          "name": "wmn_srv_torso_c_addon_a.mat"
         },
         {
-            "number": 4,
-            "name": "man_sc_ov_torso_a_detail_a.mat"
+          "number": 4,
+          "name": "man_sc_ov_torso_a_detail_a.mat"
         }
-    ],
-    "variations": []
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "chr_rope_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "chr_addons_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "wmn_srv_torso_c_addon_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "det_0_b_scale_factor",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_dif_b_tex",
+                  "type": 7,
+                  "val_str": "srf_fabric_pattern_e_dif.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "resources": [
+            {
+              "name": "man_sc_ov_torso_a_detail_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

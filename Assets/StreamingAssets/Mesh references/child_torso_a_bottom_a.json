@@ -1,27 +1,159 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "child_torso_a_bottom_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_bdt_belt_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "child_torso_a_bottom_a.mat"
+          "number": 1,
+          "name": "child_torso_a_bottom_a.mat"
         },
         {
-            "number": 2,
-            "name": "man_bdt_belt_a.mat"
+          "number": 2,
+          "name": "man_bdt_belt_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "child_torso_a_bottom_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_belt_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "wmn_zmb_torso_c_bottom_b.mat"
+                  "name": "dif_0_val",
+                  "type": 4,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "child_torso_a_bottom_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "man_bdt_belt_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "child_torso_a_bottom_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_belt_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_0_tex",
+                  "type": 7,
+                  "val_str": "chr_dark_yellow_dif.png"
                 },
                 {
-                    "number": 2,
-                    "name": "man_bdt_belt_a.mat"
+                  "name": "rgh_0_tex",
+                  "type": 7,
+                  "val_str": "chr_white_rgh.png"
                 }
-            ]
+              ]
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "child_torso_a_bottom_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "man_bdt_belt_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "child_torso_a_bottom_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_belt_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_0_tex",
+                  "type": 7,
+                  "val_str": "chr_bright_pink_dif.png"
+                },
+                {
+                  "name": "rgh_0_tex",
+                  "type": 7,
+                  "val_str": "chr_white_rgh.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

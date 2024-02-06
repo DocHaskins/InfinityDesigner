@@ -1,13 +1,65 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_bdt_torso_f_armor_upperleft.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_bdt_armor_d_rope.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_bdt_torso_f_armor_upperleft.mat"
+          "number": 1,
+          "name": "man_bdt_torso_f_armor_upperleft.mat"
         },
         {
-            "number": 2,
-            "name": "man_bdt_armor_d_rope.mat"
+          "number": 2,
+          "name": "man_bdt_armor_d_rope.mat"
         }
-    ],
-    "variations": []
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_torso_f_armor_upperleft.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "spc_0_tex",
+                  "type": 7,
+                  "val_str": "chr_silver_spc.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_armor_d_rope.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_0_tex",
+                  "type": 7,
+                  "val_str": "chr_dark_blue_dif.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

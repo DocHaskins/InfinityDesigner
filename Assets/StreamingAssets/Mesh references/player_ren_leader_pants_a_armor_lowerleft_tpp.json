@@ -1,27 +1,92 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_pk_legs_b_armor_lower_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_pk_legs_b_armor_lower_b.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_pk_legs_b_armor_lower_a.mat"
+          "number": 1,
+          "name": "man_pk_legs_b_armor_lower_a.mat"
         },
         {
-            "number": 2,
-            "name": "man_pk_legs_b_armor_lower_b.mat"
+          "number": 2,
+          "name": "man_pk_legs_b_armor_lower_b.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "player_easter_chicken_pants_a_armor_a_upper_tpp.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "player_easter_chicken_pants_a_armor_a_lower_tpp.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_easter_chicken_pants_a_armor_a_upper_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_easter_chicken_pants_a_armor_a_lower_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_pk_legs_b_armor_lower_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "man_pk_legs_b_armor_lower_b.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_easter_chicken_pants_a_armor_a_upper_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_easter_chicken_pants_a_armor_a_lower_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

@@ -1,105 +1,92 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "zmb_volatile_a_head.mat"
+    },
+    {
+      "number": 2,
+      "name": "zmb_volatile_a_eyes.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "zmb_volatile_a_head.mat"
+          "number": 1,
+          "name": "zmb_volatile_a_head.mat"
         },
         {
-            "number": 2,
-            "name": "zmb_volatile_a_eyes.mat"
+          "number": 2,
+          "name": "zmb_volatile_a_eyes.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "zmb_volatile_a_tyrant_head.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zmb_volatile_a_eyes.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "zmb_volatile_a_tyrant_head.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "zmb_volatile_a_tyrant_head.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zmb_banshee_eye_hag.mat"
-                }
-            ]
-        },
-        {
-            "id": "3",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "zmb_volatile_b_head.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zmb_volatile_a_eyes.mat"
-                }
-            ]
-        },
-        {
-            "id": "4",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "zmb_volatile_a_head.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zmb_volatile_a_tyrant_eyes.mat"
-                }
-            ]
-        },
-        {
-            "id": "5",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "zmb_volatile_a_head.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zmb_banshee_eye_hag.mat"
-                }
-            ]
-        },
-        {
-            "id": "6",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "zmb_volatile_a_head.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zmb_corruptor_a_eyes.mat"
-                }
-            ]
-        },
-        {
-            "id": "7",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "zmb_volatile_a_tyrant_head.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zmb_volatile_a_tyrant_eyes.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "zmb_volatile_a_tyrant_eyes.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "zmb_volatile_a_head.mat"
+        },
+        {
+          "number": 2,
+          "name": "zmb_volatile_a_eyes.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "zmb_volatile_b_head.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zmb_volatile_a_eyes.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

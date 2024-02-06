@@ -1,27 +1,53 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "wmn_srv_torso_a_bottom_c.mat"
+    },
+    {
+      "number": 2,
+      "name": "zipper_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "wmn_srv_torso_a_bottom_c.mat"
+          "number": 1,
+          "name": "wmn_srv_torso_a_bottom_c.mat"
         },
         {
-            "number": 2,
-            "name": "zipper_a.mat"
+          "number": 2,
+          "name": "zipper_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "wmn_srv_torso_a_bottom_c_pattern.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zipper_a.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "wmn_srv_torso_a_bottom_c_pattern.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zipper_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

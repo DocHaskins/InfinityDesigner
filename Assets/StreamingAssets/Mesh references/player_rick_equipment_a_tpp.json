@@ -1,27 +1,92 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "player_rick_equipment_a_tpp.mat"
+    },
+    {
+      "number": 2,
+      "name": "player_outfit_gunslinger_sixshooter_tpp.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "player_rick_equipment_a_tpp.mat"
+          "number": 1,
+          "name": "player_rick_equipment_a_tpp.mat"
         },
         {
-            "number": 2,
-            "name": "player_outfit_gunslinger_sixshooter_tpp.mat"
+          "number": 2,
+          "name": "player_outfit_gunslinger_sixshooter_tpp.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "player_rick_equipment_a_tpp.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "player_rick_sixshooter_tpp.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_rick_equipment_a_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_rick_sixshooter_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "player_rick_equipment_a_tpp.mat"
+        },
+        {
+          "number": 2,
+          "name": "player_outfit_gunslinger_sixshooter_tpp.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_rick_equipment_a_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_rick_sixshooter_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

@@ -1,17 +1,95 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "wmn_hands_black_b.mat"
+    },
+    {
+      "number": 2,
+      "name": "wmn_hands_black_a.mat"
+    },
+    {
+      "number": 3,
+      "name": "npc_man_gloves_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "wmn_hands_black_b.mat"
+          "number": 1,
+          "name": "wmn_hands_black_b.mat"
         },
         {
-            "number": 2,
-            "name": "wmn_hands_black_a.mat"
+          "number": 2,
+          "name": "wmn_hands_black_a.mat"
         },
         {
-            "number": 3,
-            "name": "npc_man_gloves_a.mat"
+          "number": 3,
+          "name": "npc_man_gloves_a.mat"
         }
-    ],
-    "variations": []
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "wmn_hands_black_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "msk_1_opacity",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "msk_1_tex",
+                  "type": 7,
+                  "val_str": "wmn_hands_plaguewitch_b_msk.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "wmn_hands_black_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "msk_1_opacity",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "msk_1_tex",
+                  "type": 7,
+                  "val_str": "wmn_hands_plaguewitch_a_msk.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "npc_man_gloves_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

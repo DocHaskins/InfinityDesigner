@@ -1,28 +1,183 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "npc_man_torso_shirt_sleeves_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "npc_man_torso_shirt_sleeves_a.mat"
+          "number": 1,
+          "name": "npc_man_torso_shirt_sleeves_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "npc_man_torso_shirt_sleeves_a_pattern.mat"
-                }
-            ]
-        },
-        {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "npc_man_torso_shirt_sleeves_a_velvet.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_man_torso_shirt_sleeves_a_velvet.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_man_torso_shirt_sleeves_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_man_torso_shirt_sleeves_a_pattern.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "grf_dif_tex",
+                  "type": 7,
+                  "val_str": "chr_cloth_velvet_a_grf.png"
+                },
+                {
+                  "name": "det_0_a_dtm_spc",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_a_dtm_nrm",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_a_dtm_rgh",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_a_dtm_dif",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_a_dtm_tex",
+                  "type": 7,
+                  "val_str": "srf_cotton_shirt_pattern_diamonds_dtm.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_man_torso_shirt_sleeves_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_man_torso_shirt_sleeves_a_pattern.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "det_0_a_dtm_dif",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_a_dtm_spc",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_a_dtm_rgh",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_a_dtm_nrm",
+                  "type": 2,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_man_torso_shirt_sleeves_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_man_torso_shirt_sleeves_a_pattern.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "det_0_a_dtm_tex",
+                  "type": 7,
+                  "val_str": "srf_chr_cotton_soft_pattern_checker_c_dtm.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "npc_man_torso_shirt_sleeves_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_man_torso_shirt_sleeves_a_pattern.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

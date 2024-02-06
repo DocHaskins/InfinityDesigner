@@ -1,85 +1,164 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "sh_biter_deg_b.mat"
+    },
+    {
+      "number": 2,
+      "name": "sh_eye.mat"
+    },
+    {
+      "number": 3,
+      "name": "sh_mouth_interior.mat"
+    },
+    {
+      "number": 4,
+      "name": "sh_eye_shadow.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "sh_biter_deg_b.mat"
+          "number": 1,
+          "name": "sh_biter_deg_b.mat"
         },
         {
-            "number": 2,
-            "name": "sh_eye.mat"
+          "number": 2,
+          "name": "sh_eye.mat"
         },
         {
-            "number": 3,
-            "name": "sh_mouth_interior.mat"
+          "number": 3,
+          "name": "sh_mouth_interior.mat"
         },
         {
-            "number": 4,
-            "name": "sh_eye_shadow.mat"
+          "number": 4,
+          "name": "sh_eye_shadow.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "sh_biter_deg_b.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "sh_eye_degenerated.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "sh_mouth_interior_zmb.mat"
-                },
-                {
-                    "number": 4,
-                    "name": "sh_eye_shadow.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "sh_biter_deg_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "sh_biter_deg_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "sh_eye_degenerated.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "sh_mouth_interior_zmb.mat"
-                },
-                {
-                    "number": 4,
-                    "name": "sh_eye_shadow.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "sh_eye_degenerated.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "3",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "sh_biter_deg_b.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zmb_banshee_b_eye.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "sh_mouth_interior_zmb.mat"
-                },
-                {
-                    "number": 4,
-                    "name": "sh_eye_shadow.mat"
-                }
-            ]
+          "number": 3,
+          "resources": [
+            {
+              "name": "sh_mouth_interior_zmb.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "resources": [
+            {
+              "name": "sh_eye_shadow.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "sh_biter_deg_b.mat"
+        },
+        {
+          "number": 2,
+          "name": "sh_eye.mat"
+        },
+        {
+          "number": 3,
+          "name": "sh_mouth_interior.mat"
+        },
+        {
+          "number": 4,
+          "name": "sh_eye_shadow.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "sh_biter_deg_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "sh_eye_degenerated.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "sh_mouth_interior_zmb.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "resources": [
+            {
+              "name": "sh_eye_shadow.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

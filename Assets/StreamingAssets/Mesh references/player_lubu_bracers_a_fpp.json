@@ -1,27 +1,92 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "player_lubu_classic_bracers_a_fpp.mat"
+    },
+    {
+      "number": 2,
+      "name": "player_melee_bracers_c_tpp.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "player_lubu_classic_bracers_a_fpp.mat"
+          "number": 1,
+          "name": "player_lubu_classic_bracers_a_fpp.mat"
         },
         {
-            "number": 2,
-            "name": "player_melee_bracers_c_tpp.mat"
+          "number": 2,
+          "name": "player_melee_bracers_c_tpp.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "player_lubu_classic_bracers_a_tpp.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "player_lubu_bracers_a_tpp.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_lubu_classic_bracers_a_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_lubu_bracers_a_fpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "player_lubu_classic_bracers_a_fpp.mat"
+        },
+        {
+          "number": 2,
+          "name": "player_melee_bracers_c_tpp.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_lubu_classic_bracers_a_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_lubu_bracers_a_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

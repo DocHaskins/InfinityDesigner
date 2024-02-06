@@ -72,7 +72,30 @@ public class ModelData
     public class VariationInfo
     {
         public string id;
-        public List<MaterialData> materials;
+        public List<MaterialData> materialsData;
+        public List<MaterialResource> materialsResources;
+
+        // Constructor to initialize lists
+        public VariationInfo()
+        {
+            materialsData = new List<MaterialData>();
+            materialsResources = new List<MaterialResource>();
+        }
+    }
+
+    [Serializable]
+    public class VariationOutput
+    {
+        public List<MaterialData> materialsData = new List<MaterialData>();
+        public List<Variation> variations = new List<Variation>();
+    }
+
+    [Serializable]
+    public class Variation
+    {
+        public string id;
+        public List<MaterialData> materialsData = new List<MaterialData>();
+        public List<MaterialResource> materialsResources = new List<MaterialResource>();
     }
 
     [Serializable]

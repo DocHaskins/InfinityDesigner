@@ -1,43 +1,93 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "npc_waltz_pants_b.mat"
+    },
+    {
+      "number": 2,
+      "name": "npc_colonel_shoes_a.mat"
+    },
+    {
+      "number": 3,
+      "name": "npc_waltz_pants_b_torn.mat"
+    },
+    {
+      "number": 4,
+      "name": "npc_waltz_pants_b_skin_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "npc_waltz_pants_b.mat"
+          "number": 1,
+          "name": "npc_waltz_pants_b.mat"
         },
         {
-            "number": 2,
-            "name": "npc_colonel_shoes_a.mat"
+          "number": 2,
+          "name": "npc_colonel_shoes_a.mat"
         },
         {
-            "number": 3,
-            "name": "npc_waltz_pants_b_torn.mat"
+          "number": 3,
+          "name": "npc_waltz_pants_b_torn.mat"
         },
         {
-            "number": 4,
-            "name": "npc_waltz_pants_b_skin_a.mat"
+          "number": 4,
+          "name": "npc_waltz_pants_b_skin_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "npc_waltz_pants_b_blood.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "npc_colonel_shoes_a.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "npc_waltz_pants_b_torn.mat"
-                },
-                {
-                    "number": 4,
-                    "name": "npc_waltz_pants_b_skin_a.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "npc_waltz_pants_b_blood.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "npc_colonel_shoes_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "npc_waltz_pants_b_torn.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "resources": [
+            {
+              "name": "npc_waltz_pants_b_skin_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

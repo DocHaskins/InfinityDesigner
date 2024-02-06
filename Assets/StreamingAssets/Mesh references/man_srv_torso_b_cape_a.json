@@ -1,13 +1,79 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_srv_cape_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_srv_cape_a_rope.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_srv_cape_a.mat"
+          "number": 1,
+          "name": "man_srv_cape_a.mat"
         },
         {
-            "number": 2,
-            "name": "man_srv_cape_a_rope.mat"
+          "number": 2,
+          "name": "man_srv_cape_a_rope.mat"
         }
-    ],
-    "variations": []
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_srv_cape_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "det_0_a_dtm_dif",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_a_dtm_tex",
+                  "type": 7,
+                  "val_str": "srf_ch_shark_skin_b_dtm.png"
+                },
+                {
+                  "name": "det_0_a_dtm_nrm",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_a_dtm_rgh",
+                  "type": 2,
+                  "val_str": null
+                },
+                {
+                  "name": "det_0_a_dtm_spc",
+                  "type": 2,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_srv_cape_a_rope.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

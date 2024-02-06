@@ -1,51 +1,130 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_bdt_belt_b.mat"
+    },
+    {
+      "number": 2,
+      "name": "man_bdt_bumbag_a.mat"
+    },
+    {
+      "number": 3,
+      "name": "man_bdt_belt_a.mat"
+    },
+    {
+      "number": 4,
+      "name": "chr_belt_b.mat"
+    },
+    {
+      "number": 5,
+      "name": "default.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_bdt_belt_b.mat"
+          "number": 1,
+          "name": "man_bdt_belt_b.mat"
         },
         {
-            "number": 2,
-            "name": "man_bdt_bumbag_a.mat"
+          "number": 2,
+          "name": "man_bdt_bumbag_a.mat"
         },
         {
-            "number": 3,
-            "name": "man_bdt_belt_a.mat"
+          "number": 3,
+          "name": "man_bdt_belt_a.mat"
         },
         {
-            "number": 4,
-            "name": "chr_belt_b.mat"
+          "number": 4,
+          "name": "chr_belt_b.mat"
         },
         {
-            "number": 5,
-            "name": "default.mat"
+          "number": 5,
+          "name": "default.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_bdt_belt_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_bdt_bumbag_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "man_bdt_belt_b.mat"
+                  "name": "det_0_a_scale_factor",
+                  "type": 2,
+                  "val_str": null
                 },
                 {
-                    "number": 2,
-                    "name": "man_bdt_bumbag_a.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "man_bdt_belt_a.mat"
-                },
-                {
-                    "number": 4,
-                    "name": "chr_belt_b.mat"
-                },
-                {
-                    "number": 5,
-                    "name": "man_bdt_belt_a.mat"
+                  "name": "grf_dif_tex",
+                  "type": 7,
+                  "val_str": "man_bdt_torso_i_grf.png"
                 }
-            ]
+              ]
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "man_bdt_belt_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_0_tex",
+                  "type": 7,
+                  "val_str": "man_bdt_belt_a_dark_dif.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "resources": [
+            {
+              "name": "chr_belt_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "resources": [
+            {
+              "name": "man_bdt_belt_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

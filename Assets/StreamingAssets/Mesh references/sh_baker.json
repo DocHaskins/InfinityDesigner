@@ -1,204 +1,698 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "sh_baker.mat"
+    },
+    {
+      "number": 2,
+      "name": "sh_eye.mat"
+    },
+    {
+      "number": 3,
+      "name": "sh_mouth_interior.mat"
+    },
+    {
+      "number": 4,
+      "name": "sh_eyelashes.mat"
+    },
+    {
+      "number": 5,
+      "name": "sh_eye_shadow.mat"
+    },
+    {
+      "number": 6,
+      "name": "sh_wet_eye.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "sh_baker.mat"
+          "number": 1,
+          "name": "sh_baker.mat"
         },
         {
-            "number": 2,
-            "name": "sh_eye.mat"
+          "number": 2,
+          "name": "sh_eye.mat"
         },
         {
-            "number": 3,
-            "name": "sh_mouth_interior.mat"
+          "number": 3,
+          "name": "sh_mouth_interior.mat"
         },
         {
-            "number": 4,
-            "name": "sh_eyelashes.mat"
+          "number": 4,
+          "name": "sh_eyelashes.mat"
         },
         {
-            "number": 5,
-            "name": "sh_eye_shadow.mat"
+          "number": 5,
+          "name": "sh_eye_shadow.mat"
         },
         {
-            "number": 6,
-            "name": "sh_wet_eye.mat"
+          "number": 6,
+          "name": "sh_wet_eye.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "sh_wmn_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "sh_scan_wmn_009.mat"
+                  "name": "dif_1_tex",
+                  "type": 7,
+                  "val_str": "chr_black_dif.png"
                 },
                 {
-                    "number": 2,
-                    "name": "sh_eye_green.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "sh_mouth_interior.mat"
-                },
-                {
-                    "number": 4,
-                    "name": "sh_eyelashes.mat"
-                },
-                {
-                    "number": 5,
-                    "name": "sh_eye_shadow.mat"
-                },
-                {
-                    "number": 6,
-                    "name": "sh_wet_eye.mat"
+                  "name": "msk_1_tex",
+                  "type": 7,
+                  "val_str": "sh_man_hair_buzz_a_msk.png"
                 }
-            ]
+              ]
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "sh_wmn_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "sh_eye.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "sh_mouth_interior.mat"
-                },
-                {
-                    "number": 4,
-                    "name": "sh_eyelashes.mat"
-                },
-                {
-                    "number": 5,
-                    "name": "sh_eye_shadow.mat"
-                },
-                {
-                    "number": 6,
-                    "name": "sh_wet_eye.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "sh_eye.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "3",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "sh_scan_wmn_009_scars.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "sh_eye_green.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "sh_mouth_interior.mat"
-                },
-                {
-                    "number": 4,
-                    "name": "sh_eyelashes.mat"
-                },
-                {
-                    "number": 5,
-                    "name": "sh_eye_shadow.mat"
-                },
-                {
-                    "number": 6,
-                    "name": "sh_wet_eye.mat"
-                }
-            ]
+          "number": 3,
+          "resources": [
+            {
+              "name": "sh_mouth_interior.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "4",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "sh_baker.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "sh_eye_degenerated.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "sh_mouth_interior_zmb.mat"
-                },
-                {
-                    "number": 4,
-                    "name": "sh_eyelashes.mat"
-                },
-                {
-                    "number": 5,
-                    "name": "sh_eye_shadow.mat"
-                },
-                {
-                    "number": 6,
-                    "name": "sh_wet_eye.mat"
-                }
-            ]
+          "number": 4,
+          "resources": [
+            {
+              "name": "sh_eyelashes.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "5",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "sh_biter_b.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "sh_eye_degenerated.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "sh_mouth_interior_zmb.mat"
-                },
-                {
-                    "number": 4,
-                    "name": "sh_eyelashes.mat"
-                },
-                {
-                    "number": 5,
-                    "name": "sh_eye_shadow.mat"
-                },
-                {
-                    "number": 6,
-                    "name": "sh_wet_eye.mat"
-                }
-            ]
+          "number": 5,
+          "resources": [
+            {
+              "name": "sh_eye_shadow.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "6",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "sh_scan_wmn_009_scars.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "sh_eye_degenerated.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "sh_mouth_interior_zmb.mat"
-                },
-                {
-                    "number": 4,
-                    "name": "sh_eyelashes.mat"
-                },
-                {
-                    "number": 5,
-                    "name": "sh_eye_shadow.mat"
-                },
-                {
-                    "number": 6,
-                    "name": "sh_wet_eye.mat"
-                }
-            ]
+          "number": 6,
+          "resources": [
+            {
+              "name": "sh_wet_eye.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "sh_baker.mat"
+        },
+        {
+          "number": 2,
+          "name": "sh_eye.mat"
+        },
+        {
+          "number": 3,
+          "name": "sh_mouth_interior.mat"
+        },
+        {
+          "number": 4,
+          "name": "sh_eyelashes.mat"
+        },
+        {
+          "number": 5,
+          "name": "sh_eye_shadow.mat"
+        },
+        {
+          "number": 6,
+          "name": "sh_wet_eye.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "sh_baker.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_1_tex",
+                  "type": 7,
+                  "val_str": "chr_black_dif.png"
+                },
+                {
+                  "name": "msk_1_tex",
+                  "type": 7,
+                  "val_str": "sh_wmn_hair_system_b_base_c_b_msk.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "sh_eye.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "sh_mouth_interior.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "resources": [
+            {
+              "name": "sh_eyelashes.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "resources": [
+            {
+              "name": "sh_eye_shadow.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "resources": [
+            {
+              "name": "sh_wet_eye.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "sh_baker.mat"
+        },
+        {
+          "number": 2,
+          "name": "sh_eye.mat"
+        },
+        {
+          "number": 3,
+          "name": "sh_mouth_interior.mat"
+        },
+        {
+          "number": 4,
+          "name": "sh_eyelashes.mat"
+        },
+        {
+          "number": 5,
+          "name": "sh_eye_shadow.mat"
+        },
+        {
+          "number": 6,
+          "name": "sh_wet_eye.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "sh_baker.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "msk_1_tex",
+                  "type": 7,
+                  "val_str": "sh_wmn_hair_system_b_fringe_f_msk.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "sh_eye.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "sh_mouth_interior.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "resources": [
+            {
+              "name": "sh_eyelashes.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "resources": [
+            {
+              "name": "sh_eye_shadow.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "resources": [
+            {
+              "name": "sh_wet_eye.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "sh_baker.mat"
+        },
+        {
+          "number": 2,
+          "name": "sh_eye.mat"
+        },
+        {
+          "number": 3,
+          "name": "sh_mouth_interior.mat"
+        },
+        {
+          "number": 4,
+          "name": "sh_eyelashes.mat"
+        },
+        {
+          "number": 5,
+          "name": "sh_eye_shadow.mat"
+        },
+        {
+          "number": 6,
+          "name": "sh_wet_eye.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "sh_scan_wmn_009.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_1_tex",
+                  "type": 7,
+                  "val_str": "chr_black_dif.png"
+                },
+                {
+                  "name": "msk_1_tex",
+                  "type": 7,
+                  "val_str": "sh_man_hair_buzz_a_msk.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "sh_eye_green.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "sh_mouth_interior.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "resources": [
+            {
+              "name": "sh_eyelashes.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "resources": [
+            {
+              "name": "sh_eye_shadow.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "resources": [
+            {
+              "name": "sh_wet_eye.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "sh_baker.mat"
+        },
+        {
+          "number": 2,
+          "name": "sh_eye.mat"
+        },
+        {
+          "number": 3,
+          "name": "sh_mouth_interior.mat"
+        },
+        {
+          "number": 4,
+          "name": "sh_eyelashes.mat"
+        },
+        {
+          "number": 5,
+          "name": "sh_eye_shadow.mat"
+        },
+        {
+          "number": 6,
+          "name": "sh_wet_eye.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "sh_wmn_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "sh_eye.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "sh_mouth_interior.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "resources": [
+            {
+              "name": "sh_eyelashes.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "resources": [
+            {
+              "name": "sh_eye_shadow.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "resources": [
+            {
+              "name": "sh_wet_eye.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "sh_baker.mat"
+        },
+        {
+          "number": 2,
+          "name": "sh_eye.mat"
+        },
+        {
+          "number": 3,
+          "name": "sh_mouth_interior.mat"
+        },
+        {
+          "number": 4,
+          "name": "sh_eyelashes.mat"
+        },
+        {
+          "number": 5,
+          "name": "sh_eye_shadow.mat"
+        },
+        {
+          "number": 6,
+          "name": "sh_wet_eye.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "sh_scan_wmn_009_scars.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "msk_1_tex",
+                  "type": 7,
+                  "val_str": "sh_man_hair_system_b_base_j_msk.png"
+                },
+                {
+                  "name": "dif_1_tex",
+                  "type": 7,
+                  "val_str": "chr_black_dif.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "sh_eye_green.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "sh_mouth_interior.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "resources": [
+            {
+              "name": "sh_eyelashes.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "resources": [
+            {
+              "name": "sh_eye_shadow.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "resources": [
+            {
+              "name": "sh_wet_eye.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

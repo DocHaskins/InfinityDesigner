@@ -1,27 +1,59 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "wmn_srv_torso_d_bottom_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "wmn_srv_torso_d_bottom_rope.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "wmn_srv_torso_d_bottom_a.mat"
+          "number": 1,
+          "name": "wmn_srv_torso_d_bottom_a.mat"
         },
         {
-            "number": 2,
-            "name": "wmn_srv_torso_d_bottom_rope.mat"
+          "number": 2,
+          "name": "wmn_srv_torso_d_bottom_rope.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
+          "number": 1,
+          "resources": [
+            {
+              "name": "wmn_srv_torso_d_bottom_a_pattern_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
                 {
-                    "number": 1,
-                    "name": "wmn_srv_torso_d_bottom_a_pattern_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "wmn_srv_torso_d_bottom_rope.mat"
+                  "name": "det_0_dif_a_tex",
+                  "type": 7,
+                  "val_str": "srf_fabric_nomad_pattern_a_dif.png"
                 }
-            ]
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "wmn_srv_torso_d_bottom_rope.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

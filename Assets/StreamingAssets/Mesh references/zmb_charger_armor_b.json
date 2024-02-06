@@ -1,27 +1,53 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "zmb_charger_armor_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "zmb_charger_body_a.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "zmb_charger_armor_a.mat"
+          "number": 1,
+          "name": "zmb_charger_armor_a.mat"
         },
         {
-            "number": 2,
-            "name": "zmb_charger_body_a.mat"
+          "number": 2,
+          "name": "zmb_charger_body_a.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "zmb_charger_armor_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "zmb_charger_body_b.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "zmb_charger_armor_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "zmb_charger_body_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

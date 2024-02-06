@@ -1,52 +1,128 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "man_wrestler_torso_tank_top_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "player_torso_body_a_tpp.mat"
+    },
+    {
+      "number": 3,
+      "name": "chr_chain_b.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "man_wrestler_torso_tank_top_a.mat"
+          "number": 1,
+          "name": "man_wrestler_torso_tank_top_a.mat"
         },
         {
-            "number": 2,
-            "name": "player_torso_body_a_tpp.mat"
+          "number": 2,
+          "name": "player_torso_body_a_tpp.mat"
         },
         {
-            "number": 3,
-            "name": "chr_chain_b.mat"
+          "number": 3,
+          "name": "chr_chain_b.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_wrestler_torso_tank_top_a.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "player_torso_body_a_tpp.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "chr_chain_a.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_wrestler_torso_tank_top_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         },
         {
-            "id": "2",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "man_wrestler_torso_tank_top_a_shiny.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "player_torso_body_a_tpp.mat"
-                },
-                {
-                    "number": 3,
-                    "name": "chr_chain_b.mat"
-                }
-            ]
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_torso_body_a_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "chr_chain_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_wrestler_torso_tank_top_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "player_torso_body_a_tpp.mat"
+        },
+        {
+          "number": 3,
+          "name": "chr_chain_b.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_wrestler_torso_tank_top_a_shiny.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_torso_body_a_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "chr_chain_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

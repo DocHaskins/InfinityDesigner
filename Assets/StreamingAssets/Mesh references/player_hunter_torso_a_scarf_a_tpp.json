@@ -1,27 +1,53 @@
 {
-    "materialsData": [
+  "materialsData": [
+    {
+      "number": 1,
+      "name": "player_hunter_scarf_a_basic_tpp.mat"
+    },
+    {
+      "number": 2,
+      "name": "player_hunter_scarf_a_threads_basic_tpp.mat"
+    }
+  ],
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
         {
-            "number": 1,
-            "name": "player_hunter_scarf_a_basic_tpp.mat"
+          "number": 1,
+          "name": "player_hunter_scarf_a_basic_tpp.mat"
         },
         {
-            "number": 2,
-            "name": "player_hunter_scarf_a_threads_basic_tpp.mat"
+          "number": 2,
+          "name": "player_hunter_scarf_a_threads_basic_tpp.mat"
         }
-    ],
-    "variations": [
+      ],
+      "materialsResources": [
         {
-            "id": "1",
-            "materials": [
-                {
-                    "number": 1,
-                    "name": "player_hunter_scarf_a_elite_tpp.mat"
-                },
-                {
-                    "number": 2,
-                    "name": "player_hunter_scarf_a_threads_elite_tpp.mat"
-                }
-            ]
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_hunter_scarf_a_elite_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_hunter_scarf_a_threads_elite_tpp.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }
