@@ -1650,6 +1650,8 @@ namespace doppelganger
                 { "idx_1_tex", "_idx" },
                 { "grd_0_tex", "_gra" },
                 { "grd_1_tex", "_gra" },
+                { "grf_dif_tex", "_gra" },
+                { "grf_tex", "_gra" },
                 { "spc_0_tex", "_spc" },
                 { "spc_1_tex", "_spc" },
                 { "clp_0_tex", "_clp" },
