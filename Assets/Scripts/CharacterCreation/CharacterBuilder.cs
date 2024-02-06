@@ -1175,7 +1175,7 @@ namespace doppelganger
 
         void OnVariationSliderValueChanged(string slotName, float value)
         {
-            Debug.Log($"OnVariationSliderValueChanged for slot: {slotName} with value: {value}");
+            //Debug.Log($"OnVariationSliderValueChanged for slot: {slotName} with value: {value}");
             if (!currentlyLoadedModels.TryGetValue(slotName, out GameObject currentModel))
             {
                 Debug.LogError($"No model currently loaded for slot: {slotName}");
@@ -1476,23 +1476,6 @@ namespace doppelganger
             }
         }
 
-        private bool ShouldUseCustomShader(string resourceName)
-        {
-            // Define names that should use the custom shader
-            string[] specialNames = {
-        "sh_biter_", "sh_man_", "sh_scan_man_", "multihead007_npc_carl_",
-        "sh_wmn_", "sh_scan_wmn_", "sh_dlc_opera_wmn_", "nnpc_wmn_worker",
-        "sh_scan_kid_", "sh_scan_girl_", "sh_scan_boy_", "sh_chld_"
-    };
-
-            if (resourceName.Contains("hair"))
-            {
-                return false;
-            }
-
-            return specialNames.Any(name => resourceName.StartsWith(name));
-        }
-
         private void ApplyMaterialToRenderer(SkinnedMeshRenderer renderer, string materialName, GameObject modelInstance, List<RttiValue> rttiValues = null)
         {
             if (materialName.Equals("null.mat", StringComparison.OrdinalIgnoreCase))
@@ -1523,8 +1506,7 @@ namespace doppelganger
                         {
                             if (rttiValue.name != "ems_scale")
                             {
-                                bool useCustomShader = ShouldUseCustomShader(materialName);
-                                ApplyTextureToMaterial(clonedMaterial, rttiValue.name, rttiValue.val_str, useCustomShader);
+                                ApplyTextureToMaterial(clonedMaterial, rttiValue.name, rttiValue.val_str);
                             }
                         }
                     }
@@ -1569,84 +1551,150 @@ namespace doppelganger
             disabledRenderers[modelInstance].Add(Array.IndexOf(modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true), renderer));
         }
 
-        private void ApplyTextureToMaterial(Material material, string rttiValueName, string textureName, bool useCustomShader)
+        private void ApplyTextureToMaterial(Material material, string rttiValueName, string textureName)
         {
-            if (!string.IsNullOrEmpty(textureName))
-            {
-                Debug.Log($"Applying texture. RTTI Value Name: {rttiValueName}, Texture Name: {textureName}");
+            Debug.Log($"Processing RTTI Value Name: {rttiValueName}, Texture Name: '{textureName}'.");
 
-                string texturePath = "textures/" + Path.GetFileNameWithoutExtension(textureName);
+            // Attempt to find the shader property from custom shader mapping, then HDRP mapping as fallback
+            string shaderProperty = GetShaderProperty(rttiValueName);
+
+            if (shaderProperty == null)
+            {
+                Debug.LogError($"Unsupported RTTI Value Name: {rttiValueName}. Unable to determine shader property.");
+                return;
+            }
+
+            if ("null".Equals(textureName, StringComparison.OrdinalIgnoreCase))
+            {
+                Debug.Log($"Removing texture from shader property: {shaderProperty} for RTTI: {rttiValueName}.");
+                material.SetTexture(shaderProperty, null);
+            }
+            else if (!string.IsNullOrEmpty(textureName))
+            {
+                string texturePath = $"textures/{Path.GetFileNameWithoutExtension(textureName)}";
                 Texture2D texture = Resources.Load<Texture2D>(texturePath);
 
                 if (texture != null)
                 {
-                    // Define mapping from RTTI names to shader properties
-                    Dictionary<string, string> customShaderMapping = new Dictionary<string, string>
-            {
-                {"msk_0_tex", "_msk"},
-                {"msk_1_tex", "_msk"},
-                {"msk_1_add_tex", "_msk"},
-                {"idx_0_tex", "_idx"},
-                {"idx_1_tex", "_idx"},
-                {"grd_0_tex", "_gra"},
-                {"grd_1_tex", "_gra"},
-                {"spc_0_tex", "_spc"},
-                {"spc_1_tex", "_spc"},
-                {"clp_0_tex", "_clp"},
-                {"clp_1_tex", "_clp"},
-                {"rgh_0_tex", "_rgh"},
-                {"rgh_1_tex", "_rgh"},
-                {"ocl_0_tex", "_ocl"},
-                {"ocl_1_tex", "_ocl"},
-                {"ems_0_tex", "_ems"},
-                {"ems_1_tex", "_ems"},
-                {"dif_1_tex", "_dif"},
-                {"dif_0_tex", "_dif"},
-                {"nrm_1_tex", "_nrm"},
-                {"nrm_0_tex", "_nrm"}
-            };
-
-                    // Define mapping for HDRP/Lit shader properties if custom shader not used or mapping fails
-                    Dictionary<string, string> hdrpMapping = new Dictionary<string, string>
-            {
-                {"dif_1_tex", "_BaseColorMap"},
-                {"dif_0_tex", "_BaseColorMap"},
-                {"nrm_1_tex", "_NormalMap"},
-                {"nrm_0_tex", "_NormalMap"},
-                {"msk_1_tex", "_MaskMap"},
-                {"ems_0_tex", "_EmissiveColorMap"},
-                {"ems_1_tex", "_EmissiveColorMap"}
-            };
-
-                    // Attempt to apply texture using custom shader mapping first
-                    if (customShaderMapping.TryGetValue(rttiValueName, out var shaderProp))
-                    {
-                        material.SetTexture(shaderProp, texture);
-                    }
-                    else if (hdrpMapping.TryGetValue(rttiValueName, out var hdrpProp))
-                    {
-                        // Fallback to HDRP/Lit shader properties
-                        material.SetTexture(hdrpProp, texture);
-                        if (rttiValueName.StartsWith("ems"))
-                        {
-                            material.SetColor("_EmissiveColor", Color.white * 2);
-                            material.EnableKeyword("_EMISSION");
-                        }
-                    }
-                    else
-                    {
-                        Debug.LogError($"Unsupported RTTI Value Name: {rttiValueName} for texture application.");
-                    }
+                    Debug.Log($"Applying texture to shader property: {shaderProperty}. RTTI Value Name: {rttiValueName}, Texture Name: {textureName}.");
+                    material.SetTexture(shaderProperty, texture);
+                    ApplyAdditionalSettings(material, rttiValueName, texture);
                 }
                 else
                 {
-                    Debug.LogError($"Texture '{texturePath}' not found in Resources for material '{rttiValueName}'");
+                    Debug.LogError($"Texture '{texturePath}' not found in Resources for RTTI: {rttiValueName}.");
                 }
             }
             else
             {
-                Debug.LogWarning($"Texture name is empty for RTTI Value Name: {rttiValueName}");
+                Debug.LogWarning($"No texture name provided for RTTI: {rttiValueName}, skipping texture application.");
             }
+        }
+
+        private string GetShaderProperty(string rttiValueName)
+        {
+            // First try to get the property directly from the custom shader mapping
+            var customMapping = GetCustomShaderMapping();
+            if (customMapping.TryGetValue(rttiValueName, out var shaderProp))
+            {
+                return shaderProp;
+            }
+
+            // Try a fallback to a more generic property if the specific one is not found
+            string basePropertyName = GetBasePropertyName(rttiValueName);
+            if (basePropertyName != null && customMapping.TryGetValue(basePropertyName, out shaderProp))
+            {
+                return shaderProp;
+            }
+
+            // Then try the HDRP mapping as a last resort
+            var hdrpMapping = GetHDRPMapping();
+            if (hdrpMapping.TryGetValue(rttiValueName, out shaderProp))
+            {
+                return shaderProp;
+            }
+            else if (basePropertyName != null && hdrpMapping.TryGetValue(basePropertyName, out shaderProp))
+            {
+                return shaderProp;
+            }
+
+            // No mapping found
+            return null;
+        }
+
+        private string GetBasePropertyName(string rttiValueName)
+        {
+            // Example of stripping a suffix to fallback to a more generic name
+            // This can be customized based on your specific naming conventions
+            if (rttiValueName.EndsWith("_1_tex") || rttiValueName.EndsWith("_0_tex"))
+            {
+                return rttiValueName.Substring(0, rttiValueName.LastIndexOf('_')) + "_tex";
+            }
+            else if (rttiValueName.Contains("_1_") || rttiValueName.Contains("_0_"))
+            {
+                return rttiValueName.Replace("_1_", "_").Replace("_0_", "_");
+            }
+
+            // Add other fallback rules as needed
+            return null;
+        }
+
+        private Dictionary<string, string> GetCustomShaderMapping()
+        {
+            return new Dictionary<string, string>
+            {
+                { "msk_0_tex", "_msk" },
+                { "msk_1_tex", "_msk" },
+                { "msk_1_add_tex", "_msk" },
+                { "idx_0_tex", "_idx" },
+                { "idx_1_tex", "_idx" },
+                { "grd_0_tex", "_gra" },
+                { "grd_1_tex", "_gra" },
+                { "spc_0_tex", "_spc" },
+                { "spc_1_tex", "_spc" },
+                { "clp_0_tex", "_clp" },
+                { "clp_1_tex", "_clp" },
+                { "rgh_0_tex", "_rgh" },
+                { "rgh_1_tex", "_rgh" },
+                { "ocl_0_tex", "_ocl" },
+                { "ocl_1_tex", "_ocl" },
+                { "ems_0_tex", "_ems" },
+                { "ems_1_tex", "_ems" },
+                { "dif_1_tex", "_dif_1" },
+                { "dif_0_tex", "_dif" },
+                { "det_0_b_dtm_dif", "_dif" },
+                { "nrm_1_tex", "_nrm" },
+                { "nrm_0_tex", "_nrm" },
+                { "det_0_b_dtm_tex", "_nrm" }
+            };
+        }
+
+
+        private Dictionary<string, string> GetHDRPMapping()
+        {
+            return new Dictionary<string, string>
+        {
+                {"dif_1_tex", "_BaseColorMap"},
+                {"dif_0_tex", "_BaseColorMap"},
+                {"det_0_b_dtm_dif", "_BaseColorMap" },
+                {"nrm_1_tex", "_NormalMap"},
+                {"nrm_0_tex", "_NormalMap"},
+                {"det_0_b_dtm_tex", "_nrm" },
+                {"msk_1_tex", "_MaskMap"},
+                {"ems_0_tex", "_EmissiveColorMap"},
+                {"ems_1_tex", "_EmissiveColorMap"}
+            };
+        }
+
+        private void ApplyAdditionalSettings(Material material, string rttiValueName, Texture2D texture)
+        {
+            // Example: Apply emissive color if the RTTI value name suggests an emissive texture
+            if (rttiValueName.StartsWith("ems"))
+            {
+                material.SetColor("_EmissiveColor", Color.white * 2);
+                material.EnableKeyword("_EMISSION");
+            }
+            // Additional settings can be applied here based on RTTI value names
         }
 
         private Material LoadMaterial(string materialName)
