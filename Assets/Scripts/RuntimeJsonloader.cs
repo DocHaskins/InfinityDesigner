@@ -18,7 +18,7 @@ namespace doppelganger
     public class RuntimeJsonLoader : MonoBehaviour
     {
         [Header("Managers")]
-        public CharacterBuilder characterBuilder;
+        public CharacterBuilder_InterfaceManager characterBuilder;
         private CinemachineCameraZoomTool cameraTool;
 
         [Header("Interface")]

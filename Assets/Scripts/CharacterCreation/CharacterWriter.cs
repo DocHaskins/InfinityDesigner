@@ -22,6 +22,7 @@ namespace doppelganger
     public class CharacterWriter : MonoBehaviour
     {
         [Header("Managers")]
+        public CharacterBuilder_InterfaceManager interfaceManager;
         public CharacterBuilder characterBuilder;
         public ModelWriter modelWriter;
         public SkeletonLookup skeletonLookup;
@@ -272,7 +273,7 @@ namespace doppelganger
             string jsonOutputPath = Path.Combine(jsonOutputDirectory, $"{saveName.text}.json");
             string modelOutputPath = Path.Combine(targetPath, $"{fileName}.model");
 
-            var sliderValues = characterBuilder.GetSliderValues();
+            var sliderValues = interfaceManager.GetSliderValues();
             var currentlyLoadedModels = characterBuilder.GetCurrentlyLoadedModels();
 
             var slotPairs = new List<ModelData.SlotDataPair>();

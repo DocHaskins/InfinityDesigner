@@ -10,7 +10,7 @@ namespace doppelganger
     public class FilterMapping : MonoBehaviour
     {
         [Header("Managers")]
-        public CharacterBuilder characterBuilder;
+        public CharacterBuilder_InterfaceManager characterBuilder;
         public CinemachineCameraZoomTool cameraZoomTool;
 
         [Header("Interface")]
