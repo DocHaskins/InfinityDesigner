@@ -120,7 +120,8 @@ namespace doppelganger
         {
             // Wait for the end of the frame to ensure dropdowns are populated
             yield return new WaitForEndOfFrame();
-
+            string defaultJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Jsons", "Human", "Player", "player_tpp_skeleton.json");
+            characterBuilder.LoadJsonAndSetSliders(defaultJsonFilePath);
             // Set initial values for Type, Category, and Class dropdowns
 
             categoryDropdown.value = categoryDropdown.options.FindIndex(option => option.text == "Player");
@@ -137,6 +138,8 @@ namespace doppelganger
             saveCategoryDropdown.onValueChanged.AddListener(OnSaveCategoryChanged);
 
             UpdateInterfaceBasedOnDropdownSelection();
+
+            
         }
 
         public void PopulateDropdown(TMPro.TMP_Dropdown dropdown, string path, string defaultValue, bool includeAllOption = false)
@@ -635,32 +638,31 @@ namespace doppelganger
 
         public void UpdateOrOpenModelInfoPanel(string currentSlider)
         {
-            Debug.Log($"currentSlider: {currentSlider}");
-            GameObject existingPanel = GameObject.Find(currentSlider + "ModelInfoPanel");
-            if (existingPanel != null)
+            if (variationBuilder.isPanelOpen)
             {
+                // Panel is open and for the correct slot, update it
                 variationBuilder.UpdateModelInfoPanel(currentSlider);
             }
         }
+
 
         public void OnSliderValueChanged(string slotName, float value, bool userChanged)
         {
             if (userChanged)
             {
                 sliderValues[slotName] = value;
-                string currentSlider = slotName;
-                Debug.Log($"OnVariationSliderValueChanged: currentSlider {currentSlider}");
-                UpdateOrOpenModelInfoPanel(currentSlider);
+                currentSlider = slotName;
             }
-
             if (value == 0)
             {
                 characterBuilder.RemoveModelAndVariationSlider(slotName);
+                UpdateOrOpenModelInfoPanel(null);
             }
             else
             {
                 int modelIndex = Mathf.Clamp((int)(value - 1), 0, int.MaxValue);
                 characterBuilder.LoadModelAndCreateVariationSlider(slotName, modelIndex);
+                UpdateOrOpenModelInfoPanel(currentSlider);
             }
         }
 

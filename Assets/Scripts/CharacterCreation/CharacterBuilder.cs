@@ -28,15 +28,6 @@ namespace doppelganger
         public Dictionary<string, List<Material>> originalMaterials = new Dictionary<string, List<Material>>();
         public Dictionary<string, GameObject> currentlyLoadedModels = new Dictionary<string, GameObject>();
 
-        void Start()
-        {
-
-            // Load default JSON file and set sliders
-            string defaultJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Jsons", "Human", "Player", "player_tpp_skeleton.json");
-            LoadJsonAndSetSliders(defaultJsonFilePath);
-            
-        }
-
         public void Reroll()
         {
             foreach (Transform sliderContainer in interfaceManager.slidersPanel.transform)
@@ -466,7 +457,6 @@ namespace doppelganger
                         // Add new model
                         currentlyLoadedModels.Add(slotName, modelInstance);
                     }
-                    variationBuilder.UpdateModelInfoPanel(slotName);
                 }
                 else
                 {

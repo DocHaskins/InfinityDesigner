@@ -22,6 +22,8 @@ namespace doppelganger
 
         public GameObject currentModel;
         public string currentModelName;
+        public bool isPanelOpen = false;
+        public string openPanelSlotName = "";
 
         public List<string> GetAvailableMaterialNamesForSlot(int slotNumber, string slotName)
         {
@@ -100,74 +102,94 @@ namespace doppelganger
             return null; // File not found
         }
 
-        public void OpenModelInfoPanel(string slotName)
+        public void ToggleModelInfoPanel(string slotName)
         {
-            // Check if a modelInfoPanelPrefab is already instantiated, destroy it if it's for a different slot
-            if (currentModelInfoPanel != null && currentModelInfoPanel.name != slotName + "ModelInfoPanel")
+            Debug.Log($"ToggleModelInfoPanel: slotName: {slotName}");
+            if (isPanelOpen && currentModelInfoPanel != null && openPanelSlotName == slotName)
             {
                 Destroy(currentModelInfoPanel);
-            }
-
-            // Instantiate a new modelInfoPanelPrefab
-            currentModelInfoPanel = Instantiate(modelInfoPanelPrefab, FindObjectOfType<Canvas>().transform, false);
-            currentModelInfoPanel.name = slotName + "ModelInfoPanel";
-
-            if (characterBuilder.currentlyLoadedModels.TryGetValue(slotName, out GameObject currentModel))
-            {
-                this.currentModel = currentModel;
-                this.currentModelName = currentModel.name;
-
-                TextMeshProUGUI meshNameText = currentModelInfoPanel.transform.Find("MeshName").GetComponent<TextMeshProUGUI>();
-                meshNameText.text = currentModel.name.Replace("(Clone)", " ");
-
-                Transform materialSpawn = currentModelInfoPanel.transform.Find("VariationSubPanel/materialSpawn");
-
-                int slotNumber = 1; // Initialize slotNumber correctly
-                foreach (var renderer in currentModel.GetComponentsInChildren<SkinnedMeshRenderer>(true))
-                {
-                    foreach (var material in renderer.sharedMaterials)
-                    {
-                        GameObject dropdownGameObject = Instantiate(variationMaterialDropdownPrefab, materialSpawn);
-                        dropdownGameObject.name = $"{renderer.name}_MaterialDropdown_{slotNumber}";
-
-                        TextMeshProUGUI nameText = dropdownGameObject.transform.Find("Name").GetComponent<TextMeshProUGUI>();
-                        nameText.text = "Slot #" + slotNumber;
-
-                        TMP_Dropdown tmpDropdown = dropdownGameObject.transform.Find("Dropdown").GetComponent<TMP_Dropdown>();
-                        List<string> additionalMaterialNames = GetAvailableMaterialNamesForSlot(slotNumber, slotName);
-                        SetupDropdownWithMaterials(tmpDropdown, material.name, slotNumber, slotName);
-
-                        int currentSlot = slotNumber;
-                        tmpDropdown.onValueChanged.AddListener(delegate (int index) {
-                            string selectedMaterialName = tmpDropdown.options[index].text;
-                            //Debug.Log($"Dropdown Value Changed for Slot #{currentSlot}: {selectedMaterialName}");
-                            ApplyMaterialToSlot(currentModel, currentSlot, selectedMaterialName);
-                        });
-
-                        slotNumber++; // Increment slotNumber for each material
-                    }
-                }
+                currentModelInfoPanel = null;
+                isPanelOpen = false;
             }
             else
             {
-                // If no model is loaded, display the slotName + "ModelInfoPanel"
-                TextMeshProUGUI meshNameText = currentModelInfoPanel.transform.Find("MeshName").GetComponent<TextMeshProUGUI>();
-                meshNameText.text = slotName.Replace("ALL_","").Replace("_"," ").Replace("(Clone)", " ");
+                if (currentModelInfoPanel != null)
+                {
+                    Destroy(currentModelInfoPanel);
+                }
+                OpenModelInfoPanel(slotName);
+                isPanelOpen = true;
+                openPanelSlotName = slotName;
 
-                Debug.LogError($"Model for slot {slotName} not found.");
             }
         }
 
+        public void OpenModelInfoPanel(string slotName)
+        {
+            // Check if ModelInfoPanel already exists
+            if (currentModelInfoPanel == null)
+            {
+                // Instantiate a new modelInfoPanelPrefab if it does not exist
+                currentModelInfoPanel = Instantiate(modelInfoPanelPrefab, FindObjectOfType<Canvas>().transform, false);
+                TextMeshProUGUI meshNameText = currentModelInfoPanel.transform.Find("MeshName").GetComponent<TextMeshProUGUI>();
+                if (string.IsNullOrEmpty(slotName) || !characterBuilder.currentlyLoadedModels.TryGetValue(slotName, out GameObject currentModel))
+                {
+                    meshNameText.text = "Variation Builder";
+                    return;
+                }
+            }
+            // Always reset the name to a generic one since we are reusing the panel
+            currentModelInfoPanel.name = "VariationInfoPanel";
+
+            UpdateModelInfoPanelContent(slotName); // Call a method to update panel content
+        }
+
+
+        public void UpdateModelInfoPanel(string slotName)
+        {
+            //Debug.Log($"UpdateModelInfoPanel: slotName: {slotName}");
+            GameObject modelInfoPanel = GameObject.Find("VariationInfoPanel");
+
+            if (modelInfoPanel != null)
+            {
+                //Debug.Log("ModelInfoPanel found, updating content.");
+                UpdateModelInfoPanelContent(slotName);
+            }
+        }
+
+        private void UpdateModelInfoPanelContent(string slotName)
+        {
+            TextMeshProUGUI meshNameText = currentModelInfoPanel.transform.Find("MeshName").GetComponent<TextMeshProUGUI>();
+            Transform materialSpawn = currentModelInfoPanel.transform.Find("VariationSubPanel/materialSpawn");
+
+            // Clear existing materials to repopulate
+            foreach (Transform child in materialSpawn)
+            {
+                GameObject.Destroy(child.gameObject);
+            }
+
+            if (string.IsNullOrEmpty(slotName) || !characterBuilder.currentlyLoadedModels.TryGetValue(slotName, out GameObject currentModel))
+            {
+                meshNameText.text = "Variation Builder";
+                return; // Early return to avoid further processing
+            }
+
+            if (characterBuilder.currentlyLoadedModels.TryGetValue(slotName, out GameObject loadedModel))
+            {
+                this.currentModel = loadedModel;
+                this.currentModelName = loadedModel.name;
+
+                meshNameText.text = currentModel.name.Replace("(Clone)", " ");
+                PopulateMaterialDropdowns(materialSpawn, loadedModel, slotName);
+            }
+        }
 
         void SetupDropdownWithMaterials(TMP_Dropdown tmpDropdown, string currentMaterialName, int slotNumber, string slotName)
         {
             List<string> additionalMaterialNames = GetAvailableMaterialNamesForSlot(slotNumber, slotName);
 
             tmpDropdown.ClearOptions();
-
-            // Ensure the first option is the currently applied material
             List<string> dropdownOptions = new List<string> { currentMaterialName };
-
             // Append additional materials ensuring no duplicates with the current material
             foreach (var name in additionalMaterialNames)
             {
@@ -176,44 +198,27 @@ namespace doppelganger
                     dropdownOptions.Add(name);
                 }
             }
+            dropdownOptions.AddRange(additionalMaterialNames.Where(name => !dropdownOptions.Contains(name)));
 
             tmpDropdown.AddOptions(dropdownOptions);
-            tmpDropdown.value = 0; // Set the currently applied material as selected by default
+            tmpDropdown.value = dropdownOptions.IndexOf(currentMaterialName); // Ensure the current material is selected
             tmpDropdown.RefreshShownValue();
 
-            // Remember to add the listener to apply the selected material if it's not already done
-        }
+            // Remove existing listeners to avoid duplicate calls
+            tmpDropdown.onValueChanged.RemoveAllListeners();
 
-        public void UpdateModelInfoPanel(string slotName)
-        {
-            GameObject modelInfoPanel = GameObject.Find(slotName + "ModelInfoPanel");
-            if (modelInfoPanel != null)
-            {
-                // Clear existing materials from materialSpawn
-                Transform materialSpawn = modelInfoPanel.transform.Find("VariationSubPanel/materialSpawn");
-                foreach (Transform child in materialSpawn)
-                {
-                    Destroy(child.gameObject);
-                }
-
-                // Re-populate materials based on the newly loaded model
-                if (characterBuilder.currentlyLoadedModels.TryGetValue(slotName, out GameObject loadedModel))
-                {
-                    this.currentModel = loadedModel;
-                    this.currentModelName = loadedModel.name;
-
-                    TextMeshProUGUI meshNameText = modelInfoPanel.transform.Find("MeshName").GetComponent<TextMeshProUGUI>();
-                    meshNameText.text = loadedModel.name.Replace("(Clone)", "");
-                    PopulateMaterialDropdowns(materialSpawn, loadedModel, slotName);
-                }
-            }
+            // Add a new listener
+            tmpDropdown.onValueChanged.AddListener(index => {
+                string selectedMaterialName = tmpDropdown.options[index].text;
+                ApplyMaterialToSlot(currentModel, slotNumber, selectedMaterialName);
+            });
         }
 
         public void UpdateMaterialDropdowns(string slotName)
         {
             if (!characterBuilder.currentlyLoadedModels.TryGetValue(slotName, out GameObject currentModel)) return;
 
-            GameObject modelInfoPanel = GameObject.Find(slotName + "ModelInfoPanel");
+            GameObject modelInfoPanel = GameObject.Find(slotName + "VariationInfoPanel");
             if (modelInfoPanel == null) return;
 
             Transform materialSpawn = modelInfoPanel.transform.Find("VariationSubPanel/materialSpawn");
