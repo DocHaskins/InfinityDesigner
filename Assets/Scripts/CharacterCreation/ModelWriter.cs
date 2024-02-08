@@ -40,7 +40,7 @@ namespace doppelganger
             var emptySlots = requiredSlots.Except(modelData.slotPairs.Select(sp => sp.slotData.name)).ToList();
 
             sb.AppendLine("{");
-            sb.AppendLine("  \"version\": 6,");
+            sb.AppendLine("  \"version\": 6");
             sb.AppendLine("  \"preset\": {");
             sb.AppendLine("    \"skeletonName\": \"" + modelData.skeletonName + "\"");
             sb.AppendLine("  },");

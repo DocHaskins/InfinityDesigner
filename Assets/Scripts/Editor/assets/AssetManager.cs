@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System;
 using static PrefabUtilityScript;
+using static doppelganger.AssetManager;
 
 /// <summary>
 /// Automates the management of models, materials, and prefabs within the project. 
@@ -66,7 +67,12 @@ namespace doppelganger
             GUILayout.Space(20);
             GUILayout.Label("Custom Material Tools", EditorStyles.boldLabel);
             GUILayout.Space(4);
-            minTexturesRequired = EditorGUILayout.IntField("Max textures for Assignment", minTexturesRequired);
+
+            if (GUILayout.Button("Create Materials Index"))
+            {
+                CreateMaterialsIndex();
+            }
+            GUILayout.Space(4);
             materialProcessingLimit = EditorGUILayout.IntField("Max .Mat to Process:", materialProcessingLimit);
 
             if (GUILayout.Button("Fix White Materials"))
@@ -79,9 +85,15 @@ namespace doppelganger
             }
 
             GUILayout.Space(20);
+
             GUILayout.Label("Texture Management", EditorStyles.boldLabel);
             GUILayout.Space(4);
-
+            if (GUILayout.Button("Create Textures Index"))
+            {
+                CreateTexturesIndex();
+            }
+            GUILayout.Space(4);
+            minTexturesRequired = EditorGUILayout.IntField("Max textures for Assignment", minTexturesRequired);
             if (GUILayout.Button("Assign Custom Shader Textures"))
             {
                 AssignCustomShaderTextures();
@@ -206,6 +218,54 @@ namespace doppelganger
 
             EditorUtility.SetDirty(prefabAsset);
             Debug.Log($"Prefab '{prefabAsset.name}' marked as dirty for material updates.");
+        }
+
+        public class MaterialsIndex
+        {
+            public List<string> materials;
+        }
+
+        private void CreateMaterialsIndex()
+        {
+            string materialsFolderPath = "Assets/Resources/Materials";
+            string meshReferencesFolderPath = "Assets/StreamingAssets/Mesh References";
+            string materialsIndexPath = Path.Combine(meshReferencesFolderPath, "materials_index.json");
+
+            // Check if the Materials folder exists
+            if (!Directory.Exists(materialsFolderPath))
+            {
+                Debug.LogError("Materials folder not found at: " + materialsFolderPath);
+                return;
+            }
+
+            // Create a list to store material names
+            List<string> materialNames = new List<string>();
+
+            // Get all the materials in the Materials folder
+            string[] materialFiles = Directory.GetFiles(materialsFolderPath, "*.mat", SearchOption.AllDirectories);
+            foreach (string materialFile in materialFiles)
+            {
+                // Get the material name without the extension
+                string materialName = Path.GetFileNameWithoutExtension(materialFile);
+                materialNames.Add(materialName);
+            }
+
+            // Wrap the list in an object
+            MaterialsIndex materialsIndex = new MaterialsIndex { materials = materialNames };
+
+            // Convert the object to JSON
+            string materialsIndexJson = JsonUtility.ToJson(materialsIndex, true);
+
+            // Create the Mesh References folder if it doesn't exist
+            if (!Directory.Exists(meshReferencesFolderPath))
+            {
+                Directory.CreateDirectory(meshReferencesFolderPath);
+            }
+
+            // Write the JSON to the materials index file
+            File.WriteAllText(materialsIndexPath, materialsIndexJson);
+
+            Debug.Log("Materials index created successfully at: " + materialsIndexPath);
         }
 
         private void CheckAllMaterials()
@@ -541,6 +601,54 @@ namespace doppelganger
             }
             Debug.Log($"No similar material found for {baseName}");
             return null;
+        }
+
+        public class TexturesIndex
+        {
+            public List<string> textures;
+        }
+
+        private void CreateTexturesIndex()
+        {
+            string texturesFolderPath = "Assets/Resources/Textures";
+            string meshReferencesFolderPath = "Assets/StreamingAssets/Mesh References";
+            string texturesIndexPath = Path.Combine(meshReferencesFolderPath, "textures_index.json");
+
+            // Check if the Textures folder exists
+            if (!Directory.Exists(texturesFolderPath))
+            {
+                Debug.LogError("Textures folder not found at: " + texturesFolderPath);
+                return;
+            }
+
+            // Create a list to store texture names
+            List<string> textureNames = new List<string>();
+
+            // Get all the textures in the Textures folder
+            string[] textureFiles = Directory.GetFiles(texturesFolderPath, "*.png", SearchOption.AllDirectories);
+            foreach (string textureFile in textureFiles)
+            {
+                // Get the texture name without the extension
+                string textureName = Path.GetFileNameWithoutExtension(textureFile);
+                textureNames.Add(textureName);
+            }
+
+            // Wrap the list in an object
+            TexturesIndex texturesIndex = new TexturesIndex { textures = textureNames };
+
+            // Convert the dictionary to JSON
+            string texturesIndexJson = JsonUtility.ToJson(texturesIndex, true);
+
+            // Create the Mesh References folder if it doesn't exist
+            if (!Directory.Exists(meshReferencesFolderPath))
+            {
+                Directory.CreateDirectory(meshReferencesFolderPath);
+            }
+
+            // Write the JSON to the textures index file
+            File.WriteAllText(texturesIndexPath, texturesIndexJson);
+
+            Debug.Log("Textures index created successfully at: " + texturesIndexPath);
         }
 
         private void AssignCustomShaderTextures()

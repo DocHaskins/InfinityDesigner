@@ -115,7 +115,7 @@ public class ModelData
     public class MaterialResource
     {
         public int number;
-        public List<Resource> resources;
+        public List<Resource> resources = new List<Resource>();
     }
 
     [Serializable]

@@ -68,6 +68,61 @@ namespace doppelganger
             }
         }
 
+        public Dictionary<string, float> LoadSlotWeights()
+        {
+            string iniPath = Path.Combine(Application.streamingAssetsPath, "config.ini");
+            Dictionary<string, float> slotWeights = new Dictionary<string, float>();
+
+            if (File.Exists(iniPath))
+            {
+                //Debug.Log("Reading ini file: " + iniPath);
+                string[] lines = File.ReadAllLines(iniPath);
+                bool readingWeightsSection = false;
+                foreach (string line in lines)
+                {
+                    if (line.StartsWith(";") || string.IsNullOrWhiteSpace(line))
+                        continue;
+
+                    if (line.StartsWith("[") && line.EndsWith("]"))
+                    {
+                        if (line.Equals("[Weights]", StringComparison.OrdinalIgnoreCase))
+                        {
+                            readingWeightsSection = true;
+                        }
+                        else
+                        {
+                            readingWeightsSection = false;
+                        }
+                        continue;
+                    }
+
+                    if (readingWeightsSection)
+                    {
+                        string[] parts = line.Split('=');
+                        if (parts.Length == 2)
+                        {
+                            string slotName = parts[0].Trim();
+                            if (float.TryParse(parts[1], out float weight))
+                            {
+                                slotWeights[slotName] = weight;
+                                //Debug.Log($"Loaded weight for {slotName}: {weight}");
+                            }
+                            else
+                            {
+                                Debug.LogWarning($"Could not parse weight for slot '{slotName}' in ini file.");
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogError("Slot weights ini file not found: " + iniPath);
+            }
+
+            return slotWeights;
+        }
+
         public void Reset()
         {
             foreach (Transform sliderContainer in interfaceManager.slidersPanel.transform)
@@ -411,6 +466,7 @@ namespace doppelganger
                         // Add new model
                         currentlyLoadedModels.Add(slotName, modelInstance);
                     }
+                    variationBuilder.UpdateModelInfoPanel(slotName);
                 }
                 else
                 {

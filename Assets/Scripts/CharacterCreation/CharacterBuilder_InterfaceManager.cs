@@ -38,6 +38,7 @@ namespace doppelganger
         public GameObject variationSliderPrefab;
         public GameObject buttonPrefab;
         public Button presetLoadButton;
+        public Button infoPanelButton;
 
         private string currentType;
         private string currentPath;
@@ -45,6 +46,7 @@ namespace doppelganger
         private string lastFilterCategoryKey = "";
         private string selectedCategory;
         private string selectedClass;
+        public string currentSlider = "";
 
         public Dictionary<string, float> sliderValues = new Dictionary<string, float>();
         private Dictionary<string, bool> sliderSetStatus = new Dictionary<string, bool>();
@@ -58,9 +60,18 @@ namespace doppelganger
     { "survivor", "sv" },
     { "bandit", "bdt" },
     { "volatile", "volatile" }
-    // Add other class conversions as needed
 };
 
+        public class DropdownValueMapper : MonoBehaviour
+        {
+            public Dictionary<string, string> ValueMap { get; set; } = new Dictionary<string, string>();
+
+            // Method to update the mapping
+            public void UpdateValueMap(Dictionary<string, string> newValueMap)
+            {
+                ValueMap = newValueMap;
+            }
+        }
 
         void Start()
         {
@@ -102,7 +113,7 @@ namespace doppelganger
 
             // Manually update preset dropdown based on initial dropdown selections
             UpdatePresetDropdown();
-            slotWeights = LoadSlotWeights();
+            slotWeights = characterBuilder.LoadSlotWeights();
         }
 
         IEnumerator SetInitialDropdownValues()
@@ -126,239 +137,6 @@ namespace doppelganger
             saveCategoryDropdown.onValueChanged.AddListener(OnSaveCategoryChanged);
 
             UpdateInterfaceBasedOnDropdownSelection();
-        }
-
-        private Dictionary<string, float> LoadSlotWeights()
-        {
-            string iniPath = Path.Combine(Application.streamingAssetsPath, "config.ini");
-            Dictionary<string, float> slotWeights = new Dictionary<string, float>();
-
-            if (File.Exists(iniPath))
-            {
-                //Debug.Log("Reading ini file: " + iniPath);
-                string[] lines = File.ReadAllLines(iniPath);
-                bool readingWeightsSection = false;
-                foreach (string line in lines)
-                {
-                    if (line.StartsWith(";") || string.IsNullOrWhiteSpace(line))
-                        continue;
-
-                    if (line.StartsWith("[") && line.EndsWith("]"))
-                    {
-                        if (line.Equals("[Weights]", StringComparison.OrdinalIgnoreCase))
-                        {
-                            readingWeightsSection = true;
-                        }
-                        else
-                        {
-                            readingWeightsSection = false;
-                        }
-                        continue;
-                    }
-
-                    if (readingWeightsSection)
-                    {
-                        string[] parts = line.Split('=');
-                        if (parts.Length == 2)
-                        {
-                            string slotName = parts[0].Trim();
-                            if (float.TryParse(parts[1], out float weight))
-                            {
-                                slotWeights[slotName] = weight;
-                                //Debug.Log($"Loaded weight for {slotName}: {weight}");
-                            }
-                            else
-                            {
-                                Debug.LogWarning($"Could not parse weight for slot '{slotName}' in ini file.");
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                Debug.LogError("Slot weights ini file not found: " + iniPath);
-            }
-
-            return slotWeights;
-        }
-
-        public void SetDropdownByValue(TMP_Dropdown dropdown, string value)
-        {
-            int index = dropdown.options.FindIndex(option => string.Equals(option.text, value, StringComparison.OrdinalIgnoreCase));
-            if (index != -1)
-            {
-                dropdown.value = index;
-                dropdown.RefreshShownValue();
-            }
-            else
-            {
-                Debug.LogError($"Option '{value}' not found in dropdown.");
-            }
-        }
-
-        public class DropdownValueMapper : MonoBehaviour
-        {
-            public Dictionary<string, string> ValueMap { get; set; } = new Dictionary<string, string>();
-
-            // Method to update the mapping
-            public void UpdateValueMap(Dictionary<string, string> newValueMap)
-            {
-                ValueMap = newValueMap;
-            }
-        }
-
-        public string GetActualValueFromDropdown(TMPro.TMP_Dropdown dropdown)
-        {
-            DropdownValueMapper mapper = dropdown.gameObject.GetComponent<DropdownValueMapper>();
-            if (mapper != null && mapper.ValueMap.TryGetValue(dropdown.options[dropdown.value].text, out string actualValue))
-            {
-                return actualValue;
-            }
-            else
-            {
-                Debug.LogError("No mapping found for selected dropdown value");
-                return null;
-            }
-        }
-
-        public void OnPresetLoadButtonPressed()
-        {
-            string selectedPreset = GetActualValueFromDropdown(presetDropdown);
-            saveName.text = selectedPreset;
-            if (!string.IsNullOrEmpty(selectedPreset))
-            {
-                // Assuming GetTypeFromSelector and categoryDropdown provide correct values
-                string type = GetTypeFromSelector();
-                string category = categoryDropdown.options[categoryDropdown.value].text;
-
-                // Build the correct path without appending the class as a directory
-                string presetsPath = Path.Combine(Application.streamingAssetsPath, "Jsons", type.Equals("ALL") ? "" : type, category.Equals("ALL") ? "" : category, $"{selectedPreset}.json");
-
-                Debug.Log("Loading JSON from path: " + presetsPath);
-                characterBuilder.LoadJsonAndSetSliders(presetsPath);
-            }
-            else
-            {
-                Debug.LogError("Selected preset is invalid or not found");
-            }
-        }
-
-        public string FindSlotForModel(string modelName)
-        {
-            //Debug.Log($"FindSlotForModel for {modelName}");
-            string type = GetTypeFromSelector();
-            string category = categoryDropdown.options[categoryDropdown.value].text;
-            string classSelection = classDropdown.options[classDropdown.value].text;
-
-            string slotDataPath = Path.Combine(Application.streamingAssetsPath, "SlotData", type);
-            if (category != "ALL")
-            {
-                slotDataPath = Path.Combine(slotDataPath, category);
-            }
-            if (classSelection != "ALL")
-            {
-                slotDataPath = Path.Combine(slotDataPath, classSelection);
-            }
-
-            if (!Directory.Exists(slotDataPath))
-            {
-                Debug.LogError($"Slot data folder not found: {slotDataPath}");
-                return null;
-            }
-
-            foreach (var slotFile in Directory.GetFiles(slotDataPath, "*.json"))
-            {
-                string slotJsonData = File.ReadAllText(slotFile);
-                try
-                {
-                    SlotModelData slotModelData = JsonUtility.FromJson<SlotModelData>(slotJsonData);
-                    foreach (string meshName in slotModelData.meshes)
-                    {
-                        if (string.Equals(meshName.Trim(), modelName, StringComparison.OrdinalIgnoreCase))
-                        {
-                            string slotName = Path.GetFileNameWithoutExtension(slotFile);
-                            //Debug.Log($"Found slot {slotName} for model {modelName}");
-                            return slotName;
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError($"Error parsing JSON file: {slotFile}. Error: {e.Message}");
-                }
-            }
-
-            Debug.LogError($"Model {modelName} not found in any slot");
-            return null;
-        }
-
-        public int GetModelIndex(string slotName, string modelName)
-        {
-            //Debug.Log($"GetModelIndex for slot {slotName} and model {modelName}");
-            string type = GetTypeFromSelector();
-            string category = categoryDropdown.options[categoryDropdown.value].text;
-            string classSelection = classDropdown.options[classDropdown.value].text;
-
-            string slotJsonFilePath = Path.Combine(Application.streamingAssetsPath, "SlotData", type);
-            if (category != "ALL")
-            {
-                slotJsonFilePath = Path.Combine(slotJsonFilePath, category);
-            }
-            if (classSelection != "ALL")
-            {
-                slotJsonFilePath = Path.Combine(slotJsonFilePath, classSelection);
-            }
-            slotJsonFilePath = Path.Combine(slotJsonFilePath, slotName + ".json");
-
-            if (File.Exists(slotJsonFilePath))
-            {
-                string slotJsonData = File.ReadAllText(slotJsonFilePath);
-                SlotModelData slotModelData = JsonUtility.FromJson<SlotModelData>(slotJsonData);
-
-                for (int i = 0; i < slotModelData.meshes.Count; i++)
-                {
-                    if (string.Equals(slotModelData.meshes[i].Trim(), modelName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        // Increment index by 1 so 0 can represent "off"
-                        int adjustedIndex = i + 1;
-                        //Debug.Log($"Model {modelName} found at index {i}, adjusted index: {adjustedIndex}, in slot {slotName}");
-                        return adjustedIndex;
-                    }
-                }
-                Debug.Log($"Model {modelName} not found in slot {slotName}");
-            }
-            else
-            {
-                Debug.Log($"Slot JSON file not found for {slotName}");
-            }
-            return -1;
-        }
-
-        public void SetSliderValue(string slotName, int modelIndex)
-        {
-            string sliderName = slotName + "Slider";
-            //Debug.Log($"SetSliderValue for {sliderName} with model index {modelIndex}");
-            int sliderIndex = FindSliderIndex(sliderName);
-            if (sliderIndex != -1)
-            {
-                Transform sliderTransform = slidersPanel.transform.GetChild(sliderIndex);
-                Slider slider = sliderTransform.GetComponentInChildren<Slider>();
-                if (slider != null)
-                {
-                    slider.value = modelIndex;
-                    //Debug.Log($"Set slider value for {sliderName} to {modelIndex}");
-                }
-                else
-                {
-                    Debug.Log($"Slider component not found for {sliderName}");
-                }
-            }
-            else
-            {
-                Debug.Log($"Slider index not found for {sliderName}");
-            }
-            //ResetCameraToDefaultView();
         }
 
         public void PopulateDropdown(TMPro.TMP_Dropdown dropdown, string path, string defaultValue, bool includeAllOption = false)
@@ -542,6 +320,127 @@ namespace doppelganger
             return fileName;
         }
 
+        
+        public void SetDropdownByValue(TMP_Dropdown dropdown, string value)
+        {
+            int index = dropdown.options.FindIndex(option => string.Equals(option.text, value, StringComparison.OrdinalIgnoreCase));
+            if (index != -1)
+            {
+                dropdown.value = index;
+                dropdown.RefreshShownValue();
+            }
+            else
+            {
+                Debug.LogError($"Option '{value}' not found in dropdown.");
+            }
+        }
+
+        
+        public string GetActualValueFromDropdown(TMPro.TMP_Dropdown dropdown)
+        {
+            DropdownValueMapper mapper = dropdown.gameObject.GetComponent<DropdownValueMapper>();
+            if (mapper != null && mapper.ValueMap.TryGetValue(dropdown.options[dropdown.value].text, out string actualValue))
+            {
+                return actualValue;
+            }
+            else
+            {
+                Debug.LogError("No mapping found for selected dropdown value");
+                return null;
+            }
+        }
+
+        public string FindSlotForModel(string modelName)
+        {
+            //Debug.Log($"FindSlotForModel for {modelName}");
+            string type = GetTypeFromSelector();
+            string category = categoryDropdown.options[categoryDropdown.value].text;
+            string classSelection = classDropdown.options[classDropdown.value].text;
+
+            string slotDataPath = Path.Combine(Application.streamingAssetsPath, "SlotData", type);
+            if (category != "ALL")
+            {
+                slotDataPath = Path.Combine(slotDataPath, category);
+            }
+            if (classSelection != "ALL")
+            {
+                slotDataPath = Path.Combine(slotDataPath, classSelection);
+            }
+
+            if (!Directory.Exists(slotDataPath))
+            {
+                Debug.LogError($"Slot data folder not found: {slotDataPath}");
+                return null;
+            }
+
+            foreach (var slotFile in Directory.GetFiles(slotDataPath, "*.json"))
+            {
+                string slotJsonData = File.ReadAllText(slotFile);
+                try
+                {
+                    SlotModelData slotModelData = JsonUtility.FromJson<SlotModelData>(slotJsonData);
+                    foreach (string meshName in slotModelData.meshes)
+                    {
+                        if (string.Equals(meshName.Trim(), modelName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            string slotName = Path.GetFileNameWithoutExtension(slotFile);
+                            //Debug.Log($"Found slot {slotName} for model {modelName}");
+                            return slotName;
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Error parsing JSON file: {slotFile}. Error: {e.Message}");
+                }
+            }
+
+            Debug.LogError($"Model {modelName} not found in any slot");
+            return null;
+        }
+
+        public int GetModelIndex(string slotName, string modelName)
+        {
+            //Debug.Log($"GetModelIndex for slot {slotName} and model {modelName}");
+            string type = GetTypeFromSelector();
+            string category = categoryDropdown.options[categoryDropdown.value].text;
+            string classSelection = classDropdown.options[classDropdown.value].text;
+
+            string slotJsonFilePath = Path.Combine(Application.streamingAssetsPath, "SlotData", type);
+            if (category != "ALL")
+            {
+                slotJsonFilePath = Path.Combine(slotJsonFilePath, category);
+            }
+            if (classSelection != "ALL")
+            {
+                slotJsonFilePath = Path.Combine(slotJsonFilePath, classSelection);
+            }
+            slotJsonFilePath = Path.Combine(slotJsonFilePath, slotName + ".json");
+
+            if (File.Exists(slotJsonFilePath))
+            {
+                string slotJsonData = File.ReadAllText(slotJsonFilePath);
+                SlotModelData slotModelData = JsonUtility.FromJson<SlotModelData>(slotJsonData);
+
+                for (int i = 0; i < slotModelData.meshes.Count; i++)
+                {
+                    if (string.Equals(slotModelData.meshes[i].Trim(), modelName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Increment index by 1 so 0 can represent "off"
+                        int adjustedIndex = i + 1;
+                        //Debug.Log($"Model {modelName} found at index {i}, adjusted index: {adjustedIndex}, in slot {slotName}");
+                        return adjustedIndex;
+                    }
+                }
+                Debug.Log($"Model {modelName} not found in slot {slotName}");
+            }
+            else
+            {
+                Debug.Log($"Slot JSON file not found for {slotName}");
+            }
+            return -1;
+        }
+
         public List<string> GetJsonFiles(string path)
         {
             if (Directory.Exists(path))
@@ -616,6 +515,23 @@ namespace doppelganger
             }
         }
 
+        public void PopulateSliders(string path)
+        {
+            // Clear existing sliders first
+            ClearExistingSliders();
+
+            // Your logic to load sliders from the specified path
+            string[] files = Directory.GetFiles(path, "*.json");
+            foreach (var file in files)
+            {
+                string fileName = Path.GetFileNameWithoutExtension(file);
+                CreateSliderForSlot(fileName, path); // Pass the path here
+            }
+
+            // Rebuild layout if necessary
+            LayoutRebuilder.ForceRebuildLayoutImmediate(slidersPanel.GetComponent<RectTransform>());
+        }
+
         public void PopulateSlidersWithFilters(string basePath, List<string> filters)
         {
             ClearExistingSliders();
@@ -663,22 +579,7 @@ namespace doppelganger
             //CreateDynamicButtons(allFilters);
         }
 
-        public void PopulateSliders(string path)
-        {
-            // Clear existing sliders first
-            ClearExistingSliders();
-
-            // Your logic to load sliders from the specified path
-            string[] files = Directory.GetFiles(path, "*.json");
-            foreach (var file in files)
-            {
-                string fileName = Path.GetFileNameWithoutExtension(file);
-                CreateSliderForSlot(fileName, path); // Pass the path here
-            }
-
-            // Rebuild layout if necessary
-            LayoutRebuilder.ForceRebuildLayoutImmediate(slidersPanel.GetComponent<RectTransform>());
-        }
+       
 
         public void ClearExistingSliders()
         {
@@ -724,11 +625,44 @@ namespace doppelganger
                 slider.onValueChanged.AddListener(delegate { OnSliderValueChanged(slotName, slider.value, true); });
             }
 
-            // Set label text
+            // Set label text only for the slider
             TextMeshProUGUI labelText = sliderObject.GetComponentInChildren<TextMeshProUGUI>();
-            if (labelText != null) labelText.text = slotName.Replace("ALL_", "");
+            if (labelText != null && sliderObject.name.Contains("Slider"))
+            {
+                labelText.text = slotName.Replace("ALL_", "");
+            }
         }
 
+        public void UpdateOrOpenModelInfoPanel(string currentSlider)
+        {
+            Debug.Log($"currentSlider: {currentSlider}");
+            GameObject existingPanel = GameObject.Find(currentSlider + "ModelInfoPanel");
+            if (existingPanel != null)
+            {
+                variationBuilder.UpdateModelInfoPanel(currentSlider);
+            }
+        }
+
+        public void OnSliderValueChanged(string slotName, float value, bool userChanged)
+        {
+            if (userChanged)
+            {
+                sliderValues[slotName] = value;
+                string currentSlider = slotName;
+                Debug.Log($"OnVariationSliderValueChanged: currentSlider {currentSlider}");
+                UpdateOrOpenModelInfoPanel(currentSlider);
+            }
+
+            if (value == 0)
+            {
+                characterBuilder.RemoveModelAndVariationSlider(slotName);
+            }
+            else
+            {
+                int modelIndex = Mathf.Clamp((int)(value - 1), 0, int.MaxValue);
+                characterBuilder.LoadModelAndCreateVariationSlider(slotName, modelIndex);
+            }
+        }
 
         public void CreateVariationSlider(string slotName, int variationCount)
         {
@@ -752,55 +686,6 @@ namespace doppelganger
                 variationSlider.maxValue = variationCount;
                 variationSlider.wholeNumbers = true;
                 variationSlider.onValueChanged.AddListener(delegate { OnVariationSliderValueChanged(slotName, variationSlider.value); });
-            }
-
-            TextMeshProUGUI variationLabel = variationSliderObject.GetComponentInChildren<TextMeshProUGUI>();
-            if (variationLabel != null)
-            {
-                variationLabel.text = "Variation";
-            }
-
-            Transform infoButtonTransform = variationSliderObject.transform.Find("InfoButton");
-            if (infoButtonTransform != null)
-            {
-                GameObject infoButton = infoButtonTransform.gameObject;
-                Button btnComponent = infoButton.GetComponent<Button>();
-                btnComponent.onClick.RemoveAllListeners();
-                btnComponent.onClick.AddListener(delegate { variationBuilder.OpenModelInfoPanel(slotName); });
-            }
-            else
-            {
-                Debug.LogError("InfoButton not found as a child of the variationSliderObject.");
-            }
-        }
-
-        public int FindSliderIndex(string sliderName)
-        {
-            for (int i = 0; i < slidersPanel.transform.childCount; i++)
-            {
-                if (slidersPanel.transform.GetChild(i).name == sliderName)
-                {
-                    return i;
-                }
-            }
-            return -1; // Return -1 if the slider is not found
-        }
-
-        public void OnSliderValueChanged(string slotName, float value, bool userChanged)
-        {
-            if (userChanged)
-            {
-                sliderValues[slotName] = value;
-            }
-
-            if (value == 0)
-            {
-                characterBuilder.RemoveModelAndVariationSlider(slotName);
-            }
-            else
-            {
-                int modelIndex = Mathf.Clamp((int)(value - 1), 0, int.MaxValue);
-                characterBuilder.LoadModelAndCreateVariationSlider(slotName, modelIndex);
             }
         }
 
@@ -843,6 +728,29 @@ namespace doppelganger
             {
                 Debug.LogError("Material JSON file not found: " + materialJsonFilePath);
             }
+            string currentSlider = slotName;
+            Debug.Log($"OnVariationSliderValueChanged: currentSlider {currentSlider}");
+            UpdateOrOpenModelInfoPanel(currentSlider);
+            variationBuilder.UpdateMaterialDropdowns(slotName);
+        }
+
+        public void CreateOrUpdateVariationSlider(string slotName, string modelName)
+        {
+            // Check if a variation slider already exists and remove it
+            RemoveVariationSlider(slotName);
+
+            string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");
+            if (File.Exists(materialJsonFilePath))
+            {
+                string materialJsonData = File.ReadAllText(materialJsonFilePath);
+                ModelData.ModelInfo modelInfo = JsonUtility.FromJson<ModelData.ModelInfo>(materialJsonData);
+
+                if (modelInfo != null && modelInfo.variations != null && modelInfo.variations.Count > 0)
+                {
+                    CreateVariationSlider(slotName, modelInfo.variations.Count);
+                }
+                // No else block needed, as RemoveVariationSlider has already been called
+            }
         }
 
         public void RemoveVariationSlider(string slotName)
@@ -850,6 +758,20 @@ namespace doppelganger
             Transform existingVariationSlider = slidersPanel.transform.Find(slotName + "VariationSlider");
             if (existingVariationSlider != null) Destroy(existingVariationSlider.gameObject);
         }
+
+        public int FindSliderIndex(string sliderName)
+        {
+            for (int i = 0; i < slidersPanel.transform.childCount; i++)
+            {
+                if (slidersPanel.transform.GetChild(i).name == sliderName)
+                {
+                    return i;
+                }
+            }
+            return -1; // Return -1 if the slider is not found
+        }
+
+               
 
         public string GetModelNameFromIndex(string slotName, int modelIndex)
         {
@@ -887,28 +809,57 @@ namespace doppelganger
             return null;
         }
 
-        public void CreateOrUpdateVariationSlider(string slotName, string modelName)
-        {
-            // Check if a variation slider already exists and remove it
-            RemoveVariationSlider(slotName);
-
-            string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");
-            if (File.Exists(materialJsonFilePath))
-            {
-                string materialJsonData = File.ReadAllText(materialJsonFilePath);
-                ModelData.ModelInfo modelInfo = JsonUtility.FromJson<ModelData.ModelInfo>(materialJsonData);
-
-                if (modelInfo != null && modelInfo.variations != null && modelInfo.variations.Count > 0)
-                {
-                    CreateVariationSlider(slotName, modelInfo.variations.Count);
-                }
-                // No else block needed, as RemoveVariationSlider has already been called
-            }
-        }
-
         public Dictionary<string, float> GetSliderValues()
         {
             return sliderValues;
+        }
+
+        public void SetSliderValue(string slotName, int modelIndex)
+        {
+            string sliderName = slotName + "Slider";
+            //Debug.Log($"SetSliderValue for {sliderName} with model index {modelIndex}");
+            int sliderIndex = FindSliderIndex(sliderName);
+            if (sliderIndex != -1)
+            {
+                Transform sliderTransform = slidersPanel.transform.GetChild(sliderIndex);
+                Slider slider = sliderTransform.GetComponentInChildren<Slider>();
+                if (slider != null)
+                {
+                    slider.value = modelIndex;
+                    //Debug.Log($"Set slider value for {sliderName} to {modelIndex}");
+                }
+                else
+                {
+                    Debug.Log($"Slider component not found for {sliderName}");
+                }
+            }
+            else
+            {
+                Debug.Log($"Slider index not found for {sliderName}");
+            }
+            //ResetCameraToDefaultView();
+        }
+
+        public void OnPresetLoadButtonPressed()
+        {
+            string selectedPreset = GetActualValueFromDropdown(presetDropdown);
+            saveName.text = selectedPreset;
+            if (!string.IsNullOrEmpty(selectedPreset))
+            {
+                // Assuming GetTypeFromSelector and categoryDropdown provide correct values
+                string type = GetTypeFromSelector();
+                string category = categoryDropdown.options[categoryDropdown.value].text;
+
+                // Build the correct path without appending the class as a directory
+                string presetsPath = Path.Combine(Application.streamingAssetsPath, "Jsons", type.Equals("ALL") ? "" : type, category.Equals("ALL") ? "" : category, $"{selectedPreset}.json");
+
+                Debug.Log("Loading JSON from path: " + presetsPath);
+                characterBuilder.LoadJsonAndSetSliders(presetsPath);
+            }
+            else
+            {
+                Debug.LogError("Selected preset is invalid or not found");
+            }
         }
     }
 }
