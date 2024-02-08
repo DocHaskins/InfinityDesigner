@@ -4,13 +4,13 @@ using UnityEngine.UI;
 
 public class SaveVariationButtonHandler : MonoBehaviour
 {
-    private VariationBuilder variationBuilder;
+    private VariationWriter variationWriter;
 
     void Start()
     {
         // Find VariationBuilder in the scene
-        variationBuilder = FindObjectOfType<VariationBuilder>();
-        if (variationBuilder == null)
+        variationWriter = FindObjectOfType<VariationWriter>();
+        if (variationWriter == null)
         {
             Debug.LogError("SaveVariationButtonHandler: Failed to find VariationBuilder in the scene.");
             return;
@@ -20,7 +20,7 @@ public class SaveVariationButtonHandler : MonoBehaviour
         if (saveButton != null)
         {
             // Use a lambda to call SaveNewVariation with correct context
-            saveButton.onClick.AddListener(() => variationBuilder.SaveNewVariation());
+            saveButton.onClick.AddListener(() => variationWriter.SaveNewVariation());
         }
         else
         {
