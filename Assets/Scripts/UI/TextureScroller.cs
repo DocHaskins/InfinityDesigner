@@ -1,10 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using UnlimitedScrollUI.Example;
 
-namespace UnlimitedScrollUI.Example
+namespace doppelganger
 {
     public class TextureScroller : MonoBehaviour
     {
@@ -12,24 +14,30 @@ namespace UnlimitedScrollUI.Example
         public GameObject cellPrefab; // Assuming this is your cell prefab
         public bool autoGenerate; // Control the generation process
         private List<Texture2D> allTextures;
-        public string searchTerm = "_dif";
-        private IUnlimitedScroller unlimitedScroller;
+        public string searchTerm = "_msk";
+        private UnlimitedScrollUI.IUnlimitedScroller unlimitedScroller;
+        public GameObject currentModel;
+        private string currentSlotName;
+        public event Action<Texture2D> onTextureSelected;
+        public delegate void TextureSelectedHandler(Texture2D texture, GameObject model, string slotName);
+        public event Action<Texture2D, GameObject, string> TextureSelected;
 
         private void Start()
         {
-            unlimitedScroller = GetComponent<IUnlimitedScroller>();
-            //LoadTextures(searchTerm);
+            unlimitedScroller = GetComponent<UnlimitedScrollUI.IUnlimitedScroller>();
+            LoadTextures(searchTerm);
             if (autoGenerate)
             {
                 StartCoroutine(DelayGenerate());
             }
         }
 
-        private void LoadTextures(string filter)
+        public void LoadTextures(string filter)
         {
             // Load and filter textures based on the search term
             allTextures = Resources.LoadAll<Texture2D>("Textures").Where(t => t.name.EndsWith(filter)).ToList();
             Debug.Log($"Total Textures: {allTextures.Count}");
+            GenerateTextures();
         }
 
         private IEnumerator DelayGenerate()
@@ -41,9 +49,11 @@ namespace UnlimitedScrollUI.Example
 
         private void GenerateTextures()
         {
+            //ClearExistingCells();
+
             unlimitedScroller.Generate(cellPrefab, allTextures.Count, (index, iCell) =>
             {
-                var cell = iCell as RegularCell; // Assuming RegularCell is your cell class
+                var cell = iCell as UnlimitedScrollUI.RegularCell; // Assuming RegularCell is your cell class
                 if (cell != null)
                 {
                     // Generate and assign thumbnail to the cell
@@ -73,10 +83,16 @@ namespace UnlimitedScrollUI.Example
             return thumbnail;
         }
 
+        public void SetCurrentSlotName(string name)
+        {
+            currentSlotName = name;
+            Debug.Log($"SetCurrentSlotName: {currentSlotName}");
+        }
+
         private void SelectTexture(Texture2D texture)
         {
-            // Log the selected texture (could be extended to apply the texture)
-            Debug.Log($"Selected texture: {texture.name}");
+            Debug.Log($"SelectTexture: currentModel is {(currentModel == null ? "null" : currentModel.name)}, slotName is {currentSlotName}");
+            TextureSelected?.Invoke(texture, currentModel, currentSlotName);
         }
 
         // Optionally, add a public method to trigger texture generation manually
@@ -85,6 +101,37 @@ namespace UnlimitedScrollUI.Example
             if (!autoGenerate)
             {
                 StartCoroutine(DelayGenerate());
+            }
+        }
+
+        public void ClearOnTextureSelectedSubscriptions()
+        {
+            onTextureSelected = null;
+        }
+
+        public void RefreshTextures(string newSearchTerm)
+        {
+            // Update the searchTerm
+            searchTerm = newSearchTerm;
+
+            // Clear existing textures and UI cells
+            ClearExistingCells();
+
+            // Load and display new textures based on the updated searchTerm
+            LoadTextures(searchTerm);
+        }
+
+        private void ClearExistingCells()
+        {
+            allTextures.Clear();
+
+            if (unlimitedScroller != null)
+            {
+                unlimitedScroller.Clear();
+            }
+            else
+            {
+                Debug.LogError("unlimitedScroller is null.");
             }
         }
     }

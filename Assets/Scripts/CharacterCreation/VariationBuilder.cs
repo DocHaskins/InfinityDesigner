@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using static ModelData;
 
 namespace doppelganger
@@ -18,11 +19,14 @@ namespace doppelganger
         public GameObject modelInfoPanelPrefab;
         public GameObject variationMaterialDropdownPrefab;
         public GameObject currentModelInfoPanel;
+        public GameObject variationTextureSlotPanelPrefab;
 
         public GameObject currentModel;
         public string currentModelName;
         public bool isPanelOpen = false;
         public string openPanelSlotName = "";
+
+        private Dictionary<GameObject, GameObject> dropdownToPanelMap = new Dictionary<GameObject, GameObject>();
 
         public List<string> GetAvailableMaterialNamesForSlot(int slotNumber, string slotName)
         {
@@ -159,7 +163,7 @@ namespace doppelganger
         private void UpdateModelInfoPanelContent(string slotName)
         {
             TextMeshProUGUI meshNameText = currentModelInfoPanel.transform.Find("MeshName").GetComponent<TextMeshProUGUI>();
-            Transform materialSpawn = currentModelInfoPanel.transform.Find("VariationSubPanel/materialSpawn");
+            Transform materialSpawn = currentModelInfoPanel.transform.Find("VariationSubPanel/GridScrollView/Viewport/materialSpawn");
 
             // Clear existing materials to repopulate
             foreach (Transform child in materialSpawn)
@@ -180,6 +184,41 @@ namespace doppelganger
 
                 meshNameText.text = currentModel.name.Replace("(Clone)", " ");
                 PopulateMaterialDropdowns(materialSpawn, loadedModel, slotName);
+            }
+        }
+
+        void PopulateMaterialDropdowns(Transform materialSpawn, GameObject currentModel, string slotName)
+        {
+            SkinnedMeshRenderer[] renderers = currentModel.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+            int slotNumber = 1; // Initialize slotNumber correctly
+            foreach (var renderer in renderers)
+            {
+                Material currentMaterial = renderer.sharedMaterials.Length > 0 ? renderer.sharedMaterials[0] : null;
+                if (currentMaterial != null)
+                {
+                    GameObject dropdownGameObject = Instantiate(variationMaterialDropdownPrefab, materialSpawn);
+                    TMP_Dropdown tmpDropdown = dropdownGameObject.GetComponentInChildren<TMP_Dropdown>();
+                    List<string> additionalMaterialNames = GetAvailableMaterialNamesForSlot(slotNumber, slotName);
+                    SetupDropdownWithMaterials(tmpDropdown, currentMaterial.name, slotNumber, slotName);
+                    
+                    Button optionsButton = dropdownGameObject.transform.Find("Button_Options").GetComponent<Button>();
+                    optionsButton.onClick.AddListener(delegate { ShowTextureSlots(slotName, currentMaterial, materialSpawn, dropdownGameObject, currentModel); });
+                    Debug.Log($"currentModel {currentModel}");
+                    // Correctly capture slotNumber for the listener
+                    int capturedSlotNumber = slotNumber;
+
+                    // Inline listener logic to apply the selected material
+                    tmpDropdown.onValueChanged.AddListener(delegate (int index) {
+                        string selectedMaterialName = tmpDropdown.options[index].text;
+                        Debug.Log($"Dropdown Value Changed for Slot #{capturedSlotNumber}: {selectedMaterialName}");
+                        ApplyMaterialToSlot(currentModel, capturedSlotNumber, selectedMaterialName);
+                    });
+
+                    TextMeshProUGUI nameText = dropdownGameObject.transform.Find("Name").GetComponent<TextMeshProUGUI>();
+                    nameText.text = "Slot #" + slotNumber;
+
+                    slotNumber++;
+                }
             }
         }
 
@@ -242,38 +281,6 @@ namespace doppelganger
             }
         }
 
-        void PopulateMaterialDropdowns(Transform materialSpawn, GameObject currentModel, string slotName)
-        {
-            SkinnedMeshRenderer[] renderers = currentModel.GetComponentsInChildren<SkinnedMeshRenderer>(true);
-            int slotNumber = 1; // Initialize slotNumber correctly
-            foreach (var renderer in renderers)
-            {
-                Material currentMaterial = renderer.sharedMaterials.Length > 0 ? renderer.sharedMaterials[0] : null;
-                if (currentMaterial != null)
-                {
-                    GameObject dropdownGameObject = Instantiate(variationMaterialDropdownPrefab, materialSpawn);
-                    TMP_Dropdown tmpDropdown = dropdownGameObject.GetComponentInChildren<TMP_Dropdown>();
-                    List<string> additionalMaterialNames = GetAvailableMaterialNamesForSlot(slotNumber, slotName);
-                    SetupDropdownWithMaterials(tmpDropdown, currentMaterial.name, slotNumber, slotName);
-
-                    // Correctly capture slotNumber for the listener
-                    int capturedSlotNumber = slotNumber;
-
-                    // Inline listener logic to apply the selected material
-                    tmpDropdown.onValueChanged.AddListener(delegate (int index) {
-                        string selectedMaterialName = tmpDropdown.options[index].text;
-                        //Debug.Log($"Dropdown Value Changed for Slot #{capturedSlotNumber}: {selectedMaterialName}");
-                        ApplyMaterialToSlot(currentModel, capturedSlotNumber, selectedMaterialName);
-                    });
-
-                    TextMeshProUGUI nameText = dropdownGameObject.transform.Find("Name").GetComponent<TextMeshProUGUI>();
-                    nameText.text = "Slot #" + slotNumber;
-
-                    slotNumber++;
-                }
-            }
-        }
-
         void ApplyMaterialToSlot(GameObject model, int slotNumber, string selectedMaterialName)
         {
             //Debug.Log($"Selected Material: {selectedMaterialName}");
@@ -303,6 +310,41 @@ namespace doppelganger
             {
                 Debug.LogWarning($"Renderer for slot {slotNumber} not found!");
             }
+        }
+
+        void ShowTextureSlots(String slotName, Material material, Transform spawnPoint, GameObject dropdownGameObject, GameObject currentModel)
+        {
+            GameObject existingPanel;
+            Debug.Log($"panelScript: slotName {slotName}, currentModel {currentModel}, dropdownGameObject {dropdownGameObject}");
+            // Check if a texture slots panel already exists and is associated with this dropdown
+            if (!dropdownToPanelMap.TryGetValue(dropdownGameObject, out existingPanel))
+            {
+                // If the panel doesn't exist for this dropdown, instantiate it
+                existingPanel = Instantiate(variationTextureSlotPanelPrefab, spawnPoint, false);
+                existingPanel.SetActive(true); // Make sure the panel is enabled on first instantiation
+                dropdownToPanelMap.Add(dropdownGameObject, existingPanel);
+
+                VariationTextureSlotsPanel panelScript = existingPanel.GetComponent<VariationTextureSlotsPanel>();
+                if (panelScript != null)
+                {
+                    panelScript.currentModel = currentModel;
+                    panelScript.currentSlotName = slotName;
+                    panelScript.SetupPanel(material);
+                    Debug.Log($"panelScript: currentModel {currentModel}");
+                }
+                else
+                {
+                    Debug.LogError("VariationTextureSlotsPanel script not found on the instantiated prefab.");
+                    return;
+                }
+            }
+            else
+            {
+                existingPanel.SetActive(!existingPanel.activeSelf);
+            }
+
+            int dropdownIndex = dropdownGameObject.transform.GetSiblingIndex();
+            existingPanel.transform.SetSiblingIndex(dropdownIndex + 1);
         }
 
         Material LoadMaterialByName(string materialName)
