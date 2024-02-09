@@ -22,11 +22,13 @@ namespace doppelganger
         public GameObject variationTextureSlotPanelPrefab;
 
         public GameObject currentModel;
+        public Transform currentSpawn;
         public string currentModelName;
         public bool isPanelOpen = false;
         public string openPanelSlotName = "";
 
         private Dictionary<GameObject, GameObject> dropdownToPanelMap = new Dictionary<GameObject, GameObject>();
+        private Dictionary<GameObject, bool> originalActiveStates = new Dictionary<GameObject, bool>();
 
         public List<string> GetAvailableMaterialNamesForSlot(int slotNumber, string slotName)
         {
@@ -189,6 +191,8 @@ namespace doppelganger
 
         void PopulateMaterialDropdowns(Transform materialSpawn, GameObject currentModel, string slotName)
         {
+            Debug.Log("PopulateMaterialDropdowns");
+            
             SkinnedMeshRenderer[] renderers = currentModel.GetComponentsInChildren<SkinnedMeshRenderer>(true);
             int slotNumber = 1; // Initialize slotNumber correctly
             foreach (var renderer in renderers)
@@ -197,13 +201,40 @@ namespace doppelganger
                 if (currentMaterial != null)
                 {
                     GameObject dropdownGameObject = Instantiate(variationMaterialDropdownPrefab, materialSpawn);
+                    Debug.Log($"Created dropdowns {dropdownGameObject} at {materialSpawn}");
                     TMP_Dropdown tmpDropdown = dropdownGameObject.GetComponentInChildren<TMP_Dropdown>();
                     List<string> additionalMaterialNames = GetAvailableMaterialNamesForSlot(slotNumber, slotName);
                     SetupDropdownWithMaterials(tmpDropdown, currentMaterial.name, slotNumber, slotName);
-                    
+
                     Button optionsButton = dropdownGameObject.transform.Find("Button_Options").GetComponent<Button>();
-                    optionsButton.onClick.AddListener(delegate { ShowTextureSlots(slotName, currentMaterial, materialSpawn, dropdownGameObject, currentModel); });
-                    Debug.Log($"currentModel {currentModel}");
+                    TogglePanelVisibility toggleScript = optionsButton.GetComponent<TogglePanelVisibility>();
+                    if (toggleScript == null)
+                    {
+                        Debug.Log("toggleScript not found on the gameobject: " + optionsButton.gameObject);
+                        toggleScript = optionsButton.gameObject.AddComponent<TogglePanelVisibility>();
+
+                        // Print debug lines to ensure information is being sent
+                        Debug.Log("Spawn Point: " + materialSpawn);
+                        Debug.Log("Dropdown GameObject: " + dropdownGameObject);
+                        Debug.Log("Variation Texture Slot Panel Prefab: " + variationTextureSlotPanelPrefab);
+
+                        // Assign values to TogglePanelVisibility script
+                        toggleScript.spawnPoint = materialSpawn;
+                        toggleScript.dropdownGameObject = dropdownGameObject;
+                        toggleScript.variationTextureSlotPanelPrefab = variationTextureSlotPanelPrefab;
+                    }
+                    else
+                    {
+                        Debug.Log("toggleScript found on the gameobject: " + optionsButton.gameObject);
+
+                        // Ensure spawnPoint is properly assigned
+                        toggleScript.spawnPoint = materialSpawn;
+                        toggleScript.dropdownGameObject = dropdownGameObject;
+                        toggleScript.variationTextureSlotPanelPrefab = variationTextureSlotPanelPrefab;
+                    }
+
+                    optionsButton.onClick.AddListener(() => toggleScript.TogglePanel(slotName, currentMaterial, currentModel));
+
                     // Correctly capture slotNumber for the listener
                     int capturedSlotNumber = slotNumber;
 
@@ -315,32 +346,57 @@ namespace doppelganger
         void ShowTextureSlots(String slotName, Material material, Transform spawnPoint, GameObject dropdownGameObject, GameObject currentModel)
         {
             GameObject existingPanel;
+
+            // If no panel is currently active, store the active state of all children
+            if (!dropdownToPanelMap.Values.Any(p => p.activeSelf))
+            {
+                foreach (Transform child in spawnPoint)
+                {
+                    originalActiveStates[child.gameObject] = child.gameObject.activeSelf;
+                }
+            }
+
             Debug.Log($"panelScript: slotName {slotName}, currentModel {currentModel}, dropdownGameObject {dropdownGameObject}");
-            // Check if a texture slots panel already exists and is associated with this dropdown
+
             if (!dropdownToPanelMap.TryGetValue(dropdownGameObject, out existingPanel))
             {
-                // If the panel doesn't exist for this dropdown, instantiate it
-                existingPanel = Instantiate(variationTextureSlotPanelPrefab, spawnPoint, false);
-                existingPanel.SetActive(true); // Make sure the panel is enabled on first instantiation
-                dropdownToPanelMap.Add(dropdownGameObject, existingPanel);
+                // Disable all other children except the current dropdownGameObject
+                foreach (Transform child in spawnPoint)
+                {
+                    if (child.gameObject != dropdownGameObject) // Check if it's not the current dropdownGameObject
+                    {
+                        child.gameObject.SetActive(false); // Disable other dropdowns
+                    }
+                }
 
+                // Instantiate new panel
+                existingPanel = Instantiate(variationTextureSlotPanelPrefab, spawnPoint, false);
+                existingPanel.SetActive(true);
+                dropdownToPanelMap[dropdownGameObject] = existingPanel;
+
+                // Setup panel script
                 VariationTextureSlotsPanel panelScript = existingPanel.GetComponent<VariationTextureSlotsPanel>();
                 if (panelScript != null)
                 {
                     panelScript.currentModel = currentModel;
                     panelScript.currentSlotName = slotName;
                     panelScript.SetupPanel(material);
-                    Debug.Log($"panelScript: currentModel {currentModel}");
-                }
-                else
-                {
-                    Debug.LogError("VariationTextureSlotsPanel script not found on the instantiated prefab.");
-                    return;
                 }
             }
             else
             {
-                existingPanel.SetActive(!existingPanel.activeSelf);
+                bool isActive = existingPanel.activeSelf;
+                existingPanel.SetActive(!isActive);
+
+                // If we're hiding the panel, re-enable all other children
+                if (!isActive)
+                {
+                    foreach (var entry in originalActiveStates)
+                    {
+                        entry.Key.SetActive(entry.Value);
+                    }
+                    originalActiveStates.Clear(); // Clear the states once they are restored
+                }
             }
 
             int dropdownIndex = dropdownGameObject.transform.GetSiblingIndex();

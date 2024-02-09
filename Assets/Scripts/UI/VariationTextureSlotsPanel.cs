@@ -89,15 +89,15 @@ namespace doppelganger
                 GameObject slotInstance = Instantiate(slotPrefab, transform);
 
                 TextMeshProUGUI slotText = slotInstance.transform.Find("SlotNameText").GetComponent<TextMeshProUGUI>();
-                // Assuming "TextureButton/Text" is the path to the TextMeshPro component within the button
                 TextMeshProUGUI buttonText = slotInstance.transform.Find("TextureButton/Text").GetComponent<TextMeshProUGUI>();
 
-                slotText.text = $"{slotName}";
+                slotText.text = slotName; // Ensure this is the correct slot name
                 buttonText.text = texture ? texture.name : "None";
 
-                // Setup the listener for the button
                 Button textureButton = slotInstance.transform.Find("TextureButton").GetComponent<Button>();
-                textureButton.onClick.AddListener(() => OnTextureButtonClicked(slotName, material));
+
+                // Correctly capture and use the slotName for each button
+                textureButton.onClick.AddListener(() => OnTextureButtonClicked(slotText.text, material));
             }
         }
 
@@ -136,7 +136,7 @@ namespace doppelganger
             {
                 textureScroller.SetCurrentSlotName(slotName);
                 textureScroller.TextureSelected += (texture, model, _) => {
-                    ApplyTextureToMaterial(currentMaterial, model, slotName, texture); // Use captured slotName
+                    ApplyTextureToMaterial(currentMaterial, model, textureScroller.currentSlotName, texture);
                 };
                 textureScroller.currentModel = currentModel;
                 textureScroller.searchTerm = slotName;

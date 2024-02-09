@@ -716,6 +716,7 @@ GameObject:
   - component: {fileID: 2452965656505429117}
   - component: {fileID: 5852490559969705875}
   - component: {fileID: 8779135884571722769}
+  - component: {fileID: 1084613879270658000}
   m_Layer: 5
   m_Name: Button_Options
   m_TagString: Untagged
@@ -824,6 +825,21 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1084613879270658000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4628471183362828496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af02d698606454447b4e589f25d8034b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnPoint: {fileID: 0}
+  dropdownGameObject: {fileID: 6726080216382799351}
+  variationTextureSlotPanelPrefab: {fileID: 7551916595500437525, guid: 4554c93d06c213d498603e872f4b72a5, type: 3}
 --- !u!1 &4641679356335952773
 GameObject:
   m_ObjectHideFlags: 0

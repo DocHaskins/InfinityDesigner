@@ -17,7 +17,7 @@ namespace doppelganger
         public string searchTerm = "_msk";
         private UnlimitedScrollUI.IUnlimitedScroller unlimitedScroller;
         public GameObject currentModel;
-        private string currentSlotName;
+        public string currentSlotName;
         public event Action<Texture2D> onTextureSelected;
         public delegate void TextureSelectedHandler(Texture2D texture, GameObject model, string slotName);
         public event Action<Texture2D, GameObject, string> TextureSelected;
@@ -83,10 +83,10 @@ namespace doppelganger
             return thumbnail;
         }
 
-        public void SetCurrentSlotName(string name)
+        public void SetCurrentSlotName(string slotName)
         {
-            currentSlotName = name;
-            Debug.Log($"SetCurrentSlotName: {currentSlotName}");
+            currentSlotName = slotName;
+            Debug.Log($"TextureScroller currentSlotName set to: {currentSlotName}");
         }
 
         private void SelectTexture(Texture2D texture)
