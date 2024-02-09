@@ -1,25 +1,36 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnlimitedScrollUI.Example;
+using static ModelData;
 
 namespace doppelganger
 {
     public class VariationTextureSlotsPanel : MonoBehaviour
     {
         private TextureScroller textureScroller;
+        private VariationBuilder variationBuilder;
 
         public GameObject slotPrefab;
         [SerializeField] GameObject textureScrollerPanelPrefab;
         private GameObject currentPanel;
-        private Material currentMaterial;
+        public Material currentMaterial;
         public string currentSlotName;
         public GameObject currentModel;
+
+        public List<RttiValue> currentMaterialResources = new List<RttiValue>();
 
         private readonly string[] textureSlots = {
         "_msk", "_idx", "_gra", "_spc", "_clp", "_rgh", "_ocl", "_ems", "_dif_1", "_dif", "_nrm",
         "_BaseColorMap", "_NormalMap", "_MaskMap", "_EmissiveColorMap"
     };
+
+        void Awake()
+        {
+            // Find the VariationBuilder instance in the scene
+            variationBuilder = FindObjectOfType<VariationBuilder>();
+        }
 
         public void ToggleVisibility(Material material, GameObject dropdownGameObject)
         {
@@ -73,6 +84,25 @@ namespace doppelganger
             }
         }
 
+        public void UpdatePanel()
+        {
+            Debug.Log("UpdatePanel");
+            ClearExistingSlots();
+
+            if (currentMaterial != null)
+            {
+                // Iterate through each slotName defined in textureSlots
+                foreach (string slotName in textureSlots)
+                {
+                    if (currentMaterial.HasProperty(slotName))
+                    {
+                        Texture texture = currentMaterial.GetTexture(slotName);
+                        CreateSlot(currentMaterial, slotName);
+                    }
+                }
+            }
+        }
+
         private void ClearExistingSlots()
         {
             foreach (Transform child in transform)
@@ -96,8 +126,9 @@ namespace doppelganger
 
                 Button textureButton = slotInstance.transform.Find("TextureButton").GetComponent<Button>();
 
-                // Correctly capture and use the slotName for each button
-                textureButton.onClick.AddListener(() => OnTextureButtonClicked(slotText.text, material));
+                // Update the listener to ensure the correct slotName is used
+                textureButton.onClick.RemoveAllListeners();
+                textureButton.onClick.AddListener(delegate { OnTextureButtonClicked(slotName, material); });
             }
         }
 
@@ -137,6 +168,7 @@ namespace doppelganger
                 textureScroller.SetCurrentSlotName(slotName);
                 textureScroller.TextureSelected += (texture, model, _) => {
                     ApplyTextureToMaterial(currentMaterial, model, textureScroller.currentSlotName, texture);
+                    UpdatePanel();
                 };
                 textureScroller.currentModel = currentModel;
                 textureScroller.searchTerm = slotName;
@@ -157,7 +189,6 @@ namespace doppelganger
 
             foreach (var renderer in renderers)
             {
-                // Apply the texture using a MaterialPropertyBlock
                 for (int i = 0; i < renderer.materials.Length; i++)
                 {
                     if (renderer.materials[i].HasProperty(slotName))
@@ -166,15 +197,25 @@ namespace doppelganger
                         propertyBlock.SetTexture(slotName, texture);
                         renderer.SetPropertyBlock(propertyBlock, i);
                         Debug.Log($"Applied {texture.name} to {slotName} on renderer {renderer.name} for material index {i}.");
+
+                        // Ensure VariationBuilder is not null
+                        if (variationBuilder != null)
+                        {
+                            // Call RecordTextureChange on VariationBuilder
+                            variationBuilder.RecordTextureChange(slotName, texture, material);
+                        }
+                        else
+                        {
+                            Debug.LogError("VariationBuilder instance not found.");
+                        }
+
                         textureApplied = true;
-                        // No break here to apply the texture to all materials that have the slotName property
                     }
                 }
 
                 if (textureApplied)
                 {
-                    // Optionally break out of the loop once the texture has been applied to at least one material
-                    // break;
+                    UpdatePanel();
                 }
             }
 

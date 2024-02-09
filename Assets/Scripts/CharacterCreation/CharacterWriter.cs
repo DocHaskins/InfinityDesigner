@@ -8,6 +8,7 @@ using TMPro;
 using SFB;
 using System.Text;
 using System.Linq;
+using static ModelData;
 
 
 /// <summary>
@@ -525,6 +526,9 @@ namespace doppelganger
             // Format the model name: remove "(Clone)" and add ".msh"
             string formattedModelName = FormatModelName(model.name);
 
+            // Updated call to include slotKey as a parameter
+            var materialsData = GetMaterialsDataFromStreamingAssets(formattedModelName, slotKey);
+
             var slotData = new ModelData.SlotData
             {
                 name = slotKey,
@@ -533,7 +537,7 @@ namespace doppelganger
             new ModelData.ModelInfo
             {
                 name = formattedModelName,
-                materialsData = GetMaterialsDataFromStreamingAssets(formattedModelName), // Get materials from JSON in streaming assets
+                materialsData = materialsData, // Assign the returned materials data
             }
         }
             };
@@ -547,36 +551,54 @@ namespace doppelganger
             };
         }
 
-        private List<ModelData.MaterialData> GetMaterialsDataFromStreamingAssets(string modelName)
+        private List<ModelData.MaterialData> GetMaterialsDataFromStreamingAssets(string modelName, string slotKey)
         {
             List<ModelData.MaterialData> materialsData = new List<ModelData.MaterialData>();
-
-            // Remove the ".msh" extension from modelName
             modelName = Path.GetFileNameWithoutExtension(modelName);
 
-            // Print original materials from streaming assets
             string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");
             if (File.Exists(materialJsonFilePath))
             {
                 string materialJsonData = File.ReadAllText(materialJsonFilePath);
                 ModelData.ModelInfo modelInfo = JsonUtility.FromJson<ModelData.ModelInfo>(materialJsonData);
+
+                // Check if a variation index exists for the current slot
+                if (interfaceManager.selectedVariationIndexes.TryGetValue(slotKey, out int variationIndex))
+                {
+                    Debug.Log($"Variation index found for {slotKey}: {variationIndex}");
+
+                    // Load the variation data based on the index (assuming you have a method to do this)
+                    Variation variation = GetVariationDataForIndex(variationIndex + 1, modelInfo); // Implement this method based on your data structure
+
+                    // Use variation data if available
+                    if (variation != null)
+                    {
+                        foreach (var material in variation.materialsData)
+                        {
+                            string materialName = EnsureMaterialNameEndsWithMat(material.name);
+                            materialsData.Add(new ModelData.MaterialData
+                            {
+                                number = material.number,
+                                name = materialName
+                            });
+                        }
+
+                        // Assume there's a similar process for materialsResources if necessary
+                        return materialsData;
+                    }
+                }
+
+                // Fallback to original materials data if no variation is found
                 if (modelInfo != null && modelInfo.materialsData != null)
                 {
-                    Debug.Log("Original Materials from Streaming Assets:");
-
-                    // Iterate through the materialsData in the JSON file
+                    Debug.Log("Using original materials from Streaming Assets:");
                     foreach (var materialData in modelInfo.materialsData)
                     {
-                        // Ensure each material name ends with ".mat"
-                        string materialName = materialData.name;
-                        if (!materialName.EndsWith(".mat"))
-                        {
-                            materialName += ".mat";
-                        }
+                        string materialName = EnsureMaterialNameEndsWithMat(materialData.name);
                         Debug.Log($"Material Name: {materialName}");
                         materialsData.Add(new ModelData.MaterialData
                         {
-                            number = materialData.number, // Use the correct material number
+                            number = materialData.number,
                             name = materialName
                         });
                     }
@@ -592,6 +614,22 @@ namespace doppelganger
             }
 
             return materialsData;
+        }
+
+        private Variation GetVariationDataForIndex(int index, ModelInfo modelInfo)
+        {
+            // Ensure the type returned matches your class definition
+            return modelInfo.variations.FirstOrDefault(v => v.id == index.ToString());
+        }
+
+
+        private string EnsureMaterialNameEndsWithMat(string materialName)
+        {
+            if (!materialName.EndsWith(".mat"))
+            {
+                materialName += ".mat";
+            }
+            return materialName;
         }
 
         private string FormatModelName(string modelName)

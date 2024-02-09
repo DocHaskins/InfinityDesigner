@@ -51,10 +51,11 @@ namespace doppelganger
                             number = materialIndex,
                             resources = new List<Resource> {
                         new Resource {
-                            name = materialName,
+                            name = materialName.Replace(" (Instance)",""),
                             selected = true,
-                            layoutId = 4, // Example values
-                            loadFlags = "S" // Example values
+                            layoutId = 4,
+                            loadFlags = "S", 
+                            rttiValues = variationBuilder.currentMaterialResources
                         }
                     }
                         });
@@ -69,7 +70,7 @@ namespace doppelganger
                 // Serialize and save the updated JSON
                 string newJsonData = JsonConvert.SerializeObject(variationOutput, Formatting.Indented);
                 File.WriteAllText(materialJsonFilePath, newJsonData);
-
+                variationBuilder.currentMaterialResources.Clear();
                 Debug.Log($"New variation saved for model: {variationBuilder.currentModelName} with ID: {newVariation.id}");
             }
             else

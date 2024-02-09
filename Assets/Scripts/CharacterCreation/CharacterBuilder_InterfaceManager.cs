@@ -52,8 +52,10 @@ namespace doppelganger
         private Dictionary<string, bool> sliderSetStatus = new Dictionary<string, bool>();
         private Dictionary<string, float> slotWeights;
         private Dictionary<string, List<string>> slotData = new Dictionary<string, List<string>>();
+        public Dictionary<string, int> selectedVariationIndexes = new Dictionary<string, int>();
 
         Dictionary<string, string> classConversions = new Dictionary<string, string>
+
 {
     { "peacekeeper", "pk" },
     { "scavenger", "sc" },
@@ -653,9 +655,12 @@ namespace doppelganger
                 sliderValues[slotName] = value;
                 currentSlider = slotName;
             }
+
             if (value == 0)
             {
                 characterBuilder.RemoveModelAndVariationSlider(slotName);
+                selectedVariationIndexes.Remove(slotName);
+                Debug.Log($"OnSliderValueChanged: Slot '{slotName}' removed. Updated selectedVariationIndexes: {string.Join(", ", selectedVariationIndexes.Keys)}");
                 UpdateOrOpenModelInfoPanel(null);
             }
             else
@@ -663,6 +668,25 @@ namespace doppelganger
                 int modelIndex = Mathf.Clamp((int)(value - 1), 0, int.MaxValue);
                 characterBuilder.LoadModelAndCreateVariationSlider(slotName, modelIndex);
                 UpdateOrOpenModelInfoPanel(currentSlider);
+            }
+        }
+
+        public void CreateOrUpdateVariationSlider(string slotName, string modelName)
+        {
+            // Check if a variation slider already exists and remove it
+            RemoveVariationSlider(slotName);
+
+            string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");
+            if (File.Exists(materialJsonFilePath))
+            {
+                string materialJsonData = File.ReadAllText(materialJsonFilePath);
+                ModelData.ModelInfo modelInfo = JsonUtility.FromJson<ModelData.ModelInfo>(materialJsonData);
+
+                if (modelInfo != null && modelInfo.variations != null && modelInfo.variations.Count > 0)
+                {
+                    CreateVariationSlider(slotName, modelInfo.variations.Count);
+                }
+                // No else block needed, as RemoveVariationSlider has already been called
             }
         }
 
@@ -734,24 +758,13 @@ namespace doppelganger
             Debug.Log($"OnVariationSliderValueChanged: currentSlider {currentSlider}");
             UpdateOrOpenModelInfoPanel(currentSlider);
             variationBuilder.UpdateMaterialDropdowns(slotName);
-        }
+            selectedVariationIndexes[slotName] = Mathf.Clamp((int)value - 1, 0, int.MaxValue);
 
-        public void CreateOrUpdateVariationSlider(string slotName, string modelName)
-        {
-            // Check if a variation slider already exists and remove it
-            RemoveVariationSlider(slotName);
-
-            string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");
-            if (File.Exists(materialJsonFilePath))
+            // Debug log to show the actual stored index for each slot
+            Debug.Log("OnVariationSliderValueChanged:");
+            foreach (var kvp in selectedVariationIndexes)
             {
-                string materialJsonData = File.ReadAllText(materialJsonFilePath);
-                ModelData.ModelInfo modelInfo = JsonUtility.FromJson<ModelData.ModelInfo>(materialJsonData);
-
-                if (modelInfo != null && modelInfo.variations != null && modelInfo.variations.Count > 0)
-                {
-                    CreateVariationSlider(slotName, modelInfo.variations.Count);
-                }
-                // No else block needed, as RemoveVariationSlider has already been called
+                Debug.Log($"Slot: {kvp.Key}, Stored Index: {kvp.Value}");
             }
         }
 

@@ -59,7 +59,7 @@ public class ModelData
         public List<MaterialResource> materialsResources;
         
         [JsonIgnore]
-        public List<VariationInfo> variations;
+        public List<Variation> variations;
     }
 
     [Serializable]

@@ -33,6 +33,18 @@ namespace doppelganger
                 // Disable siblings
                 ToggleSiblings(false);
             }
+
+            if (existingPanel != null && existingPanel.activeSelf)
+            {
+                var panelScript = existingPanel.GetComponent<VariationTextureSlotsPanel>();
+                if (panelScript != null)
+                {
+                    panelScript.currentModel = currentModel;
+                    panelScript.currentSlotName = slotName;
+                    panelScript.currentMaterial = material;
+                    panelScript.UpdatePanel();
+                }
+            }
         }
 
         private void SetupPanel(GameObject panel, string slotName, Material material, GameObject currentModel)

@@ -29,6 +29,7 @@ namespace doppelganger
 
         private Dictionary<GameObject, GameObject> dropdownToPanelMap = new Dictionary<GameObject, GameObject>();
         private Dictionary<GameObject, bool> originalActiveStates = new Dictionary<GameObject, bool>();
+        public List<RttiValue> currentMaterialResources = new List<RttiValue>();
 
         public List<string> GetAvailableMaterialNamesForSlot(int slotNumber, string slotName)
         {
@@ -56,7 +57,7 @@ namespace doppelganger
 
                         if (modelInfo.variations != null)
                         {
-                            foreach (VariationInfo variation in modelInfo.variations)
+                            foreach (Variation variation in modelInfo.variations)
                             {
                                 foreach (MaterialResource materialResource in variation.materialsResources)
                                 {
@@ -210,15 +211,7 @@ namespace doppelganger
                     TogglePanelVisibility toggleScript = optionsButton.GetComponent<TogglePanelVisibility>();
                     if (toggleScript == null)
                     {
-                        Debug.Log("toggleScript not found on the gameobject: " + optionsButton.gameObject);
                         toggleScript = optionsButton.gameObject.AddComponent<TogglePanelVisibility>();
-
-                        // Print debug lines to ensure information is being sent
-                        Debug.Log("Spawn Point: " + materialSpawn);
-                        Debug.Log("Dropdown GameObject: " + dropdownGameObject);
-                        Debug.Log("Variation Texture Slot Panel Prefab: " + variationTextureSlotPanelPrefab);
-
-                        // Assign values to TogglePanelVisibility script
                         toggleScript.spawnPoint = materialSpawn;
                         toggleScript.dropdownGameObject = dropdownGameObject;
                         toggleScript.variationTextureSlotPanelPrefab = variationTextureSlotPanelPrefab;
@@ -244,6 +237,8 @@ namespace doppelganger
                         Debug.Log($"Dropdown Value Changed for Slot #{capturedSlotNumber}: {selectedMaterialName}");
                         ApplyMaterialToSlot(currentModel, capturedSlotNumber, selectedMaterialName);
                     });
+
+                    
 
                     TextMeshProUGUI nameText = dropdownGameObject.transform.Find("Name").GetComponent<TextMeshProUGUI>();
                     nameText.text = "Slot #" + slotNumber;
@@ -336,71 +331,44 @@ namespace doppelganger
                 {
                     Debug.LogWarning($"Material {selectedMaterialName} not found!");
                 }
+                VariationTextureSlotsPanel panelScript = FindObjectOfType<VariationTextureSlotsPanel>(); // Find the active panel in the scene
+                if (panelScript != null)
+                {
+                    panelScript.currentMaterial = selectedMaterial;
+                    panelScript.UpdatePanel();
+                }
             }
             else
             {
                 Debug.LogWarning($"Renderer for slot {slotNumber} not found!");
             }
+            
         }
 
-        void ShowTextureSlots(String slotName, Material material, Transform spawnPoint, GameObject dropdownGameObject, GameObject currentModel)
+        public void RecordTextureChange(string slotName, Texture2D texture, Material material)
         {
-            GameObject existingPanel;
+            string textureName = texture != null ? texture.name : "None";
+            string formattedSlotName = slotName.Replace("_", "") + "_0_tex";
 
-            // If no panel is currently active, store the active state of all children
-            if (!dropdownToPanelMap.Values.Any(p => p.activeSelf))
+            // Ensure only one entry per slotName-material combination
+            var existingEntry = currentMaterialResources.FirstOrDefault(r => r.name == formattedSlotName);
+            if (existingEntry != null)
             {
-                foreach (Transform child in spawnPoint)
-                {
-                    originalActiveStates[child.gameObject] = child.gameObject.activeSelf;
-                }
-            }
-
-            Debug.Log($"panelScript: slotName {slotName}, currentModel {currentModel}, dropdownGameObject {dropdownGameObject}");
-
-            if (!dropdownToPanelMap.TryGetValue(dropdownGameObject, out existingPanel))
-            {
-                // Disable all other children except the current dropdownGameObject
-                foreach (Transform child in spawnPoint)
-                {
-                    if (child.gameObject != dropdownGameObject) // Check if it's not the current dropdownGameObject
-                    {
-                        child.gameObject.SetActive(false); // Disable other dropdowns
-                    }
-                }
-
-                // Instantiate new panel
-                existingPanel = Instantiate(variationTextureSlotPanelPrefab, spawnPoint, false);
-                existingPanel.SetActive(true);
-                dropdownToPanelMap[dropdownGameObject] = existingPanel;
-
-                // Setup panel script
-                VariationTextureSlotsPanel panelScript = existingPanel.GetComponent<VariationTextureSlotsPanel>();
-                if (panelScript != null)
-                {
-                    panelScript.currentModel = currentModel;
-                    panelScript.currentSlotName = slotName;
-                    panelScript.SetupPanel(material);
-                }
+                // Update existing entry
+                existingEntry.val_str = textureName + ".png";
+                Debug.Log($"Updated {formattedSlotName} with new texture: {textureName}");
             }
             else
             {
-                bool isActive = existingPanel.activeSelf;
-                existingPanel.SetActive(!isActive);
-
-                // If we're hiding the panel, re-enable all other children
-                if (!isActive)
+                // Add new entry if not exist
+                currentMaterialResources.Add(new RttiValue
                 {
-                    foreach (var entry in originalActiveStates)
-                    {
-                        entry.Key.SetActive(entry.Value);
-                    }
-                    originalActiveStates.Clear(); // Clear the states once they are restored
-                }
+                    name = formattedSlotName,
+                    type = 7, // Assuming type 7 is for textures
+                    val_str = textureName + ".png"
+                });
+                Debug.Log($"Added new texture entry: {formattedSlotName} = {textureName}");
             }
-
-            int dropdownIndex = dropdownGameObject.transform.GetSiblingIndex();
-            existingPanel.transform.SetSiblingIndex(dropdownIndex + 1);
         }
 
         Material LoadMaterialByName(string materialName)
