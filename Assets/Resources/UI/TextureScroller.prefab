@@ -38,7 +38,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 314.19998}
-  m_SizeDelta: {x: 1000, y: 627.7}
+  m_SizeDelta: {x: 450, y: 627.7}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &2973995094269042304
 CanvasRenderer:
@@ -142,8 +142,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0.000014360771, y: 0.000094393356}
-  m_SizeDelta: {x: 1368.4, y: 300}
+  m_AnchoredPosition: {x: 0.000014360771, y: -0.000065061926}
+  m_SizeDelta: {x: 460, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &4194131150149547967
 MonoBehaviour:
@@ -188,8 +188,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   contentPanel: {fileID: 7820988468696249516}
   cellPrefab: {fileID: 3798934600628987672, guid: c523a93cb275dd14c92c0308d3e5e515, type: 3}
-  autoGenerate: 0
+  autoGenerate: 1
   searchTerm: _dif
+  currentModel: {fileID: 0}
+  currentSlotName: 
 --- !u!1 &8309887713464465670
 GameObject:
   m_ObjectHideFlags: 0
@@ -306,7 +308,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8761278239416837743}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -314,11 +316,11 @@ RectTransform:
   - {fileID: 1323596515704921438}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -29.199951, y: -147}
-  m_SizeDelta: {x: 1000, y: 630.7}
-  m_Pivot: {x: 0.5, y: 1}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 450, y: 500}
+  m_Pivot: {x: 1, y: 0}
 --- !u!222 &5111090074722637175
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -387,11 +389,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114873481446907276, guid: 74cc90c9965222b45a1b281adb1e4e5e, type: 3}
       propertyPath: m_Size
-      value: 0.99979424
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114873481446907276, guid: 74cc90c9965222b45a1b281adb1e4e5e, type: 3}
       propertyPath: m_Value
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224271494585329000, guid: 74cc90c9965222b45a1b281adb1e4e5e, type: 3}
       propertyPath: m_Pivot.x

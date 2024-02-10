@@ -126,6 +126,11 @@ public class ModelData
         public int layoutId;
         public string loadFlags;
         public List<RttiValue> rttiValues;
+
+        public Resource()
+        {
+            rttiValues = new List<RttiValue>();
+        }
     }
 
     [Serializable]

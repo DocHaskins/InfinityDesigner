@@ -63,25 +63,58 @@ namespace doppelganger
 
         public void SetupPanel(Material material)
         {
-            // Clear existing slots
+            // Disable existing slots instead of destroying them
             foreach (Transform child in transform)
             {
-                Destroy(child.gameObject);
+                child.gameObject.SetActive(false);
             }
 
-            // Generate new slots based on the provided material
+            // Generate new slots or reuse existing ones based on the provided material
             foreach (string slotName in textureSlots)
             {
                 if (material.HasProperty(slotName))
                 {
                     Texture texture = material.GetTexture(slotName);
-                    // Log the slot name and the texture name (if available)
-                    string textureName = texture ? texture.name : "None";
-                    //Debug.Log($"Slot {slotName} has texture: {textureName}");
+                    GameObject slotInstance = null;
 
-                    CreateSlot(material, slotName);
+                    // Try to find an existing slot that matches the slotName and reuse it
+                    foreach (Transform child in transform)
+                    {
+                        if (child.name == slotName)
+                        {
+                            slotInstance = child.gameObject;
+                            break;
+                        }
+                    }
+
+                    // If no existing slot was found, create a new one
+                    if (slotInstance == null)
+                    {
+                        slotInstance = Instantiate(slotPrefab, transform);
+                        slotInstance.name = slotName; // Set the name of the slotInstance to match the slotName for easy identification
+                    }
+
+                    // Update the slotInstance's visibility and contents
+                    slotInstance.SetActive(true);
+                    UpdateSlot(slotInstance, material, slotName, texture);
                 }
             }
+        }
+
+        private void UpdateSlot(GameObject slotInstance, Material material, string slotName, Texture texture)
+        {
+
+            TextMeshProUGUI slotText = slotInstance.transform.Find("SlotNameText").GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI buttonText = slotInstance.transform.Find("TextureButton/Text").GetComponent<TextMeshProUGUI>();
+
+            slotText.text = slotName; // Ensure this is the correct slot name
+            buttonText.text = texture ? texture.name : "None";
+
+            Button textureButton = slotInstance.transform.Find("TextureButton").GetComponent<Button>();
+
+            // Update the listener to ensure the correct slotName is used
+            textureButton.onClick.RemoveAllListeners();
+            textureButton.onClick.AddListener(delegate { OnTextureButtonClicked(slotName, material); });
         }
 
         public void UpdatePanel()
@@ -105,9 +138,10 @@ namespace doppelganger
 
         private void ClearExistingSlots()
         {
+            // Disable existing slots instead of destroying them
             foreach (Transform child in transform)
             {
-                Destroy(child.gameObject);
+                child.gameObject.SetActive(false);
             }
         }
 

@@ -192,8 +192,6 @@ namespace doppelganger
 
         void PopulateMaterialDropdowns(Transform materialSpawn, GameObject currentModel, string slotName)
         {
-            Debug.Log("PopulateMaterialDropdowns");
-            
             SkinnedMeshRenderer[] renderers = currentModel.GetComponentsInChildren<SkinnedMeshRenderer>(true);
             int slotNumber = 1; // Initialize slotNumber correctly
             foreach (var renderer in renderers)
@@ -202,7 +200,7 @@ namespace doppelganger
                 if (currentMaterial != null)
                 {
                     GameObject dropdownGameObject = Instantiate(variationMaterialDropdownPrefab, materialSpawn);
-                    Debug.Log($"Created dropdowns {dropdownGameObject} at {materialSpawn}");
+                    //Debug.Log($"Created dropdowns {dropdownGameObject} at {materialSpawn}");
                     TMP_Dropdown tmpDropdown = dropdownGameObject.GetComponentInChildren<TMP_Dropdown>();
                     List<string> additionalMaterialNames = GetAvailableMaterialNamesForSlot(slotNumber, slotName);
                     SetupDropdownWithMaterials(tmpDropdown, currentMaterial.name, slotNumber, slotName);
@@ -218,8 +216,6 @@ namespace doppelganger
                     }
                     else
                     {
-                        Debug.Log("toggleScript found on the gameobject: " + optionsButton.gameObject);
-
                         // Ensure spawnPoint is properly assigned
                         toggleScript.spawnPoint = materialSpawn;
                         toggleScript.dropdownGameObject = dropdownGameObject;
