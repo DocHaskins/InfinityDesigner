@@ -47,15 +47,15 @@ namespace doppelganger
         private Dictionary<string, string> sliderToSlotMapping = new Dictionary<string, string>()
     {
         {"ALL_head", "HEAD"},
-        {"ALL_hair", "HEAD_PART_1"},
-        {"ALL_hair_base", "HEAD_PART_1"},
-        {"ALL_hair_1", "HEAD_PART_1"},
-        {"ALL_hair_2", "HEAD_PART_1"},
+        {"ALL_hair", "HEADCOVER"},
+        {"ALL_hair_base", "HEADCOVER"},
+        {"ALL_hair_1", "HEADCOVER"},
+        {"ALL_hair_2", "HEADCOVER"},
         {"ALL_facial_hair", "HEAD_PART_1"},
         {"ALL_earrings", "HEAD_PART_1"},
         {"ALL_glasses", "HEAD_PART_1"},
-        {"ALL_hat", "HAT"},
-        {"ALL_hat_access", "HAT"},
+        {"ALL_hat", "HEADCOVER"},
+        {"ALL_hat_access", "HEADCOVER"},
         {"ALL_mask", "HEADCOVER"},
         {"ALL_mask_access", "HEADCOVER"},
         {"ALL_armor_helmet", "HEADCOVER"},
@@ -98,7 +98,6 @@ namespace doppelganger
         private Dictionary<string, List<string>> fallbackSlots = new Dictionary<string, List<string>>()
 {
     {"HEADCOVER", new List<string> { "HEADCOVER_PART_1", "HEAD_PART_1", "HEAD_PART_2", "HEAD_PART_3", "HEAD_PART_4", "HEAD_PART_5", "HEAD_PART_6", "OTHER", "OTHER_PART_1", "OTHER_PART_2", "OTHER_PART_3", "OTHER_PART_4", "OTHER_PART_5" }},
-    {"HAT", new List<string> { "HEADCOVER_PART_1", "HEAD_PART_1", "HEAD_PART_2", "HEAD_PART_3", "HEAD_PART_4", "HEAD_PART_5", "HEAD_PART_6", "OTHER", "OTHER_PART_1", "OTHER_PART_2", "OTHER_PART_3", "OTHER_PART_4", "OTHER_PART_5" }},
     {"HEADCOVER_PART_1", new List<string> { "HEADCOVER", "HEAD_PART_1", "HEAD_PART_2", "HEAD_PART_3", "HEAD_PART_4", "HEAD_PART_5", "HEAD_PART_6", "OTHER", "OTHER_PART_1", "OTHER_PART_2", "OTHER_PART_3", "OTHER_PART_4", "OTHER_PART_5" }},
     {"HEAD_PART_1", new List<string> { "HEADCOVER", "HEAD_PART_1", "HEAD_PART_2", "HEAD_PART_3", "HEAD_PART_4", "HEAD_PART_5", "HEAD_PART_6", "OTHER", "OTHER_PART_1", "OTHER_PART_2", "OTHER_PART_3", "OTHER_PART_4", "OTHER_PART_5" }},
     {"TORSO_PART_1", new List<string> { "TORSO_PART_1", "TORSO_PART_2", "TORSO_PART_3", "TORSO_PART_4", "TORSO_PART_5", "TORSO_PART_6", "TORSO_PART_7", "TORSO_PART_8", "TORSO_PART_9", "OTHER", "OTHER_PART_1", "OTHER_PART_2", "OTHER_PART_3", "OTHER_PART_4", "OTHER_PART_5" }},
@@ -234,144 +233,6 @@ namespace doppelganger
             return null; // Return null if no path found
         }
 
-        private void UpdatePlayerConfiguration(Dictionary<string, GameObject> currentlyLoadedModels, string jsonOutputPath, string modelOutputPath)
-        {
-            string skeletonJson = File.ReadAllText(skeletonJsonPath);
-            ModelData skeletonData = JsonConvert.DeserializeObject<ModelData>(skeletonJson);
-
-            // Ensure the directories exist
-            Directory.CreateDirectory(Path.GetDirectoryName(jsonOutputPath));
-            Directory.CreateDirectory(Path.GetDirectoryName(modelOutputPath));
-
-            // Update slot data based on sliders
-            foreach (var slider in interfaceManager.GetSliderValues())
-            {
-                if (slider.Value > 0 && currentlyLoadedModels.TryGetValue(slider.Key, out GameObject model))
-                {
-                    UpdateSlotDataBasedOnSlider(skeletonData, model, slider.Key);
-                }
-            }
-
-            // Write the updated configuration
-            WriteConfigurationOutput(skeletonData, jsonOutputPath, modelOutputPath);
-        }
-
-        private void UpdateSlotDataBasedOnSlider(ModelData skeletonData, GameObject model, string sliderKey)
-        {
-            string modelName = model.name.Replace("(Clone)", "").ToLower() + ".msh";
-
-            // Attempt to assign model to an available slot
-            if (!AssignModelToAvailableSlot(skeletonData, model, modelName, sliderKey))
-            {
-                Debug.LogWarning($"No available slots found for '{modelName}'. Unable to assign.");
-            }
-        }
-
-        private bool AssignModelToAvailableSlot(ModelData skeletonData, GameObject model, string modelName, string sliderKey)
-        {
-            // First, attempt direct assignment using slotUIDLookup
-            if (AttemptDirectAssignment(skeletonData, model, modelName, sliderKey))
-            {
-                return true;
-            }
-
-            // If direct assignment fails, try using the generic slot and fallbacks
-            return AttemptAssignmentWithFallback(skeletonData, model, modelName, sliderKey);
-        }
-
-        private bool AttemptDirectAssignment(ModelData skeletonData, GameObject model, string modelName, string sliderKey)
-        {
-            if (slotUIDLookup.ModelSlots.TryGetValue(modelName, out List<ModelData.SlotInfo> possibleSlots))
-            {
-                foreach (var possibleSlot in possibleSlots)
-                {
-                    if (!IsSlotOccupied(skeletonData, possibleSlot.name))
-                    {
-                        // Call AddModelToSlot with correct arguments
-                        AddModelToSlot(skeletonData, possibleSlot.name, model);
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        private bool AttemptAssignmentWithFallback(ModelData skeletonData, GameObject model, string modelName, string sliderKey)
-        {
-            string mappedSlotKey = sliderToSlotMapping.ContainsKey(sliderKey) ? sliderToSlotMapping[sliderKey] : null;
-            if (mappedSlotKey == null || !fallbackSlots.ContainsKey(mappedSlotKey))
-            {
-                Debug.LogWarning($"No mapped slot or fallback slots found for '{sliderKey}'.");
-                return false;
-            }
-
-            foreach (var fallbackSlotKey in fallbackSlots[mappedSlotKey])
-            {
-                var slotUid = GetSlotUid(skeletonData, fallbackSlotKey);
-                if (slotUid != -1 && !IsSlotOccupied(skeletonData, fallbackSlotKey))
-                {
-                    // A suitable fallback slot is found and not occupied, assign the model to this slot
-                    AddModelToSlot(skeletonData, fallbackSlotKey, model);
-                    return true;
-                }
-            }
-
-            // If we've gone through all fallback slots and none are available, indicate failure
-            Debug.LogWarning($"No available slots found for model '{modelName}' with slider key '{sliderKey}'.");
-            return false;
-        }
-
-        private bool IsSlotOccupied(ModelData skeletonData, string slotKey)
-        {
-            return skeletonData.slotPairs.Any(sp => sp.key.Equals(slotKey, StringComparison.OrdinalIgnoreCase) && sp.slotData.models.Any());
-        }
-
-        private void AddModelToSlot(ModelData skeletonData, string slotKey, GameObject model)
-        {
-            // Ensure the model name is formatted correctly (remove "(Clone)" and ensure ".msh" extension)
-            string formattedModelName = FormatModelName(model.name);
-
-            // Check if the slot exists in the skeleton data
-            var slotPair = skeletonData.slotPairs.FirstOrDefault(sp => sp.key == slotKey);
-            if (slotPair != null)
-            {
-                // Use CreateSlotDataPair to prepare the slot data pair with the formatted model name
-                ModelData.SlotDataPair newSlotPair = CreateSlotDataPair(model, slotKey);
-                if (newSlotPair != null)
-                {
-                    // If newSlotPair contains valid data, update the existing slot's model list
-                    slotPair.slotData.models.AddRange(newSlotPair.slotData.models);
-                    Debug.Log($"Model '{formattedModelName}' successfully added to slot '{slotKey}'.");
-                }
-                else
-                {
-                    Debug.LogError($"Failed to create slot data pair for model '{formattedModelName}'.");
-                }
-            }
-            else
-            {
-                Debug.LogError($"Slot '{slotKey}' not found for model '{formattedModelName}'. No assignment made.");
-            }
-        }
-
-
-        private int GetSlotUid(ModelData skeletonData, string slotKey)
-        {
-            // Attempt to find an existing slot with the given key
-            var slotPair = skeletonData.slotPairs.FirstOrDefault(sp => sp.key.Equals(slotKey, StringComparison.OrdinalIgnoreCase));
-            if (slotPair != null)
-            {
-                // If found, return the existing slot UID
-                return slotPair.slotData.slotUid;
-            }
-            else
-            {
-                // If not found, log an error indicating no available slots and return an invalid UID
-                Debug.Log($"No available slot found for key '{slotKey}'. Unable to assign.");
-                return -1; // Indicate an invalid UID since we cannot generate new ones
-            }
-        }
-
         public void WriteCurrentConfigurationToJson()
         {
             if (characterBuilder == null || skeletonLookup == null)
@@ -437,21 +298,6 @@ namespace doppelganger
             var slotPairs = new List<ModelData.SlotDataPair>();
             var usedSlots = new HashSet<string>();
 
-            if (saveCategory.Equals("Player", StringComparison.OrdinalIgnoreCase))
-            {
-                
-                if (File.Exists(skeletonJsonPath))
-                {
-                    // Call the method to update player configuration with the loaded skeleton data and the paths
-                    UpdatePlayerConfiguration(currentlyLoadedModels, jsonOutputPath, modelOutputPath);
-                    return;
-                }
-                else
-                {
-                    Debug.LogError($"Skeleton JSON file not found: {skeletonJsonPath}");
-                }
-            }
-
             foreach (var slider in sliderValues)
             {
                 Debug.Log($"Processing slider: {slider.Key} with value: {slider.Value}");
@@ -474,7 +320,7 @@ namespace doppelganger
                             }
                             else
                             {
-                                string modelName = model.name.Replace("(Clone)", "").ToLower() + ".msh";
+                                string modelName = model.name.Replace("(Clone)", ".msh").ToLower();
                                 string potentialSkeletonName = skeletonLookup.FindMatchingSkeleton(modelName);
                                 if (!string.IsNullOrEmpty(potentialSkeletonName) && potentialSkeletonName != "default_skeleton.msh" && potentialSkeletonName != skeletonName)
                                 {
@@ -574,7 +420,8 @@ namespace doppelganger
             // Convert JSON to model format and update the .pak file, if applicable
             if (modelWriter != null)
             {
-                modelWriter.ConvertJsonToModelFormat(jsonOutputPath, modelOutputPath);
+                string saveCategory = saveCategoryDropdown.options[saveCategoryDropdown.value].text;
+                modelWriter.ConvertJsonToModelFormat(jsonOutputPath, modelOutputPath, saveCategory);
                 Debug.Log($"Model file created at {modelOutputPath}");
 
                 // Assuming you have a method to update .pak file, like ZipUtility.AddOrUpdateFilesInZip
@@ -582,16 +429,16 @@ namespace doppelganger
                 ZipUtility.AddOrUpdateFilesInZip(modelOutputPath, outputPakPath);
                 Debug.Log($"Data4.pak updated with model data at {outputPakPath}");
 
-                // Cleanup: Optionally delete the temporary model file
-                try
-                {
-                    File.Delete(modelOutputPath);
-                    Debug.Log($"{modelOutputPath} was successfully deleted.");
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError($"Failed to delete {modelOutputPath}: {e.Message}");
-                }
+                //// Cleanup: Optionally delete the temporary model file
+                //try
+                //{
+                //    File.Delete(modelOutputPath);
+                //    Debug.Log($"{modelOutputPath} was successfully deleted.");
+                //}
+                //catch (Exception e)
+                //{
+                //    Debug.LogError($"Failed to delete {modelOutputPath}: {e.Message}");
+                //}
             }
             else
             {
@@ -808,10 +655,9 @@ namespace doppelganger
         private string FormatModelName(string modelName)
         {
             // Remove "(Clone)" from the model name
-            string cleanName = modelName.Replace("(Clone)", "").Trim();
+            string cleanName = modelName.Replace("(Clone)", ".msh").Trim();
 
-            // Add ".msh" extension
-            return cleanName + ".msh";
+            return cleanName;
         }
 
 

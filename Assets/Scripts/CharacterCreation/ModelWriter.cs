@@ -3,6 +3,9 @@ using System.Text;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System;
+using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 
 /// <summary>
 /// Converts JSON data into a custom model format compatible with the Dying Light 2 Engine, focusing on character customization elements like arms, hands, legs, and torso parts. 
@@ -15,10 +18,38 @@ namespace doppelganger
 {
     public class ModelWriter : MonoBehaviour
     {
-        
-        public void ConvertJsonToModelFormat(string jsonInputPath, string modelOutputPath)
+        private void Start()
+        {
+            LoadSlotUidLookup();
+        }
+        private Dictionary<string, Queue<int>> slotUidLookup = new Dictionary<string, Queue<int>>();
+        private void LoadSlotUidLookup()
+        {
+            // Correcting the path to include the "SlotData" directory
+            string jsonPath = Path.Combine(Application.dataPath, "StreamingAssets/SlotData/SlotUidLookup_Empty.json");
+            if (File.Exists(jsonPath))
+            {
+                string jsonContent = File.ReadAllText(jsonPath);
+                var lookup = JsonConvert.DeserializeObject<Dictionary<string, List<int>>>(jsonContent);
+                slotUidLookup = lookup.ToDictionary(kvp => kvp.Key, kvp => new Queue<int>(kvp.Value));
+            }
+            else
+            {
+                Debug.LogError($"SlotUidLookup_Empty.json file not found at path: {jsonPath}");
+                slotUidLookup = new Dictionary<string, Queue<int>>(); // Initialize to avoid null reference
+            }
+        }
+        public void ConvertJsonToModelFormat(string jsonInputPath, string modelOutputPath, string category)
         {
             var requiredSlots = new List<string>
+        {
+            "ARMS", "ARMS_PART_1", "ARMS_PART_2", "ARMS_PART_3", "ARMS_PART_4", "ARMS_PART_5", "ARMS_PART_6",
+            "HANDS", "HANDS_PART_1", "HANDS_PART_2", "HANDS_PART_3", "HANDS_PART_4", "HANDS_PART_5", "HANDS_PART_6",
+            "HAT", "HEAD", "HEADCOVER", "HEADCOVER_PART_1", "HEAD_PART_1", "HEAD_PART_2", "HEAD_PART_3", "HEAD_PART_4", "HEAD_PART_5", "HEAD_PART_6",
+            "LEGS", "LEGS_PART_1", "LEGS_PART_2", "LEGS_PART_3", "LEGS_PART_5", "OTHER", "OTHER_PART_1", "OTHER_PART_2", "OTHER_PART_3", "OTHER_PART_4", "OTHER_PART_5",
+            "PANTS", "PANTS_PART_1", "PLAYER_GLOVES", "TORSO", "TORSO_PART_1", "TORSO_PART_2", "TORSO_PART_3", "TORSO_PART_4", "TORSO_PART_5", "TORSO_PART_6", "TORSO_PART_7", "TORSO_PART_8", "TORSO_PART_9",
+        };
+            var requiredPlayerSlots = new List<string>
         {
             "ARMS", "ARMS_PART_1", "ARMS_PART_2", "ARMS_PART_3", "ARMS_PART_4", "ARMS_PART_5", "ARMS_PART_6",
             "HANDS", "HANDS_PART_1", "HANDS_PART_2", "HANDS_PART_3", "HANDS_PART_4", "HANDS_PART_5", "HANDS_PART_6",
@@ -29,6 +60,9 @@ namespace doppelganger
             // Load the model data from JSON input
             string jsonInput = File.ReadAllText(jsonInputPath);
             ModelData modelData = JsonUtility.FromJson<ModelData>(jsonInput);
+
+
+            List<int> existingSlotUids = modelData.slotPairs.Select(sp => sp.slotData.slotUid).ToList();
 
             // Initialize StringBuilder for JSON output
             StringBuilder sb = new StringBuilder();
@@ -46,34 +80,76 @@ namespace doppelganger
 
             // Begin slots array
             sb.AppendLine("  \"slots\": [");
+            bool isFirstSlotAppended = modelData.slotPairs.Count == 0; // True if no slots have been appended yet
 
-            // Append existing slot pairs
             foreach (var slotPair in modelData.slotPairs)
             {
                 AppendSlotPair(sb, slotPair, modelData.slotPairs.LastOrDefault().Equals(slotPair));
+                isFirstSlotAppended = false; // After appending the first slot, set this to false
             }
 
-            // Extract the names of slots already used in modelData
             var usedSlotNames = modelData.slotPairs.Select(sp => sp.slotData.name).ToList();
+            bool isPreviousSlotAppended = true;
+            int existingUIDs = existingSlotUids.Count;
 
-            // Identify and append only the required empty slots that are missing
-            List<int> existingSlotUids = modelData.slotPairs.Select(sp => sp.slotData.slotUid).ToList();
-
-            // Identify and append only the required empty slots that are missing
-            foreach (var requiredSlot in requiredSlots)
+            if (category.Equals("Player", StringComparison.OrdinalIgnoreCase))
             {
-                if (!usedSlotNames.Contains(requiredSlot))
+                int totalRequired = requiredPlayerSlots.Count - existingUIDs; // Total number of required slots
+                int createdCount = 0;
+
+                foreach (var requiredPlayerSlot in requiredPlayerSlots)
                 {
-                    int nextAvailableSlotUid = DetermineNextAvailableSlotUid(existingSlotUids);
-                    // Append the required empty slot with the determined next available slot UID
-                    AppendEmptySlot(sb, requiredSlot, nextAvailableSlotUid, requiredSlot == requiredSlots.Last());
-                    existingSlotUids.Add(nextAvailableSlotUid); // Update the list with the newly used UID
+                    if (!usedSlotNames.Contains(requiredPlayerSlot))
+                    {
+                        int nextAvailableSlotUid = DetermineNextAvailableSlotUid(requiredPlayerSlot, new HashSet<int>(existingSlotUids));
+
+                        // Increment the created count since we're about to create a new slot
+                        createdCount++;
+
+                        // Determine if this is the last required slot by comparing the count of created slots against the total required
+                        bool isLast = (createdCount == totalRequired);
+
+                        Debug.Log($"nextAvailableSlotUid: {nextAvailableSlotUid}, total required: {totalRequired}, created: {createdCount}, isLast: {isLast}");
+
+                        AppendEmptySlot(sb, requiredPlayerSlot, nextAvailableSlotUid, isFirstSlotAppended, isPreviousSlotAppended, isLast);
+
+                        existingSlotUids.Add(nextAvailableSlotUid); // Update the list with the newly used UID
+
+                        isFirstSlotAppended = false; // After the first creation, this is always false
+                        isPreviousSlotAppended = true; // This becomes true after the first slot is appended
+                    }
+                }
+            }
+            else
+            {
+                int totalRequired = requiredSlots.Count - existingUIDs; // Total number of required slots
+                int createdCount = 0;
+
+                foreach (var requiredSlot in requiredSlots)
+                {
+                    if (!usedSlotNames.Contains(requiredSlot))
+                    {
+                        int nextAvailableSlotUid = DetermineNextAvailableSlotUid(requiredSlot, new HashSet<int>(existingSlotUids));
+
+                        // Increment the created count since we're about to create a new slot
+                        createdCount++;
+
+                        // Determine if this is the last required slot by comparing the count of created slots against the total required
+                        bool isLast = (createdCount == totalRequired);
+
+                        Debug.Log($"nextAvailableSlotUid: {nextAvailableSlotUid}, total required: {totalRequired}, created: {createdCount}, isLast: {isLast}");
+
+                        AppendEmptySlot(sb, requiredSlot, nextAvailableSlotUid, isFirstSlotAppended, isPreviousSlotAppended, isLast);
+
+                        existingSlotUids.Add(nextAvailableSlotUid); // Update the list with the newly used UID
+
+                        isFirstSlotAppended = false; // After the first creation, this is always false
+                        isPreviousSlotAppended = true; // This becomes true after the first slot is appended
+                    }
                 }
             }
 
-            // Close slots array
             sb.AppendLine("  ]");
-            sb.AppendLine("  }");
             sb.AppendLine("}");
 
             // Write to .model file
@@ -131,7 +207,7 @@ namespace doppelganger
                 sb.AppendLine("        \"resources\": []");
             }
             sb.AppendLine("      }");
-            sb.AppendLine("    }" + (!isLast ? "," : ""));
+            sb.AppendLine("    },");
         }
         private long[] GenerateUserData(ModelData.ModelInfo model)
         {
@@ -276,33 +352,67 @@ namespace doppelganger
             }
         }
 
-        private int DetermineNextAvailableSlotUid(List<int> existingSlotUids)
+        private int DetermineNextAvailableSlotUid(string slotName, HashSet<int> existingSlotUids)
         {
-            // Assuming existingSlotUids are sorted; if not, sort them first
-            existingSlotUids.Sort();
-            int nextAvailableSlotUid = 100; // Start from the minimum expected slot UID
-
-            // Increment nextAvailableSlotUid until finding a value not in existingSlotUids
-            while (existingSlotUids.Contains(nextAvailableSlotUid))
+            if (slotUidLookup.TryGetValue(slotName, out Queue<int> availableUids))
             {
-                nextAvailableSlotUid++;
+                while (availableUids.Count > 0)
+                {
+                    int uid = availableUids.Dequeue(); // Try the next available UID
+                    if (!existingSlotUids.Contains(uid))
+                    {
+                        //Debug.Log($"Found available UID '{uid}' for slot '{slotName}'.");
+                        return uid; // Found an available UID
+                    }
+                    //else
+                    //{
+                    //    Debug.Log($"UID '{uid}' is already in use.");
+                    //}
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"No available UIDs found for slot '{slotName}'.");
+            }
+            int startUid = 100;
+            int endUid = 199;
+            int newUid = startUid;
+
+            while (existingSlotUids.Contains(newUid))
+            {
+                newUid++;
+                // If it exceeds the range, wrap around or extend your range logic here
+                if (newUid > endUid)
+                {
+                    Debug.LogError($"Exceeded UID range for slot '{slotName}'. Consider expanding UID range or checking for errors.");
+                    // Handle error condition, perhaps by extending the range or other logic
+                    break; // Or return -1 to indicate failure, based on your error handling policy
+                }
             }
 
-            return nextAvailableSlotUid;
+            Debug.Log($"Generated new UID '{newUid}' for slot '{slotName}'.");
+            return newUid;
         }
 
-        private void AppendEmptySlot(StringBuilder sb, string slotName, int slotUid, bool isLast)
+        private void AppendEmptySlot(StringBuilder sb, string slotName, int slotUid, bool isFirstSlotAppended, bool isPreviousSlotAppended, bool isLast)
         {
             sb.AppendLine("    {");
             sb.AppendLine($"      \"slotUid\": {slotUid},");
             sb.AppendLine($"      \"name\": \"{slotName}\",");
-            sb.AppendLine($"      \"filterText\": \"{slotName.ToLower()}\",");
+            sb.AppendLine($"      \"filterText\": \"{Regex.Replace(slotName.ToLower(), @"[\d]|_part_", string.Empty)}\",");
             sb.AppendLine("      \"tagsBits\": 0,");
             sb.AppendLine("      \"shadowMaps\": 15,");
             sb.AppendLine("      \"meshResources\": {");
             sb.AppendLine("        \"resources\": []");
             sb.AppendLine("      }");
-            sb.AppendLine("    }" + (isLast ? "" : ","));
+            if (isFirstSlotAppended || isPreviousSlotAppended && !isLast)
+            {
+                sb.AppendLine("    },");
+            }
+            else if (!isFirstSlotAppended || isPreviousSlotAppended && isLast)
+            {
+                sb.AppendLine("    }");
+            }
         }
 
     }

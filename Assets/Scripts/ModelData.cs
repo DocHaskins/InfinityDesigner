@@ -34,10 +34,10 @@ public class ModelData
     }
 
     [Serializable]
-    public class PlayerSlotInfo
+    public class SlotUidFrequency
     {
         public int slotUid;
-        public string name;
+        public int frequency;
     }
 
     [Serializable]

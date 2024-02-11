@@ -197,11 +197,18 @@ public class JsonCreatorWindow : EditorWindow
 
         EditorGUILayout.Space();
 
-        if (GUILayout.Button("Build Unique SlotUID Jsons"))
+        if (GUILayout.Button("Build Unique Mesh SlotUID Lookup"))
         {
             GenerateModelSlotLookup();
         }
-        
+
+        EditorGUILayout.Space();
+
+        if (GUILayout.Button("Build Unique Empty SlotUID Lookup"))
+        {
+            GenerateNameSlotUidFrequencyLookup();
+        }
+
     }
 
     
@@ -1046,10 +1053,88 @@ public class JsonCreatorWindow : EditorWindow
 
     private void SaveModelSlotLookup(ModelData.ModelSlotLookup modelSlotLookup)
     {
+        // Sort each list of SlotInfo by slotUid before saving
+        foreach (var modelName in modelSlotLookup.modelSlots.Keys.ToList()) // ToList() to avoid collection modified exception
+        {
+            modelSlotLookup.modelSlots[modelName] = modelSlotLookup.modelSlots[modelName]
+                .OrderBy(slotInfo => slotInfo.slotUid)
+                .ToList();
+        }
+
         string outputPath = Path.Combine(Application.dataPath, "StreamingAssets/SlotData/SlotUIDLookup.json");
         string jsonOutput = JsonConvert.SerializeObject(modelSlotLookup, Formatting.Indented);
         File.WriteAllText(outputPath, jsonOutput);
         Debug.Log($"Model Slot Lookup saved to: {outputPath}");
+    }
+
+    private void GenerateNameSlotUidFrequencyLookup()
+    {
+        string jsonDirectoryPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons");
+        if (!Directory.Exists(jsonDirectoryPath))
+        {
+            Debug.LogError("JSON directory does not exist.");
+            return;
+        }
+
+        // Dictionary to hold name and all associated slotUids
+        var nameToSlotUids = new Dictionary<string, List<int>>();
+
+        foreach (var typeDir in Directory.GetDirectories(jsonDirectoryPath))
+        {
+            foreach (var categoryDir in Directory.GetDirectories(typeDir))
+            {
+                var jsonFiles = Directory.GetFiles(categoryDir, "*.json");
+                foreach (var file in jsonFiles)
+                {
+                    try
+                    {
+                        string jsonData = File.ReadAllText(file);
+                        ModelData modelData = JsonConvert.DeserializeObject<ModelData>(jsonData);
+
+                        if (modelData.modelProperties == null || modelData.slotPairs == null) continue;
+
+                        foreach (var slotPair in modelData.GetSlots())
+                        {
+                            SlotData slotData = slotPair.Value;
+                            foreach (var model in slotData.models)
+                            {
+                                string nameKey = slotData.name.ToUpper(); // Using slotData.name for mapping
+
+                                if (!nameToSlotUids.ContainsKey(nameKey))
+                                {
+                                    nameToSlotUids[nameKey] = new List<int>();
+                                }
+                                nameToSlotUids[nameKey].Add(slotData.slotUid);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError($"Error processing file {file}: {ex.Message}");
+                    }
+                }
+            }
+        }
+
+        // Process the mapping to count frequencies and sort by them
+        var sortedNameToSlotUids = nameToSlotUids.ToDictionary(
+            entry => entry.Key,
+            entry => entry.Value.GroupBy(uid => uid)
+                                .OrderByDescending(group => group.Count()) // Sort by frequency
+                                .ThenBy(group => group.Key) // Then by slotUid for ties
+                                .Select(group => group.Key)
+                                .ToList()
+        );
+
+        SaveNameSlotUidFrequencyLookup(sortedNameToSlotUids);
+    }
+
+    private void SaveNameSlotUidFrequencyLookup(Dictionary<string, List<int>> sortedNameToSlotUids)
+    {
+        string outputPath = Path.Combine(Application.dataPath, "StreamingAssets/SlotData/SlotUidLookup_Empty.json");
+        var jsonOutput = JsonConvert.SerializeObject(sortedNameToSlotUids, Formatting.Indented);
+        File.WriteAllText(outputPath, jsonOutput);
+        Debug.Log($"Name Slot UID Frequency Lookup saved to: {outputPath}");
     }
 
 

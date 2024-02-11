@@ -125,9 +125,9 @@ namespace doppelganger
             // Directly use the provided selectedCategory and selectedClass parameters
             if (skeletonMapping.ContainsKey(selectedCategory) && skeletonMapping[selectedCategory].ContainsKey(selectedClass))
             {
-                Debug.Log("Selected Category: " + selectedCategory + ", Selected Class: " + selectedClass);
+                //Debug.Log("Selected Category: " + selectedCategory + ", Selected Class: " + selectedClass);
                 string selectedSkeleton = skeletonMapping[selectedCategory][selectedClass];
-                Debug.Log("Selected Skeleton: " + selectedSkeleton);
+                //Debug.Log("Selected Skeleton: " + selectedSkeleton);
                 return selectedSkeleton + ".msh";
             }
             else
