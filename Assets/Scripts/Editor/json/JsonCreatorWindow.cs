@@ -194,6 +194,14 @@ public class JsonCreatorWindow : EditorWindow
         {
             CreateVariationJsons();
         }
+
+        EditorGUILayout.Space();
+
+        if (GUILayout.Button("Build Unique SlotUID Jsons"))
+        {
+            GenerateModelSlotLookup();
+        }
+        
     }
 
     
@@ -259,7 +267,6 @@ public class JsonCreatorWindow : EditorWindow
         HashSet<string> ignoreList = new HashSet<string> { "player_legs_a.msh", "player_camo_bracers_a_tpp.msh", "player_camo_bracers_a_fpp.msh", "man_bdt_torso_c_shawl_b.msh", "chr_player_healer_mask.msh", "reporter_woman_old_skeleton.msh", "player_camo_gloves_a_tpp.msh", "player_camo_headwear_a_tpp.msh", "player_camo_hood_a_tpp.msh", "player_camo_pants_a_tpp.msh", "npc_colonel_coat_b.msh" };
         Dictionary<string, List<string>> modelToFilterLookup = new Dictionary<string, List<string>>();
         Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>> modelsByClassAndFilter = new Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>>();
-
         Dictionary<string, string> specificTermsToCategory = new Dictionary<string, string>
 {
     { "young", "Human/Child" },
@@ -957,6 +964,92 @@ public class JsonCreatorWindow : EditorWindow
     private static int GetNextVariationId(VariationOutput variationOutput)
     {
         return variationOutput.variations.Any() ? variationOutput.variations.Max(v => int.TryParse(v.id, out int id) ? id : 0) + 1 : 1;
+    }
+
+    private void GenerateModelSlotLookup()
+    {
+        string jsonDirectoryPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons");
+        if (!Directory.Exists(jsonDirectoryPath))
+        {
+            Debug.LogError("JSON directory does not exist.");
+            return;
+        }
+
+        ModelData.ModelSlotLookup modelSlotLookup = new ModelData.ModelSlotLookup();
+
+        foreach (var typeDir in Directory.GetDirectories(jsonDirectoryPath))
+        {
+            foreach (var categoryDir in Directory.GetDirectories(typeDir))
+            {
+                var jsonFiles = Directory.GetFiles(categoryDir, "*.json");
+                foreach (var file in jsonFiles)
+                {
+                    try
+                    {
+                        string jsonData = File.ReadAllText(file);
+                        ModelData modelData = JsonConvert.DeserializeObject<ModelData>(jsonData);
+
+                        if (modelData.modelProperties == null || modelData.slotPairs == null)
+                        {
+                            Debug.LogWarning($"Skipped file {file} due to missing properties or slotPairs.");
+                            continue;
+                        }
+
+                        foreach (var slotPair in modelData.GetSlots())
+                        {
+                            SlotData slotData = slotPair.Value;
+                            foreach (var model in slotData.models)
+                            {
+                                string modelName = model.name.ToLower();
+                                ModelData.SlotInfo slotInfo = new ModelData.SlotInfo
+                                {
+                                    slotUid = slotData.slotUid,
+                                    name = slotData.name,
+                                    filterText = slotData.filterText
+                                };
+
+                                if (!modelSlotLookup.modelSlots.ContainsKey(modelName))
+                                {
+                                    modelSlotLookup.modelSlots[modelName] = new List<ModelData.SlotInfo>();
+                                }
+
+                                // Check for uniqueness before adding
+                                if (!ContainsSlotInfo(modelSlotLookup.modelSlots[modelName], slotInfo))
+                                {
+                                    modelSlotLookup.modelSlots[modelName].Add(slotInfo);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError($"Error processing file {file}: {ex.Message}");
+                    }
+                }
+            }
+        }
+
+        SaveModelSlotLookup(modelSlotLookup);
+    }
+
+    private bool ContainsSlotInfo(List<ModelData.SlotInfo> slotInfos, ModelData.SlotInfo newSlotInfo)
+    {
+        foreach (var slotInfo in slotInfos)
+        {
+            if (slotInfo.slotUid == newSlotInfo.slotUid && slotInfo.name == newSlotInfo.name && slotInfo.filterText == newSlotInfo.filterText)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void SaveModelSlotLookup(ModelData.ModelSlotLookup modelSlotLookup)
+    {
+        string outputPath = Path.Combine(Application.dataPath, "StreamingAssets/SlotData/SlotUIDLookup.json");
+        string jsonOutput = JsonConvert.SerializeObject(modelSlotLookup, Formatting.Indented);
+        File.WriteAllText(outputPath, jsonOutput);
+        Debug.Log($"Model Slot Lookup saved to: {outputPath}");
     }
 
 

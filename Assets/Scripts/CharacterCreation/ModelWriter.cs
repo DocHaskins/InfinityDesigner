@@ -15,15 +15,9 @@ namespace doppelganger
 {
     public class ModelWriter : MonoBehaviour
     {
+        
         public void ConvertJsonToModelFormat(string jsonInputPath, string modelOutputPath)
         {
-            // Read the JSON input
-            string jsonInput = File.ReadAllText(jsonInputPath);
-            ModelData modelData = JsonUtility.FromJson<ModelData>(jsonInput);
-
-            // Use StringBuilder to create the formatted string
-            StringBuilder sb = new StringBuilder();
-
             var requiredSlots = new List<string>
         {
             "ARMS", "ARMS_PART_1", "ARMS_PART_2", "ARMS_PART_3", "ARMS_PART_4", "ARMS_PART_5", "ARMS_PART_6",
@@ -32,80 +26,118 @@ namespace doppelganger
             "LEGS", "LEGS_PART_1", "LEGS_PART_2", "LEGS_PART_3", "LEGS_PART_5", "OTHER", "OTHER_PART_1", "OTHER_PART_2", "OTHER_PART_3", "OTHER_PART_4", "OTHER_PART_5",
             "PANTS", "PANTS_PART_1", "PLAYER_GLOVES", "TORSO", "TORSO_PART_1", "TORSO_PART_2", "TORSO_PART_3", "TORSO_PART_4", "TORSO_PART_5", "TORSO_PART_6", "TORSO_PART_7", "TORSO_PART_8", "TORSO_PART_9", "SHIELDHOLDER", "PARAGLIDER",
         };
+            // Load the model data from JSON input
+            string jsonInput = File.ReadAllText(jsonInputPath);
+            ModelData modelData = JsonUtility.FromJson<ModelData>(jsonInput);
 
-            int nextSlotUid = modelData.slotPairs.Any()
-                          ? modelData.slotPairs.Max(sp => sp.slotData.slotUid) + 1
-                          : 101;
+            // Initialize StringBuilder for JSON output
+            StringBuilder sb = new StringBuilder();
 
-            var emptySlots = requiredSlots.Except(modelData.slotPairs.Select(sp => sp.slotData.name)).ToList();
-
+            // Start JSON structure
             sb.AppendLine("{");
             sb.AppendLine("  \"version\": 6,");
             sb.AppendLine("  \"preset\": {");
-            sb.AppendLine("    \"skeletonName\": \"" + modelData.skeletonName + "\"");
+            sb.AppendLine($"    \"skeletonName\": \"{modelData.skeletonName}\"");
             sb.AppendLine("  },");
             sb.AppendLine("  \"data\": {");
 
+            // Append properties
             AppendProperties(sb, modelData);
 
+            // Begin slots array
             sb.AppendLine("  \"slots\": [");
-            // Append slot pairs
+
+            // Append existing slot pairs
             foreach (var slotPair in modelData.slotPairs)
             {
-                sb.AppendLine("    {");
-                sb.AppendLine($"      \"slotUid\": {slotPair.slotData.slotUid},");
-                sb.AppendLine($"      \"name\": \"{slotPair.slotData.name}\",");
-                sb.AppendLine("      \"filterText\": \"" + GetFilterText(slotPair.slotData.name) + "\",");
-                sb.AppendLine("      \"tagsBits\": 0,");
-                sb.AppendLine("      \"shadowMaps\": 15,");
-                sb.AppendLine("      \"meshResources\": {");
+                AppendSlotPair(sb, slotPair, modelData.slotPairs.LastOrDefault().Equals(slotPair));
+            }
+
+            // Extract the names of slots already used in modelData
+            var usedSlotNames = modelData.slotPairs.Select(sp => sp.slotData.name).ToList();
+
+            // Identify and append only the required empty slots that are missing
+            List<int> existingSlotUids = modelData.slotPairs.Select(sp => sp.slotData.slotUid).ToList();
+
+            // Identify and append only the required empty slots that are missing
+            foreach (var requiredSlot in requiredSlots)
+            {
+                if (!usedSlotNames.Contains(requiredSlot))
+                {
+                    int nextAvailableSlotUid = DetermineNextAvailableSlotUid(existingSlotUids);
+                    // Append the required empty slot with the determined next available slot UID
+                    AppendEmptySlot(sb, requiredSlot, nextAvailableSlotUid, requiredSlot == requiredSlots.Last());
+                    existingSlotUids.Add(nextAvailableSlotUid); // Update the list with the newly used UID
+                }
+            }
+
+            // Close slots array
+            sb.AppendLine("  ]");
+            sb.AppendLine("  }");
+            sb.AppendLine("}");
+
+            // Write to .model file
+            File.WriteAllText(modelOutputPath, sb.ToString());
+        }
+
+        private List<int> FindGapSlotUids(List<int> existingSlotUids)
+        {
+            var gapSlotUids = new List<int>();
+            int nextSlotUid = 100; // Start from UID 100
+
+            while (nextSlotUid <= existingSlotUids.DefaultIfEmpty(99).Max() + 1)
+            {
+                if (!existingSlotUids.Contains(nextSlotUid))
+                {
+                    gapSlotUids.Add(nextSlotUid);
+                }
+                nextSlotUid++;
+            }
+
+            return gapSlotUids;
+        }
+
+        private void AppendSlotPair(StringBuilder sb, ModelData.SlotDataPair slotPair, bool isLast)
+        {
+            sb.AppendLine("    {");
+            sb.AppendLine($"      \"slotUid\": {slotPair.slotData.slotUid},");
+            sb.AppendLine($"      \"name\": \"{slotPair.slotData.name}\",");
+            sb.AppendLine($"      \"filterText\": \"{GetFilterText(slotPair.slotData.name)}\",");
+            sb.AppendLine("      \"tagsBits\": 0,");
+            sb.AppendLine("      \"shadowMaps\": 15,");
+            sb.AppendLine("      \"meshResources\": {");
+            if (slotPair.slotData.models.Any())
+            {
                 sb.AppendLine("        \"resources\": [");
 
                 foreach (var model in slotPair.slotData.models)
                 {
+                    // Assume GenerateUserData is a method that returns long[] based on model info
+                    long[] userData = GenerateUserData(model);
+
                     sb.AppendLine("          {");
                     sb.AppendLine($"            \"name\": \"{model.name}\",");
                     sb.AppendLine("            \"selected\": true,");
                     sb.AppendLine("            \"layoutId\": 4,");
-
-                    // Define the userData array
-                    long[] userData = new long[] { 4286643968, 128, 4294901760, 0 };
                     AppendUserData(sb, userData);
-
-                    // Append materialsData
                     AppendMaterialsData(sb, model.materialsData);
-                    // Append materialsResources
                     AppendMaterialsResources(sb, model.materialsResources);
-
-                    sb.AppendLine("          },");
+                    sb.AppendLine("          }" + (!model.Equals(slotPair.slotData.models.Last()) ? "," : ""));
                 }
-                if (slotPair.slotData.models.Count > 0) sb.Remove(sb.Length - 3, 1); // Remove last comma
                 sb.AppendLine("        ]");
-                sb.AppendLine("      }");
-                sb.AppendLine("    },");
             }
-            if (modelData.slotPairs.Count > 0)
+            else
             {
-                // Remove the last comma if there are no empty slots to append
-                if (!emptySlots.Any())
-                {
-                    sb.Remove(sb.Length - 3, 1);
-                }
+                sb.AppendLine("        \"resources\": []");
             }
-
-            // Append empty slots
-            for (int i = 0; i < emptySlots.Count; i++)
-            {
-                bool isLastSlot = (i == emptySlots.Count - 1);
-                AppendEmptySlot(sb, nextSlotUid++, emptySlots[i], isLastSlot);
-            }
-
-            sb.AppendLine("  ]");
-            sb.AppendLine("}");
-
-            // Write the formatted string to a .model file
-            File.WriteAllText(modelOutputPath, sb.ToString());
+            sb.AppendLine("      }");
+            sb.AppendLine("    }" + (!isLast ? "," : ""));
         }
+        private long[] GenerateUserData(ModelData.ModelInfo model)
+        {
+            return new long[] { 4286643968, 128, 4294901760, 0 };
+        }
+
 
         private string GetFilterText(string name)
         {
@@ -244,25 +276,34 @@ namespace doppelganger
             }
         }
 
-        private void AppendEmptySlot(StringBuilder sb, int slotUid, string slotName, bool isLastSlot)
+        private int DetermineNextAvailableSlotUid(List<int> existingSlotUids)
+        {
+            // Assuming existingSlotUids are sorted; if not, sort them first
+            existingSlotUids.Sort();
+            int nextAvailableSlotUid = 100; // Start from the minimum expected slot UID
+
+            // Increment nextAvailableSlotUid until finding a value not in existingSlotUids
+            while (existingSlotUids.Contains(nextAvailableSlotUid))
+            {
+                nextAvailableSlotUid++;
+            }
+
+            return nextAvailableSlotUid;
+        }
+
+        private void AppendEmptySlot(StringBuilder sb, string slotName, int slotUid, bool isLast)
         {
             sb.AppendLine("    {");
             sb.AppendLine($"      \"slotUid\": {slotUid},");
             sb.AppendLine($"      \"name\": \"{slotName}\",");
-            sb.AppendLine($"      \"filterText\": \"{GetFilterText(slotName)}\",");
+            sb.AppendLine($"      \"filterText\": \"{slotName.ToLower()}\",");
             sb.AppendLine("      \"tagsBits\": 0,");
             sb.AppendLine("      \"shadowMaps\": 15,");
             sb.AppendLine("      \"meshResources\": {");
             sb.AppendLine("        \"resources\": []");
             sb.AppendLine("      }");
-            if (!isLastSlot)
-            {
-                sb.AppendLine("    },");
-            }
-            else
-            {
-                sb.AppendLine("    }");
-            }
+            sb.AppendLine("    }" + (isLast ? "" : ","));
         }
+
     }
 }

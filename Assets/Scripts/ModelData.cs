@@ -28,6 +28,27 @@ public class ModelData
     }
 
     [Serializable]
+    public class ModelSlotLookup
+    {
+        public Dictionary<string, List<SlotInfo>> modelSlots = new Dictionary<string, List<SlotInfo>>();
+    }
+
+    [Serializable]
+    public class PlayerSlotInfo
+    {
+        public int slotUid;
+        public string name;
+    }
+
+    [Serializable]
+    public class SlotInfo
+    {
+        public int slotUid;
+        public string name;
+        public string filterText;
+    }
+
+    [Serializable]
     public class ModelProperties
     {
         public string @class;

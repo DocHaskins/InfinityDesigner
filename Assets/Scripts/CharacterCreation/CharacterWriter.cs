@@ -9,6 +9,7 @@ using SFB;
 using System.Text;
 using System.Linq;
 using static ModelData;
+using static doppelganger.CharacterWriter;
 
 
 /// <summary>
@@ -39,7 +40,10 @@ namespace doppelganger
         public bool createAdditionalModel = false;
 
         public AudioSource audioSource;
-
+        public string dateSubfolder = DateTime.Now.ToString("yyyy_MM_dd");
+        public string jsonOutputDirectory = Path.Combine(Application.streamingAssetsPath, "Output");
+        public string skeletonJsonPath = "Assets/StreamingAssets/Jsons/Human/Player/player_tpp_skeleton.json";
+        SlotUIDLookup slotUIDLookup = SlotUIDLookup.LoadFromJson("Assets/StreamingAssets/SlotData/SlotUIDLookup.json");
         private Dictionary<string, string> sliderToSlotMapping = new Dictionary<string, string>()
     {
         {"ALL_head", "HEAD"},
@@ -51,8 +55,11 @@ namespace doppelganger
         {"ALL_earrings", "HEAD_PART_1"},
         {"ALL_glasses", "HEAD_PART_1"},
         {"ALL_hat", "HAT"},
+        {"ALL_hat_access", "HAT"},
         {"ALL_mask", "HEADCOVER"},
+        {"ALL_mask_access", "HEADCOVER"},
         {"ALL_armor_helmet", "HEADCOVER"},
+        {"ALL_armor_helmet_access", "HEADCOVER"},
         {"ALL_hands", "HANDS"},
         {"ALL_rhand", "HANDS_PART_1"},
         {"ALL_lhand", "HANDS_PART_1"},
@@ -61,20 +68,30 @@ namespace doppelganger
         {"ALL_rings", "HANDS_PART_1"},
         {"ALL_backpack", "TORSO_PART_1"},
         {"ALL_torso", "TORSO"},
+        {"ALL_torso_2", "TORSO_PART_1"},
         {"ALL_cape", "TORSO_PART_1"},
         {"ALL_necklace", "TORSO_PART_1"},
         {"ALL_torso_access", "TORSO_PART_1"},
         {"ALL_torso_extra", "TORSO_PART_1"},
         {"ALL_armor_torso", "TORSO_PART_1"},
+        {"ALL_armor_torso_access", "TORSO_PART_1"},
         {"ALL_armor_torso_lowerleft", "ARMS_PART_1"},
         {"ALL_armor_torso_lowerright", "ARMS_PART_1"},
         {"ALL_armor_torso_upperleft", "ARMS_PART_1"},
         {"ALL_armor_torso_upperright", "ARMS_PART_1"},
+        {"ALL_armor_legs", "LEGS_PART_1"},
+        {"ALL_armor_legs_lowerleft", "LEGS_PART_1"},
+        {"ALL_armor_legs_lowerright", "LEGS_PART_1"},
+        {"ALL_armor_legs_upperleft", "LEGS_PART_1"},
+        {"ALL_armor_legs_upperright", "LEGS_PART_1"},
         {"ALL_sleeve", "ARMS_PART_1"},
         {"ALL_legs", "LEGS"},
-        {"ALL_leg_access", "LEGS_PART_1"},
+        {"ALL_legs_access", "LEGS_PART_1"},
+        {"ALL_legs_extra", "LEGS_PART_1"},
         {"ALL_shoes", "LEGS_PART_1"},
         {"ALL_decals", "OTHER_PART_1"},
+        {"ALL_decals_extra", "OTHER_PART_1"},
+        {"ALL_decals_logo", "OTHER_PART_1"},
         {"ALL_tattoo", "OTHER_PART_1"},
         // Add other mappings here
     };
@@ -217,6 +234,144 @@ namespace doppelganger
             return null; // Return null if no path found
         }
 
+        private void UpdatePlayerConfiguration(Dictionary<string, GameObject> currentlyLoadedModels, string jsonOutputPath, string modelOutputPath)
+        {
+            string skeletonJson = File.ReadAllText(skeletonJsonPath);
+            ModelData skeletonData = JsonConvert.DeserializeObject<ModelData>(skeletonJson);
+
+            // Ensure the directories exist
+            Directory.CreateDirectory(Path.GetDirectoryName(jsonOutputPath));
+            Directory.CreateDirectory(Path.GetDirectoryName(modelOutputPath));
+
+            // Update slot data based on sliders
+            foreach (var slider in interfaceManager.GetSliderValues())
+            {
+                if (slider.Value > 0 && currentlyLoadedModels.TryGetValue(slider.Key, out GameObject model))
+                {
+                    UpdateSlotDataBasedOnSlider(skeletonData, model, slider.Key);
+                }
+            }
+
+            // Write the updated configuration
+            WriteConfigurationOutput(skeletonData, jsonOutputPath, modelOutputPath);
+        }
+
+        private void UpdateSlotDataBasedOnSlider(ModelData skeletonData, GameObject model, string sliderKey)
+        {
+            string modelName = model.name.Replace("(Clone)", "").ToLower() + ".msh";
+
+            // Attempt to assign model to an available slot
+            if (!AssignModelToAvailableSlot(skeletonData, model, modelName, sliderKey))
+            {
+                Debug.LogWarning($"No available slots found for '{modelName}'. Unable to assign.");
+            }
+        }
+
+        private bool AssignModelToAvailableSlot(ModelData skeletonData, GameObject model, string modelName, string sliderKey)
+        {
+            // First, attempt direct assignment using slotUIDLookup
+            if (AttemptDirectAssignment(skeletonData, model, modelName, sliderKey))
+            {
+                return true;
+            }
+
+            // If direct assignment fails, try using the generic slot and fallbacks
+            return AttemptAssignmentWithFallback(skeletonData, model, modelName, sliderKey);
+        }
+
+        private bool AttemptDirectAssignment(ModelData skeletonData, GameObject model, string modelName, string sliderKey)
+        {
+            if (slotUIDLookup.ModelSlots.TryGetValue(modelName, out List<ModelData.SlotInfo> possibleSlots))
+            {
+                foreach (var possibleSlot in possibleSlots)
+                {
+                    if (!IsSlotOccupied(skeletonData, possibleSlot.name))
+                    {
+                        // Call AddModelToSlot with correct arguments
+                        AddModelToSlot(skeletonData, possibleSlot.name, model);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private bool AttemptAssignmentWithFallback(ModelData skeletonData, GameObject model, string modelName, string sliderKey)
+        {
+            string mappedSlotKey = sliderToSlotMapping.ContainsKey(sliderKey) ? sliderToSlotMapping[sliderKey] : null;
+            if (mappedSlotKey == null || !fallbackSlots.ContainsKey(mappedSlotKey))
+            {
+                Debug.LogWarning($"No mapped slot or fallback slots found for '{sliderKey}'.");
+                return false;
+            }
+
+            foreach (var fallbackSlotKey in fallbackSlots[mappedSlotKey])
+            {
+                var slotUid = GetSlotUid(skeletonData, fallbackSlotKey);
+                if (slotUid != -1 && !IsSlotOccupied(skeletonData, fallbackSlotKey))
+                {
+                    // A suitable fallback slot is found and not occupied, assign the model to this slot
+                    AddModelToSlot(skeletonData, fallbackSlotKey, model);
+                    return true;
+                }
+            }
+
+            // If we've gone through all fallback slots and none are available, indicate failure
+            Debug.LogWarning($"No available slots found for model '{modelName}' with slider key '{sliderKey}'.");
+            return false;
+        }
+
+        private bool IsSlotOccupied(ModelData skeletonData, string slotKey)
+        {
+            return skeletonData.slotPairs.Any(sp => sp.key.Equals(slotKey, StringComparison.OrdinalIgnoreCase) && sp.slotData.models.Any());
+        }
+
+        private void AddModelToSlot(ModelData skeletonData, string slotKey, GameObject model)
+        {
+            // Ensure the model name is formatted correctly (remove "(Clone)" and ensure ".msh" extension)
+            string formattedModelName = FormatModelName(model.name);
+
+            // Check if the slot exists in the skeleton data
+            var slotPair = skeletonData.slotPairs.FirstOrDefault(sp => sp.key == slotKey);
+            if (slotPair != null)
+            {
+                // Use CreateSlotDataPair to prepare the slot data pair with the formatted model name
+                ModelData.SlotDataPair newSlotPair = CreateSlotDataPair(model, slotKey);
+                if (newSlotPair != null)
+                {
+                    // If newSlotPair contains valid data, update the existing slot's model list
+                    slotPair.slotData.models.AddRange(newSlotPair.slotData.models);
+                    Debug.Log($"Model '{formattedModelName}' successfully added to slot '{slotKey}'.");
+                }
+                else
+                {
+                    Debug.LogError($"Failed to create slot data pair for model '{formattedModelName}'.");
+                }
+            }
+            else
+            {
+                Debug.LogError($"Slot '{slotKey}' not found for model '{formattedModelName}'. No assignment made.");
+            }
+        }
+
+
+        private int GetSlotUid(ModelData skeletonData, string slotKey)
+        {
+            // Attempt to find an existing slot with the given key
+            var slotPair = skeletonData.slotPairs.FirstOrDefault(sp => sp.key.Equals(slotKey, StringComparison.OrdinalIgnoreCase));
+            if (slotPair != null)
+            {
+                // If found, return the existing slot UID
+                return slotPair.slotData.slotUid;
+            }
+            else
+            {
+                // If not found, log an error indicating no available slots and return an invalid UID
+                Debug.Log($"No available slot found for key '{slotKey}'. Unable to assign.");
+                return -1; // Indicate an invalid UID since we cannot generate new ones
+            }
+        }
+
         public void WriteCurrentConfigurationToJson()
         {
             if (characterBuilder == null || skeletonLookup == null)
@@ -224,7 +379,7 @@ namespace doppelganger
                 Debug.LogError("Dependencies are null. Cannot write configuration.");
                 return;
             }
-
+            
             string customBasePath = LoadPathFromConfig();
             string targetPath = Path.Combine(customBasePath, "ph/source");
 
@@ -240,8 +395,8 @@ namespace doppelganger
             string saveNameText = saveName.text;
             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(saveNameText);
 
-            string dateSubfolder = DateTime.Now.ToString("yyyy_MM_dd");
-            string jsonOutputDirectory = Path.Combine(Application.streamingAssetsPath, "Output", dateSubfolder);
+            
+            
             Directory.CreateDirectory(jsonOutputDirectory);
 
             Dictionary<string, string> skeletonDictLookup = ReadSkeletonLookup();
@@ -273,8 +428,8 @@ namespace doppelganger
             }
 
             // Constructing the JSON and .model file paths dynamically based on the fileName
-            string jsonOutputPath = Path.Combine(jsonOutputDirectory, $"{saveName.text}.json");
-            string modelOutputPath = Path.Combine(targetPath, $"{fileName}.model");
+            string jsonOutputPath = Path.Combine(Application.streamingAssetsPath, "Output", DateTime.Now.ToString("yyyy_MM_dd"), saveName.text + ".json");
+            string modelOutputPath = Path.Combine(customBasePath, "ph/source", fileName + ".model");
 
             var sliderValues = interfaceManager.GetSliderValues();
             var currentlyLoadedModels = characterBuilder.GetCurrentlyLoadedModels();
@@ -282,14 +437,24 @@ namespace doppelganger
             var slotPairs = new List<ModelData.SlotDataPair>();
             var usedSlots = new HashSet<string>();
 
-            // Create a list to hold the ALL_head slot pair if found
-            List<ModelData.SlotDataPair> allHeadSlotPairs = new List<ModelData.SlotDataPair>();
-
-            int nextSlotUid = 101; // Initialize the next slot's uid to 101
+            if (saveCategory.Equals("Player", StringComparison.OrdinalIgnoreCase))
+            {
+                
+                if (File.Exists(skeletonJsonPath))
+                {
+                    // Call the method to update player configuration with the loaded skeleton data and the paths
+                    UpdatePlayerConfiguration(currentlyLoadedModels, jsonOutputPath, modelOutputPath);
+                    return;
+                }
+                else
+                {
+                    Debug.LogError($"Skeleton JSON file not found: {skeletonJsonPath}");
+                }
+            }
 
             foreach (var slider in sliderValues)
             {
-                //Debug.Log($"Processing slider: {slider.Key} with value: {slider.Value}");
+                Debug.Log($"Processing slider: {slider.Key} with value: {slider.Value}");
 
                 if (slider.Value > 0)
                 {
@@ -297,44 +462,54 @@ namespace doppelganger
                     {
                         if (sliderToSlotMapping.TryGetValue(slider.Key, out string slotKey))
                         {
-                            ModelData.SlotDataPair slotPair;
+                            bool slotAssigned = false;
+                            ModelData.SlotDataPair slotPair = null;
 
                             if (slotKey == "HEAD")
                             {
                                 slotPair = CreateSlotDataPair(model, slotKey);
                                 slotPair.slotData.slotUid = 100;
-                                slotPairs.Insert(0, slotPair);
+                                slotPairs.Add(slotPair);
+                                slotAssigned = true;
                             }
                             else
                             {
-                                string assignedSlot = GetAvailableSlot(slotKey, usedSlots);
-                                if (assignedSlot == null)
+                                string modelName = model.name.Replace("(Clone)", "").ToLower() + ".msh";
+                                string potentialSkeletonName = skeletonLookup.FindMatchingSkeleton(modelName);
+                                if (!string.IsNullOrEmpty(potentialSkeletonName) && potentialSkeletonName != "default_skeleton.msh" && potentialSkeletonName != skeletonName)
                                 {
-                                    Debug.LogWarning($"No available slots for {slider.Key}");
-                                    continue;
+                                    skeletonName = potentialSkeletonName;
+                                    skeletonUpdated = true;
+                                    Debug.Log($"Skeleton updated to {skeletonName} based on loaded models.");
                                 }
+                                if (slotUIDLookup.ModelSlots.TryGetValue(modelName, out List<ModelData.SlotInfo> possibleSlots))
+                                {
+                                    Debug.Log($"Found possible slots for model {modelName}: {possibleSlots.Count}");
 
-                                slotPair = CreateSlotDataPair(model, assignedSlot);
-                                slotPair.slotData.slotUid = nextSlotUid++;
-                                slotPairs.Add(slotPair);
-
-                                //Debug.Log($"Assigned {assignedSlot} slot for {slider.Key}");
+                                    foreach (var possibleSlot in possibleSlots)
+                                    {
+                                        if (!usedSlots.Contains(possibleSlot.name))
+                                        {
+                                            slotPair = CreateSlotDataPair(model, possibleSlot.name);
+                                            slotPair.slotData.slotUid = possibleSlot.slotUid;
+                                            slotPairs.Add(slotPair);
+                                            usedSlots.Add(possibleSlot.name);
+                                            Debug.Log($"Assigned {possibleSlot.name} slot for {slider.Key} with Slot UID: {possibleSlot.slotUid}");
+                                            slotAssigned = true;
+                                            break; // Exit the loop once a slot is assigned
+                                        }
+                                    }
+                                }
                             }
 
-                            usedSlots.Add(slotKey);
-                            string modelName = model.name;
-                            string potentialSkeletonName = skeletonLookup.FindMatchingSkeleton(modelName);
-                            if (!string.IsNullOrEmpty(potentialSkeletonName) && potentialSkeletonName != "default_skeleton.msh" && potentialSkeletonName != skeletonName)
+                            if (slotPair != null && slotAssigned)
                             {
-                                skeletonName = potentialSkeletonName;
-                                skeletonUpdated = true;
-                                Debug.Log($"Skeleton updated to {skeletonName} based on loaded models.");
-                                break; // If you prefer the first match; otherwise, remove this to check all models
+                                Debug.Log($"Assigned {slotPair.slotData.name} slot for {slider.Key} with Slot UID: {slotPair.slotData.slotUid}");
                             }
-                        }
-                        else
-                        {
-                            Debug.LogWarning($"No slot mapping found for slider {slider.Key}");
+                            else
+                            {
+                                Debug.LogWarning($"No available slots found for model {slotKey}");
+                            }
                         }
                     }
                     else
@@ -344,53 +519,74 @@ namespace doppelganger
                 }
             }
 
-            // Insert the ALL_head slot pairs before other slot pairs
-            slotPairs.InsertRange(1, allHeadSlotPairs);
+            //int maxSlotUid = 199; // Define the maximum slotUid for the "100s" range
 
-            if (slotPairs.Count == 0)
-            {
-                Debug.LogWarning("No slot pairs were added. JSON will be empty.");
-            }
+            //// Find the highest used slotUid within the "100s" range or start from 99 if none are used
+            //int highestUsedSlotUid = slotPairs
+            //    .Where(pair => pair.slotData.slotUid >= 100 && pair.slotData.slotUid <= maxSlotUid)
+            //    .Select(pair => pair.slotData.slotUid)
+            //    .DefaultIfEmpty(99)
+            //    .Max();
+            //StringBuilder sb = new StringBuilder();
+            //// Fill in the gaps
+            //HashSet<int> usedSlotUids = new HashSet<int>(slotPairs.Select(pair => pair.slotData.slotUid));
+            //for (int slotUid = 101; slotUid <= maxSlotUid; slotUid++)
+            //{
+            //    if (!usedSlotUids.Contains(slotUid))
+            //    {
+            //        // Assuming GetFilterText returns a string based on slotName
+            //        string slotName = $"Empty_{slotUid}"; // Customize this name as needed
+            //        bool isLastSlot = slotUid == maxSlotUid || !usedSlotUids.Any(uid => uid > slotUid && uid <= maxSlotUid);
+            //        modelWriter.AppendEmptySlot(sb, slotUid, slotName, isLastSlot);
+            //    }
+            //}
 
+            // Ensure slotPairs are sorted after appending empty slots
+            slotPairs = slotPairs.OrderBy(pair => pair.slotData.slotUid).ToList();
+
+            // Write the configuration to JSON
             var outputData = new ModelData
             {
-                skeletonName = skeletonName,
+                skeletonName = skeletonName, // Make sure skeletonName is updated from the loaded models
                 slotPairs = slotPairs,
                 modelProperties = new ModelData.ModelProperties
                 {
-                    // Use a ternary operator to conditionally set the class
-                    @class = saveClass == "ALL" ? "NPC" : saveClass,
-                    race = "Unknown",
-                    sex = DetermineCharacterSex(slotPairs)
+                    @class = saveClass.Equals("ALL", StringComparison.OrdinalIgnoreCase) ? "NPC" : saveClass,
+                    race = "Unknown", // Customize as needed
+                    sex = DetermineCharacterSex(slotPairs) // Implement this method based on your logic
                 }
             };
+            WriteConfigurationOutput(outputData, jsonOutputPath, modelOutputPath);
+        }
 
+        private void WriteConfigurationOutput(ModelData outputData, string jsonOutputPath, string modelOutputPath)
+        {
+            // Serialize the outputData to JSON
             string json = JsonConvert.SerializeObject(outputData, Formatting.Indented);
 
-            // Creating directory if it doesn't exist
+            // Ensure the output directory exists
             Directory.CreateDirectory(Path.GetDirectoryName(jsonOutputPath));
-            File.WriteAllText(jsonOutputPath, json);
-            Debug.Log($"Character configuration saved to {jsonOutputPath}");
-            string outputPakPath = Path.Combine(targetPath, "Data4.pak");
 
-            // After writing the JSON, call ModelWriter to convert it to .model format
+            // Write the JSON file
+            File.WriteAllText(jsonOutputPath, json);
+            Debug.Log($"Configuration saved to {jsonOutputPath}");
+
+            // Convert JSON to model format and update the .pak file, if applicable
             if (modelWriter != null)
             {
                 modelWriter.ConvertJsonToModelFormat(jsonOutputPath, modelOutputPath);
-                Debug.Log($"Model configuration saved to {modelOutputPath}");
+                Debug.Log($"Model file created at {modelOutputPath}");
 
-                // Update the .pak file with the .model file
+                // Assuming you have a method to update .pak file, like ZipUtility.AddOrUpdateFilesInZip
+                string outputPakPath = Path.Combine(Path.GetDirectoryName(modelOutputPath), "Data4.pak");
                 ZipUtility.AddOrUpdateFilesInZip(modelOutputPath, outputPakPath);
                 Debug.Log($"Data4.pak updated with model data at {outputPakPath}");
 
-                // Cleanup: Delete the .model file after it has been added to the .pak
+                // Cleanup: Optionally delete the temporary model file
                 try
                 {
-                    if (File.Exists(modelOutputPath))
-                    {
-                        File.Delete(modelOutputPath);
-                        Debug.Log($"{modelOutputPath} was successfully deleted.");
-                    }
+                    File.Delete(modelOutputPath);
+                    Debug.Log($"{modelOutputPath} was successfully deleted.");
                 }
                 catch (Exception e)
                 {
@@ -399,61 +595,45 @@ namespace doppelganger
             }
             else
             {
-                Debug.LogError("ModelWriter not set in CharacterWriter.");
+                Debug.LogError("ModelWriter not set.");
+            }
+        }
+
+
+        public class SlotUIDLookup
+        {
+            public Dictionary<string, List<ModelData.SlotInfo>> ModelSlots { get; set; }
+
+            public SlotUIDLookup()
+            {
+                ModelSlots = new Dictionary<string, List<ModelData.SlotInfo>>();
             }
 
-            if (modelWriter != null)
+            public static SlotUIDLookup LoadFromJson(string path)
             {
-                modelWriter.ConvertJsonToModelFormat(jsonOutputPath, modelOutputPath);
-                Debug.Log($"Model configuration saved to {modelOutputPath}");
+                string jsonText = File.ReadAllText(path);
+                return JsonConvert.DeserializeObject<SlotUIDLookup>(jsonText);
+            }
+        }
 
-                // Update the .pak file with the .model file
-                ZipUtility.AddOrUpdateFilesInZip(modelOutputPath, outputPakPath);
-                Debug.Log($"Data4.pak updated with model data at {outputPakPath}");
+        private string GetAvailableSlot(string initialSlot, HashSet<string> usedSlots)
+        {
+            if (!usedSlots.Contains(initialSlot))
+            {
+                return initialSlot;
+            }
 
-                // Conditionally create an additional model if the flag is true
-                if (createAdditionalModel)
+            if (fallbackSlots.TryGetValue(initialSlot, out List<string> fallbacks))
+            {
+                foreach (var slot in fallbacks)
                 {
-                    // Define a modified list of slot pairs excluding specified sliders
-                    var modifiedSlotPairs = slotPairs.Where(pair => !ExcludedSliders.Contains(pair.slotData.name)).ToList();
-                    var modifiedOutputData = new ModelData
+                    if (!usedSlots.Contains(slot))
                     {
-                        skeletonName = "player_fpp_skeleton.msh", // Use the specific skeleton
-                        slotPairs = modifiedSlotPairs,
-                        modelProperties = outputData.modelProperties // Copy other properties
-                    };
-
-                    string modifiedJson = JsonConvert.SerializeObject(modifiedOutputData, Formatting.Indented);
-                    string fppModelPath = modelOutputPath.Replace(".model", "_fpp.model");
-
-                    // Directly convert to .model format without saving the JSON
-                    modelWriter.ConvertJsonToModelFormat(modifiedJson, fppModelPath);
-                    Debug.Log($"Additional model configuration saved to {fppModelPath}");
-
-                    // Add the additional .model file to the .pak
-                    ZipUtility.AddOrUpdateFilesInZip(fppModelPath, outputPakPath);
-                    Debug.Log($"Data4.pak updated with additional model data at {outputPakPath}");
-
-                    // Cleanup: Delete the additional .model file
-                    if (File.Exists(fppModelPath))
-                    {
-                        File.Delete(fppModelPath);
-                        Debug.Log($"{fppModelPath} was successfully deleted.");
+                        return slot;
                     }
                 }
-
-                // Cleanup: Delete the original .model file
-                if (File.Exists(modelOutputPath))
-                {
-                    File.Delete(modelOutputPath);
-                    Debug.Log($"{modelOutputPath} was successfully deleted.");
-                }
-                audioSource.Play();
             }
-            else
-            {
-                Debug.LogError("ModelWriter not set in CharacterWriter.");
-            }
+            return null; // Return null if no slots are available
         }
 
         private Dictionary<string, string> ReadSkeletonLookup()
@@ -502,26 +682,6 @@ namespace doppelganger
             return "";
         }
 
-        private string GetAvailableSlot(string initialSlot, HashSet<string> usedSlots)
-        {
-            if (!usedSlots.Contains(initialSlot))
-            {
-                return initialSlot;
-            }
-
-            if (fallbackSlots.TryGetValue(initialSlot, out List<string> fallbacks))
-            {
-                foreach (var slot in fallbacks)
-                {
-                    if (!usedSlots.Contains(slot))
-                    {
-                        return slot;
-                    }
-                }
-            }
-            return null; // Return null if no slots are available
-        }
-
         private ModelData.SlotDataPair CreateSlotDataPair(GameObject model, string slotKey)
         {
             // Store the original slotKey for exporting purposes
@@ -538,7 +698,7 @@ namespace doppelganger
             // Initialize slotData with the formatted model name and the transformed slot key for internal purposes
             var slotData = new ModelData.SlotData
             {
-                name = originalSlotKey, // Use the original slot key here for the output
+                name = originalSlotKey,
                 models = new List<ModelData.ModelInfo>()
             };
 
