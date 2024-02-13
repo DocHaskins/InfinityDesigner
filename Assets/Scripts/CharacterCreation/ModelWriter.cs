@@ -94,29 +94,24 @@ namespace doppelganger
 
             if (category.Equals("Player", StringComparison.OrdinalIgnoreCase))
             {
-                int totalRequired = requiredPlayerSlots.Count - existingUIDs; // Total number of required slots
-                int createdCount = 0;
+                var slotsToCreate = requiredPlayerSlots.Except(usedSlotNames).ToList(); // Slots that actually need to be created
+                int totalRequired = slotsToCreate.Count;
 
-                foreach (var requiredPlayerSlot in requiredPlayerSlots)
+                foreach (var requiredSlot in requiredPlayerSlots)
                 {
-                    if (!usedSlotNames.Contains(requiredPlayerSlot))
+                    if (!usedSlotNames.Contains(requiredSlot))
                     {
-                        int nextAvailableSlotUid = DetermineNextAvailableSlotUid(requiredPlayerSlot, new HashSet<int>(existingSlotUids));
+                        int nextAvailableSlotUid = DetermineNextAvailableSlotUid(requiredSlot, new HashSet<int>(existingSlotUids));
+                        bool isLast = slotsToCreate.IndexOf(requiredSlot) == slotsToCreate.Count - 1; // Check if this is the last slot to create
 
-                        // Increment the created count since we're about to create a new slot
-                        createdCount++;
+                        // Note: The following log might need adjustment since createdCount isn't updated in this snippet
+                        Debug.Log($"nextAvailableSlotUid: {nextAvailableSlotUid}, total required: {totalRequired}, created: {slotsToCreate.IndexOf(requiredSlot) + 1}, isLast: {isLast}");
 
-                        // Determine if this is the last required slot by comparing the count of created slots against the total required
-                        bool isLast = (createdCount == totalRequired);
-
-                        Debug.Log($"nextAvailableSlotUid: {nextAvailableSlotUid}, total required: {totalRequired}, created: {createdCount}, isLast: {isLast}");
-
-                        AppendEmptySlot(sb, requiredPlayerSlot, nextAvailableSlotUid, isFirstSlotAppended, isPreviousSlotAppended, isLast);
+                        AppendEmptySlot(sb, requiredSlot, nextAvailableSlotUid, isFirstSlotAppended, isPreviousSlotAppended, isLast);
 
                         existingSlotUids.Add(nextAvailableSlotUid); // Update the list with the newly used UID
-
-                        isFirstSlotAppended = false; // After the first creation, this is always false
-                        isPreviousSlotAppended = true; // This becomes true after the first slot is appended
+                        isFirstSlotAppended = false; // Adjusted after the first slot creation
+                        isPreviousSlotAppended = true; // Ensures correct formatting for JSON
                     }
                 }
             }

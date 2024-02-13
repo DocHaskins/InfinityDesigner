@@ -21,6 +21,7 @@ namespace doppelganger
         [Header("Managers")]
         public CharacterBuilder characterBuilder;
         public VariationBuilder variationBuilder;
+        public SliderKeyboardControl sliderKeyboardControl;
         public FilterMapping filterMapping;
 
         [Header("Interface")]

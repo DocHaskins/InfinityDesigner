@@ -44,6 +44,7 @@ namespace doppelganger
         public string jsonOutputDirectory = Path.Combine(Application.streamingAssetsPath, "Output");
         public string skeletonJsonPath = "Assets/StreamingAssets/Jsons/Human/Player/player_tpp_skeleton.json";
         SlotUIDLookup slotUIDLookup = SlotUIDLookup.LoadFromJson("Assets/StreamingAssets/SlotData/SlotUIDLookup.json");
+        private Dictionary<string, int> slotNameToUidMap = new Dictionary<string, int>();
         private Dictionary<string, string> sliderToSlotMapping = new Dictionary<string, string>()
     {
         {"ALL_head", "HEAD"},
@@ -58,12 +59,10 @@ namespace doppelganger
         {"ALL_hat_access", "HEADCOVER"},
         {"ALL_mask", "HEADCOVER"},
         {"ALL_mask_access", "HEADCOVER"},
-        {"ALL_armor_helmet", "HEADCOVER"},
-        {"ALL_armor_helmet_access", "HEADCOVER"},
         {"ALL_hands", "HANDS"},
         {"ALL_rhand", "HANDS_PART_1"},
         {"ALL_lhand", "HANDS_PART_1"},
-        {"ALL_gloves", "HANDS_PART_1"},
+        {"ALL_gloves", "PLAYER_GLOVES"},
         {"ALL_arm_access", "HANDS_PART_1"},
         {"ALL_rings", "HANDS_PART_1"},
         {"ALL_backpack", "TORSO_PART_1"},
@@ -73,6 +72,8 @@ namespace doppelganger
         {"ALL_necklace", "TORSO_PART_1"},
         {"ALL_torso_access", "TORSO_PART_1"},
         {"ALL_torso_extra", "TORSO_PART_1"},
+        {"ALL_armor_helmet", "HEADCOVER"},
+        {"ALL_armor_helmet_access", "HEADCOVER"},
         {"ALL_armor_torso", "TORSO_PART_1"},
         {"ALL_armor_torso_access", "TORSO_PART_1"},
         {"ALL_armor_torso_lowerleft", "ARMS_PART_1"},
@@ -103,7 +104,8 @@ namespace doppelganger
     {"TORSO_PART_1", new List<string> { "TORSO_PART_1", "TORSO_PART_2", "TORSO_PART_3", "TORSO_PART_4", "TORSO_PART_5", "TORSO_PART_6", "TORSO_PART_7", "TORSO_PART_8", "TORSO_PART_9", "OTHER", "OTHER_PART_1", "OTHER_PART_2", "OTHER_PART_3", "OTHER_PART_4", "OTHER_PART_5" }},
     {"ARMS_PART_1", new List<string> { "ARMS_PART_2", "ARMS_PART_3", "ARMS_PART_4", "ARMS_PART_5", "ARMS_PART_6", "OTHER", "OTHER_PART_1", "OTHER_PART_2", "OTHER_PART_3", "OTHER_PART_4", "OTHER_PART_5" }},
     {"OTHER_PART_1", new List<string> { "OTHER_PART_2", "OTHER_PART_3", "OTHER_PART_4", "OTHER_PART_5" }},
-    {"LEGS_PART_1", new List<string> { "PANTS", "PANTS_PART_1", "LEGS_PART_2", "LEGS_PART_3", "LEGS_PART_4", "LEGS_PART_5", "OTHER_PART_1", "OTHER_PART_2", "OTHER_PART_3", "OTHER_PART_4", "OTHER_PART_5" }},
+    {"LEGS_PART_1", new List<string> { "PANTS", "PANTS_PART_1", "LEGS_PART_5", "OTHER_PART_1", "OTHER_PART_2", "OTHER_PART_3", "OTHER_PART_4", "OTHER_PART_5" }},
+    {"PLAYER_GLOVES", new List<string> { "HANDS_PART_1", "HANDS_PART_3", "HANDS_PART_4", "HANDS_PART_5", "HANDS_PART_6", "OTHER_PART_1", "OTHER_PART_2", "OTHER_PART_3", "OTHER_PART_4", "OTHER_PART_5" }},
     {"HANDS_PART_1", new List<string> { "HANDS_PART_2", "HANDS_PART_3", "HANDS_PART_4", "HANDS_PART_5", "HANDS_PART_6", "OTHER_PART_1", "OTHER_PART_2", "OTHER_PART_3", "OTHER_PART_4", "OTHER_PART_5" }},
     {"HANDS", new List<string> { "HANDS_PART_1", "HANDS_PART_2", "HANDS_PART_3", "HANDS_PART_4", "HANDS_PART_5", "HANDS_PART_6", "OTHER_PART_1", "OTHER_PART_2", "OTHER_PART_3", "OTHER_PART_4", "OTHER_PART_5" }},
 };
@@ -125,6 +127,24 @@ namespace doppelganger
     "ALL_hat", "ALL_hat_access", "ALL_mask", "ALL_mask_access"
 };
 
+        private Dictionary<string, Queue<int>> slotUidLookup = new Dictionary<string, Queue<int>>();
+        private void LoadSlotUidLookup()
+        {
+            // Correcting the path to include the "SlotData" directory
+            string jsonPath = Path.Combine(Application.dataPath, "StreamingAssets/SlotData/SlotUidLookup_Empty.json");
+            if (File.Exists(jsonPath))
+            {
+                string jsonContent = File.ReadAllText(jsonPath);
+                var lookup = JsonConvert.DeserializeObject<Dictionary<string, List<int>>>(jsonContent);
+                slotUidLookup = lookup.ToDictionary(kvp => kvp.Key, kvp => new Queue<int>(kvp.Value));
+            }
+            else
+            {
+                Debug.LogError($"SlotUidLookup_Empty.json file not found at path: {jsonPath}");
+                slotUidLookup = new Dictionary<string, Queue<int>>(); // Initialize to avoid null reference
+            }
+        }
+
         void Start()
         {
             string savedPath = LoadPathFromConfig();
@@ -138,6 +158,8 @@ namespace doppelganger
                 characterBuilder = FindObjectOfType<CharacterBuilder>();
                 Debug.Log("CharacterBuilder found: " + (characterBuilder != null));
             }
+
+            LoadSlotUidLookup();
         }
 
         public void OpenSetPathDialog()
@@ -276,7 +298,7 @@ namespace doppelganger
                 Debug.Log($"Fallback skeleton name {skeletonName} obtained using the LookupSkeleton method for {saveCategory}, {saveClass}.");
             }
 
-            bool skeletonUpdated = false;
+            bool skeletonUpdated;
 
             // Overwrite fileName if saveCategory is "Player"
             string fileName = saveCategory.Equals("Player", StringComparison.OrdinalIgnoreCase) ? (string.IsNullOrWhiteSpace(saveName.text) || saveName.text.Equals("Aiden", StringComparison.OrdinalIgnoreCase) ? "player_tpp_skeleton" : saveName.text) : saveName.text;
@@ -297,6 +319,7 @@ namespace doppelganger
 
             var slotPairs = new List<ModelData.SlotDataPair>();
             var usedSlots = new HashSet<string>();
+            HashSet<int> usedSlotUids = new HashSet<int>(); // Moved outside the loop
 
             foreach (var slider in sliderValues)
             {
@@ -308,53 +331,77 @@ namespace doppelganger
                     {
                         if (sliderToSlotMapping.TryGetValue(slider.Key, out string slotKey))
                         {
-                            bool slotAssigned = false;
-                            ModelData.SlotDataPair slotPair = null;
-
-                            if (slotKey == "HEAD")
+                            string modelName = model.name.Replace("(Clone)", ".msh").ToLower();
+                            string potentialSkeletonName = skeletonLookup.FindMatchingSkeleton(modelName);
+                            if (!string.IsNullOrEmpty(potentialSkeletonName) && potentialSkeletonName != "default_skeleton.msh" && potentialSkeletonName != skeletonName)
                             {
-                                slotPair = CreateSlotDataPair(model, slotKey);
-                                slotPair.slotData.slotUid = 100;
-                                slotPairs.Add(slotPair);
-                                slotAssigned = true;
+                                skeletonName = potentialSkeletonName;
+                                skeletonUpdated = true;
+                                Debug.Log($"Skeleton updated to {skeletonName} based on loaded models.");
                             }
-                            else
+                            if (slotUIDLookup.ModelSlots.TryGetValue(modelName, out List<ModelData.SlotInfo> possibleSlots))
                             {
-                                string modelName = model.name.Replace("(Clone)", ".msh").ToLower();
-                                string potentialSkeletonName = skeletonLookup.FindMatchingSkeleton(modelName);
-                                if (!string.IsNullOrEmpty(potentialSkeletonName) && potentialSkeletonName != "default_skeleton.msh" && potentialSkeletonName != skeletonName)
-                                {
-                                    skeletonName = potentialSkeletonName;
-                                    skeletonUpdated = true;
-                                    Debug.Log($"Skeleton updated to {skeletonName} based on loaded models.");
-                                }
-                                if (slotUIDLookup.ModelSlots.TryGetValue(modelName, out List<ModelData.SlotInfo> possibleSlots))
-                                {
-                                    Debug.Log($"Found possible slots for model {modelName}: {possibleSlots.Count}");
+                                Debug.Log($"Found possible slots for model {modelName}: {possibleSlots.Count}");
+                                bool slotAssigned = false;
+                                ModelData.SlotDataPair slotPair; // Declaration moved outside of the loop
 
-                                    foreach (var possibleSlot in possibleSlots)
+                                foreach (var possibleSlot in possibleSlots)
+                                {
+                                    if (!usedSlotUids.Contains(possibleSlot.slotUid))
                                     {
-                                        if (!usedSlots.Contains(possibleSlot.name))
+                                        slotPair = CreateSlotDataPair(model, possibleSlot.name, possibleSlot.slotUid);
+                                        slotPairs.Add(slotPair);
+                                        usedSlotUids.Add(possibleSlot.slotUid);
+                                        usedSlots.Add(possibleSlot.name); // Also mark the slot name as used
+                                        Debug.Log($"Assigned {possibleSlot.name} slot for {slider.Key} with Slot UID: {possibleSlot.slotUid}");
+                                        slotAssigned = true;
+                                        break; // Exit the loop since a slot has been successfully assigned
+                                    }
+                                    else
+                                    {
+                                        Debug.Log($"Slot UID {possibleSlot.slotUid} for slot {possibleSlot.name} is already in use.");
+                                        string initialFallbackSlotName = sliderToSlotMapping[slider.Key];
+                                        List<string> fallbackOptions = fallbackSlots.TryGetValue(initialFallbackSlotName, out var initialFallbacks) ? initialFallbacks : new List<string>();
+
+                                        Debug.Log($"Fallback options for {initialFallbackSlotName}: {string.Join(", ", fallbackOptions)}");
+
+                                        foreach (var fallbackOption in fallbackOptions)
                                         {
-                                            slotPair = CreateSlotDataPair(model, possibleSlot.name);
-                                            slotPair.slotData.slotUid = possibleSlot.slotUid;
-                                            slotPairs.Add(slotPair);
-                                            usedSlots.Add(possibleSlot.name);
-                                            Debug.Log($"Assigned {possibleSlot.name} slot for {slider.Key} with Slot UID: {possibleSlot.slotUid}");
-                                            slotAssigned = true;
-                                            break; // Exit the loop once a slot is assigned
+                                            Debug.Log($"Considering fallback option: {fallbackOption}");
+                                            // Directly check if the fallback slot name is available and not yet used
+                                            if (!usedSlots.Contains(fallbackOption))
+                                            {
+                                                // Attempt to find a matching slot UID that hasn't been used yet
+                                                var nextAvailableSlotUid = DetermineNextAvailableSlotUid(fallbackOption, usedSlotUids);
+                                                if (nextAvailableSlotUid != -1) // Assuming -1 indicates failure to find an available UID
+                                                {
+                                                    Debug.Log($"Using next available Slot UID '{nextAvailableSlotUid}' for fallback slot '{fallbackOption}'.");
+                                                    slotPair = CreateSlotDataPair(model, fallbackOption, nextAvailableSlotUid);
+                                                    slotPairs.Add(slotPair);
+                                                    usedSlotUids.Add(nextAvailableSlotUid);
+                                                    usedSlots.Add(fallbackOption);
+                                                    Debug.Log($"Assigned fallback {fallbackOption} slot for {slider.Key} with Slot UID: {nextAvailableSlotUid}");
+                                                    slotAssigned = true;
+                                                    break; // Exit the loop since a fallback slot has been successfully assigned
+                                                }
+                                                else
+                                                {
+                                                    Debug.Log($"Fallback option '{fallbackOption}' available but no unused Slot UID found within the allowed range.");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Debug.Log($"Fallback option '{fallbackOption}' already used.");
+                                            }
+                                        }
+
+                                        if (!slotAssigned)
+                                        {
+                                            // Fallback logic exhausted and still no slot assigned
+                                            Debug.LogWarning($"No available slots found for model {modelName}. Consider handling this scenario.");
                                         }
                                     }
                                 }
-                            }
-
-                            if (slotPair != null && slotAssigned)
-                            {
-                                Debug.Log($"Assigned {slotPair.slotData.name} slot for {slider.Key} with Slot UID: {slotPair.slotData.slotUid}");
-                            }
-                            else
-                            {
-                                Debug.LogWarning($"No available slots found for model {slotKey}");
                             }
                         }
                     }
@@ -364,28 +411,6 @@ namespace doppelganger
                     }
                 }
             }
-
-            //int maxSlotUid = 199; // Define the maximum slotUid for the "100s" range
-
-            //// Find the highest used slotUid within the "100s" range or start from 99 if none are used
-            //int highestUsedSlotUid = slotPairs
-            //    .Where(pair => pair.slotData.slotUid >= 100 && pair.slotData.slotUid <= maxSlotUid)
-            //    .Select(pair => pair.slotData.slotUid)
-            //    .DefaultIfEmpty(99)
-            //    .Max();
-            //StringBuilder sb = new StringBuilder();
-            //// Fill in the gaps
-            //HashSet<int> usedSlotUids = new HashSet<int>(slotPairs.Select(pair => pair.slotData.slotUid));
-            //for (int slotUid = 101; slotUid <= maxSlotUid; slotUid++)
-            //{
-            //    if (!usedSlotUids.Contains(slotUid))
-            //    {
-            //        // Assuming GetFilterText returns a string based on slotName
-            //        string slotName = $"Empty_{slotUid}"; // Customize this name as needed
-            //        bool isLastSlot = slotUid == maxSlotUid || !usedSlotUids.Any(uid => uid > slotUid && uid <= maxSlotUid);
-            //        modelWriter.AppendEmptySlot(sb, slotUid, slotName, isLastSlot);
-            //    }
-            //}
 
             // Ensure slotPairs are sorted after appending empty slots
             slotPairs = slotPairs.OrderBy(pair => pair.slotData.slotUid).ToList();
@@ -472,15 +497,55 @@ namespace doppelganger
 
             if (fallbackSlots.TryGetValue(initialSlot, out List<string> fallbacks))
             {
-                foreach (var slot in fallbacks)
+                foreach (var fallback in fallbacks)
                 {
-                    if (!usedSlots.Contains(slot))
+                    // Recursively check for available slots in the fallback list
+                    string availableSlot = GetAvailableSlot(fallback, usedSlots);
+                    if (availableSlot != null)
                     {
-                        return slot;
+                        return availableSlot; // Found an available fallback slot
                     }
                 }
             }
-            return null; // Return null if no slots are available
+            return null; // No available slots found
+        }
+
+        private int DetermineNextAvailableSlotUid(string slotName, HashSet<int> existingSlotUids)
+        {
+            if (slotUidLookup.TryGetValue(slotName, out Queue<int> availableUids))
+            {
+                while (availableUids.Count > 0)
+                {
+                    int uid = availableUids.Dequeue(); // Try the next available UID
+                    if (!existingSlotUids.Contains(uid))
+                    {
+                        Debug.Log($"Found available UID '{uid}' for slot '{slotName}'.");
+                        return uid;
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"No available UIDs found for slot '{slotName}'.");
+            }
+            int startUid = 100;
+            int endUid = 199;
+            int newUid = startUid;
+
+            while (existingSlotUids.Contains(newUid))
+            {
+                newUid++;
+                // If it exceeds the range, wrap around or extend your range logic here
+                if (newUid > endUid)
+                {
+                    Debug.LogError($"Exceeded UID range for slot '{slotName}'. Consider expanding UID range or checking for errors.");
+                    // Handle error condition, perhaps by extending the range or other logic
+                    break; // Or return -1 to indicate failure, based on your error handling policy
+                }
+            }
+
+            Debug.Log($"Generated new UID '{newUid}' for slot '{slotName}'.");
+            return newUid;
         }
 
         private Dictionary<string, string> ReadSkeletonLookup()
@@ -529,7 +594,7 @@ namespace doppelganger
             return "";
         }
 
-        private ModelData.SlotDataPair CreateSlotDataPair(GameObject model, string slotKey)
+        private ModelData.SlotDataPair CreateSlotDataPair(GameObject model, string slotKey, int slotUid)
         {
             // Store the original slotKey for exporting purposes
             string originalSlotKey = slotKey;
@@ -545,8 +610,9 @@ namespace doppelganger
             // Initialize slotData with the formatted model name and the transformed slot key for internal purposes
             var slotData = new ModelData.SlotData
             {
-                name = originalSlotKey,
-                models = new List<ModelData.ModelInfo>()
+                name = slotKey, // Use the slotKey as provided; assumes it's already the "original" key or you handle naming elsewhere
+                slotUid = slotUid, // Directly use the provided slotUid
+                models = new List<ModelData.ModelInfo>() // Initialization remains the same
             };
 
             string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", $"{formattedModelName.Replace(".msh", "")}.json");
@@ -603,7 +669,7 @@ namespace doppelganger
                 Debug.LogError($"Material JSON file does not exist for model: {formattedModelName}. Cannot load variation or original materials.");
             }
 
-            return new ModelData.SlotDataPair { key = originalSlotKey, slotData = slotData };
+            return new ModelData.SlotDataPair { key = slotKey, slotData = slotData };
         }
 
         private List<ModelData.MaterialData> GetMaterialsDataFromStreamingAssets(string modelName)

@@ -1,0 +1,1071 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Threading.Tasks;
+using UnityEngine;
+using static ModelData;
+
+public class RunTimeDataBuilder : MonoBehaviour
+{
+
+    string selectedFolder = "";
+    private bool storeClassData = false;
+    private Dictionary<string, List<string>> filters;
+    private Dictionary<string, string[]> categoryPrefixes;
+    private Dictionary<string, List<string>> exclude_filters;
+    Dictionary<string, List<string>> modelToFilterLookup = new Dictionary<string, List<string>>();
+    Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>> modelsByClassAndFilter = new Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>>();
+    private Dictionary<string, string> skeletonToCategory = new Dictionary<string, string>
+{
+    {"child_skeleton", "Child"},{ "child_skeleton_mia", "Child"},{ "man_basic_skeleton", "Man"},{ "man_basic_skeleton_no_sh", "Man"},{ "man_bdt_heavy_coat_skeleton", "Man"},{ "man_bdt_heavy_skeleton", "Man"},{ "man_bdt_heavy_torso_d_skeleton", "Man"},{ "man_bdt_light_skeleton", "Man"},{ "man_bdt_medium_skeleton", "Man"},{ "man_bdt_skeleton", "Man"},{ "man_npc_hakon_arrow_skeleton", "Man"},{ "man_npc_skeleton", "Man"},{ "man_pk_heavy_skeleton", "Man"},{ "man_pk_light_skeleton", "Man"},{ "man_pk_medium_skeleton", "Man"},{ "man_pk_skeleton", "Man"},{ "man_plr_skeleton", "Man"},{ "man_sc_heavy_skeleton", "Man"},{ "man_sc_light_skeleton", "Man"},{ "man_sc_medium_skeleton", "Man"},{ "man_sc_skeleton", "Man"},{ "man_skeleton", "Man"},{ "man_srv_heavy_skeleton", "Man"},{ "man_srv_light_skeleton", "Man"},{ "man_srv_medium_skeleton", "Man"},{ "man_srv_skeleton", "Man"},{ "npc_frank_skeleton", "Man"},{ "npc_hakon_sh_skeleton", "Man"},{ "player_fpp_phx_skeleton", "Player"},{ "player_fpp_skeleton", "Player"},{ "player_phx_skeleton", "Player"},{ "player_skeleton", "Player"},{ "viral_skeleton", "Viral"},{ "woman_basic_skeleton", "Wmn"},{ "woman_light_skeleton", "Wmn"},{ "woman_npc_meredith_skeleton", "Wmn"},{ "woman_npc_singer_skeleton", "Wmn"},{ "woman_sc_skeleton", "Wmn"},{ "woman_skeleton", "Wmn"},{ "woman_srv_skeleton", "Wmn"},{ "zmb_banshee_skeleton", "Special Infected"},{ "zmb_bolter_skeleton", "Special Infected"},{ "zmb_charger_skeleton", "Special Infected"},{ "zmb_corruptor_skeleton", "Special Infected"},{ "zmb_demolisher_phx_skeleton", "Special Infected"},{ "zmb_demolisher_skeleton", "Special Infected"},{ "zmb_goon_skeleton", "Special Infected"},{ "zmb_screamer_skeleton", "Special Infected"},{ "zmb_spitter_skeleton", "Special Infected"},{ "zmb_spitter_tier_a_skeleton", "Special Infected"},{ "zmb_suicider_skeleton", "Special Infected"},{ "zmb_volataile_hive_skeleton", "Special Infected"},{ "zmb_volataile_skeleton", "Special Infected"},{ "man_zmb_heavy_skeleton", "Biter"},{ "man_zmb_light_skeleton", "Biter"},{ "man_zmb_medium_skeleton", "Biter"},{ "man_zmb_skeleton", "Biter"},
+{ "woman_zmb_skeleton", "Biter"},{ "man_srv_skinybiter_skeleton", "Biter"}
+    };
+
+    private void Start()
+    {
+        InitializeDictionaries();
+    }
+
+    private void InitializeDictionaries()
+    {
+        filters = new Dictionary<string, List<string>>()
+        {
+            {"head", new List<string> {"sh_scan_", "sh_npc_", "sh_wmn_", "aiden_young", "sh_", "sh_man_", "sh_biter_", "sh_man_viral_a", "head", "sh_biter_deg_b", "zmb_volatile_a"}},
+            {"hat", new List<string> {"hat", "cap", "headwear", "bandana", "beret", "bracken_bandage", "beanie", "hood", "sh_man_pk_headcover_c", "headband", "man_bdt_headcover_i", "coverlet"}},
+            {"hat_access", new List<string> {"hat", "cap", "headwear", "bandana", "horns", "beret", "bracken_bandage", "beanie", "hood", "sh_man_pk_headcover_c", "headband", "man_bdt_headcover_i", "coverlet"}},
+            {"mask", new List<string> {"mask", "balaclava", "scarf_a_part_d"}},
+            {"mask_access", new List<string> {"mask", "balaclava", "scarf_a_part_d"}},
+            {"glasses", new List<string> {"glasses", "man_ren_scarf_a_part_c", "player_tank_headwear_a_tpp"}},
+            {"necklace", new List<string> {"jewelry", "necklace", "man_bdt_chain_i", "man_bdt_chain_g", "man_bdt_chain_h", "man_bdt_chain_f"}},
+            {"earrings", new List<string> {"earing", "earring"}},
+            {"rings", new List<string> {"npc_man_ring"}},
+            {"hair", new List<string> {"hair", "npc_aiden_hair_headwear", "extension"}},
+            {"hair_base", new List<string> {"base"}},
+            {"hair_2", new List<string> {"sides", "braids", "extension"}},
+            {"hair_3", new List<string> {"fringe", "extension"}},
+            {"facial_hair", new List<string> {"facial_hair", "beard", "jaw_"}},
+            {"cape", new List<string> {"cape", "scarf", "chainmail", "sweater", "shawl", "shalw", "choker", "cloak", "npc_man_torso_g_hood_b"}},
+            {"torso", new List<string> {"torso", "npc_anderson", "player_reload_outfit", "singer_top", "npc_frank", "bolter", "goon", "charger_body", "corruptor", "screamer", "spitter", "viral", "volatile", "zmb_suicider_corpse"}},
+            {"torso_2", new List<string> { "torso", "centre", "vest", "wmn_torso_e", "wmn_torso_i", "center", "top", "fronttop", "front", "dress", "coat", "jacket", "bubbles", "horns", "guts", "gastank"}},
+            {"torso_extra", new List<string> {"torso", "addon", "wpntmp", "centre", "detail", "vest", "wmn_torso_e", "wmn_torso_i", "stethoscope", "center", "top", "fronttop", "front", "dress", "machete_tpp", "coat", "plates", "vest", "jacket", "bubbles", "horns", "guts", "gastank"}},
+            {"torso_access", new List<string> {"belt", "bumbag", "wpntmp", "centre", "detail", "vest", "wmn_torso_e", "wmn_torso_i", "stethoscope", "center", "top", "fronttop", "front", "torso_b_cape_spikes", "spikes", "knife", "add_", "wrap", "npc_colonel_feathers_a", "axe", "npc_wmn_pants_b_torso_g_tank_top_bumbag_a", "zipper", "rag", "pouch", "collar", "neck", "pocket", "waist_shirt", "chain_armour", "skull_", "plates", "sport_bag", "gastank", "walkietalkie", "man_bdt_belt_c_addon_a", "chain", "battery", "torso_a_pk_top", "man_bdt_torso_d_shirt_c", "wrench", "suspenders", "turtleneck", "npc_waltz_torso_a_glasses_addon", "apron"}},
+            {"tattoo", new List<string> {"tatoo", "tattoo"}},
+            {"hands", new List<string> {"hands", "arms"}},
+            {"lhand", new List<string> {"arm", "_left", "hand"}},
+            {"rhand", new List<string> {"arm", "_right", "hand"}},
+            {"gloves", new List<string> {"gloves", "arms_rag", "glove", "army_gloves"}},
+            {"arm_access", new List<string> {"biomarker", "basic_watch", "bracelet", "npc_barney_band","gloves_a_addon"}},
+            {"sleeve", new List<string> {"sleeve", "sleeves", "forearm", "arm", "arms"}},
+            {"backpack", new List<string> {"backpack", "bag", "parachute", "backback"}},
+            {"decals", new List<string> {"decal", "patch"}},
+            {"decals_extra", new List<string> {"decal", "patch"}},
+            {"decals_logo", new List<string> {"logo"}},
+            {"legs", new List<string> {"leg", "legs", "pants", "trousers", "army_pants"}},
+            {"legs_extra", new List<string> {"pocket", "socks", "bottom", "sc_ov_legs", "legs_a_part", "child_torso_a_bottom", "skirt", "man_srv_legs_b_bottom_a", "belt", "legs_c_add_", "legs_a_addon", "pants_b_rag"}},
+            {"legs_access", new List<string> {"pocket", "socks", "bottom", "sc_ov_legs", "legs_a_part", "pouch", "child_torso_a_bottom", "holster", "skirt", "chain", "equipment", "npc_jack_legs_adds", "man_srv_legs_b_bottom_a", "belt", "pad_", "legs_c_add_", "legs_a_addon", "pants_b_rag", "bumbag", "bag", "patch_", "bandage", "element", "tapes"}},
+            {"shoes", new List<string> {"shoes", "shoe", "feet", "boots", "child_pants_b"}},
+            {"armor_helmet", new List<string> {"helmet", "tank_headwear", "armor_b_head", "skullface_helmet", "headcover", "head_armor", "headgear"}},
+            {"armor_helmet_access", new List<string> {"helmet", "skullface_helmet", "headcover", "head_armor", "headgear"}},
+            {"armor_torso", new List<string> {"armor", "nuwa_torso_a"}},
+            {"armor_torso_access", new List<string> {"armor", "addon"}},
+            {"armor_torso_upperright", new List<string> {"upperright"}},
+            {"armor_torso_upperleft", new List<string> {"upperleft", "man_bandit_shoulders_armor_left_a", "shoulderpad"}},
+            {"armor_torso_lowerright", new List<string> {"lowerright", "bracers", "bracer", "hand_tapes_a_right", "pad_a_r", "elbow_pad_a_normal_r", "elbow_pad_a_muscular_r"}},
+            {"armor_torso_lowerleft", new List<string> {"lowerleft", "bracers", "npc_skullface_shield", "pad_a_l", "hand_tapes_a_left", "elbow_pad_a_muscular_l", "elbow_pad_a_normal_l"}},
+            {"armor_legs", new List<string> { "legs_armor", "legs_b_armor", "leg_armor", "pants_armor", "legs_a_armor", "pants_b_armor", "leg_armor", "pants_a_armor"}},
+            {"armor_legs_upperright", new List<string> { "armor"}},
+            {"armor_legs_upperleft", new List<string> { "armor"}},
+            {"armor_legs_lowerright", new List<string> { "armor"}},
+            {"armor_legs_lowerleft", new List<string> { "armor"}}
+        };
+
+        categoryPrefixes = new Dictionary<string, string[]>
+        {
+            {"Biter", new[] {"biter", "ialr_zmb_", "zmb_man", "zmb_wmn", "man_zmb_", "woman_zmb", "wmn_zmb_", "_zmb"}},
+            {"Viral", new[] {"viral", "viral_man", "ialr_viral_", "wmn_viral"}},
+            {"Player", new[] { "sh_npc_aiden", "player", "player_outfit_lubu_tpp", "player_outfit_carrier_leader_tpp", "player_outfit_brecken", "player_outfit_gunslinger_tpp"}},
+            {"Man", new[] {"man", "man_srv_craftmaster", "dlc_opera_man_shopkeeper_special", "npc_pipsqueak", "dlc_opera_man_npc_ciro", "npc_mc_dispatcher", "dlc_opera_man_npc_ferka", "dlc_opera_man_npc_hideo", "dlc_opera_man_npc_ogar", "npc_carl", "npc_alberto_paganini", "npc_outpost_guard", "npc_callum", "npc_abandon_srv_emmett", "npc_abandon_pk_master_brewer", "npc_feliks", "npc_marcus", "npc_mq_stan", "npc_hank", "npc_jack", "npc_colonel", "npc_pilgrim", "sh_baker", "npc_simon", "npc_juan", "npc_rowe", "npc_vincente", "sh_bruce",  "sh_frank", "sh_dlc_opera_npc_tetsuo", "sh_dlc_opera_npc_ogar", "sh_dlc_opera_npc_ciro", "sh_dlc_opera_npc_andrew", "npc_dylan", "npc_waltz", "dlc_opera_man", "npc_skullface", "sh_johnson", "npc_hakon", "npc_steve", "npc_barney", "multihead007_npc_carl_"}},
+            {"Wmn", new[] {"wmn", "woman", "dlc_opera_wmn", "npc_anderson", "dlc_opera_man_wmn_brienne", "sh_mother", "npc_thalia", "npc_hilda", "npc_lola", "npc_mq_singer", "npc_astrid", "npc_dr_veronika", "npc_lawan", "npc_meredith", "npc_mia", "npc_nuwa", "npc_plaguewitch", "npc_sophie"}},
+            {"Child", new[] {"child", "kid", "girl", "npc_arya", "npc_kevin", "npc_dominik", "prologue_npc_theo", "npc_rose", "npc_mq_maya", "npc_mq_zapalka", "npc_liam", "npc_moe", "ialr_viral_child", "ialr_zmb_child_", "boy", "young", "chld"}},
+            {"Special Infected", new[] { "volatile", "suicider", "spitter", "goon", "demolisher", "screamer", "bolter", "corruptor", "banshee", "charger" }},
+        };
+
+        exclude_filters = new Dictionary<string, List<string>>()
+        {
+            {"head", new List<string> {"hat", "cap", "headwear", "headgear", "armor", "mask", "bdt_balaclava", "horns", "sh_benchmark_npc_hakon_cc", "beret", "glasses", "hair", "bandana", "facial_hair", "beard", "headcover", "emblem", "hat", "cap", "headwear", "bandana", "beanie", "hood"}},
+            {"hat", new List<string> {"part", "player_camo_headwear_a_tpp", "fringe", "base", "braids", "player_headwear_crane_b_tpp", "player_tank_headwear_a_tpp", "player_camo_hood_a_tpp", "npc_man_torso_g_hood_b", "glasses", "hair", "decal_logo", "cape", "mask", "_addon", "decal", "facial_hair"}},
+            {"hat_access", new List<string> {"player_camo_headwear_a_tpp", "player_headwear_crane_b_tpp", "player_tank_headwear_a_tpp", "player_camo_hood_a_tpp", "npc_man_torso_g_hood_b", "glasses", "hair", "cape", "mask", "facial_hair"}},
+            {"mask", new List<string> {"glasses", "hair", "decal_logo", "cape", "_addon", "chr_player_healer_mask", "facial_hair"}},
+            {"mask_access", new List<string> {"glasses", "hair", "decal_logo", "cape", "chr_player_healer_mask", "facial_hair"}},
+            {"glasses", new List<string> {"hat", "cap", "npc_waltz_torso_a_glasses_addon", "headwear", "mask", "hair", "facial_hair"}},
+            {"necklace", new List<string> {"bandana"}},
+            {"earrings", new List<string> {"bandana", "torso"}},
+            {"rings", new List<string> {"bandana", "torso", "earing", "earring"}},
+            {"hair", new List<string> {"cap", "mask", "glasses", "facial_hair", "decal"}},
+            {"hair_base", new List<string> {"cap", "headwear", "mask", "torso", "glasses", "decal", "facial_hair", "young_hair", "fringe", "sides"}},
+            {"hair_2", new List<string> {"cap", "headwear", "mask", "glasses", "decal", "facial_hair", "young_hair", "fringe", "base"}},
+            {"hair_3", new List<string> {"cap", "headwear", "mask", "glasses", "decal", "facial_hair", "young_hair", "sides", "base"}},
+            {"facial_hair", new List<string> {"hat", "cap", "headwear", "mask", "decal", "glasses" }},
+            {"cape", new List<string> {"mask", "spikes", "belts", "scarf_a_part_d", "bags", "scarf_a_part_c"}},
+            {"torso", new List<string> {"armor", "sleeve", "plates", "wrench", "jacket", "_adds", "upperright", "upperleft", "bracelet", "back_", "pin", "beard", "shawl", "detail", "vest", "skirt", "center",  "wmn_torso_e", "bracer", "bracers", "sh_npc_anderson", "wmn_torso_i", "bottom", "base", "front_", "fronttop",  "torso_c_sweater", "rag", "stethoscope", "plaguewitch", "centre", "nuwa_torso_a", "horns", "wpntmp", "equipment", "head", "hair", "shoulderpad", "player_camo_torso_a_tpp", "hat", "mask", "player_inquisitor_torso_a_tpp", "player_torso_tpp_a", "addon", "machete_tpp", "skull", "chain_armour", "hands", "battery", "arms", "cape", "turtleneck", "apron", "pants", "backpack", "bag", "parachute", "suspenders", "legs", "hood", "spikes", "chain", "decal", "collar", "scarf", "pouch", "zipper", "belt", "part", "patch", "bag", "pocket", "jewelry", "necklace", "ring"}},
+            {"torso_2", new List<string> {"armor", "sleeve", "plates", "wrench", "detail", "bracer", "bracers", "sh_npc_anderson", "bottom", "base", "torso_c_sweater", "stethoscope", "plaguewitch", "horns", "wpntmp", "equipment", "head", "hair", "shoulderpad", "player_camo_torso_a_tpp", "hat", "mask", "player_inquisitor_torso_a_tpp", "player_torso_tpp_a", "addon", "machete_tpp", "skull", "chain_armour", "hands", "battery", "arms", "cape", "turtleneck", "apron", "pants", "backpack", "bag", "parachute", "suspenders", "legs", "hood", "spikes", "chain", "decal", "collar", "scarf", "pouch", "zipper", "belt", "part", "patch", "bag", "pocket", "jewelry", "necklace", "ring"}},
+            {"torso_extra", new List<string> {"armor", "mask", "gloves", "sleeve", "hands", "battery", "arms", "cape", "pants", "backpack", "bag", "parachute", "legs", "hood", "spikes", "chain", "decal", "collar", "scarf", "pouch", "zipper", "belt", "bag", "pocket", "jewelry", "necklace", "ring"}},
+            {"torso_access", new List<string> {"pants", "leg", "legs", "shoes", "man_bdt_chain_i", "bracken_bandage", "man_bdt_chain_g", "man_bdt_chain_h", "man_bdt_chain_f"}},
+            {"hands", new List<string> {"sleeve", "upper_arms", "pk", "man_srv_arms_a", "man_srv_torso_b_arms", "_left", "belts", "chains", "elbow", "_right", "armor", "decal_tattoo", "decal"}},
+            {"lhand", new List<string> {"_right", "upper", "headwear", "belts", "wrapper", "bracer", "bracers", "chains", "elbow", "balaclava", "shoes", "sleeve", "armor", "glove", "decal_tattoo", "tattoo", "torso", "leg", "legs", "pants", "hand", "decal"}},
+            {"rhand", new List<string> {"_left", "upper", "headwear", "belts", "wrapper", "bracer", "bracers", "chains", "elbow", "balaclava", "shoes", "sleeve", "armor", "glove", "decal_tattoo", "tattoo", "torso", "leg", "legs", "pants", "hand", "decal"}},
+            {"tattoo", new List<string> {"mask"}},
+            {"gloves", new List<string> {"arm","hand", "decal", "addon", "player_camo_gloves_a_tpp"}},
+            {"arm_access", new List<string> {"torso"}},
+            {"sleeve", new List<string> {"decal", "logo", "headwear", "gloves", "pants", "shoes", "leg", "addon", "torso_armor"}},
+            {"backpack", new List<string> {"pants"}},
+            {"decals", new List<string> {"mask"}},
+            {"decals_extra", new List<string> {"mask"}},
+            {"decals_graphic", new List<string> {"mask"}},
+            {"legs", new List<string> {"mask", "shoes", "player_legs_a", "sc_ov_legs", "feet", "part", "child_torso_a_bottom", "child_pants_b", "player_camo_pants_a_tpp", "arm", "chain", "elbow", "_right", "npc_jack_legs_adds", "bandage", "sleeve", "patch", "add_", "armor", "glove", "addon", "bag", "tapes", "man_srv_legs_b_bottom_a", "element", "hand", "decal", "equipment", "pocket", "pouch", "element", "decal_logo", "belt", "pad", "pants_b_rag", "bumbag", "bag", "patch_"}},
+            {"legs_extra", new List<string> {"armor", "man_bdt_belt_d_pouches_a", "hair", "chainmail", "bracken_bandage", "man_bdt_belt_g", "man_bdt_belt_c_addon_a", "man_bdt_belt_c", "man_bzr_belt_c", "man_bdt_belt_d", "man_bzr_belt_a", "man_srv_belt_bags_a", "torso", "elbow", "decal_logo", "shoes", "arm", "sleeve", "armor", "glove", "torso", "hand", "hat"}},
+            {"legs_access", new List<string> {"armor", "man_bdt_belt_d_pouches_a", "hair", "chainmail", "bracken_bandage", "man_bdt_belt_g", "man_bdt_belt_c_addon_a", "man_bdt_belt_c", "man_bzr_belt_c", "man_bdt_belt_d", "man_bzr_belt_a", "man_srv_belt_bags_a", "torso", "elbow", "decal_logo", "shoes", "arm", "sleeve", "armor", "glove", "torso", "hand", "hat"}},
+            {"shoes", new List<string> {"mask"}},
+            {"armor_helmet", new List<string> {"hat", "cap", "part", "sh_man_pk_headcover_c", "emblem", "man_bdt_headcover_i", "bandana", "beanie", "hood", "headband", "torso", "glasses", "hair", "decal", "cape"}},
+            {"armor_helmet_access", new List<string> {"hat", "cap", "sh_man_pk_headcover_c", "man_bdt_headcover_i", "beanie", "hood", "torso", "glasses", "hair", "cape"}},
+            {"armor_torso", new List<string> {"legs", "pants", "bottom", "armor_b_head", "pouches", "walkietalkie", "pin", "leg", "upper", "element", "bottom_a_armor", "cape", "addon", "upperleft", "lowerright", "lowerleft", "upperright"}},
+            {"armor_torso_access", new List<string> {"legs", "pants", "mask", "scarf", "hair", "bottom", "pouches", "walkietalkie", "pin", "leg", "upper", "element", "bottom_a_armor", "cape", "upperleft", "lowerright", "lowerleft", "upperright"}},
+            {"armor_torso_upperright", new List<string> {"legs", "pants", "leg"}},
+            {"armor_torso_upperleft", new List<string> {"legs", "pants", "leg"}},
+            {"armor_torso_lowerright", new List<string> {"legs", "pants", "leg"}},
+            {"armor_torso_lowerleft", new List<string> {"legs", "pants", "leg"}},
+            {"armor_legs", new List<string> {"mask"}},
+            {"armor_legs_upperright", new List<string> { "lowerleft", "lowerright", "upperleft", "arm", "arms"}},
+            {"armor_legs_upperleft", new List<string> { "lowerleft", "lowerright", "upperright", "mask", "arm", "arms" }},
+            {"armor_legs_lowerright", new List<string> { "lowerleft", "upperright", "upperleft", "mask", "arm", "arms" }},
+            {"armor_legs_lowerleft", new List<string> { "upperright", "lowerright", "upperleft", "mask", "arm", "arms" }}
+        };
+
+        
+    }
+
+    public void ProcessModelsInFolder(string folderPath)
+    {
+        Task.Run(() =>
+        {
+            var ignoreList = new HashSet<string>
+        {
+            "heron.model", "sh_debug_face_anim.model", "hen.model", "goat.model",
+            "gazelle_fem.model", "empty_model.model", "horse.model", "wolf.model",
+            "rat.model", "roedeer.model", "polito_01.model", "dog_prototype.model", "goat.model"
+        };
+
+            string[] files = Directory.GetFiles(folderPath, "*.model", SearchOption.AllDirectories);
+            List<Task> processingTasks = new List<Task>();
+
+            foreach (string modelFile in files)
+            {
+                processingTasks.Add(Task.Run(() =>
+                {
+                    if (ignoreList.Contains(Path.GetFileName(modelFile).ToLower()))
+                    {
+                        UnityMainThreadDispatcher.Instance.Enqueue(() =>
+                            Debug.Log($"Skipped ignored model file: {modelFile}"));
+                        return;
+                    }
+
+                    try
+                    {
+                        string jsonData = File.ReadAllText(modelFile);
+                        JObject modelObject = JObject.Parse(jsonData);
+
+                        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(modelFile);
+                        var processedData = ProcessModelData(modelObject);
+                        string outputJson = JsonConvert.SerializeObject(processedData, Formatting.Indented);
+
+                        string category = DetermineCategory(processedData.modelProperties.@class, processedData.modelProperties.sex, fileNameWithoutExtension);
+                        string type = DetermineType(category);
+
+                        // File IO operations are generally thread-safe, but watch out for writing to the same file from multiple threads.
+                        string outputDir = Path.Combine(Application.dataPath, "StreamingAssets/Jsons", type, category);
+                        Directory.CreateDirectory(outputDir);
+
+                        string outputFilePath = Path.Combine(outputDir, fileNameWithoutExtension + ".json");
+                        File.WriteAllText(outputFilePath, outputJson);
+
+                        UnityMainThreadDispatcher.Instance.Enqueue(() =>
+                            Debug.Log($"Processed data saved to: {outputFilePath}"));
+                    }
+                    catch (Exception ex)
+                    {
+                        UnityMainThreadDispatcher.Instance.Enqueue(() =>
+                            Debug.LogError($"Failed to process model file {modelFile}: {ex.Message}"));
+                    }
+                }));
+            }
+
+            Task.WhenAll(processingTasks).ContinueWith(t =>
+                UnityMainThreadDispatcher.Instance.Enqueue(OrganizeJsonFiles));
+        });
+    }
+
+    private string DetermineCategory(string modelClass, string fileName, string skeletonName)
+    {
+        fileName = fileName.ToLower();
+        modelClass = modelClass.ToLower();
+        skeletonName = skeletonName.ToLower();
+
+        List<string> attemptedPrefixes = new List<string>();
+
+        // Iterate over each category and its prefixes to find a match
+        foreach (var prefix in categoryPrefixes)
+        {
+            foreach (var term in prefix.Value)
+            {
+                attemptedPrefixes.Add(term); // Add each term to the attempted list
+                if (fileName.Contains(term.ToLower()) || modelClass.Contains(term.ToLower()) || skeletonName.Contains(term.ToLower()))
+                {
+                    return prefix.Key;
+                }
+            }
+        }
+
+        // Second, fallback to modelClass
+        if (!string.IsNullOrEmpty(modelClass))
+        {
+            modelClass = modelClass.ToLower();
+            foreach (var prefix in categoryPrefixes)
+            {
+                foreach (var prefixItem in categoryPrefixes[prefix.Key])
+                {
+                    if (modelClass.Contains(prefixItem.ToLower()))
+                    {
+                        Debug.Log($"Model class '{modelClass}' matches prefix '{prefixItem}' for category '{prefix.Key}'.");
+                        return prefix.Key;
+                    }
+                }
+            }
+        }
+
+        // Third, fallback to skeletonName
+        foreach (var prefix in categoryPrefixes)
+        {
+            foreach (var prefixItem in categoryPrefixes[prefix.Key])
+            {
+                if (skeletonName.Contains(prefixItem.ToLower()))
+                {
+                    Debug.LogWarning($"Skeleton name '{skeletonName}' matches prefix '{prefixItem}' for category '{prefix.Key}'.");
+                    return prefix.Key;
+                }
+            }
+        }
+
+        // If no match found, default to "Other"
+        Debug.LogError($"No matching category found for file name '{fileName}', model class '{modelClass}', and skeleton name '{skeletonName}'. Attempted prefixes: {string.Join(", ", attemptedPrefixes)}.");
+        return "Other";
+    }
+
+    private string DetermineType(string category)
+    {
+        string humanPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons", "Human");
+        string infectedPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons", "Infected");
+        var folderMappings = new Dictionary<string, string>
+{
+    {"Player", humanPath},
+    {"Man", humanPath},
+    {"Wmn", humanPath},
+    {"Child", humanPath},
+    {"Biter", infectedPath},
+    {"Viral", infectedPath},
+    {"Special Infected", infectedPath}
+};
+        return folderMappings.TryGetValue(category, out string typePath) ? Path.GetFileName(typePath) : "Unknown";
+    }
+
+    public struct ProcessedModelData
+    {
+        public ModelProperties modelProperties;
+        public string skeletonName;
+        public List<SlotDataPair> slotPairs;
+    }
+
+    private ProcessedModelData ProcessModelData(JObject modelObject)
+    {
+        // Assuming skeletonName is directly accessible and properties are within a 'data' object
+        string skeletonName = modelObject["preset"]?["skeletonName"]?.ToString() ?? modelObject["skeletonName"]?.ToString();
+        ModelProperties modelProperties = modelObject["data"]?["properties"]?.ToObject<ModelProperties>() ?? modelObject["modelProperties"]?.ToObject<ModelProperties>();
+        List<SlotDataPair> slotPairs = ExtractSlotPairs(modelObject["slots"] as JArray);
+
+        // Construct and return the ModelData object
+        return new ProcessedModelData
+        {
+            skeletonName = skeletonName,
+            modelProperties = modelProperties,
+            slotPairs = slotPairs
+        };
+    }
+
+    public static void CreateVariationJsons()
+    {
+        string jsonsDir = Path.Combine(Application.dataPath, "StreamingAssets/Jsons");
+        string outputDir = Path.Combine(Application.dataPath, "StreamingAssets/Mesh References");
+
+        // Use ConcurrentDictionary for thread-safe operations
+        ConcurrentDictionary<string, VariationOutput> existingVariations = new ConcurrentDictionary<string, VariationOutput>();
+
+        var jsonFiles = Directory.GetFiles(jsonsDir, "*.json", SearchOption.AllDirectories);
+
+        // Use Parallel.ForEach for concurrent processing
+        Parallel.ForEach(jsonFiles, (file) =>
+        {
+            ProcessJsonFile(file, outputDir, existingVariations);
+        });
+
+        // Once all tasks are complete, you might want to perform some finalization work here
+        Debug.Log("All variation JSONs created.");
+    }
+
+    private static void ProcessJsonFile(string file, string outputDir, ConcurrentDictionary<string, VariationOutput> existingVariations)
+    {
+        string jsonContent = File.ReadAllText(file);
+        ModelData modelData = JsonConvert.DeserializeObject<ModelData>(jsonContent);
+
+        foreach (var slotPair in modelData.slotPairs)
+        {
+            foreach (var model in slotPair.slotData.models)
+            {
+                if (string.IsNullOrWhiteSpace(model.name)) continue;
+
+                string baseMeshName = Path.GetFileNameWithoutExtension(model.name);
+                string sanitizedMeshName = SanitizeFilename(baseMeshName);
+                string outputFilePath = Path.Combine(outputDir, $"{sanitizedMeshName}.json");
+
+                VariationOutput variationOutput = existingVariations.GetOrAdd(outputFilePath, new VariationOutput());
+
+                // Thread-safe update or add new variations
+                UpdateVariations(variationOutput, model);
+
+                // Serialize and write the updated VariationOutput to the file
+                string outputJson = JsonConvert.SerializeObject(variationOutput, Formatting.Indented);
+                File.WriteAllText(outputFilePath, outputJson);
+            }
+        }
+    }
+
+    private static string SanitizeFilename(string filename)
+    {
+        foreach (char c in Path.GetInvalidFileNameChars())
+        {
+            filename = filename.Replace(c, '_');
+        }
+        return filename;
+    }
+
+    private static void UpdateVariations(VariationOutput variationOutput, ModelInfo model)
+    {
+        if (variationOutput.materialsData == null || variationOutput.materialsData.Count == 0)
+        {
+            variationOutput.materialsData = model.materialsData;
+        }
+
+        // HashSet to keep track of unique variation signatures to prevent adding duplicates
+        HashSet<string> existingVariationSignatures = new HashSet<string>();
+
+        // Populate existingVariationSignatures with signatures of already processed variations
+        foreach (var existingVariation in variationOutput.variations)
+        {
+            string existingSignature = GenerateVariationSignature(existingVariation);
+            existingVariationSignatures.Add(existingSignature);
+        }
+
+        Variation newVariation = CreateNewVariationWithAllMaterials(variationOutput, model);
+
+        if (DoesVariationIntroduceChanges(newVariation, model, existingVariationSignatures))
+        {
+            variationOutput.variations.Add(newVariation);
+        }
+    }
+
+    private static string GenerateVariationSignature(Variation variation)
+    {
+        // Concatenate material names and RTTI values to form a unique signature for the variation
+        return string.Join("|", variation.materialsResources.SelectMany(mr => mr.resources.Select(r =>
+            $"{r.name}:{string.Join(",", r.rttiValues.Select(rtti => $"{rtti.name}={rtti.val_str}"))}")).OrderBy(name => name));
+    }
+
+    private static bool DoesVariationIntroduceChanges(Variation newVariation, ModelInfo model, HashSet<string> existingVariationSignatures)
+    {
+        // First, check if the variation matches the original materialsData without any RTTI modifications.
+        if (DoesVariationMatchOriginalMaterialsWithoutRTTI(newVariation, model))
+        {
+            // If it matches and doesn't introduce new RTTI values, it's not considered a new variation.
+            return false;
+        }
+
+        // Generate a signature for the new variation based on material names and RTTI values.
+        string variationSignature = GenerateVariationSignature(newVariation);
+
+        // Check if this variation signature has already been processed.
+        if (existingVariationSignatures.Contains(variationSignature))
+        {
+            // This variation does not introduce changes since its signature matches one that's already processed.
+            return false;
+        }
+
+        // The variation is new or introduces changes, add its signature to the set for future comparisons.
+        existingVariationSignatures.Add(variationSignature);
+
+        // Since the variation is new, it introduces changes.
+        return true;
+    }
+
+    private static bool DoesVariationMatchOriginalMaterialsWithoutRTTI(Variation variation, ModelInfo model)
+    {
+        // Check if all material names in the variation's materialsResources match the original materialsData names.
+        bool allNamesMatch = model.materialsData.All(md =>
+            variation.materialsResources.SelectMany(mr => mr.resources).Any(r => r.name == md.name));
+
+        // Check if there are no RTTI values in the variation's materialsResources that match the original materialsData names.
+        bool noRTTIValues = variation.materialsResources.SelectMany(mr => mr.resources).All(r =>
+            !r.rttiValues.Any() && model.materialsData.Any(md => md.name == r.name));
+
+        return allNamesMatch && noRTTIValues;
+    }
+
+    private static Variation CreateNewVariationWithAllMaterials(VariationOutput variationOutput, ModelInfo model)
+    {
+        int nextVariationId = GetNextVariationId(variationOutput);
+
+        return new Variation
+        {
+            id = nextVariationId.ToString(),
+            materialsData = new List<MaterialData>(model.materialsData),
+            materialsResources = new List<MaterialResource>(model.materialsResources)
+        };
+    }
+
+    private static int GetNextVariationId(VariationOutput variationOutput)
+    {
+        return variationOutput.variations.Any() ? variationOutput.variations.Max(v => int.TryParse(v.id, out int id) ? id : 0) + 1 : 1;
+    }
+    public void OrganizeJsonFiles()
+    {
+        string jsonsDir = Path.Combine(Application.dataPath, "StreamingAssets/Jsons");
+        List<string> jsonFiles = new List<string>();
+        Dictionary<string, Dictionary<string, List<string>>> modelsSortedByCategory = new Dictionary<string, Dictionary<string, List<string>>>();
+        HashSet<string> unsortedModels = new HashSet<string>();
+        HashSet<string> ignoreList = new HashSet<string> { "player_legs_a.msh", "player_camo_bracers_a_tpp.msh", "player_camo_bracers_a_fpp.msh", "man_bdt_torso_c_shawl_b.msh", "chr_player_healer_mask.msh", "reporter_woman_old_skeleton.msh", "player_camo_gloves_a_tpp.msh", "player_camo_headwear_a_tpp.msh", "player_camo_hood_a_tpp.msh", "player_camo_pants_a_tpp.msh", "npc_colonel_coat_b.msh" };
+        Dictionary<string, List<string>> modelToFilterLookup = new Dictionary<string, List<string>>();
+        Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>> modelsByClassAndFilter = new Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>>();
+        Dictionary<string, string> specificTermsToCategory = new Dictionary<string, string>
+{
+    { "young", "Human/Child" },
+    { "destroyed", "Infected/Biter" },
+    { "waltz_young", "Human/Man" },
+    { "npc_mq_kiddie", "Human/Man" }
+    // Add more terms as needed
+};
+
+        foreach (var typeDir in Directory.GetDirectories(jsonsDir))
+        {
+            foreach (var categoryDir in Directory.GetDirectories(typeDir))
+            {
+                jsonFiles.AddRange(Directory.GetFiles(categoryDir, "*.json"));
+                foreach (var file in jsonFiles)
+                {
+                    try
+                    {
+                        string jsonData = File.ReadAllText(file);
+                        ModelData modelData = JsonConvert.DeserializeObject<ModelData>(jsonData);
+
+                        if (modelData.modelProperties == null || modelData.slotPairs == null)
+                        {
+                            Debug.LogWarning($"Skipped file {file} due to missing properties or slotPairs.");
+                            continue;
+                        }
+
+                        // Extracting category from the file path
+                        string relativePath = file.Substring(jsonsDir.Length).Replace("\\", "/").TrimStart('/');
+                        string[] pathParts = relativePath.Split('/');
+                        string initialCategory = String.Join("/", pathParts.Take(pathParts.Length - 1));
+
+                        foreach (var slotPair in modelData.slotPairs)
+                        {
+                            foreach (var model in slotPair.slotData.models)
+                            {
+                                string modelName = model.name.ToLower();
+                                SortModel(modelName, modelsSortedByCategory, unsortedModels, modelToFilterLookup, ignoreList, specificTermsToCategory, initialCategory, modelData, modelsByClassAndFilter);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError($"Error processing file {file}: {ex.Message}");
+                    }
+                }
+            }
+        }
+
+        SaveSortedModels(modelsSortedByCategory, modelsByClassAndFilter, storeClassData);
+        SaveUnsortedModels(unsortedModels);
+        SaveModelFilterLookup(modelToFilterLookup);
+        ReorganizeAndCombineJsonFiles();
+        Debug.Log("JSON files organized and saved.");
+    }
+
+    void SortModel(string modelName, Dictionary<string, Dictionary<string, List<string>>> modelsSortedByCategory, HashSet<string> unsortedModels, Dictionary<string, List<string>> modelToFilterLookup, HashSet<string> ignoreList, Dictionary<string, string> specificTermsToCategory, string initialCategory, ModelData modelData, Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>> modelsByClassAndFilter)
+    {
+        if (ignoreList.Contains(modelName))
+        {
+            Debug.Log($"Model '{modelName}' is in the ignore list and will be skipped.");
+            return;
+        }
+
+        // Determine if the model's name matches specific terms to override the category
+        var overrideCategory = specificTermsToCategory.FirstOrDefault(pair => modelName.Contains(pair.Key)).Value;
+        string finalCategory = overrideCategory ?? initialCategory;
+
+        if (!modelsSortedByCategory.ContainsKey(finalCategory))
+        {
+            modelsSortedByCategory[finalCategory] = new Dictionary<string, List<string>>();
+        }
+
+        bool matchedAnyFilter = false;
+        string modelClass = string.Empty;
+        if (storeClassData && !string.IsNullOrEmpty(modelData.modelProperties.@class))
+        {
+            modelClass = modelData.modelProperties.@class.ToLower();
+            if (!modelsByClassAndFilter.ContainsKey(finalCategory))
+            {
+                modelsByClassAndFilter[finalCategory] = new Dictionary<string, Dictionary<string, List<string>>>();
+            }
+            if (!modelsByClassAndFilter[finalCategory].ContainsKey(modelClass))
+            {
+                modelsByClassAndFilter[finalCategory][modelClass] = new Dictionary<string, List<string>>();
+            }
+        }
+
+        foreach (var filterPair in filters)
+        {
+            string filterName = filterPair.Key;
+            List<string> filterTerms = filterPair.Value;
+            foreach (var filterTerm in filterTerms)
+            {
+                if (modelName.Contains(filterTerm) && !(exclude_filters.ContainsKey(filterName) && exclude_filters[filterName].Any(excludeTerm => modelName.Contains(excludeTerm))))
+                {
+                    if (!modelsSortedByCategory[finalCategory].ContainsKey(filterName))
+                    {
+                        modelsSortedByCategory[finalCategory][filterName] = new List<string>();
+                    }
+                    modelsSortedByCategory[finalCategory][filterName].Add(modelName);
+                    if (!modelToFilterLookup.ContainsKey(modelName))
+                    {
+                        modelToFilterLookup[modelName] = new List<string>();
+                    }
+                    if (!modelToFilterLookup[modelName].Contains(filterName))
+                    {
+                        modelToFilterLookup[modelName].Add(filterName);
+                    }
+
+                    if (storeClassData)
+                    {
+                        if (!modelsByClassAndFilter[finalCategory][modelClass].ContainsKey(filterName))
+                        {
+                            modelsByClassAndFilter[finalCategory][modelClass][filterName] = new List<string>();
+                        }
+                        modelsByClassAndFilter[finalCategory][modelClass][filterName].Add(modelName);
+                    }
+
+                    matchedAnyFilter = true;
+                }
+            }
+        }
+
+        if (!matchedAnyFilter)
+        {
+            Debug.LogWarning($"Model '{modelName}' did not match any filters or was excluded in category '{finalCategory}'");
+            unsortedModels.Add(modelName);
+        }
+    }
+
+    void SaveModelFilterLookup(Dictionary<string, List<string>> modelToFilterLookup)
+    {
+        string outputDir = Path.Combine(Application.dataPath, "StreamingAssets/SlotData");
+        Directory.CreateDirectory(outputDir);
+        string filePath = Path.Combine(outputDir, "ModelFilterLookup.json");
+        string jsonContent = JsonConvert.SerializeObject(modelToFilterLookup, Formatting.Indented);
+        File.WriteAllText(filePath, jsonContent);
+    }
+
+    void SaveSortedModels(Dictionary<string, Dictionary<string, List<string>>> modelsSortedByCategory,
+                      Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>> modelsByClassAndFilter,
+                      bool storeClassData)
+    {
+        HashSet<string> classSkipList = new HashSet<string> { "none", "player", "npc", "viral", "biter" };
+        Dictionary<string, string> classIdentifiers = new Dictionary<string, string>
+{
+    { "peacekeeper", "_pk_" },
+    { "bandit", "_bdt_" },
+    { "renegade", "_ren_" },
+    { "scavenger", "_sc_" },
+    { "survivor", "_srv_" }
+};
+
+        // Iterate through each category
+        foreach (var categoryKey in modelsSortedByCategory.Keys)
+        {
+            // Directly use the categoryKey as part of the path, assuming it's structured like "Category/Subcategory"
+            string categoryDir = Path.Combine(Application.dataPath, $"StreamingAssets/SlotData/{categoryKey}");
+            Directory.CreateDirectory(categoryDir);
+
+            foreach (var filter in modelsSortedByCategory[categoryKey].Keys)
+            {
+                List<string> sortedModels = modelsSortedByCategory[categoryKey][filter].Distinct().ToList();
+                sortedModels.Sort();
+
+                string filePath = Path.Combine(categoryDir, $"ALL_{filter}.json");
+                string jsonContent = JsonConvert.SerializeObject(new { meshes = sortedModels }, Formatting.Indented);
+                File.WriteAllText(filePath, jsonContent);
+            }
+
+            if (storeClassData && modelsByClassAndFilter.ContainsKey(categoryKey))
+            {
+                foreach (var classEntry in modelsByClassAndFilter[categoryKey])
+                {
+                    if (classSkipList.Contains(classEntry.Key))
+                    {
+                        continue; // Skip this class
+                    }
+
+                    string classDir = Path.Combine(categoryDir, classEntry.Key);
+                    Directory.CreateDirectory(classDir);
+
+                    foreach (var filterEntry in classEntry.Value)
+                    {
+                        // Filter models based on the class-specific identifier
+                        string classIdentifier = classIdentifiers.ContainsKey(classEntry.Key) ? classIdentifiers[classEntry.Key] : "";
+                        List<string> classSortedModels = filterEntry.Value
+                            .Where(model => model.Contains(classIdentifier))
+                            .Distinct().ToList();
+                        classSortedModels.Sort();
+
+                        // Only write file if classSortedModels is not empty
+                        if (classSortedModels.Any())
+                        {
+                            string classFilePath = Path.Combine(classDir, $"ALL_{filterEntry.Key}.json");
+                            string classJsonContent = JsonConvert.SerializeObject(new { meshes = classSortedModels }, Formatting.Indented);
+                            File.WriteAllText(classFilePath, classJsonContent);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    void SaveUnsortedModels(HashSet<string> unsortedModels)
+    {
+        if (unsortedModels.Any())
+        {
+            string outputDir = Path.Combine(Application.dataPath, "StreamingAssets/SlotData");
+            Directory.CreateDirectory(outputDir);
+            string filePath = Path.Combine(outputDir, "None_found.json");
+            string jsonContent = JsonConvert.SerializeObject(new { unsortedMeshes = unsortedModels }, Formatting.Indented);
+            File.WriteAllText(filePath, jsonContent);
+        }
+    }
+
+
+    void ReorganizeAndCombineJsonFiles()
+    {
+        string slotDataPath = Path.Combine(Application.dataPath, "StreamingAssets/SlotData");
+
+        // Create Human and Infected folders
+        string humanPath = Path.Combine(slotDataPath, "Human");
+        string infectedPath = Path.Combine(slotDataPath, "Infected");
+
+        // Combine ALL_{filters}.json files
+        CombineJsonFiles(humanPath);
+        CombineJsonFiles(infectedPath);
+    }
+
+    void CreateDirectoryIfNotExists(string path)
+    {
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+    }
+
+    void MergeDirectories(string sourceDir, string destDir)
+    {
+        // Create the destination directory if it doesn't exist
+        CreateDirectoryIfNotExists(destDir);
+
+        // Move each file and subdirectory from source to destination
+        foreach (var file in Directory.GetFiles(sourceDir))
+        {
+            string destFile = Path.Combine(destDir, Path.GetFileName(file));
+            if (File.Exists(destFile))
+            {
+                File.Delete(destFile);
+            }
+            File.Move(file, destFile);
+        }
+
+        foreach (var directory in Directory.GetDirectories(sourceDir))
+        {
+            string destSubDir = Path.Combine(destDir, Path.GetFileName(directory));
+            MergeDirectories(directory, destSubDir);
+        }
+
+        // Optionally, delete the source directory if now empty
+        if (Directory.GetFileSystemEntries(sourceDir).Length == 0)
+        {
+            Directory.Delete(sourceDir);
+        }
+    }
+
+    void CombineJsonFiles(string parentFolderPath)
+    {
+        // Retrieve all subfolder paths
+        var subFolders = Directory.GetDirectories(parentFolderPath);
+
+        // Dictionary to store combined data
+        var combinedData = new Dictionary<string, List<string>>();
+
+        foreach (var folder in subFolders)
+        {
+            // Skip the "Child" folder
+            if (Path.GetFileName(folder).Equals("Child", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            var jsonFiles = Directory.GetFiles(folder, "ALL_*.json");
+            foreach (var file in jsonFiles)
+            {
+                string fileName = Path.GetFileName(file);
+                if (!combinedData.ContainsKey(fileName))
+                {
+                    combinedData[fileName] = new List<string>();
+                }
+
+                var jsonData = File.ReadAllText(file);
+                var allFiltersModelData = JsonConvert.DeserializeObject<AllFiltersModelData>(jsonData);
+                combinedData[fileName].AddRange(allFiltersModelData.meshes);
+            }
+        }
+
+
+        // Write combined data to new JSON files
+        foreach (var entry in combinedData)
+        {
+            string combinedFilePath = Path.Combine(parentFolderPath, entry.Key);
+            string jsonContent = JsonConvert.SerializeObject(new { meshes = entry.Value.Distinct().ToList() }, Formatting.Indented);
+            File.WriteAllText(combinedFilePath, jsonContent);
+        }
+    }
+
+
+    private void GenerateModelSlotLookup()
+    {
+        string jsonDirectoryPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons");
+        if (!Directory.Exists(jsonDirectoryPath))
+        {
+            Debug.LogError("JSON directory does not exist.");
+            return;
+        }
+
+        ModelData.ModelSlotLookup modelSlotLookup = new ModelData.ModelSlotLookup();
+
+        foreach (var typeDir in Directory.GetDirectories(jsonDirectoryPath))
+        {
+            foreach (var categoryDir in Directory.GetDirectories(typeDir))
+            {
+                var jsonFiles = Directory.GetFiles(categoryDir, "*.json");
+                foreach (var file in jsonFiles)
+                {
+                    try
+                    {
+                        string jsonData = File.ReadAllText(file);
+                        ModelData modelData = JsonConvert.DeserializeObject<ModelData>(jsonData);
+
+                        if (modelData.modelProperties == null || modelData.slotPairs == null)
+                        {
+                            Debug.LogWarning($"Skipped file {file} due to missing properties or slotPairs.");
+                            continue;
+                        }
+
+                        foreach (var slotPair in modelData.GetSlots())
+                        {
+                            SlotData slotData = slotPair.Value;
+                            foreach (var model in slotData.models)
+                            {
+                                string modelName = model.name.ToLower();
+                                ModelData.SlotInfo slotInfo = new ModelData.SlotInfo
+                                {
+                                    slotUid = slotData.slotUid,
+                                    name = slotData.name,
+                                    filterText = slotData.filterText
+                                };
+
+                                if (!modelSlotLookup.modelSlots.ContainsKey(modelName))
+                                {
+                                    modelSlotLookup.modelSlots[modelName] = new List<ModelData.SlotInfo>();
+                                }
+
+                                // Check for uniqueness before adding
+                                if (!ContainsSlotInfo(modelSlotLookup.modelSlots[modelName], slotInfo))
+                                {
+                                    modelSlotLookup.modelSlots[modelName].Add(slotInfo);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError($"Error processing file {file}: {ex.Message}");
+                    }
+                }
+            }
+        }
+
+        SaveModelSlotLookup(modelSlotLookup);
+    }
+
+    private bool ContainsSlotInfo(List<ModelData.SlotInfo> slotInfos, ModelData.SlotInfo newSlotInfo)
+    {
+        foreach (var slotInfo in slotInfos)
+        {
+            if (slotInfo.slotUid == newSlotInfo.slotUid && slotInfo.name == newSlotInfo.name && slotInfo.filterText == newSlotInfo.filterText)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void SaveModelSlotLookup(ModelData.ModelSlotLookup modelSlotLookup)
+    {
+        // Sort each list of SlotInfo by slotUid before saving
+        foreach (var modelName in modelSlotLookup.modelSlots.Keys.ToList()) // ToList() to avoid collection modified exception
+        {
+            modelSlotLookup.modelSlots[modelName] = modelSlotLookup.modelSlots[modelName]
+                .OrderBy(slotInfo => slotInfo.slotUid)
+                .ToList();
+        }
+
+        string outputPath = Path.Combine(Application.dataPath, "StreamingAssets/SlotData/SlotUIDLookup.json");
+        string jsonOutput = JsonConvert.SerializeObject(modelSlotLookup, Formatting.Indented);
+        File.WriteAllText(outputPath, jsonOutput);
+        Debug.Log($"Model Slot Lookup saved to: {outputPath}");
+    }
+
+    private void GenerateNameSlotUidFrequencyLookup()
+    {
+        string jsonDirectoryPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons");
+        if (!Directory.Exists(jsonDirectoryPath))
+        {
+            Debug.LogError("JSON directory does not exist.");
+            return;
+        }
+
+        // Dictionary to hold name and all associated slotUids
+        var nameToSlotUids = new Dictionary<string, List<int>>();
+
+        foreach (var typeDir in Directory.GetDirectories(jsonDirectoryPath))
+        {
+            foreach (var categoryDir in Directory.GetDirectories(typeDir))
+            {
+                var jsonFiles = Directory.GetFiles(categoryDir, "*.json");
+                foreach (var file in jsonFiles)
+                {
+                    try
+                    {
+                        string jsonData = File.ReadAllText(file);
+                        ModelData modelData = JsonConvert.DeserializeObject<ModelData>(jsonData);
+
+                        if (modelData.modelProperties == null || modelData.slotPairs == null) continue;
+
+                        foreach (var slotPair in modelData.GetSlots())
+                        {
+                            SlotData slotData = slotPair.Value;
+                            foreach (var model in slotData.models)
+                            {
+                                string nameKey = slotData.name.ToUpper(); // Using slotData.name for mapping
+
+                                if (!nameToSlotUids.ContainsKey(nameKey))
+                                {
+                                    nameToSlotUids[nameKey] = new List<int>();
+                                }
+                                nameToSlotUids[nameKey].Add(slotData.slotUid);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError($"Error processing file {file}: {ex.Message}");
+                    }
+                }
+            }
+        }
+
+        // Process the mapping to count frequencies and sort by them
+        var sortedNameToSlotUids = nameToSlotUids.ToDictionary(
+            entry => entry.Key,
+            entry => entry.Value.GroupBy(uid => uid)
+                                .OrderByDescending(group => group.Count()) // Sort by frequency
+                                .ThenBy(group => group.Key) // Then by slotUid for ties
+                                .Select(group => group.Key)
+                                .ToList()
+        );
+
+        SaveNameSlotUidFrequencyLookup(sortedNameToSlotUids);
+    }
+
+    private void SaveNameSlotUidFrequencyLookup(Dictionary<string, List<int>> sortedNameToSlotUids)
+    {
+        string outputPath = Path.Combine(Application.dataPath, "StreamingAssets/SlotData/SlotUidLookup_Empty.json");
+        var jsonOutput = JsonConvert.SerializeObject(sortedNameToSlotUids, Formatting.Indented);
+        File.WriteAllText(outputPath, jsonOutput);
+        Debug.Log($"Name Slot UID Frequency Lookup saved to: {outputPath}");
+    }
+
+
+    ModelProperties ExtractModelProperties(JArray propertiesArray)
+    {
+        ModelProperties properties = new ModelProperties();
+        foreach (JObject prop in propertiesArray)
+        {
+            string propName = prop["name"]?.ToString();
+            switch (propName)
+            {
+                case "class":
+                    properties.@class = prop["value"]?.ToString();
+                    break;
+                case "race":
+                    properties.race = prop["value"]?.ToString();
+                    break;
+                case "sex":
+                    properties.sex = prop["value"]?.ToString();
+                    break;
+                    // Add other properties as needed
+            }
+        }
+        return properties;
+    }
+
+
+    List<SlotDataPair> ExtractSlotPairs(JArray slotsArray)
+    {
+        var slotPairs = new List<SlotDataPair>();
+        foreach (JObject slot in slotsArray)
+        {
+            SlotDataPair slotPair = new SlotDataPair
+            {
+                key = slot["name"]?.ToString(),
+                slotData = new SlotData
+                {
+                    slotUid = (int)slot["slotUid"],
+                    name = slot["name"]?.ToString(),
+                    filterText = slot["filterText"]?.ToString(),
+                    models = ExtractModels(slot["meshResources"]["resources"] as JArray)
+                }
+            };
+            slotPairs.Add(slotPair);
+        }
+        return slotPairs;
+    }
+
+    List<ModelInfo> ExtractModels(JArray modelsArray)
+    {
+        var models = new List<ModelInfo>();
+        foreach (JObject model in modelsArray)
+        {
+            ModelInfo modelInfo = new ModelInfo
+            {
+                name = model["name"]?.ToString(),
+                materialsData = ExtractMaterialsData(model["materialsData"] as JArray),
+                materialsResources = ExtractMaterialsResources(model["materialsResources"] as JArray)
+            };
+            models.Add(modelInfo);
+        }
+        return models;
+    }
+
+    List<MaterialData> ExtractMaterialsData(JArray materialsDataArray)
+    {
+        var materialsData = new List<MaterialData>();
+        foreach (JObject materialDataObject in materialsDataArray)
+        {
+            var materialData = new MaterialData
+            {
+                number = (int)materialDataObject["number"],
+                name = materialDataObject["name"]?.ToString()
+            };
+            materialsData.Add(materialData);
+        }
+        return materialsData;
+    }
+
+    List<MaterialResource> ExtractMaterialsResources(JArray materialsResourcesArray)
+    {
+        var materialsResources = new List<MaterialResource>();
+        foreach (JObject materialResourceObject in materialsResourcesArray)
+        {
+            var materialResource = new MaterialResource
+            {
+                number = (int)materialResourceObject["number"],
+                resources = ExtractResources(materialResourceObject["resources"] as JArray)
+            };
+            materialsResources.Add(materialResource);
+        }
+        return materialsResources;
+    }
+
+    List<Resource> ExtractResources(JArray resourcesArray)
+    {
+        var resources = new List<Resource>();
+        foreach (JObject resourceObject in resourcesArray)
+        {
+            var resource = new Resource
+            {
+                name = resourceObject["name"]?.ToString(),
+                selected = (bool)resourceObject["selected"],
+                layoutId = (int)resourceObject["layoutId"],
+                loadFlags = resourceObject["loadFlags"]?.ToString(),
+                rttiValues = ExtractRttiValues(resourceObject["rttiValues"] as JArray)
+            };
+            resources.Add(resource);
+        }
+        return resources;
+    }
+
+    List<RttiValue> ExtractRttiValues(JArray rttiValuesArray)
+    {
+        var rttiValues = new List<RttiValue>();
+        if (rttiValuesArray == null)
+        {
+            Debug.LogWarning("rttiValuesArray is null.");
+            return rttiValues; // Returning an empty list as there's nothing to process.
+        }
+
+        foreach (JObject rttiValueObject in rttiValuesArray)
+        {
+            if (rttiValueObject == null)
+            {
+                Debug.LogWarning("rttiValueObject is null, skipping this iteration.");
+                continue;
+            }
+
+            var rttiValue = new RttiValue
+            {
+                name = rttiValueObject["name"]?.ToString(),
+                type = (int)(rttiValueObject["type"] ?? 0),
+                val_str = rttiValueObject["val_str"]?.ToString()
+            };
+            rttiValues.Add(rttiValue);
+        }
+        return rttiValues;
+    }
+}

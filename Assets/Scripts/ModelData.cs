@@ -6,7 +6,7 @@ using UnityEngine;
 [Serializable]
 public class ModelData
 {
-    public string skeletonName;
+    public string skeletonName { get; set; }
     public ModelProperties modelProperties;
     public List<SlotDataPair> slotPairs;
 

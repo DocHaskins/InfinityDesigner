@@ -7,21 +7,10 @@ using Cinemachine;
 using TMPro;
 using UnityEngine.UI;
 
-/// <summary>
-/// RuntimeJsonLoader dynamically loads character models and their configurations at runtime based on user-selected filters and search terms. 
-/// It interfaces with CharacterBuilder for model instantiation, supports filtering by class, sex, race, and name, and offers functionality for loading and unloading models. 
-/// Dropdowns and input fields enable dynamic querying and selection from available JSON data.
-/// </summary>
-
 namespace doppelganger
 {
     public class RuntimeJsonLoader : MonoBehaviour
     {
-        [Header("Managers")]
-        public CharacterBuilder_InterfaceManager characterBuilder;
-        private CinemachineCameraZoomTool cameraTool;
-
-        [Header("Interface")]
         public TMP_Text modelName;
         public TMP_Dropdown filterCustomDropdown;
         public TMP_Dropdown filterClassDropdown;
@@ -32,19 +21,22 @@ namespace doppelganger
         public Button loadButton;
         public Button unloadButton;
 
+        private List<MinimalModelData> minimalModelInfos = new List<MinimalModelData>();
+        private Dictionary<string, string> displayNameToFileMap = new Dictionary<string, string>();
+        private List<string> filteredJsonFiles = new List<string>();
         private string selectedJson;
         private string searchTerm = "";
         private string selectedClass = "All";
         private string selectedSex = "All";
         private string selectedRace = "All";
-        private GameObject loadedSkeleton;
         private HashSet<string> classes = new HashSet<string> { "All" };
         private HashSet<string> sexes = new HashSet<string> { "All" };
         private HashSet<string> races = new HashSet<string> { "All" };
-        private Dictionary<string, string> displayNameToFileMap = new Dictionary<string, string>();
+        private int selectedIndex = -1;
+        private Vector2 scrollPos;
+        private GameObject loadedSkeleton;
         private List<GameObject> loadedObjects = new List<GameObject>();
-        private List<string> filteredJsonFiles = new List<string>();
-        private List<MinimalModelData> minimalModelInfos = new List<MinimalModelData>();
+        private CinemachineCameraZoomTool cameraTool;
 
         void Start()
         {
@@ -138,20 +130,21 @@ namespace doppelganger
                 return;
             }
 
-            foreach (var file in Directory.GetFiles(jsonsFolderPath, "*.json"))
+            // Use SearchOption.AllDirectories to include all subdirectories
+            foreach (var filePath in Directory.GetFiles(jsonsFolderPath, "*.json", SearchOption.AllDirectories))
             {
-                string jsonPath = Path.Combine(jsonsFolderPath, file);
-                string jsonData = File.ReadAllText(jsonPath);
+                string jsonData = File.ReadAllText(filePath);
                 ModelData modelData = JsonUtility.FromJson<ModelData>(jsonData);
 
                 if (modelData.modelProperties != null)
                 {
                     minimalModelInfos.Add(new MinimalModelData
                     {
-                        FileName = Path.GetFileName(file),
+                        FileName = Path.GetFileName(filePath), // Use filePath directly
                         Properties = modelData.modelProperties
                     });
 
+                    // Adding properties to respective lists
                     classes.Add(modelData.modelProperties.@class ?? "Unknown");
                     sexes.Add(modelData.modelProperties.sex ?? "Unknown");
                     races.Add(modelData.modelProperties.race ?? "Unknown");
@@ -211,6 +204,42 @@ namespace doppelganger
             modelName.text = "";
         }
 
+        public void LoadModelFromJson(string jsonFileName)
+        {
+            string searchDirectory = Path.Combine(Application.streamingAssetsPath, "Jsons");
+            string[] files = Directory.GetFiles(searchDirectory, jsonFileName, SearchOption.AllDirectories);
+
+            if (files.Length == 0)
+            {
+                Debug.LogError("File not found: " + jsonFileName);
+                return;
+            }
+
+            // Assuming you're interested in the first occurrence of the file
+            string path = files[0];
+            string jsonData = File.ReadAllText(path);
+            ModelData modelData = JsonUtility.FromJson<ModelData>(jsonData);
+
+            if (modelData != null)
+            {
+                var slots = modelData.GetSlots();
+                if (slots != null && slots.Count > 0)
+                {
+                    GameObject loadedModel = LoadSkeleton(modelData.skeletonName);
+                    LoadModels(slots);
+                    UpdateCameraTarget(loadedModel.transform);
+                }
+                else
+                {
+                    Debug.LogError("Slots dictionary is null or empty.");
+                }
+            }
+            else
+            {
+                Debug.LogError("Failed to deserialize JSON data from file: " + path);
+            }
+        }
+
         private void UpdateCameraTarget(Transform loadedModelTransform)
         {
             if (cameraTool != null && loadedModelTransform != null)
@@ -253,103 +282,6 @@ namespace doppelganger
             return null;
         }
 
-        public void LoadModelFromJson(string jsonFileName)
-        {
-            string path = Path.Combine(Application.streamingAssetsPath, "Jsons", jsonFileName);
-
-            // Add debug log to check the path
-            Debug.Log("Attempting to load JSON from path: " + path);
-
-            if (!File.Exists(path))
-            {
-                Debug.LogError("File not found: " + path);
-                return;
-            }
-
-            string jsonData = File.ReadAllText(path);
-            ModelData modelData = JsonUtility.FromJson<ModelData>(jsonData);
-
-            if (modelData != null)
-            {
-                var slots = modelData.GetSlots();
-                if (slots != null && slots.Count > 0)
-                {
-                    GameObject loadedModel = LoadSkeleton(modelData.skeletonName);
-                    LoadCharacterConfiguration(jsonFileName);
-                    LoadModels(slots);
-                    UpdateCameraTarget(loadedModel.transform);
-                }
-                else
-                {
-                    Debug.LogError("Slots dictionary is null or empty.");
-                }
-            }
-            else
-            {
-                Debug.LogError("Failed to deserialize JSON data");
-            }
-        }
-
-        public void LoadCharacterConfiguration(string jsonFilePath)
-        {
-            string fullPath = Path.Combine(Application.streamingAssetsPath, "Jsons", jsonFilePath);
-
-            if (!File.Exists(fullPath))
-            {
-                Debug.LogError("JSON file not found: " + fullPath);
-                return;
-            }
-
-            string jsonData = File.ReadAllText(fullPath);
-            ModelData modelData = JsonUtility.FromJson<ModelData>(jsonData);
-
-            string genderProperty = modelData.modelProperties != null ? modelData.modelProperties.sex : null;
-            if (!string.IsNullOrEmpty(genderProperty))
-            {
-                if (genderProperty.Equals("female", StringComparison.OrdinalIgnoreCase))
-                {
-                    genderProperty = "Wmn";
-                }
-                else if (genderProperty.Equals("male", StringComparison.OrdinalIgnoreCase))
-                {
-                    genderProperty = "Man";
-                }
-
-                Debug.Log("gender_property: " + genderProperty);
-                characterBuilder.SetCurrentType(genderProperty);
-            }
-            else
-            {
-                Debug.LogError("gender_property is null or empty in the JSON file.");
-            }
-        }
-
-        private void LoadModels(Dictionary<string, ModelData.SlotData> slotDictionary)
-        {
-            foreach (var slotPair in slotDictionary)
-            {
-                var slot = slotPair.Value;
-                foreach (var modelInfo in slot.models)
-                {
-                    ProcessModelConfiguration(modelInfo.name);
-                }
-            }
-        }
-
-        private void ProcessModelConfiguration(string modelName)
-        {
-            Debug.Log($"ProcessModelConfiguration for {modelName}");
-            string slotName = characterBuilder.FindSlotForModel(modelName);
-            if (!string.IsNullOrEmpty(slotName))
-            {
-                int modelIndex = characterBuilder.GetModelIndex(slotName, modelName);
-                characterBuilder.SetSliderValue(slotName, modelIndex);
-            }
-            else
-            {
-                Debug.LogError($"No slot found for model {modelName}");
-            }
-        }
 
         private GameObject LoadSkeleton(string skeletonName)
         {
@@ -386,6 +318,55 @@ namespace doppelganger
             }
 
             return instantiatedSkeleton; // Return the loaded and instantiated skeleton
+        }
+
+        private void LoadModels(Dictionary<string, ModelData.SlotData> slotDictionary)
+        {
+            foreach (var slotPair in slotDictionary)
+            {
+                var slot = slotPair.Value;
+                foreach (var modelInfo in slot.models)
+                {
+                    // Correctly formatting the prefab path for Resources.Load
+                    string prefabPath = modelInfo.name.Replace(".msh", "");
+                    GameObject modelPrefab = Resources.Load<GameObject>("Prefabs/" + prefabPath);
+
+                    //Debug.Log($"Attempting to load prefab from Resources path: Prefabs/{prefabPath}");
+
+                    if (modelPrefab != null)
+                    {
+                        GameObject modelInstance = Instantiate(modelPrefab, Vector3.zero, Quaternion.identity);
+                        ApplyMaterials(modelInstance, modelInfo);
+                        loadedObjects.Add(modelInstance);
+
+                        // Check if the prefab name contains "sh_man_facial_hair_" and adjust Z position
+                        if (prefabPath.Contains("sh_man_facial_hair_"))
+                        {
+                            Vector3 localPosition = modelInstance.transform.localPosition;
+                            localPosition.z += 0.01f;
+                            modelInstance.transform.localPosition = localPosition;
+
+                            Debug.Log($"Adjusted position for facial hair prefab: {prefabPath}");
+                        }
+
+                        if (prefabPath.Contains("sh_man_hair_system_"))
+                        {
+                            Vector3 localPosition = modelInstance.transform.localPosition;
+                            //localPosition.y += 0.009f;
+                            localPosition.z += 0.009f;
+                            modelInstance.transform.localPosition = localPosition;
+
+                            Debug.Log($"Adjusted position for hair prefab: {prefabPath}");
+                        }
+
+                        //Debug.Log($"Prefab loaded and instantiated: {prefabPath}");
+                    }
+                    else
+                    {
+                        Debug.LogError($"Model prefab not found in Resources: Prefabs/{prefabPath}");
+                    }
+                }
+            }
         }
 
         private void ApplyMaterials(GameObject modelInstance, ModelData.ModelInfo modelInfo)
