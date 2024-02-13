@@ -1,0 +1,108 @@
+{
+  "skeletonName": "zmb_suicider_skeleton.msh",
+  "modelProperties": {
+    "class": "suicider",
+    "race": "caucasian",
+    "sex": "male"
+  },
+  "slotPairs": [
+    {
+      "key": "TORSO",
+      "slotData": {
+        "slotUid": 600,
+        "name": "TORSO",
+        "filterText": "torso",
+        "models": [
+          {
+            "name": "zmb_suicider_corpse.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "zmb_suicider_corpse.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "zmb_suicider_corpse.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "LEGS",
+      "slotData": {
+        "slotUid": 700,
+        "name": "LEGS",
+        "filterText": "legs",
+        "models": [
+          {
+            "name": "zmb_suicider_a_legs.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "zmb_suicider_a_pants.mat"
+              },
+              {
+                "number": 2,
+                "name": "zmb_suicider_a_legs.mat"
+              },
+              {
+                "number": 3,
+                "name": "zmb_suicider_a_torn_cloth.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "zmb_suicider_a_pants.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "zmb_suicider_a_legs.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "zmb_suicider_a_torn_cloth.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

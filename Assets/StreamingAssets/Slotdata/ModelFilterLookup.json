@@ -219,6 +219,12 @@
     "decals",
     "decals_extra"
   ],
+  "sh_npc_mia_young.msh": [
+    "head"
+  ],
+  "npc_mia_young_hair.msh": [
+    "hair"
+  ],
   "child_sleeves_c.msh": [
     "sleeve"
   ],
@@ -1645,46 +1651,6 @@
     "torso_extra",
     "torso_access"
   ],
-  "man_zmb_arm_b.msh": [
-    "lhand",
-    "rhand",
-    "sleeve"
-  ],
-  "man_zmb_torso_g.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "man_zmb_torso_g_sleeves_b.msh": [
-    "sleeve"
-  ],
-  "man_zmb_torso_g_decal_a.msh": [
-    "decals",
-    "decals_extra"
-  ],
-  "man_zmb_legs_base_a.msh": [
-    "hair_base",
-    "legs"
-  ],
-  "man_zmb_legs_base_a_bottom_c.msh": [
-    "hair_base",
-    "legs",
-    "legs_extra",
-    "legs_access"
-  ],
-  "man_zmb_gre_face_mask_a.msh": [
-    "mask",
-    "mask_access"
-  ],
-  "sh_wmn_zmb_hair_a.msh": [
-    "hair"
-  ],
-  "man_zmb_torso_g_sleeves_c.msh": [
-    "sleeve"
-  ],
-  "npc_man_pants_a.msh": [
-    "legs"
-  ],
   "npc_man_torso_h_sleeves_a.msh": [
     "sleeve"
   ],
@@ -1959,6 +1925,9 @@
   "npc_man_torso_shirt_necklace_a.msh": [
     "necklace",
     "torso_access"
+  ],
+  "npc_man_pants_a.msh": [
+    "legs"
   ],
   "chr_earing_e.msh": [
     "earrings"
@@ -2413,25 +2382,6 @@
     "torso_access",
     "decals",
     "decals_extra"
-  ],
-  "man_zmb_gastank_headgear_a.msh": [
-    "torso_extra",
-    "torso_access",
-    "armor_helmet",
-    "armor_helmet_access"
-  ],
-  "man_zmb_gastank_torso_a.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra",
-    "torso_access"
-  ],
-  "man_zmb_gastank_sleeves_a.msh": [
-    "torso_access",
-    "sleeve"
-  ],
-  "man_zmb_gastank_pants_a.msh": [
-    "legs"
   ],
   "npc_man_worker_torso_a_sleeves_a.msh": [
     "sleeve"
@@ -2986,29 +2936,138 @@
     "armor_helmet",
     "armor_helmet_access"
   ],
-  "sh_biter_a.msh": [
+  "sh_player_fh_berserker.msh": [
     "head"
   ],
-  "man_zmb_skinny_biter_hands_a.msh": [
-    "hands"
+  "player_fh_berserker_shoes_a_tpp.msh": [
+    "shoes"
   ],
-  "man_zmb_skinny_biter_torso_a.msh": [
+  "player_fh_berserker_axe_tpp.msh": [
+    "torso_access"
+  ],
+  "player_fh_berserker_forearms_a_tpp.msh": [
+    "hands",
+    "lhand",
+    "rhand",
+    "sleeve"
+  ],
+  "player_fh_berserker_headwear_a_tpp.msh": [
+    "hat",
+    "hat_access"
+  ],
+  "player_fh_berserker_torso_a_tpp.msh": [
     "torso",
     "torso_2",
     "torso_extra"
   ],
-  "man_zmb_skinny_biter_rags_a_top.msh": [
+  "player_fh_berserker_hairs_tpp.msh": [
+    "hair"
+  ],
+  "player_fh_berserker_beard_tpp.msh": [
+    "facial_hair"
+  ],
+  "player_fh_berserker_pants_a_tpp.msh": [
+    "legs"
+  ],
+  "player_fh_berserker_torso_a_skull_tpp.msh": [
+    "torso_extra",
+    "torso_access"
+  ],
+  "player_fh_berserker_hands_a_tpp.msh": [
+    "hands"
+  ],
+  "sh_player_fh_kensei.msh": [
+    "head"
+  ],
+  "player_fh_kensei_shoes_a_tpp.msh": [
+    "shoes"
+  ],
+  "player_fh_kensei_torso_a_plates_tpp.msh": [
+    "torso_extra",
+    "torso_access"
+  ],
+  "player_hands_tpp_a.msh": [
+    "hands"
+  ],
+  "player_fh_kensei_headwear_a_tpp.msh": [
+    "hat",
+    "hat_access"
+  ],
+  "player_fh_kensei_torso_a_tpp.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "player_fh_kensei_pants_a_tpp.msh": [
+    "legs"
+  ],
+  "player_fh_kensei_plates_tpp.msh": [
+    "torso_extra",
+    "torso_access"
+  ],
+  "player_fh_kensei_gloves_a_fpp.msh": [
+    "gloves"
+  ],
+  "player_fh_warden_torso_a_sleeves_a_tpp.msh": [
+    "sleeve"
+  ],
+  "player_fh_warden_gloves_a_fpp.msh": [
+    "gloves"
+  ],
+  "player_fh_warden_headwear_a_tpp.msh": [
+    "hat",
+    "hat_access"
+  ],
+  "player_fh_warden_torso_a_tpp.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "player_fh_warden_gloves_a_bracer_fpp.msh": [
+    "gloves",
+    "armor_torso_lowerright"
+  ],
+  "player_fh_warden_pants_a_tpp.msh": [
+    "legs"
+  ],
+  "player_fh_warden_cloak_a_tpp.msh": [
+    "cape"
+  ],
+  "player_fh_warden_chainmail_a_tpp.msh": [
+    "cape",
+    "torso_access"
+  ],
+  "player_fh_warden_bottom_a_tpp.msh": [
+    "legs_extra",
+    "legs_access"
+  ],
+  "npc_man_torso_vest_a_center_c_decal_a.msh": [
+    "torso_access",
+    "decals",
+    "decals_extra"
+  ],
+  "npc_man_torso_vest_a_b.msh": [
     "torso_2",
     "torso_extra",
     "torso_access"
   ],
-  "man_zmb_skinny_biter_legs_a.msh": [
-    "legs"
-  ],
-  "man_zmb_skinny_biter_rags_a_bottom.msh": [
+  "npc_man_torso_f_belt_bag_a.msh": [
     "torso_access",
-    "legs_extra",
-    "legs_access"
+    "backpack"
+  ],
+  "man_pk_torso_b_addon_a.msh": [
+    "torso_extra",
+    "armor_torso_access"
+  ],
+  "npc_man_torso_vest_a_b_pin_a.msh": [
+    "torso_2",
+    "torso_extra",
+    "torso_access"
+  ],
+  "npc_man_torso_vest_a_center_c.msh": [
+    "torso_2",
+    "torso_extra",
+    "torso_access"
   ],
   "man_leather_gloves_a.msh": [
     "gloves"
@@ -3541,10 +3600,6 @@
     "decals",
     "decals_extra"
   ],
-  "npc_man_torso_f_belt_bag_a.msh": [
-    "torso_access",
-    "backpack"
-  ],
   "man_bdt_torso_c_bottom_a_shirt.msh": [
     "torso_extra"
   ],
@@ -3709,6 +3764,10 @@
     "decals",
     "decals_extra"
   ],
+  "man_pk_torso_c_armor_a_upperright_b.msh": [
+    "sleeve",
+    "armor_torso_upperright"
+  ],
   "man_bdt_torso_a_sleeves_c.msh": [
     "sleeve"
   ],
@@ -3851,19 +3910,6 @@
   "npc_dylan_torso_b_decal_a.msh": [
     "decals",
     "decals_extra"
-  ],
-  "npc_waltz_torso_a_front_a.msh": [
-    "torso_2",
-    "torso_extra",
-    "torso_access"
-  ],
-  "npc_waltz_torso_a_collar_b.msh": [
-    "torso_access"
-  ],
-  "npc_waltz_torso_a.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
   ],
   "man_srv_torso_f_necklace_a.msh": [
     "necklace",
@@ -4144,39 +4190,6 @@
     "legs_extra",
     "legs_access"
   ],
-  "sh_scan_wmn_019.msh": [
-    "head"
-  ],
-  "sh_wmn_hair_system_b_base_a.msh": [
-    "hair",
-    "hair_base"
-  ],
-  "sh_wmn_hair_system_b_fringe_c.msh": [
-    "hair",
-    "hair_3"
-  ],
-  "npc_wmn_gloves_b.msh": [
-    "gloves"
-  ],
-  "npc_wmn_torso_e.msh": [
-    "torso_2",
-    "torso_extra",
-    "torso_access"
-  ],
-  "npc_wmn_torso_e_b.msh": [
-    "torso_2",
-    "torso_extra",
-    "torso_access"
-  ],
-  "npc_wmn_pants_b_shoes_d.msh": [
-    "shoes"
-  ],
-  "npc_wmn_pants_b_b.msh": [
-    "legs"
-  ],
-  "npc_wmn_glasses_a.msh": [
-    "glasses"
-  ],
   "man_sc_worker_torso_a_wrench.msh": [
     "torso_extra",
     "torso_access"
@@ -4263,21 +4276,6 @@
   "sh_scan_man_047.msh": [
     "head"
   ],
-  "npc_man_torso_vest_a_b.msh": [
-    "torso_2",
-    "torso_extra",
-    "torso_access"
-  ],
-  "npc_man_torso_vest_a_center_c.msh": [
-    "torso_2",
-    "torso_extra",
-    "torso_access"
-  ],
-  "npc_man_torso_vest_a_center_c_decal_a.msh": [
-    "torso_access",
-    "decals",
-    "decals_extra"
-  ],
   "npc_man_torso_vest_a_b_addons_a.msh": [
     "torso_extra",
     "torso_access",
@@ -4332,10 +4330,6 @@
     "torso_2",
     "torso_extra",
     "torso_access"
-  ],
-  "man_pk_torso_b_addon_a.msh": [
-    "torso_extra",
-    "armor_torso_access"
   ],
   "man_pk_torso_b_empty_decal_a.msh": [
     "decals",
@@ -4395,21 +4389,8 @@
     "torso_2",
     "torso_extra"
   ],
-  "man_pk_torso_c_armor_a_upperright_b.msh": [
-    "sleeve",
-    "armor_torso_upperright"
-  ],
   "sh_npc_simon.msh": [
     "head"
-  ],
-  "npc_waltz_torso_a_decal_b.msh": [
-    "decals",
-    "decals_extra"
-  ],
-  "npc_waltz_torso_a_front_b.msh": [
-    "torso_2",
-    "torso_extra",
-    "torso_access"
   ],
   "man_hands_decal_bandage_a.msh": [
     "decals",
@@ -4506,15 +4487,6 @@
   ],
   "npc_steve_earring.msh": [
     "earrings"
-  ],
-  "npc_waltz_torso_a_glasses_addon.msh": [
-    "torso_extra",
-    "torso_access",
-    "armor_torso_access"
-  ],
-  "npc_waltz_torso_a_decal_a.msh": [
-    "decals",
-    "decals_extra"
   ],
   "man_srv_torso_c_bag_a.msh": [
     "backpack"
@@ -4614,56 +4586,6 @@
     "necklace",
     "torso_access"
   ],
-  "sh_npc_waltz_old.msh": [
-    "head"
-  ],
-  "npc_waltz_old_hair.msh": [
-    "hair"
-  ],
-  "sh_npc_waltz_old_beard.msh": [
-    "facial_hair"
-  ],
-  "npc_waltz_torso_b.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "npc_waltz_torso_b_sleeves_a.msh": [
-    "sleeve"
-  ],
-  "npc_waltz_pants_a.msh": [
-    "legs"
-  ],
-  "npc_waltz_torso_b_sleeves_b.msh": [
-    "sleeve"
-  ],
-  "npc_waltz_torso_b_hands_b.msh": [
-    "hands"
-  ],
-  "npc_waltz_torso_c_hands_a.msh": [
-    "hands"
-  ],
-  "npc_waltz_torso_c.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "npc_waltz_pants_b.msh": [
-    "legs"
-  ],
-  "sh_npc_waltz_young.msh": [
-    "head"
-  ],
-  "npc_waltz_young_hair.msh": [
-    "hair"
-  ],
-  "npc_waltz_torso_a_collar_a.msh": [
-    "torso_access"
-  ],
-  "npc_waltz_torso_a_addon_a.msh": [
-    "torso_extra",
-    "armor_torso_access"
-  ],
   "man_sc_worker_scarf.msh": [
     "cape"
   ],
@@ -4698,6 +4620,117 @@
   "npc_man_worker_legs_a_belt.msh": [
     "legs_extra",
     "legs_access"
+  ],
+  "sh_npc_aiden.msh": [
+    "head"
+  ],
+  "player_healer_pants_c_tpp.msh": [
+    "legs"
+  ],
+  "player_healer_gloves_c_fpp.msh": [
+    "gloves"
+  ],
+  "player_healer_torso_c_tpp.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "player_biomarker_e3.msh": [
+    "arm_access"
+  ],
+  "player_healer_bracers_c_fpp.msh": [
+    "armor_torso_lowerright",
+    "armor_torso_lowerleft"
+  ],
+  "player_healer_shoes_c_tpp.msh": [
+    "shoes"
+  ],
+  "player_healer_headwear_c_tpp.msh": [
+    "hat",
+    "hat_access"
+  ],
+  "npc_aiden_hair.msh": [
+    "hair"
+  ],
+  "player_healer_gloves_a_fpp.msh": [
+    "gloves"
+  ],
+  "player_healer_bracers_a_fpp.msh": [
+    "armor_torso_lowerright",
+    "armor_torso_lowerleft"
+  ],
+  "player_melee_pants_c_tpp.msh": [
+    "legs"
+  ],
+  "player_tank_bracers_c_fpp.msh": [
+    "armor_torso_lowerright",
+    "armor_torso_lowerleft"
+  ],
+  "player_melee_gloves_c_fpp.msh": [
+    "gloves"
+  ],
+  "player_melee_torso_c_tpp.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "player_range_headwear_b_tpp.msh": [
+    "hat",
+    "hat_access"
+  ],
+  "player_melee_shoes_b_tpp.msh": [
+    "shoes"
+  ],
+  "player_melee_bracers_c_fpp.msh": [
+    "armor_torso_lowerright",
+    "armor_torso_lowerleft"
+  ],
+  "player_melee_headwear_a_tpp.msh": [
+    "hat",
+    "hat_access"
+  ],
+  "player_range_pants_a_tpp.msh": [
+    "legs"
+  ],
+  "player_forearm_tpp_a.msh": [
+    "lhand",
+    "rhand",
+    "sleeve"
+  ],
+  "player_range_gloves_c_fpp.msh": [
+    "gloves"
+  ],
+  "player_range_torso_c_tpp.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "player_range_bracers_c_fpp.msh": [
+    "armor_torso_lowerright",
+    "armor_torso_lowerleft"
+  ],
+  "player_range_shoes_c_tpp.msh": [
+    "shoes"
+  ],
+  "player_range_headwear_c_tpp.msh": [
+    "hat",
+    "hat_access"
+  ],
+  "player_range_gloves_b_fpp.msh": [
+    "gloves"
+  ],
+  "player_range_torso_a_tpp.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "player_range_bracers_b_fpp.msh": [
+    "armor_torso_lowerright",
+    "armor_torso_lowerleft"
+  ],
+  "player_range_headwear_a_tpp.msh": [
+    "hat",
+    "hat_access"
   ],
   "man_bdt_pants_b_decal_patch_a.msh": [
     "decals",
@@ -4746,35 +4779,6 @@
   ],
   "man_bdt_torso_b_spikes_a.msh": [
     "torso_access"
-  ],
-  "sh_scan_wmn_009.msh": [
-    "head"
-  ],
-  "wmn_srv_torso_c_sleeves_e.msh": [
-    "sleeve"
-  ],
-  "wmn_srv_torso_a.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "wmn_srv_torso_a_belt_a.msh": [
-    "torso_access"
-  ],
-  "wmn_srv_torso_a_bottom_b.msh": [
-    "torso_extra"
-  ],
-  "wmn_sc_runner_legs_b.msh": [
-    "legs"
-  ],
-  "wmn_srv_torso_a_bottom_c.msh": [
-    "torso_extra"
-  ],
-  "wmn_srv_torso_a_sleeves_d.msh": [
-    "sleeve"
-  ],
-  "wmn_hands_c.msh": [
-    "hands"
   ],
   "man_sc_runner_legs_a_belts_a.msh": [
     "legs_extra",
@@ -4898,222 +4902,6 @@
   "man_bdt_torso_a_frontbottom_c.msh": [
     "torso_extra",
     "torso_access"
-  ],
-  "sh_player_fh_berserker.msh": [
-    "head"
-  ],
-  "player_fh_berserker_shoes_a_tpp.msh": [
-    "shoes"
-  ],
-  "player_fh_berserker_axe_tpp.msh": [
-    "torso_access"
-  ],
-  "player_fh_berserker_forearms_a_tpp.msh": [
-    "hands",
-    "lhand",
-    "rhand",
-    "sleeve"
-  ],
-  "player_fh_berserker_headwear_a_tpp.msh": [
-    "hat",
-    "hat_access"
-  ],
-  "player_fh_berserker_torso_a_tpp.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "player_fh_berserker_hairs_tpp.msh": [
-    "hair"
-  ],
-  "player_fh_berserker_beard_tpp.msh": [
-    "facial_hair"
-  ],
-  "player_fh_berserker_pants_a_tpp.msh": [
-    "legs"
-  ],
-  "player_fh_berserker_torso_a_skull_tpp.msh": [
-    "torso_extra",
-    "torso_access"
-  ],
-  "player_fh_berserker_hands_a_tpp.msh": [
-    "hands"
-  ],
-  "sh_player_fh_kensei.msh": [
-    "head"
-  ],
-  "player_fh_kensei_shoes_a_tpp.msh": [
-    "shoes"
-  ],
-  "player_fh_kensei_torso_a_plates_tpp.msh": [
-    "torso_extra",
-    "torso_access"
-  ],
-  "player_hands_tpp_a.msh": [
-    "hands"
-  ],
-  "player_fh_kensei_headwear_a_tpp.msh": [
-    "hat",
-    "hat_access"
-  ],
-  "player_fh_kensei_torso_a_tpp.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "player_fh_kensei_pants_a_tpp.msh": [
-    "legs"
-  ],
-  "player_fh_kensei_plates_tpp.msh": [
-    "torso_extra",
-    "torso_access"
-  ],
-  "player_fh_kensei_gloves_a_fpp.msh": [
-    "gloves"
-  ],
-  "player_fh_warden_torso_a_sleeves_a_tpp.msh": [
-    "sleeve"
-  ],
-  "player_fh_warden_gloves_a_fpp.msh": [
-    "gloves"
-  ],
-  "player_fh_warden_headwear_a_tpp.msh": [
-    "hat",
-    "hat_access"
-  ],
-  "player_fh_warden_torso_a_tpp.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "player_fh_warden_gloves_a_bracer_fpp.msh": [
-    "gloves",
-    "armor_torso_lowerright"
-  ],
-  "player_fh_warden_pants_a_tpp.msh": [
-    "legs"
-  ],
-  "player_fh_warden_cloak_a_tpp.msh": [
-    "cape"
-  ],
-  "player_fh_warden_chainmail_a_tpp.msh": [
-    "cape",
-    "torso_access"
-  ],
-  "player_fh_warden_bottom_a_tpp.msh": [
-    "legs_extra",
-    "legs_access"
-  ],
-  "sh_npc_aiden.msh": [
-    "head"
-  ],
-  "player_healer_pants_c_tpp.msh": [
-    "legs"
-  ],
-  "player_healer_gloves_c_fpp.msh": [
-    "gloves"
-  ],
-  "player_healer_torso_c_tpp.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "player_biomarker_e3.msh": [
-    "arm_access"
-  ],
-  "player_healer_bracers_c_fpp.msh": [
-    "armor_torso_lowerright",
-    "armor_torso_lowerleft"
-  ],
-  "player_healer_shoes_c_tpp.msh": [
-    "shoes"
-  ],
-  "player_healer_headwear_c_tpp.msh": [
-    "hat",
-    "hat_access"
-  ],
-  "npc_aiden_hair.msh": [
-    "hair"
-  ],
-  "player_healer_gloves_a_fpp.msh": [
-    "gloves"
-  ],
-  "player_healer_bracers_a_fpp.msh": [
-    "armor_torso_lowerright",
-    "armor_torso_lowerleft"
-  ],
-  "player_melee_pants_c_tpp.msh": [
-    "legs"
-  ],
-  "player_tank_bracers_c_fpp.msh": [
-    "armor_torso_lowerright",
-    "armor_torso_lowerleft"
-  ],
-  "player_melee_gloves_c_fpp.msh": [
-    "gloves"
-  ],
-  "player_melee_torso_c_tpp.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "player_range_headwear_b_tpp.msh": [
-    "hat",
-    "hat_access"
-  ],
-  "player_melee_shoes_b_tpp.msh": [
-    "shoes"
-  ],
-  "player_melee_bracers_c_fpp.msh": [
-    "armor_torso_lowerright",
-    "armor_torso_lowerleft"
-  ],
-  "player_melee_headwear_a_tpp.msh": [
-    "hat",
-    "hat_access"
-  ],
-  "player_range_pants_a_tpp.msh": [
-    "legs"
-  ],
-  "player_forearm_tpp_a.msh": [
-    "lhand",
-    "rhand",
-    "sleeve"
-  ],
-  "player_range_gloves_c_fpp.msh": [
-    "gloves"
-  ],
-  "player_range_torso_c_tpp.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "player_range_bracers_c_fpp.msh": [
-    "armor_torso_lowerright",
-    "armor_torso_lowerleft"
-  ],
-  "player_range_shoes_c_tpp.msh": [
-    "shoes"
-  ],
-  "player_range_headwear_c_tpp.msh": [
-    "hat",
-    "hat_access"
-  ],
-  "player_range_gloves_b_fpp.msh": [
-    "gloves"
-  ],
-  "player_range_torso_a_tpp.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "player_range_bracers_b_fpp.msh": [
-    "armor_torso_lowerright",
-    "armor_torso_lowerleft"
-  ],
-  "player_range_headwear_a_tpp.msh": [
-    "hat",
-    "hat_access"
   ],
   "player_melee_shoes_a_tpp.msh": [
     "shoes"
@@ -6372,6 +6160,9 @@
   "wmn_hub_torso_a_sleeves_a.msh": [
     "sleeve"
   ],
+  "wmn_sc_runner_legs_b.msh": [
+    "legs"
+  ],
   "wmn_hub_torso_a_bdt_necklace_a.msh": [
     "necklace",
     "torso_access"
@@ -6391,6 +6182,9 @@
   "wmn_srv_scarf_b_torso_a.msh": [
     "cape"
   ],
+  "sh_scan_wmn_019.msh": [
+    "head"
+  ],
   "wmn_srv_hat_f.msh": [
     "hat",
     "hat_access"
@@ -6403,6 +6197,11 @@
   ],
   "wmn_srv_gloves_a.msh": [
     "gloves"
+  ],
+  "wmn_srv_torso_a.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
   ],
   "wmn_srv_torso_a_bottom_a.msh": [
     "torso_extra"
@@ -6451,6 +6250,12 @@
   "sh_wmn_srv_b.msh": [
     "head"
   ],
+  "wmn_srv_torso_a_bottom_b.msh": [
+    "torso_extra"
+  ],
+  "wmn_srv_torso_a_bottom_c.msh": [
+    "torso_extra"
+  ],
   "sh_scan_wmn_001.msh": [
     "head"
   ],
@@ -6460,6 +6265,10 @@
   ],
   "wmn_bzr_belt_a_for_torso_c_top_b.msh": [
     "torso_access"
+  ],
+  "sh_wmn_hair_system_b_base_a.msh": [
+    "hair",
+    "hair_base"
   ],
   "wmn_srv_torso_c_sleeves_part_a.msh": [
     "sleeve"
@@ -6476,6 +6285,9 @@
   "wmn_srv_torso_c_sleeves_c.msh": [
     "sleeve"
   ],
+  "sh_scan_wmn_009.msh": [
+    "head"
+  ],
   "sh_beanie_wmn_hair_fringe_b.msh": [
     "hair",
     "hair_3"
@@ -6485,6 +6297,9 @@
   ],
   "wmn_srv_torso_c_waist_belt_c.msh": [
     "torso_access"
+  ],
+  "npc_wmn_pants_b_b.msh": [
+    "legs"
   ],
   "npc_wmn_pants_b_shoes_a.msh": [
     "shoes"
@@ -6536,6 +6351,9 @@
   "wmn_tpp_biomarker_a.msh": [
     "arm_access"
   ],
+  "wmn_hands_c.msh": [
+    "hands"
+  ],
   "sh_scan_wmn_021.msh": [
     "head"
   ],
@@ -6561,36 +6379,6 @@
     "torso_2",
     "torso_extra",
     "torso_access"
-  ],
-  "wmn_zmb_gre_face_mask_a.msh": [
-    "mask",
-    "mask_access"
-  ],
-  "wmn_zmb_arms_a.msh": [
-    "hands",
-    "lhand",
-    "rhand",
-    "sleeve"
-  ],
-  "npc_wmn_torso_a.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "npc_wmn_torso_a_decal_a.msh": [
-    "decals",
-    "decals_extra"
-  ],
-  "wmn_zmb_legs_b.msh": [
-    "legs"
-  ],
-  "wmn_zmb_legs_c.msh": [
-    "legs"
-  ],
-  "wmn_zmb_legs_c_bottom_c.msh": [
-    "legs",
-    "legs_extra",
-    "legs_access"
   ],
   "wmn_srv_hat_h.msh": [
     "hat",
@@ -6618,11 +6406,44 @@
   "wmn_srv_torso_a_sleeves_c.msh": [
     "sleeve"
   ],
+  "sh_scan_wmn_017.msh": [
+    "head"
+  ],
+  "wmn_zmb_arms_a.msh": [
+    "hands",
+    "lhand",
+    "rhand",
+    "sleeve"
+  ],
+  "wmn_zmb_torso_a.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "wmn_zmb_bottom_a.msh": [
+    "legs_extra",
+    "legs_access"
+  ],
+  "wmn_zmb_legs_a.msh": [
+    "legs"
+  ],
   "sh_scan_wmn_002.msh": [
     "head"
   ],
   "wmn_viral_hair_a.msh": [
     "hair"
+  ],
+  "npc_wmn_torso_a.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "npc_wmn_torso_a_decal_a.msh": [
+    "decals",
+    "decals_extra"
+  ],
+  "wmn_zmb_legs_c.msh": [
+    "legs"
   ],
   "wmn_zmb_legs_c_bottom_a.msh": [
     "legs",
@@ -6685,6 +6506,9 @@
   "sh_wmn_hair_system_b_base_c_b.msh": [
     "hair",
     "hair_base"
+  ],
+  "npc_wmn_gloves_b.msh": [
+    "gloves"
   ],
   "wmn_hands_c_nohand.msh": [
     "hands"
@@ -6879,6 +6703,10 @@
     "hair",
     "hair_3"
   ],
+  "sh_wmn_hair_system_b_fringe_c.msh": [
+    "hair",
+    "hair_3"
+  ],
   "npc_wmn_torso_d_front_b_necklace_a.msh": [
     "necklace",
     "torso_access"
@@ -7008,6 +6836,9 @@
   "npc_wmn_torso_d_sleeves_e.msh": [
     "sleeve"
   ],
+  "npc_wmn_pants_b_shoes_d.msh": [
+    "shoes"
+  ],
   "wmn_srv_hat_f_decal_a.msh": [
     "hat_access",
     "decals",
@@ -7074,6 +6905,11 @@
   ],
   "sh_scan_wmn_011.msh": [
     "head"
+  ],
+  "npc_wmn_torso_e.msh": [
+    "torso_2",
+    "torso_extra",
+    "torso_access"
   ],
   "npc_wmn_pants_b_belt_b.msh": [
     "legs_extra",
@@ -7164,6 +7000,9 @@
   "wmn_ren_torso_a_apron_a.msh": [
     "torso_extra",
     "torso_access"
+  ],
+  "wmn_srv_torso_a_sleeves_d.msh": [
+    "sleeve"
   ],
   "wmn_hands_b_nohand.msh": [
     "hands"
@@ -7551,12 +7390,17 @@
     "torso_access",
     "backpack"
   ],
+  "npc_wmn_glasses_a.msh": [
+    "glasses"
+  ],
   "npc_wmn_torso_g_fastened_decal_a.msh": [
     "decals",
     "decals_extra"
   ],
-  "sh_scan_wmn_017.msh": [
-    "head"
+  "npc_wmn_torso_e_b.msh": [
+    "torso_2",
+    "torso_extra",
+    "torso_access"
   ],
   "sh_bandana_wmn_hair_fringe_b.msh": [
     "hair",
@@ -7643,12 +7487,6 @@
     "torso_2",
     "torso_extra"
   ],
-  "sh_npc_mia_young.msh": [
-    "head"
-  ],
-  "npc_mia_young_hair.msh": [
-    "hair"
-  ],
   "npc_wmn_scarf_b_a.msh": [
     "cape"
   ],
@@ -7673,6 +7511,9 @@
   "wmn_srv_skirt_a.msh": [
     "legs_extra",
     "legs_access"
+  ],
+  "wmn_srv_torso_c_sleeves_e.msh": [
+    "sleeve"
   ],
   "sh_mother_3.msh": [
     "head"
@@ -7945,6 +7786,9 @@
     "decals",
     "decals_extra"
   ],
+  "wmn_srv_torso_a_belt_a.msh": [
+    "torso_access"
+  ],
   "sh_beanie_wmn_hair_fringe_c.msh": [
     "hair",
     "hair_3"
@@ -8183,8 +8027,17 @@
     "rhand",
     "sleeve"
   ],
+  "man_zmb_legs_base_a.msh": [
+    "hair_base",
+    "legs"
+  ],
   "sh_man_zmb_hair_c.msh": [
     "hair"
+  ],
+  "man_zmb_arm_b.msh": [
+    "lhand",
+    "rhand",
+    "sleeve"
   ],
   "man_zmb_torso_e.msh": [
     "torso",
@@ -8197,6 +8050,33 @@
     "legs_extra",
     "legs_access"
   ],
+  "sh_biter_a.msh": [
+    "head"
+  ],
+  "sh_wmn_zmb_hair_a.msh": [
+    "hair"
+  ],
+  "man_zmb_skinny_biter_hands_a.msh": [
+    "hands"
+  ],
+  "man_zmb_skinny_biter_torso_a.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "man_zmb_skinny_biter_rags_a_top.msh": [
+    "torso_2",
+    "torso_extra",
+    "torso_access"
+  ],
+  "man_zmb_skinny_biter_legs_a.msh": [
+    "legs"
+  ],
+  "man_zmb_skinny_biter_rags_a_bottom.msh": [
+    "torso_access",
+    "legs_extra",
+    "legs_access"
+  ],
   "man_zmb_skinny_biter_shalw_a.msh": [
     "cape"
   ],
@@ -8204,13 +8084,6 @@
     "torso",
     "torso_2",
     "torso_extra"
-  ],
-  "wmn_zmb_bottom_a.msh": [
-    "legs_extra",
-    "legs_access"
-  ],
-  "wmn_zmb_legs_a.msh": [
-    "legs"
   ],
   "man_zmb_torso_a_b_sleeves_c.msh": [
     "sleeve"
@@ -8220,10 +8093,42 @@
     "torso_2",
     "torso_extra"
   ],
-  "wmn_zmb_torso_a.msh": [
+  "man_zmb_legs_base_a_bottom_c.msh": [
+    "hair_base",
+    "legs",
+    "legs_extra",
+    "legs_access"
+  ],
+  "man_zmb_torso_g.msh": [
     "torso",
     "torso_2",
     "torso_extra"
+  ],
+  "man_zmb_torso_g_sleeves_b.msh": [
+    "sleeve"
+  ],
+  "man_zmb_torso_g_decal_a.msh": [
+    "decals",
+    "decals_extra"
+  ],
+  "man_zmb_gre_face_mask_a.msh": [
+    "mask",
+    "mask_access"
+  ],
+  "man_zmb_torso_g_sleeves_c.msh": [
+    "sleeve"
+  ],
+  "wmn_zmb_gre_face_mask_a.msh": [
+    "mask",
+    "mask_access"
+  ],
+  "wmn_zmb_legs_b.msh": [
+    "legs"
+  ],
+  "wmn_zmb_legs_c_bottom_c.msh": [
+    "legs",
+    "legs_extra",
+    "legs_access"
   ],
   "wmn_zmb_torso_c_arms_a.msh": [
     "hands",
@@ -8247,11 +8152,80 @@
     "legs_extra",
     "legs_access"
   ],
+  "sh_man_viral_a.msh": [
+    "head",
+    "torso"
+  ],
+  "viral_torso_b.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "viral_torso_i.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "viral_torso_b_hands_a.msh": [
+    "hands"
+  ],
+  "viral_legs_b.msh": [
+    "legs"
+  ],
+  "sh_man_zmb_hair_b.msh": [
+    "hair"
+  ],
+  "sh_wmn_viral_a_b.msh": [
+    "head",
+    "torso"
+  ],
+  "wmn_viral_a_torso_d_arms_a.msh": [
+    "hands",
+    "sleeve"
+  ],
+  "wmn_viral_a_torso_d_jacket_a.msh": [
+    "torso_2",
+    "torso_extra"
+  ],
+  "wmn_viral_a_bottom_a.msh": [
+    "legs_extra",
+    "legs_access"
+  ],
+  "wmn_viral_a_legs_h.msh": [
+    "legs"
+  ],
   "man_zmb_torso_a_b_sleeves_b.msh": [
     "sleeve"
   ],
+  "man_zmb_gastank_headgear_a.msh": [
+    "torso_extra",
+    "torso_access",
+    "armor_helmet",
+    "armor_helmet_access"
+  ],
+  "man_zmb_gastank_torso_a.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra",
+    "torso_access"
+  ],
+  "man_zmb_gastank_sleeves_a.msh": [
+    "torso_access",
+    "sleeve"
+  ],
+  "man_zmb_gastank_pants_a.msh": [
+    "legs"
+  ],
   "man_zmb_torso_g_sleeves_a.msh": [
     "sleeve"
+  ],
+  "viral_torso_a.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "viral_legs_h.msh": [
+    "legs"
   ],
   "man_pk_headcover_b.msh": [
     "armor_helmet",
@@ -8274,8 +8248,86 @@
   "sh_biter_c.msh": [
     "head"
   ],
-  "sh_man_zmb_hair_b.msh": [
+  "npc_waltz_torso_a_front_a.msh": [
+    "torso_2",
+    "torso_extra",
+    "torso_access"
+  ],
+  "npc_waltz_torso_a_collar_b.msh": [
+    "torso_access"
+  ],
+  "npc_waltz_torso_a.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "npc_waltz_torso_a_decal_b.msh": [
+    "decals",
+    "decals_extra"
+  ],
+  "npc_waltz_torso_a_front_b.msh": [
+    "torso_2",
+    "torso_extra",
+    "torso_access"
+  ],
+  "npc_waltz_torso_a_glasses_addon.msh": [
+    "torso_extra",
+    "torso_access",
+    "armor_torso_access"
+  ],
+  "npc_waltz_torso_a_decal_a.msh": [
+    "decals",
+    "decals_extra"
+  ],
+  "sh_npc_waltz_old.msh": [
+    "head"
+  ],
+  "npc_waltz_old_hair.msh": [
     "hair"
+  ],
+  "sh_npc_waltz_old_beard.msh": [
+    "facial_hair"
+  ],
+  "npc_waltz_torso_b.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "npc_waltz_torso_b_sleeves_a.msh": [
+    "sleeve"
+  ],
+  "npc_waltz_pants_a.msh": [
+    "legs"
+  ],
+  "npc_waltz_torso_b_sleeves_b.msh": [
+    "sleeve"
+  ],
+  "npc_waltz_torso_b_hands_b.msh": [
+    "hands"
+  ],
+  "npc_waltz_torso_c_hands_a.msh": [
+    "hands"
+  ],
+  "npc_waltz_torso_c.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "npc_waltz_pants_b.msh": [
+    "legs"
+  ],
+  "sh_npc_waltz_young.msh": [
+    "head"
+  ],
+  "npc_waltz_young_hair.msh": [
+    "hair"
+  ],
+  "npc_waltz_torso_a_collar_a.msh": [
+    "torso_access"
+  ],
+  "npc_waltz_torso_a_addon_a.msh": [
+    "torso_extra",
+    "armor_torso_access"
   ],
   "man_zmb_pk_legs_a_armor_lowerleft_a.msh": [
     "armor_legs"
@@ -8325,13 +8377,125 @@
     "torso_2",
     "torso_extra"
   ],
-  "man_zmb_gastank_pants_b.msh": [
+  "wmn_viral_torso_h.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "wmn_viral_torso_h_sleeves_b.msh": [
+    "sleeve"
+  ],
+  "wmn_viral_a_arms_rag_a.msh": [
+    "torso_access",
+    "hands",
+    "lhand",
+    "rhand",
+    "sleeve"
+  ],
+  "wmn_viral_a_legs_f.msh": [
     "legs"
+  ],
+  "wmn_viral_a_legs_f_bottom_b.msh": [
+    "legs",
+    "legs_extra",
+    "legs_access"
+  ],
+  "wmn_viral_a_legs_g_bottom_a.msh": [
+    "legs",
+    "legs_extra",
+    "legs_access"
+  ],
+  "sh_christmas_hat_a.msh": [
+    "hat",
+    "hat_access"
+  ],
+  "sh_christmas_hat_b.msh": [
+    "hat",
+    "hat_access"
+  ],
+  "viral_torso_k.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
   ],
   "man_zmb_gastank_tank.msh": [
     "torso_2",
     "torso_extra",
     "torso_access"
+  ],
+  "man_zmb_gastank_tube_a.msh": [
+    "torso_2",
+    "torso_extra",
+    "torso_access"
+  ],
+  "viral_torso_l.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "viral_torso_j_sleeves_b.msh": [
+    "sleeve"
+  ],
+  "viral_torso_neck_a.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra",
+    "torso_access"
+  ],
+  "viral_legs_c_rag.msh": [
+    "legs"
+  ],
+  "viral_torso_c.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "sh_wmn_viral_a.msh": [
+    "head",
+    "torso"
+  ],
+  "wmn_viral_a_legs_c.msh": [
+    "legs"
+  ],
+  "wmn_viral_torso_g.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "wmn_viral_a_torso_b.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "wmn_viral_a_torso_b_shirt_a.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "wmn_viral_a_legs_f_bottom_c.msh": [
+    "legs",
+    "legs_extra",
+    "legs_access"
+  ],
+  "wmn_viral_a_torso_c.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "wmn_viral_a_torso_b_shirt_b.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "wmn_viral_a_legs_a.msh": [
+    "legs"
+  ],
+  "wmn_viral_a_torso_d_arms_b.msh": [
+    "hands",
+    "sleeve"
+  ],
+  "man_zmb_gastank_pants_b.msh": [
+    "legs"
   ],
   "man_zmb_gastank_sleeves_b.msh": [
     "torso_access",
@@ -8388,11 +8552,6 @@
   "wmn_zmb_torso_f_arms_a.msh": [
     "hands",
     "sleeve"
-  ],
-  "man_zmb_gastank_tube_a.msh": [
-    "torso_2",
-    "torso_extra",
-    "torso_access"
   ],
   "man_zmb_gastank_headgear_b.msh": [
     "torso_extra",
@@ -8465,17 +8624,9 @@
     "torso_2",
     "torso_extra"
   ],
-  "sh_christmas_hat_a.msh": [
-    "hat",
-    "hat_access"
-  ],
   "man_zmb_torso_a_sport_bag_a_christmas_sweets_a.msh": [
     "torso_access",
     "backpack"
-  ],
-  "sh_christmas_hat_b.msh": [
-    "hat",
-    "hat_access"
   ],
   "man_zmb_torso_e_backpack_a.msh": [
     "backpack"
@@ -8490,14 +8641,6 @@
   ],
   "npc_man_worker_torso_a_battery_a.msh": [
     "torso_access"
-  ],
-  "wmn_viral_torso_h.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "wmn_viral_torso_h_sleeves_b.msh": [
-    "sleeve"
   ],
   "wmn_zmb_torso_a_shawl_a.msh": [
     "cape",
@@ -8515,6 +8658,26 @@
     "torso",
     "torso_2",
     "torso_extra"
+  ],
+  "zmb_suicider_a_torso.msh": [
+    "torso",
+    "torso_2",
+    "torso_extra"
+  ],
+  "zmb_suicider_a_bubbles_front.msh": [
+    "torso_2",
+    "torso_extra",
+    "torso_access"
+  ],
+  "zmb_suicider_a_legs.msh": [
+    "legs"
+  ],
+  "zmb_suicider_a_bubbles.msh": [
+    "torso_2",
+    "torso_extra"
+  ],
+  "zmb_suicider_corpse.msh": [
+    "torso"
   ],
   "zmb_demolisher_head_a.msh": [
     "head"
@@ -8723,26 +8886,6 @@
   "zmb_spitter_b.msh": [
     "torso"
   ],
-  "zmb_suicider_a_torso.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "zmb_suicider_a_bubbles_front.msh": [
-    "torso_2",
-    "torso_extra",
-    "torso_access"
-  ],
-  "zmb_suicider_a_legs.msh": [
-    "legs"
-  ],
-  "zmb_suicider_a_bubbles.msh": [
-    "torso_2",
-    "torso_extra"
-  ],
-  "zmb_suicider_corpse.msh": [
-    "torso"
-  ],
   "zmb_suicider_b_torso.msh": [
     "torso",
     "torso_2",
@@ -8781,130 +8924,16 @@
   "zmb_demolisher_legs_b_armor_a.msh": [
     "armor_legs"
   ],
-  "sh_man_viral_a.msh": [
-    "head",
-    "torso"
-  ],
-  "viral_torso_a.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "viral_torso_b.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "viral_torso_b_hands_a.msh": [
-    "hands"
-  ],
   "viral_legs_c.msh": [
-    "legs"
-  ],
-  "viral_torso_i.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "viral_legs_b.msh": [
-    "legs"
-  ],
-  "sh_wmn_viral_a.msh": [
-    "head",
-    "torso"
-  ],
-  "wmn_viral_torso_g.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "wmn_viral_a_legs_c.msh": [
-    "legs"
-  ],
-  "sh_wmn_viral_a_b.msh": [
-    "head",
-    "torso"
-  ],
-  "wmn_viral_a_torso_d_arms_a.msh": [
-    "hands",
-    "sleeve"
-  ],
-  "wmn_viral_a_torso_d_jacket_a.msh": [
-    "torso_2",
-    "torso_extra"
-  ],
-  "wmn_viral_a_bottom_a.msh": [
-    "legs_extra",
-    "legs_access"
-  ],
-  "wmn_viral_a_legs_h.msh": [
-    "legs"
-  ],
-  "viral_legs_h.msh": [
-    "legs"
-  ],
-  "npc_man_torso_vest_a_b_pin_a.msh": [
-    "torso_2",
-    "torso_extra",
-    "torso_access"
-  ],
-  "wmn_viral_a_legs_a.msh": [
     "legs"
   ],
   "wmn_viral_torso_h_sleeves_a.msh": [
     "sleeve"
   ],
-  "wmn_viral_a_arms_rag_a.msh": [
-    "torso_access",
-    "hands",
-    "lhand",
-    "rhand",
-    "sleeve"
-  ],
-  "wmn_viral_a_legs_f.msh": [
-    "legs"
-  ],
-  "wmn_viral_a_legs_f_bottom_b.msh": [
-    "legs",
-    "legs_extra",
-    "legs_access"
-  ],
-  "wmn_viral_a_legs_g_bottom_a.msh": [
-    "legs",
-    "legs_extra",
-    "legs_access"
-  ],
-  "viral_torso_k.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "viral_torso_l.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
   "viral_torso_k_shirt_a.msh": [
     "torso",
     "torso_2",
     "torso_extra"
-  ],
-  "viral_torso_j_sleeves_b.msh": [
-    "sleeve"
-  ],
-  "viral_torso_neck_a.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra",
-    "torso_access"
-  ],
-  "viral_torso_c.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "viral_legs_c_rag.msh": [
-    "legs"
   ],
   "wmn_viral_a_torso_a.msh": [
     "torso",
@@ -8915,35 +8944,6 @@
     "legs",
     "legs_extra",
     "legs_access"
-  ],
-  "wmn_viral_a_torso_b.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "wmn_viral_a_torso_b_shirt_a.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "wmn_viral_a_legs_f_bottom_c.msh": [
-    "legs",
-    "legs_extra",
-    "legs_access"
-  ],
-  "wmn_viral_a_torso_c.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "wmn_viral_a_torso_b_shirt_b.msh": [
-    "torso",
-    "torso_2",
-    "torso_extra"
-  ],
-  "wmn_viral_a_torso_d_arms_b.msh": [
-    "hands",
-    "sleeve"
   ],
   "wmn_viral_a_torso_d.msh": [
     "torso",

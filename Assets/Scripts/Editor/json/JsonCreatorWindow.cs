@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 using System.IO;
 using static ModelData;
 using System;
@@ -22,6 +23,11 @@ public class JsonCreatorWindow : EditorWindow
     private Dictionary<string, List<string>> filters;
     private Dictionary<string, string[]> categoryPrefixes;
     private Dictionary<string, List<string>> exclude_filters;
+    private Dictionary<string, string> skeletonToCategory = new Dictionary<string, string>
+{
+    {"child_skeleton", "Child"},{"child_skeleton_mia", "Child"},{"man_basic_skeleton", "Man"},{"man_basic_skeleton_no_sh", "Man"},{"man_bdt_heavy_coat_skeleton", "Man"},{"man_bdt_heavy_skeleton", "Man"},{"man_bdt_heavy_torso_d_skeleton", "Man"},{"man_bdt_light_skeleton", "Man"},{"man_bdt_medium_skeleton", "Man"},{"man_bdt_skeleton", "Man"},{"man_npc_hakon_arrow_skeleton", "Man"},{"man_npc_skeleton", "Man"},{"man_pk_heavy_skeleton", "Man"},{"man_pk_light_skeleton", "Man"},{"man_pk_medium_skeleton", "Man"},{"man_pk_skeleton", "Man"},{"man_plr_skeleton", "Man"},{"man_sc_heavy_skeleton", "Man"},{"man_sc_light_skeleton", "Man"},{"man_sc_medium_skeleton", "Man"},{"man_sc_skeleton", "Man"},{"man_skeleton", "Man"},{"man_srv_heavy_skeleton", "Man"},{"man_srv_light_skeleton", "Man"},{"man_srv_medium_skeleton", "Man"},{"man_srv_skeleton", "Man"},{"npc_frank_skeleton", "Man"},{"npc_hakon_sh_skeleton", "Man"},{"player_fpp_phx_skeleton", "Player"},{"player_fpp_skeleton", "Player"},{"player_phx_skeleton", "Player"},{"player_skeleton", "Player"},{"viral_skeleton", "Viral"},{"woman_basic_skeleton", "Wmn"},{"woman_light_skeleton", "Wmn"},{"woman_npc_meredith_skeleton", "Wmn"},{"woman_npc_singer_skeleton", "Wmn"},{"woman_sc_skeleton", "Wmn"},{"woman_skeleton", "Wmn"},{"woman_srv_skeleton", "Wmn"},{"zmb_banshee_skeleton", "Special Infected"},{"zmb_bolter_skeleton", "Special Infected"},{"zmb_charger_skeleton", "Special Infected"},{"zmb_corruptor_skeleton", "Special Infected"},{"zmb_demolisher_phx_skeleton", "Special Infected"},{"zmb_demolisher_skeleton", "Special Infected"},{"zmb_goon_skeleton", "Special Infected"},{"zmb_screamer_skeleton", "Special Infected"},{"zmb_spitter_skeleton", "Special Infected"},{"zmb_spitter_tier_a_skeleton", "Special Infected"},{"zmb_suicider_skeleton", "Special Infected"},{"zmb_volataile_hive_skeleton", "Special Infected"},{"zmb_volataile_skeleton", "Special Infected"},{"man_zmb_heavy_skeleton", "Biter"},{"man_zmb_light_skeleton", "Biter"},{"man_zmb_medium_skeleton", "Biter"},{"man_zmb_skeleton", "Biter"},
+{"woman_zmb_skeleton", "Biter"},{"man_srv_skinybiter_skeleton", "Biter"}
+    };
 
     void OnEnable()
     {
@@ -731,95 +737,177 @@ public class JsonCreatorWindow : EditorWindow
         }
     }
 
-    void ProcessModelsInFolder(string folderPath)
+    public void ProcessModelsInFolder(string folderPath)
     {
-        string[] files = Directory.GetFiles(folderPath, "*.model", SearchOption.AllDirectories);
-
-        // Define the ignore list
-        var ignoreList = new HashSet<string> { "heron.model", "sh_debug_face_anim.model", "hen.model", "goat.model", "gazelle_fem.model", "empty_model.model", "horse.model", "wolf.model", "rat.model", "roedeer.model", "polito_01.model", "dog_prototype.model", "goat.model" };
-
-        foreach (string modelFile in files)
+        Task.Run(() =>
         {
-            // Skip files in the ignore list
-            if (ignoreList.Contains(Path.GetFileName(modelFile).ToLower()))
-            {
-                Debug.Log($"Skipped ignored model file: {modelFile}");
-                continue;
-            }
-
-            Debug.Log($"Processing model file: {modelFile}");
-            string jsonData = File.ReadAllText(modelFile);
-            JObject modelObject = JObject.Parse(jsonData);
-
-            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(modelFile);
-            var processedData = ProcessModelData(modelObject);
-            string outputJson = JsonConvert.SerializeObject(processedData, Newtonsoft.Json.Formatting.Indented);
-
-            // Determine category using file name, class, and sex
-            string category = DetermineCategory(processedData.modelProperties.@class, processedData.modelProperties.sex, fileNameWithoutExtension);
-            string type = DetermineType(category);
-
-            // Create directories if they don't exist
-            string outputDir = Path.Combine(Application.dataPath, "StreamingAssets/Jsons", type, category);
-            Directory.CreateDirectory(outputDir);
-
-            string outputFilePath = Path.Combine(outputDir, Path.GetFileNameWithoutExtension(modelFile) + ".json");
-            File.WriteAllText(outputFilePath, outputJson);
-            Debug.Log($"Processed data saved to: {outputFilePath}");
-        }
-    }
-
-    string DetermineCategory(string modelClass, string sex, string fileName)
-    {
-        fileName = fileName.ToLower();
-
-        // First, try to determine the category based on the file name
-        foreach (var prefix in categoryPrefixes)
+            var ignoreList = new HashSet<string>
         {
-            if (categoryPrefixes[prefix.Key].Any(p => fileName.Contains(p.ToLower())))
-            {
-                return prefix.Key;
-            }
-        }
+            "heron.model", "sh_debug_face_anim.model", "hen.model", "goat.model",
+            "gazelle_fem.model", "empty_model.model", "horse.model", "wolf.model",
+            "rat.model", "roedeer.model", "polito_01.model", "dog_prototype.model", "goat.model"
+        };
 
-        // If the file name check fails, fallback to modelClass
-        if (!string.IsNullOrEmpty(modelClass))
-        {
-            modelClass = modelClass.ToLower();
-            foreach (var prefix in categoryPrefixes)
+            string[] files = Directory.GetFiles(folderPath, "*.model", SearchOption.AllDirectories);
+            List<Task> processingTasks = new List<Task>();
+
+            foreach (string modelFile in files)
             {
-                if (categoryPrefixes[prefix.Key].Any(p => modelClass.Contains(p.ToLower())))
+                Debug.Log($"ProcessModelsInFolder: modelFile: {modelFile}");
+                processingTasks.Add(Task.Run(() =>
                 {
-                    return prefix.Key;
-                }
-            }
-        }
+                    if (ignoreList.Contains(Path.GetFileName(modelFile).ToLower()))
+                    {
+                        UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"Skipped ignored model file: {modelFile}"));
+                        return;
+                    }
 
-        // Lastly, use sex as a secondary fallback
-        return DetermineCategoryBySex(sex);
+                    try
+                    {
+                        string jsonData = File.ReadAllText(modelFile);
+                        JObject modelObject = JObject.Parse(jsonData);
+                        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(modelFile);
+                        var processedData = ProcessModelData(modelObject);
+                        Debug.Log($"ProcessModelsInFolder: Skeleton name: {processedData.skeletonName}");
+                        // Now passing skeletonName to DetermineCategory
+                        string category = DetermineCategory(processedData.skeletonName);
+                        Debug.Log($"ProcessModelsInFolder: category: {category}");
+                        string normalizedFileName = fileNameWithoutExtension.ToLower();
+                        if (category == "Man" || category == "Wmn")
+                        {
+                            if (normalizedFileName.Contains("_test_player"))
+                            {
+                                category = "Player";
+                                Debug.Log($"Category changed to Player due to name: {normalizedFileName}");
+                            }
+                            else if (normalizedFileName.Contains("zmb"))
+                            {
+                                category = "Biter";
+                                Debug.Log($"Category changed to Biter due to name: {normalizedFileName}");
+                            }
+                            else if (normalizedFileName.Contains("viral"))
+                            {
+                                category = "Viral";
+                                Debug.Log($"Category changed to Viral due to name: {normalizedFileName}");
+                            }
+                            if (category == "Biter" || category == "Viral")
+                            {
+                                if (normalizedFileName.Contains("npc_waltz"))
+                                {
+                                    category = "Man";
+                                    Debug.Log($"Category changed to Man due to name: {normalizedFileName}");
+                                }
+                            }
+                        }
+                        string type = DetermineType(category, fileNameWithoutExtension);
+
+                        string outputDir = Path.Combine(Application.dataPath, "StreamingAssets/Jsons", type, category);
+                        Directory.CreateDirectory(outputDir);
+
+                        string outputFilePath = Path.Combine(outputDir, fileNameWithoutExtension + ".json");
+                        Debug.Log($"outputFilePath {outputFilePath}");
+                        string outputJson = CreateJsonWithSkeletonNameAtTop(processedData);
+                        File.WriteAllText(outputFilePath, outputJson);
+
+                        UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"Processed data saved to: {outputFilePath}"));
+                    }
+                    catch (Exception ex)
+                    {
+                        UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.LogError($"Failed to process model file {modelFile}: {ex.Message}"));
+                    }
+                }));
+            }
+
+            Task.WhenAll(processingTasks).ContinueWith(t => UnityMainThreadDispatcher.Instance.Enqueue(OrganizeJsonFiles));
+        });
     }
 
-    string DetermineCategoryBySex(string sex)
+
+    public struct ProcessedModelData
     {
-        if (!string.IsNullOrEmpty(sex))
+        public string skeletonName;
+        public ModelProperties modelProperties;
+        public List<SlotDataPair> slotPairs;
+    }
+
+    private ProcessedModelData ProcessModelData(JObject modelObject)
+    {
+        // Extract skeletonName from the preset object
+        string skeletonName = modelObject["preset"]?["skeletonName"]?.ToString() ?? modelObject["skeletonName"]?.ToString();
+        Debug.Log($"ProcessModelData: Skeleton name: {skeletonName}");
+        // Extract modelProperties from the data object
+        JObject dataObject = modelObject["data"] as JObject;
+        ModelProperties modelProperties = ExtractModelProperties(dataObject["properties"] as JArray);
+
+        // Extract slotPairs directly from the root object
+        List<SlotDataPair> slotPairs = ExtractSlotPairs(modelObject["slots"] as JArray);
+
+        // Construct and return the ModelData object
+        return new ProcessedModelData
         {
-            switch (sex.ToLower())
-            {
-                case "male":
-                    return "Man";
-                case "female":
-                    return "Wmn";
-            }
-        }
-        return "Unknown"; // Default category if no match is found
+            skeletonName = skeletonName,
+            modelProperties = modelProperties,
+            slotPairs = slotPairs
+        };
     }
 
-    string DetermineType(string category)
+
+    private string DetermineCategory(string skeletonName)
     {
+        Debug.Log($"DetermineCategory: Processing skeleton name: {skeletonName}");
+
+        // Normalize skeletonName for comparison
+        string normalizedSkeletonName = skeletonName.ToLower().Replace(".msh", "");
+
+        foreach (var entry in skeletonToCategory)
+        {
+            string normalizedKey = entry.Key.ToLower();
+            // Use exact match instead of Contains
+            if (normalizedSkeletonName.Equals(normalizedKey))
+            {
+                Debug.Log($"Exact match found: {normalizedSkeletonName} -> {entry.Value}");
+                return entry.Value;
+            }
+        }
+
+        Debug.Log($"No exact category match found for skeleton '{normalizedSkeletonName}'. Defaulting to 'Other'");
+        return "Other";
+    }
+
+    private string DetermineType(string category, string fileName)
+    {
+        string normalizedFileName = fileName.ToLower();
+
+        // Adjust category for specific cases based on filename content
+        if (category == "Man")
+        {
+            if (normalizedFileName.Contains("wmn"))
+            {
+                category = "Wmn";
+                Debug.Log($"Category changed to Wmn due to name: {normalizedFileName}");
+            }
+        }
+
+        if (category.Equals("Man") || category.Equals("Wmn"))
+        {
+            if (normalizedFileName.Contains("player_"))
+            {
+                category = "Player";
+            }
+            if (normalizedFileName.Contains("zmb"))
+            {
+                category = "Biter";
+            }
+            else if (normalizedFileName.Contains("viral"))
+            {
+                category = "Viral";
+            }
+        }
+
         string humanPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons", "Human");
         string infectedPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons", "Infected");
         var folderMappings = new Dictionary<string, string>
-    {
+{
         {"Player", humanPath},
         {"Man", humanPath},
         {"Wmn", humanPath},
@@ -827,8 +915,21 @@ public class JsonCreatorWindow : EditorWindow
         {"Biter", infectedPath},
         {"Viral", infectedPath},
         {"Special Infected", infectedPath}
-    };
+};
+
         return folderMappings.TryGetValue(category, out string typePath) ? Path.GetFileName(typePath) : "Unknown";
+    }
+
+    private string CreateJsonWithSkeletonNameAtTop(ProcessedModelData data)
+    {
+        var jsonObj = new JObject
+        {
+            ["skeletonName"] = data.skeletonName,
+            ["modelProperties"] = JToken.FromObject(data.modelProperties),
+            ["slotPairs"] = JToken.FromObject(data.slotPairs)
+        };
+
+        return jsonObj.ToString(Formatting.Indented);
     }
 
     public static void CreateVariationJsons()
@@ -1135,28 +1236,6 @@ public class JsonCreatorWindow : EditorWindow
         var jsonOutput = JsonConvert.SerializeObject(sortedNameToSlotUids, Formatting.Indented);
         File.WriteAllText(outputPath, jsonOutput);
         Debug.Log($"Name Slot UID Frequency Lookup saved to: {outputPath}");
-    }
-
-
-    ModelData ProcessModelData(JObject modelObject)
-    {
-        // Extract skeletonName from the preset object
-        string skeletonName = modelObject["preset"]["skeletonName"]?.ToString();
-
-        // Extract modelProperties from the data object
-        JObject dataObject = modelObject["data"] as JObject;
-        ModelProperties modelProperties = ExtractModelProperties(dataObject["properties"] as JArray);
-
-        // Extract slotPairs directly from the root object
-        List<SlotDataPair> slotPairs = ExtractSlotPairs(modelObject["slots"] as JArray);
-
-        // Construct and return the ModelData object
-        return new ModelData
-        {
-            skeletonName = skeletonName,
-            modelProperties = modelProperties,
-            slotPairs = slotPairs
-        };
     }
 
     ModelProperties ExtractModelProperties(JArray propertiesArray)
