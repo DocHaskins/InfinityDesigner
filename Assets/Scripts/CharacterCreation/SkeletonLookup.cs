@@ -169,7 +169,7 @@ namespace doppelganger
             }
 
             // If no match was found
-            return "default_skeleton.msh";
+            return "player_skeleton.msh";
         }
     }
 }

@@ -67,6 +67,7 @@ namespace doppelganger
             // Initialize StringBuilder for JSON output
             StringBuilder sb = new StringBuilder();
 
+            Debug.Log($"skeletonName: {modelData.skeletonName}");
             // Start JSON structure
             sb.AppendLine("{");
             sb.AppendLine("  \"version\": 6,");

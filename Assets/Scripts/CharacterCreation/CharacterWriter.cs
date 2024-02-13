@@ -44,7 +44,7 @@ namespace doppelganger
         public string dateSubfolder = DateTime.Now.ToString("yyyy_MM_dd");
         public string jsonOutputDirectory = Path.Combine(Application.streamingAssetsPath, "Output");
         public string skeletonJsonPath = "Assets/StreamingAssets/Jsons/Human/Player/player_tpp_skeleton.json";
-        SlotUIDLookup slotUIDLookup = SlotUIDLookup.LoadFromJson("Assets/StreamingAssets/SlotData/SlotUIDLookup.json");
+        public string slotUIDLookupRelativePath = "SlotData/SlotUIDLookup.json";
         private Dictionary<string, int> slotNameToUidMap = new Dictionary<string, int>();
         private Dictionary<string, string> sliderToSlotMapping = new Dictionary<string, string>()
     {
@@ -208,14 +208,16 @@ namespace doppelganger
             string saveClass = saveClassDropdown.options[saveClassDropdown.value].text;
             string saveNameText = saveName.text;
             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(saveNameText);
+            string slotUIDLookupFullPath = Path.Combine(Application.streamingAssetsPath, slotUIDLookupRelativePath);
+            SlotUIDLookup slotUIDLookup = SlotUIDLookup.LoadFromJson(slotUIDLookupFullPath);
+            Debug.Log($"saveNameText {saveNameText} found in lookup for {fileNameWithoutExtension}.");
 
-            
-            
             Directory.CreateDirectory(jsonOutputDirectory);
 
             Dictionary<string, string> skeletonDictLookup = ReadSkeletonLookup();
             string skeletonName;
 
+            
             // First, attempt to find the skeleton name directly in the skeletonDictLookup.
             if (skeletonDictLookup.ContainsKey(fileNameWithoutExtension))
             {
@@ -264,11 +266,12 @@ namespace doppelganger
                         {
                             string modelName = model.name.Replace("(Clone)", ".msh").ToLower();
                             string potentialSkeletonName = skeletonLookup.FindMatchingSkeleton(modelName);
-                            if (!string.IsNullOrEmpty(potentialSkeletonName) && potentialSkeletonName != "default_skeleton.msh" && potentialSkeletonName != skeletonName)
+                            Debug.Log($"{potentialSkeletonName} Skeleton updated to {skeletonName} based on loaded models.");
+                            if (!string.IsNullOrEmpty(potentialSkeletonName) && potentialSkeletonName != "player_skeleton.msh" && potentialSkeletonName != skeletonName)
                             {
                                 skeletonName = potentialSkeletonName;
                                 skeletonUpdated = true;
-                                Debug.Log($"Skeleton updated to {skeletonName} based on loaded models.");
+                                Debug.Log($"{potentialSkeletonName} Skeleton updated to {skeletonName} based on loaded models.");
                             }
                             if (slotUIDLookup.ModelSlots.TryGetValue(modelName, out List<ModelData.SlotInfo> possibleSlots))
                             {
@@ -349,7 +352,7 @@ namespace doppelganger
             // Write the configuration to JSON
             var outputData = new ModelData
             {
-                skeletonName = skeletonName, // Make sure skeletonName is updated from the loaded models
+                skeletonName = skeletonName,
                 slotPairs = slotPairs,
                 modelProperties = new ModelData.ModelProperties
                 {
@@ -358,6 +361,7 @@ namespace doppelganger
                     sex = DetermineCharacterSex(slotPairs) // Implement this method based on your logic
                 }
             };
+            Debug.Log($"outputData {outputData.skeletonName}");
             WriteConfigurationOutput(outputData, jsonOutputPath, modelOutputPath);
         }
 
@@ -385,16 +389,16 @@ namespace doppelganger
                 ZipUtility.AddOrUpdateFilesInZip(modelOutputPath, outputPakPath);
                 Debug.Log($"Data4.pak updated with model data at {outputPakPath}");
 
-                //// Cleanup: Optionally delete the temporary model file
-                //try
-                //{
-                //    File.Delete(modelOutputPath);
-                //    Debug.Log($"{modelOutputPath} was successfully deleted.");
-                //}
-                //catch (Exception e)
-                //{
-                //    Debug.LogError($"Failed to delete {modelOutputPath}: {e.Message}");
-                //}
+                // Cleanup: Optionally delete the temporary model file
+                try
+                {
+                    File.Delete(modelOutputPath);
+                    Debug.Log($"{modelOutputPath} was successfully deleted.");
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Failed to delete {modelOutputPath}: {e.Message}");
+                }
                 audioSource.Play();
             }
             else
@@ -488,7 +492,7 @@ namespace doppelganger
                 Debug.LogError("Skeleton lookup file not found.");
                 return new Dictionary<string, string>();
             }
-
+            Debug.Log($"ReadSkeletonLookup: path: {path}");
             string json = File.ReadAllText(path);
             return JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
         }
