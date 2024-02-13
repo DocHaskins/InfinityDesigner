@@ -4,6 +4,7 @@ using System.IO.Compression;
 using System.Threading.Tasks;
 using UnityEngine;
 using TMPro;
+using Unity.VisualScripting;
 
 namespace doppelganger
 {
@@ -18,7 +19,8 @@ namespace doppelganger
         public AudioClip updatingClip;
         public AudioClip finishedClip;
         public TMP_Text updateHeader;
-        public CanvasGroup updateCanvasGroup;
+        public TMP_Text updatesettingsHeader;
+        public GameObject updateCanvasGroup;
 
         public void SaveVersionInfo(string rootPath)
         {
@@ -55,10 +57,16 @@ namespace doppelganger
         {
             if (updateCanvasGroup != null)
             {
-                // Make the popup fully visible and interactive immediately upon spawning
-                updateCanvasGroup.alpha = 1.0f;
-                updateCanvasGroup.interactable = true;
-                updateCanvasGroup.blocksRaycasts = true;
+                Animator animator = updateCanvasGroup.GetComponent<Animator>();
+                if (animator != null)
+                {
+                    animator.enabled = true;
+                    animator.SetBool("Active", true);
+                }
+                else
+                {
+                    Debug.LogError("Popup Prefab does not have an Animator component.");
+                }
             }
             else
             {
@@ -87,6 +95,7 @@ namespace doppelganger
         public void RunUpdate()
         {
             PlayFirstClip();
+            updatesettingsHeader.text = "Updating Data...";
             float totalDelay = 0.1f;
             Invoke("DelayedUpdateCode", totalDelay);
         }
@@ -196,9 +205,13 @@ namespace doppelganger
             Debug.Log("Data processing completed.");
             PlayFinishedClip();
             updateHeader.text = "Update complete!";
-            updateCanvasGroup.alpha = 0.0f;
-            updateCanvasGroup.interactable = false;
-            updateCanvasGroup.blocksRaycasts = false;
+            Animator animator = updateCanvasGroup.GetComponent<Animator>();
+            if (animator != null)
+            {
+                animator.enabled = true;
+                animator.SetBool("Active", false);
+            }
+            updatesettingsHeader.text = "Update Data";
             VersionCheck();
         }
     }
