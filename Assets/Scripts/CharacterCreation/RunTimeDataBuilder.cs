@@ -12,9 +12,8 @@ using static ModelData;
 
 public class RunTimeDataBuilder : MonoBehaviour
 {
-    public AudioSource audioSource;
     string selectedFolder = "";
-    private bool storeClassData = false;
+    private bool storeClassData = true;
     private Dictionary<string, List<string>> filters;
     private Dictionary<string, string[]> categoryPrefixes;
     private Dictionary<string, List<string>> exclude_filters;
@@ -482,7 +481,7 @@ public class RunTimeDataBuilder : MonoBehaviour
         List<string> jsonFiles = new List<string>();
         Dictionary<string, Dictionary<string, List<string>>> modelsSortedByCategory = new Dictionary<string, Dictionary<string, List<string>>>();
         HashSet<string> unsortedModels = new HashSet<string>();
-        HashSet<string> ignoreList = new HashSet<string> { "player_legs_a.msh", "player_camo_bracers_a_tpp.msh", "player_camo_bracers_a_fpp.msh", "man_bdt_torso_c_shawl_b.msh", "chr_player_healer_mask.msh", "reporter_woman_old_skeleton.msh", "player_camo_gloves_a_tpp.msh", "player_camo_headwear_a_tpp.msh", "player_camo_hood_a_tpp.msh", "player_camo_pants_a_tpp.msh", "npc_colonel_coat_b.msh" };
+        HashSet<string> ignoreList = new HashSet<string> { "player_legs_a.msh", "player_torso_tpp_a_hood.msh", "player_inquisitor_torso_a_tpp.msh", "player_inquisitor_headwear_a_tpp.msh", "player_camo_shoes_a_tpp.msh", "player_camo_torso_a_tpp.msh", "player_camo_gloves_a_fpp.msh", "player_camo_belt_a_tpp.msh", "player_inquisitor_bracers_a_tpp.msh", "player_camo_bracers_a_tpp.msh", "player_camo_bracers_a_fpp.msh", "man_bdt_torso_c_shawl_b.msh", "chr_player_healer_mask.msh", "reporter_woman_old_skeleton.msh", "player_camo_gloves_a_tpp.msh", "player_camo_headwear_a_tpp.msh", "player_camo_hood_a_tpp.msh", "player_camo_pants_a_tpp.msh", "npc_colonel_coat_b.msh" };
         Dictionary<string, List<string>> modelToFilterLookup = new Dictionary<string, List<string>>();
         Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>> modelsByClassAndFilter = new Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>>();
         Dictionary<string, string> specificTermsToCategory = new Dictionary<string, string>

@@ -18,56 +18,64 @@ namespace doppelganger
         public TMP_Text gameVersionLabel;
         public TMP_Text engineVersion;
         public GameObject popupPrefab;
-        private CanvasGroup popupCanvasGroup;
+        public CanvasGroup popupCanvasGroup;
 
         void Start()
         {
-            if (IsGameVersionAndPathSet())
+            if (!IsGameVersionAndPathSet())
             {
-                Debug.Log($"savePathFound and versionFound");
+                Debug.LogError("Game version or path is not correctly set. Showing popup.");
+                SpawnPopup();
             }
             else
             {
-                SpawnPopup();
+                Debug.Log("savePathFound and versionFound");
             }
         }
 
         private bool IsGameVersionAndPathSet()
         {
-            Debug.Log($"IsGameVersionAndPathSet check");
+            Debug.Log("IsGameVersionAndPathSet check");
             string savePath = ConfigManager.LoadSetting("SavePath", "Path");
-            string gameVersion = ConfigManager.LoadSetting("Game", "Version");
-            string exePath = Path.Combine(savePath, "ph", "work", "bin", "x64", "DyingLightGame_x64_rwdi.exe");
+            string gameVersion = ConfigManager.LoadSetting("Version", "DL2_Game");
 
+            Debug.Log($"gameVersion {gameVersion}, savePath {savePath}.");
             // Check if both settings are found and not empty
             bool savePathFound = !string.IsNullOrEmpty(savePath);
             bool versionFound = !string.IsNullOrEmpty(gameVersion);
+
+            if (!savePathFound || !versionFound)
+            {
+                Debug.LogError("Either save path or game version is not set.");
+                return false;
+            }
+
+            // Proceed with path combination only if the savePath is valid
+            string exePath = Path.Combine(new string[] { savePath, "ph", "work", "bin", "x64", "DyingLightGame_x64_rwdi.exe" });
 
             if (savePathFound)
             {
                 pathInputField.text = savePath;
                 Debug.Log($"savePathFound {savePath}");
                 updateManager.GetExeVersion(exePath);
+                
             }
 
             if (versionFound)
             {
-                gameVersionLabel.text = gameVersion;
-                Debug.Log($"savePathFound {gameVersion}");
+                Debug.Log($"versionFound {gameVersion}");
             }
 
             string projectVersion = ConfigManager.LoadSetting("Version", "Engine_Version");
             ConfigManager.SaveSetting("Version", "Engine_Version", projectVersion);
             engineVersion.text = projectVersion;
             Debug.Log($"engineVersion set {projectVersion}");
-            return savePathFound && versionFound;
+            updateManager.VersionCheck();
+            return true;
         }
 
         private void SpawnPopup()
         {
-            GameObject popupInstance = Instantiate(popupPrefab, Vector3.zero, Quaternion.identity);
-            // Now find the CanvasGroup in the instantiated popup
-            popupCanvasGroup = popupInstance.GetComponent<CanvasGroup>();
             if (popupCanvasGroup != null)
             {
                 // Make the popup fully visible and interactive immediately upon spawning
@@ -88,14 +96,30 @@ namespace doppelganger
             if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
             {
                 string path = paths[0];
-                SavePathToConfig(path);
-                if (pathInputField != null)
-                {
-                    pathInputField.text = path; // Update the input field with the selected path
-                }
-                Debug.Log($"Path set and saved: {path}");
 
-                updateManager.SaveVersionInfo(path);
+                // Attempt to find the executable in the expected directory structure
+                string exePath = Path.Combine(path, "ph", "work", "bin", "x64", "DyingLightGame_x64_rwdi.exe");
+
+                // Check if the executable exists
+                if (File.Exists(exePath))
+                {
+                    SavePathToConfig(path);
+                    if (pathInputField != null)
+                    {
+                        pathInputField.text = path;
+                        popupCanvasGroup.alpha = 0.0f;
+                        popupCanvasGroup.interactable = false;
+                        popupCanvasGroup.blocksRaycasts = false;
+                    }
+                    Debug.Log($"Path set and saved: {path}");
+
+                    updateManager.SaveVersionInfo(path);
+                }
+                else
+                {
+                    pathInputField.text = "Set Path";
+                    Debug.LogError($"Dying Light 2 executable not found, make sure this is the Dying Light 2 Root folder");
+                }
             }
             else
             {

@@ -1,70 +1,86 @@
 using UnityEngine;
 using System.IO;
 using System.IO.Compression;
+using System;
 
 namespace doppelganger
 {
     public class ZipUtility
     {
         // Method to compress files into a zip archive with a specified subfolder for the model file
-        public static void AddOrUpdateFilesInZip(string modelFilePath, string outputZipPath)
+        public static void AddOrUpdateFilesInZip(string filePath, string outputZipPath, string fileNameWithinZip)
         {
-            // Check if the output zip (pak) file already exists
-            if (File.Exists(outputZipPath))
-            {
-                // Extract the existing zip to a temporary directory
-                string tempExtractPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-                ZipFile.ExtractToDirectory(outputZipPath, tempExtractPath);
-
-                try
-                {
-                    // Add or update the model file in the "models" subfolder of the extracted directory
-                    string modelsDirectory = Path.Combine(tempExtractPath, "models");
-                    Directory.CreateDirectory(modelsDirectory); // Ensure the models directory exists
-                    string modelFileName = Path.GetFileName(modelFilePath);
-                    File.Copy(modelFilePath, Path.Combine(modelsDirectory, modelFileName), true);
-
-                    // Delete the old zip file
-                    File.Delete(outputZipPath);
-
-                    // Create a new zip file from the updated temporary directory
-                    ZipFile.CreateFromDirectory(tempExtractPath, outputZipPath);
-                    Debug.Log("Updated zip archive at " + outputZipPath);
-                }
-                finally
-                {
-                    // Clean up: Delete the temporary extract directory
-                    Directory.Delete(tempExtractPath, true);
-                }
-            }
-            else
-            {
-                // If the pak file doesn't exist, just create a new one
-                CompressFilesIntoZip(modelFilePath, outputZipPath);
-            }
-        }
-
-        public static void CompressFilesIntoZip(string modelFilePath, string outputZipPath)
-        {
-            // Create a temporary directory
-            string tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-            Directory.CreateDirectory(tempDirectory);
+            // Temporary directory to stage zip contents
+            string tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            Directory.CreateDirectory(tempDir);
 
             try
             {
-                string modelsDirectory = Path.Combine(tempDirectory, "models");
-                Directory.CreateDirectory(modelsDirectory);
-                string modelFileName = Path.GetFileName(modelFilePath);
-                string tempModelPath = Path.Combine(modelsDirectory, modelFileName);
-                File.Copy(modelFilePath, tempModelPath, true);
+                if (File.Exists(outputZipPath))
+                {
+                    // Extract existing zip
+                    ZipFile.ExtractToDirectory(outputZipPath, tempDir);
+                }
 
-                ZipFile.CreateFromDirectory(tempDirectory, outputZipPath);
-                Debug.Log("Zip archive created at " + outputZipPath);
+                // Create "models" subfolder in the temporary directory if not working with the placeholder file
+                string targetPath;
+                if (!fileNameWithinZip.Equals("PLACEHOLDER_InfinityDesigner.file"))
+                {
+                    string modelsDirectory = Path.Combine(tempDir, "models");
+                    Directory.CreateDirectory(modelsDirectory);
+                    // Determine the target path for the file within the "models" subfolder
+                    targetPath = Path.Combine(modelsDirectory, fileNameWithinZip);
+                }
+                else
+                {
+                    // If adding the placeholder, it should be at the top level of the zip
+                    targetPath = Path.Combine(tempDir, fileNameWithinZip);
+                }
+
+                // Add or update the file at the determined path
+                File.Copy(filePath, targetPath, true);
+
+                // Before zipping, ensure the placeholder file exists at the topmost level
+                string placeholderPath = Path.Combine(tempDir, "PLACEHOLDER_InfinityDesigner.file");
+                if (!File.Exists(placeholderPath))
+                {
+                    // Create an empty placeholder file
+                    File.WriteAllText(placeholderPath, "");
+                }
+
+                // Recreate the zip, now including the placeholder at the topmost level along with any other contents
+                if (File.Exists(outputZipPath))
+                {
+                    File.Delete(outputZipPath); // Delete the old zip if it exists
+                }
+                ZipFile.CreateFromDirectory(tempDir, outputZipPath);
             }
             finally
             {
-                Directory.Delete(tempDirectory, true);
+                // Clean up the temporary directory
+                Directory.Delete(tempDir, true);
             }
+        }
+
+        public static bool ZipContainsFile(string zipPath, string fileName)
+        {
+            if (!File.Exists(zipPath))
+            {
+                return false;
+            }
+
+            using (ZipArchive archive = ZipFile.OpenRead(zipPath))
+            {
+                foreach (ZipArchiveEntry entry in archive.Entries)
+                {
+                    if (entry.FullName.Equals(fileName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true; // Found the file
+                    }
+                }
+            }
+
+            return false; // File not found
         }
     }
 }

@@ -367,27 +367,29 @@ namespace doppelganger
 
         private void WriteConfigurationOutput(ModelData outputData, string jsonOutputPath, string modelOutputPath)
         {
-            // Serialize the outputData to JSON
+            string customBasePath = ConfigManager.LoadSetting("SavePath", "Path");
+            string dataPath = Path.Combine(customBasePath, "ph/source");
             string json = JsonConvert.SerializeObject(outputData, Formatting.Indented);
 
             // Ensure the output directory exists
-            Directory.CreateDirectory(Path.GetDirectoryName(jsonOutputPath));
+            string outputDir = Path.GetDirectoryName(jsonOutputPath);
+            Directory.CreateDirectory(outputDir);
 
             // Write the JSON file
             File.WriteAllText(jsonOutputPath, json);
             Debug.Log($"Configuration saved to {jsonOutputPath}");
 
-            // Convert JSON to model format and update the .pak file, if applicable
             if (modelWriter != null)
             {
                 string saveCategory = saveCategoryDropdown.options[saveCategoryDropdown.value].text;
                 modelWriter.ConvertJsonToModelFormat(jsonOutputPath, modelOutputPath, saveCategory);
                 Debug.Log($"Model file created at {modelOutputPath}");
 
-                // Assuming you have a method to update .pak file, like ZipUtility.AddOrUpdateFilesInZip
-                string outputPakPath = Path.Combine(Path.GetDirectoryName(modelOutputPath), "Data4.pak");
-                ZipUtility.AddOrUpdateFilesInZip(modelOutputPath, outputPakPath);
-                Debug.Log($"Data4.pak updated with model data at {outputPakPath}");
+                string outputPakPath = DeterminePakFilePath(dataPath);
+                EnsurePlaceholderInPak(outputPakPath);
+                string modelFileNameWithinZip = Path.GetFileName(modelOutputPath);
+                ZipUtility.AddOrUpdateFilesInZip(modelOutputPath, outputPakPath, modelFileNameWithinZip);
+                Debug.Log($"{outputPakPath} updated with model data.");
 
                 // Cleanup: Optionally delete the temporary model file
                 try
@@ -404,6 +406,61 @@ namespace doppelganger
             else
             {
                 Debug.LogError("ModelWriter not set.");
+            }
+        }
+
+        private string DeterminePakFilePath(string directoryPath)
+        {
+            Debug.Log($"Scanning directory for .pak files: {directoryPath}");
+
+            var pakFiles = Directory.GetFiles(directoryPath, "data*.pak")
+                                    .Where(file => !Path.GetFileNameWithoutExtension(file).StartsWith("data_devtools"))
+                                    .Select(Path.GetFileNameWithoutExtension)
+                                    .Where(fileName => int.TryParse(fileName.Replace("data", ""), out int _))
+                                    .Select(fileName => new
+                                    {
+                                        FileName = fileName,
+                                        Number = int.Parse(fileName.Replace("data", ""))
+                                    })
+                                    .OrderBy(file => file.Number)
+                                    .ToList();
+
+            Debug.Log($"Filtered and processed .pak files: {string.Join(", ", pakFiles.Select(f => $"{f.FileName} => {f.Number}"))}");
+            int highestNumber = pakFiles.Any() ? pakFiles.Last().Number : 1; // Default to 1 if no .pak files are found
+            string highestPakPath = Path.Combine(directoryPath, $"data{highestNumber}.pak");
+            if (File.Exists(highestPakPath) && !ZipUtility.ZipContainsFile(highestPakPath, "PLACEHOLDER_InfinityDesigner.file"))
+            {
+                highestNumber++;
+            }
+
+            string newPakPath = Path.Combine(directoryPath, $"data{highestNumber}.pak");
+            Debug.Log($"Preparing new .pak file: {newPakPath}. This is the next sequence after checking existing .pak files.");
+
+            return newPakPath;
+        }
+
+        private void EnsurePlaceholderInPak(string pakFilePath)
+        {
+            const string placeholderFileName = "PLACEHOLDER_InfinityDesigner.file";
+            if (!ZipUtility.ZipContainsFile(pakFilePath, placeholderFileName))
+            {
+                // Use a more direct approach to create and add the placeholder file
+                string tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+                Directory.CreateDirectory(tempDirectory);
+
+                try
+                {
+                    string tempPlaceholderPath = Path.Combine(tempDirectory, placeholderFileName);
+                    File.WriteAllText(tempPlaceholderPath, ""); // Create an empty placeholder file
+
+                    // Ensure the placeholder is added to the root of the pak file
+                    ZipUtility.AddOrUpdateFilesInZip(tempPlaceholderPath, pakFilePath, placeholderFileName);
+                }
+                finally
+                {
+                    // Clean up the temporary directory and its contents
+                    Directory.Delete(tempDirectory, true);
+                }
             }
         }
 

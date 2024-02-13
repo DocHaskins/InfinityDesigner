@@ -1,9 +1,9 @@
+using System.Collections.Generic;
+using System.IO;
+using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
-using System.IO;
 using UnityEngine;
-using UnityEditor;
-using System.Collections.Generic;
 
 public class PreBuildScript : IPreprocessBuildWithReport
 {
@@ -13,7 +13,36 @@ public class PreBuildScript : IPreprocessBuildWithReport
     {
         string configPath = Path.Combine(Application.streamingAssetsPath, "config.ini");
         string version = PlayerSettings.bundleVersion;
-        WriteVersionToConfig(configPath, version);
+
+        ClearSpecificConfigData(configPath); // Clear specific config data first
+        WriteVersionToConfig(configPath, version); // Then write or update the version
+    }
+
+    private void ClearSpecificConfigData(string configPath)
+    {
+        if (!File.Exists(configPath))
+        {
+            return; // If the config file doesn't exist, there's nothing to clear
+        }
+
+        List<string> lines = new List<string>(File.ReadAllLines(configPath));
+        List<string> keysToRemove = new List<string> { "Path=", "DL2_Game=", "ProcessedVersion=" };
+
+        // Iterate through the lines in reverse to safely remove items without affecting the iteration
+        for (int i = lines.Count - 1; i >= 0; i--)
+        {
+            foreach (var key in keysToRemove)
+            {
+                if (lines[i].Contains(key))
+                {
+                    lines.RemoveAt(i);
+                    break; // Break after removal to avoid multiple checks for a single line
+                }
+            }
+        }
+
+        // Rewrite the modified lines back to the file
+        File.WriteAllLines(configPath, lines.ToArray());
     }
 
     private void WriteVersionToConfig(string configPath, string version)
@@ -31,12 +60,24 @@ public class PreBuildScript : IPreprocessBuildWithReport
         {
             if (lines[i].Trim().Equals("[Version]", System.StringComparison.InvariantCultureIgnoreCase))
             {
-                if (i + 1 < lines.Count)
+                versionSectionFound = true;
+                int searchIndex = i + 1;
+                bool engineVersionLineFound = false;
+                while (searchIndex < lines.Count && !lines[searchIndex].StartsWith("["))
                 {
-                    lines[i + 1] = $"Engine_Version={version}";
-                    versionSectionFound = true;
-                    break;
+                    if (lines[searchIndex].StartsWith("Engine_Version=", System.StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        lines[searchIndex] = $"Engine_Version={version}";
+                        engineVersionLineFound = true;
+                        break;
+                    }
+                    searchIndex++;
                 }
+                if (!engineVersionLineFound)
+                {
+                    lines.Insert(searchIndex, $"Engine_Version={version}");
+                }
+                break;
             }
         }
 

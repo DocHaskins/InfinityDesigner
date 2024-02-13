@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
 using UnityEngine;
+using TMPro;
 
 namespace doppelganger
 {
@@ -10,8 +11,14 @@ namespace doppelganger
     {
         public DataManager datamanager;
         public RunTimeDataBuilder runTimeDataBuilder;
+
+        public AudioSource audioSource;
         private bool extractionCompleted = false;
         private String gameVersion;
+        public AudioClip updatingClip;
+        public AudioClip finishedClip;
+        public TMP_Text updateHeader;
+        public CanvasGroup updateCanvasGroup;
 
         public void SaveVersionInfo(string rootPath)
         {
@@ -23,6 +30,40 @@ namespace doppelganger
             gameVersion = exeVersion;
             datamanager.gameVersionLabel.text = exeVersion.Replace("na", "");
             datamanager.engineVersion.text = projectVersion;
+        }
+
+        public void VersionCheck()
+        {
+            string savePath = ConfigManager.LoadSetting("SavePath", "Path");
+            string storedGameVersion = ConfigManager.LoadSetting("Version", "DL2_Game");
+            string exePath = Path.Combine(savePath, "ph", "work", "bin", "x64", "DyingLightGame_x64_rwdi.exe"); // Ensure savePath is used
+            string exeVersion = GetExeVersion(exePath);
+            datamanager.gameVersionLabel.text = exeVersion;
+            // Check if the stored game version matches the exe version
+            if (!string.Equals(storedGameVersion, exeVersion))
+            {
+                ShowUpdatePopup();
+            }
+            else
+            {
+                // Optionally, handle the case where versions match
+                Debug.Log("Game version matches the stored version.");
+            }
+        }
+
+        private void ShowUpdatePopup()
+        {
+            if (updateCanvasGroup != null)
+            {
+                // Make the popup fully visible and interactive immediately upon spawning
+                updateCanvasGroup.alpha = 1.0f;
+                updateCanvasGroup.interactable = true;
+                updateCanvasGroup.blocksRaycasts = true;
+            }
+            else
+            {
+                Debug.LogError("Popup Prefab does not have a CanvasGroup component.");
+            }
         }
 
         public string GetExeVersion(string path)
@@ -45,8 +86,44 @@ namespace doppelganger
 
         public void RunUpdate()
         {
+            PlayFirstClip();
+            float totalDelay = 0.1f;
+            Invoke("DelayedUpdateCode", totalDelay);
+        }
+
+        void DelayedUpdateCode()
+        {
             string rootPath = ConfigManager.LoadSetting("SavePath", "Path");
             UpdateCode(rootPath);
+        }
+
+        void PlayFirstClip()
+        {
+            if (audioSource != null && updatingClip != null)
+            {
+                audioSource.Stop();
+                audioSource.clip = updatingClip;
+                audioSource.Play();
+            }
+            else
+            {
+                Debug.LogWarning("AudioSource or updatingClip not assigned.");
+            }
+        }
+
+        public void PlayFinishedClip()
+        {
+            // Check if the audio source and the second clip are assigned
+            if (audioSource != null && finishedClip != null)
+            {
+                audioSource.Stop();
+                audioSource.clip = finishedClip;
+                audioSource.Play();
+            }
+            else
+            {
+                Debug.LogWarning("AudioSource or secondClip not assigned.");
+            }
         }
 
         public void UpdateCode(string rootPath)
@@ -113,8 +190,16 @@ namespace doppelganger
             }
 
             runTimeDataBuilder.ProcessModelsInFolder(tempPath);
+            ConfigManager.SaveSetting("Version", "DL2_Game", gameVersion);
             ConfigManager.SaveSetting("Version", "ProcessedVersion", gameVersion);
+
             Debug.Log("Data processing completed.");
+            PlayFinishedClip();
+            updateHeader.text = "Update complete!";
+            updateCanvasGroup.alpha = 0.0f;
+            updateCanvasGroup.interactable = false;
+            updateCanvasGroup.blocksRaycasts = false;
+            VersionCheck();
         }
     }
 }

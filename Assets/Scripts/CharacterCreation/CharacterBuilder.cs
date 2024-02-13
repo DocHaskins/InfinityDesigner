@@ -6,6 +6,7 @@ using Cinemachine;
 using UnityEngine.UI;
 using static ModelData;
 using System.Linq;
+using System.Text;
 
 /// <summary>
 /// This script utilizes a combination of JSON data for model properties and dynamically generated UI elements to allow users to build and customize characters in real-time.
@@ -27,6 +28,52 @@ namespace doppelganger
         private Dictionary<GameObject, bool[]> initialRendererStates = new Dictionary<GameObject, bool[]>();
         public Dictionary<string, List<Material>> originalMaterials = new Dictionary<string, List<Material>>();
         public Dictionary<string, GameObject> currentlyLoadedModels = new Dictionary<string, GameObject>();
+
+        void Update()
+        {
+            if (Input.GetKey(KeyCode.F12))
+            {
+                CreateCrashReport();
+            }
+        }
+
+        public void CreateCrashReport()
+        {
+            // Ensure the "Crash Reports" directory exists
+            string crashReportsDirectory = Path.Combine(Application.dataPath, "Crash Reports");
+            Directory.CreateDirectory(crashReportsDirectory);
+
+            // Create the report file name with the current datetime
+            string dateTimeFormat = "yyyyMMdd_HHmmss";
+            string reportFileName = $"CrashReport_{DateTime.Now.ToString(dateTimeFormat)}.txt";
+            string reportFilePath = Path.Combine(crashReportsDirectory, reportFileName);
+
+            // Initialize a StringBuilder to hold the report content
+            StringBuilder reportContent = new StringBuilder();
+
+            // Iterate through currently loaded models
+            foreach (var pair in currentlyLoadedModels)
+            {
+                GameObject model = pair.Value;
+                reportContent.AppendLine($"Model Key: {pair.Key}, GameObject Name: {model.name}");
+
+                // Retrieve materials for each model
+                Renderer[] renderers = model.GetComponentsInChildren<Renderer>();
+                foreach (Renderer renderer in renderers)
+                {
+                    foreach (Material material in renderer.sharedMaterials)
+                    {
+                        reportContent.AppendLine($"\tMaterial: {material.name}");
+                    }
+                }
+                reportContent.AppendLine(); // Add an empty line for better readability
+            }
+
+            // Write the report to the file
+            File.WriteAllText(reportFilePath, reportContent.ToString());
+
+            Debug.Log($"Crash report created at: {reportFilePath}");
+        }
 
         public void Reroll()
         {
