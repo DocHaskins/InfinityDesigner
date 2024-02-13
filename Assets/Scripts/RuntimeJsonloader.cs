@@ -34,7 +34,7 @@ namespace doppelganger
         private HashSet<string> races = new HashSet<string> { "All" };
         private int selectedIndex = -1;
         private Vector2 scrollPos;
-        private GameObject loadedSkeleton;
+        public GameObject loadedSkeleton;
         private List<GameObject> loadedObjects = new List<GameObject>();
         private CinemachineCameraZoomTool cameraTool;
 
@@ -44,6 +44,7 @@ namespace doppelganger
             PopulateDropdowns();
             AddButtonListeners();
             cameraTool = FindObjectOfType<CinemachineCameraZoomTool>();
+            UpdateCameraTarget(loadedSkeleton.transform);
         }
 
         void PopulateDropdowns()
@@ -225,9 +226,9 @@ namespace doppelganger
                 var slots = modelData.GetSlots();
                 if (slots != null && slots.Count > 0)
                 {
-                    GameObject loadedModel = LoadSkeleton(modelData.skeletonName);
+                    //GameObject loadedModel = LoadSkeleton(modelData.skeletonName);
                     LoadModels(slots);
-                    UpdateCameraTarget(loadedModel.transform);
+                    //UpdateCameraTarget(loadedModel.transform);
                 }
                 else
                 {
@@ -285,7 +286,9 @@ namespace doppelganger
 
         private GameObject LoadSkeleton(string skeletonName)
         {
-            string resourcePath = "Models/" + skeletonName.Replace(".msh", "");
+            Debug.Log($"resourcePath {skeletonName}");
+            string resourcePath = "Prefabs/" + skeletonName.Replace(".msh", "");
+            Debug.Log($"resourcePath {resourcePath}");
             GameObject skeletonPrefab = Resources.Load<GameObject>(resourcePath);
             GameObject instantiatedSkeleton = null;
 

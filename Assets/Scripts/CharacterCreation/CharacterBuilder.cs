@@ -265,6 +265,9 @@ namespace doppelganger
             GameObject skeletonPrefab = Resources.Load<GameObject>(resourcePath);
             if (skeletonPrefab != null)
             {
+                // Check for the current skeleton in the scene and get its focus point
+                Transform currentFocusPoint = cameraTool.GetCurrentFocusPoint(); // Assuming this method exists
+
                 GameObject loadedSkeleton = Instantiate(skeletonPrefab, Vector3.zero, Quaternion.Euler(-90, 0, 0));
                 loadedSkeleton.tag = "Skeleton";
 
@@ -285,7 +288,8 @@ namespace doppelganger
                 {
                     Debug.LogError("Pelvis not found in the skeleton prefab: " + skeletonName);
                 }
-                UpdateCameraTarget(loadedSkeleton.transform);
+
+                UpdateCameraTarget(loadedSkeleton.transform, currentFocusPoint);
             }
             else
             {
@@ -293,12 +297,14 @@ namespace doppelganger
             }
         }
 
-        private void UpdateCameraTarget(Transform loadedModelTransform)
+        private void UpdateCameraTarget(Transform loadedModelTransform, Transform currentFocusPoint = null)
         {
             if (cameraTool != null && loadedModelTransform != null)
             {
                 cameraTool.targets.Clear();
                 string[] pointNames = { "pelvis", "spine1", "spine3", "neck", "legs", "r_hand", "l_hand", "l_foot", "r_foot" };
+
+                // Rebuild the targets list
                 foreach (var pointName in pointNames)
                 {
                     Transform targetTransform = DeepFind(loadedModelTransform, pointName);
@@ -306,18 +312,31 @@ namespace doppelganger
                     {
                         cameraTool.targets.Add(targetTransform);
                     }
-                    else
-                    {
-                        Debug.LogWarning($"Target point '{pointName}' not found in loaded model.");
-                    }
                 }
 
-                // Update the current target index and camera target
-                if (cameraTool.targets.Count > 0)
+                // Attempt to maintain focus on the current or similar point in the new model
+                if (currentFocusPoint != null)
                 {
-                    cameraTool.CurrentTargetIndex = 0; // Reset to first target
-                    cameraTool.UpdateCameraTarget();
+                    int newIndex = cameraTool.targets.IndexOf(currentFocusPoint);
+                    if (newIndex != -1)
+                    {
+                        // If the current focus point exists in the new skeleton, focus there
+                        cameraTool.CurrentTargetIndex = newIndex;
+                    }
+                    else
+                    {
+                        // If the exact point doesn't exist, default to the first target or a similar point
+                        cameraTool.CurrentTargetIndex = 0;
+                    }
                 }
+                else if (cameraTool.targets.Count > 0)
+                {
+                    // If there was no previous focus, default to the first target
+                    cameraTool.CurrentTargetIndex = 0;
+                }
+
+                // Update the camera target based on the new index
+                cameraTool.UpdateCameraTarget();
             }
         }
 

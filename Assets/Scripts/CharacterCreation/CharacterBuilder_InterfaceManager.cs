@@ -485,6 +485,7 @@ namespace doppelganger
             UpdateInterfaceBasedOnType();
             UpdateSlidersBasedOnSelection();
             UpdatePresetDropdown();
+            sliderKeyboardControl.RefreshSliders();
             characterBuilder.LoadSkeletonBasedOnSelection();
         }
 
@@ -514,6 +515,7 @@ namespace doppelganger
             if (filterMapping.buttonMappings.TryGetValue(categoryKey, out List<string> filters))
             {
                 PopulateSlidersWithFilters(currentPath, filters);
+                sliderKeyboardControl.RefreshSliders();
             }
             else
             {
@@ -583,6 +585,7 @@ namespace doppelganger
             // Create a list to store all filters
             List<string> allFilters = filterMapping.buttonMappings.SelectMany(pair => pair.Value).Distinct().ToList();
             //CreateDynamicButtons(allFilters);
+            sliderKeyboardControl.RefreshSliders();
         }
 
        

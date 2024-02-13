@@ -7,8 +7,6 @@ namespace doppelganger
 {
     public class ConfigManager : MonoBehaviour
     {
-        public DataManager dataManager;
-
         private static string configPath = Path.Combine(Application.streamingAssetsPath, "config.ini");
 
         public static void SaveSetting(string section, string key, string value)

@@ -170,6 +170,18 @@ public class CinemachineCameraZoomTool : MonoBehaviour
             currentTargetIndex += direction;
             if (currentTargetIndex >= targets.Count) currentTargetIndex = 0;
             if (currentTargetIndex < 0) currentTargetIndex = targets.Count - 1;
+
+            // Update camera target after cycling
+            UpdateCameraTarget();
+        }
+
+        public Transform GetCurrentFocusPoint()
+        {
+            if (targets.Count > 0 && currentTargetIndex >= 0 && currentTargetIndex < targets.Count)
+            {
+                return targets[currentTargetIndex];
+            }
+            return null;
         }
 
         public void FocusOn(FocusPoint focusPoint)
@@ -227,14 +239,11 @@ public class CinemachineCameraZoomTool : MonoBehaviour
 
         public void UpdateCameraTarget()
         {
-            // Check if the application is in play mode and if freelook is not null
-            if (Application.isPlaying && freelook != null)
+            if (Application.isPlaying && freelook != null && targets.Count > currentTargetIndex)
             {
-                if (targets.Count > 0 && currentTargetIndex < targets.Count)
-                {
-                    freelook.LookAt = targets[0];
-                    freelook.Follow = targets[0];
-                }
+                Transform newTarget = targets[currentTargetIndex];
+                freelook.LookAt = newTarget;
+                freelook.Follow = newTarget; // Only set this if you want the camera to also follow the target positionally
             }
         }
     }

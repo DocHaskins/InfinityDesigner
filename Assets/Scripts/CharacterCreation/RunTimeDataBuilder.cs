@@ -9,12 +9,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using static ModelData;
-using static UnityEditor.Experimental.GraphView.GraphView;
-using static UnityEngine.EventSystems.EventTrigger;
 
 public class RunTimeDataBuilder : MonoBehaviour
 {
-
+    public AudioSource audioSource;
     string selectedFolder = "";
     private bool storeClassData = false;
     private Dictionary<string, List<string>> filters;
@@ -156,7 +154,7 @@ public class RunTimeDataBuilder : MonoBehaviour
 
             foreach (string modelFile in files)
             {
-                Debug.Log($"ProcessModelsInFolder: modelFile: {modelFile}");
+                //Debug.Log($"ProcessModelsInFolder: modelFile: {modelFile}");
                 processingTasks.Add(Task.Run(() =>
                 {
                     if (ignoreList.Contains(Path.GetFileName(modelFile).ToLower()))
@@ -171,34 +169,34 @@ public class RunTimeDataBuilder : MonoBehaviour
                         JObject modelObject = JObject.Parse(jsonData);
                         string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(modelFile);
                         var processedData = ProcessModelData(modelObject);
-                        Debug.Log($"ProcessModelsInFolder: Skeleton name: {processedData.skeletonName}");
+                        //Debug.Log($"ProcessModelsInFolder: Skeleton name: {processedData.skeletonName}");
                         // Now passing skeletonName to DetermineCategory
                         string category = DetermineCategory(processedData.skeletonName);
-                        Debug.Log($"ProcessModelsInFolder: category: {category}");
+                        //Debug.Log($"ProcessModelsInFolder: category: {category}");
                         string normalizedFileName = fileNameWithoutExtension.ToLower();
                         if (category == "Man" || category == "Wmn")
                         {
                             if (normalizedFileName.Contains("_test_player"))
                             {
                                 category = "Player";
-                                Debug.Log($"Category changed to Player due to name: {normalizedFileName}");
+                                //Debug.Log($"Category changed to Player due to name: {normalizedFileName}");
                             }
                             else if (normalizedFileName.Contains("zmb"))
                             {
                                 category = "Biter";
-                                Debug.Log($"Category changed to Biter due to name: {normalizedFileName}");
+                               //Debug.Log($"Category changed to Biter due to name: {normalizedFileName}");
                             }
                             else if (normalizedFileName.Contains("viral"))
                             {
                                 category = "Viral";
-                                Debug.Log($"Category changed to Viral due to name: {normalizedFileName}");
+                                //Debug.Log($"Category changed to Viral due to name: {normalizedFileName}");
                             }
                             if (category == "Biter" || category == "Viral")
                             {
                                 if (normalizedFileName.Contains("npc_waltz"))
                                 {
                                     category = "Man";
-                                    Debug.Log($"Category changed to Man due to name: {normalizedFileName}");
+                                    //Debug.Log($"Category changed to Man due to name: {normalizedFileName}");
                                 }
                             }
                         }
@@ -208,7 +206,7 @@ public class RunTimeDataBuilder : MonoBehaviour
                         Directory.CreateDirectory(outputDir);
 
                         string outputFilePath = Path.Combine(outputDir, fileNameWithoutExtension + ".json");
-                        Debug.Log($"outputFilePath {outputFilePath}");
+                        //Debug.Log($"outputFilePath {outputFilePath}");
                         string outputJson = CreateJsonWithSkeletonNameAtTop(processedData);
                         File.WriteAllText(outputFilePath, outputJson);
 
@@ -237,7 +235,7 @@ public class RunTimeDataBuilder : MonoBehaviour
     {
         // Extract skeletonName from the preset object
         string skeletonName = modelObject["preset"]?["skeletonName"]?.ToString() ?? modelObject["skeletonName"]?.ToString();
-        Debug.Log($"ProcessModelData: Skeleton name: {skeletonName}");
+        //Debug.Log($"ProcessModelData: Skeleton name: {skeletonName}");
         // Extract modelProperties from the data object
         JObject dataObject = modelObject["data"] as JObject;
         ModelProperties modelProperties = ExtractModelProperties(dataObject["properties"] as JArray);
@@ -257,7 +255,7 @@ public class RunTimeDataBuilder : MonoBehaviour
 
     private string DetermineCategory(string skeletonName)
     {
-        Debug.Log($"DetermineCategory: Processing skeleton name: {skeletonName}");
+        //Debug.Log($"DetermineCategory: Processing skeleton name: {skeletonName}");
 
         // Normalize skeletonName for comparison
         string normalizedSkeletonName = skeletonName.ToLower().Replace(".msh", "");
@@ -268,7 +266,7 @@ public class RunTimeDataBuilder : MonoBehaviour
             // Use exact match instead of Contains
             if (normalizedSkeletonName.Equals(normalizedKey))
             {
-                Debug.Log($"Exact match found: {normalizedSkeletonName} -> {entry.Value}");
+                //Debug.Log($"Exact match found: {normalizedSkeletonName} -> {entry.Value}");
                 return entry.Value;
             }
         }
@@ -287,7 +285,7 @@ public class RunTimeDataBuilder : MonoBehaviour
             if (normalizedFileName.Contains("wmn"))
             {
                 category = "Wmn";
-                Debug.Log($"Category changed to Wmn due to name: {normalizedFileName}");
+                //Debug.Log($"Category changed to Wmn due to name: {normalizedFileName}");
             }
         }
 

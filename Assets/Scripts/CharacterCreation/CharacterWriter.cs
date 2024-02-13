@@ -26,6 +26,7 @@ namespace doppelganger
         [Header("Managers")]
         public CharacterBuilder_InterfaceManager interfaceManager;
         public CharacterBuilder characterBuilder;
+        public ConfigManager configManager;
         public ModelWriter modelWriter;
         public SkeletonLookup skeletonLookup;
 
@@ -147,10 +148,10 @@ namespace doppelganger
 
         void Start()
         {
-            string savedPath = LoadPathFromConfig();
-            if (!string.IsNullOrEmpty(savedPath))
+            string savePath = ConfigManager.LoadSetting("SavePath", "Path");
+            if (!string.IsNullOrEmpty(savePath))
             {
-                pathInputField.text = savedPath;
+                pathInputField.text = savePath;
             }
 
             if (characterBuilder == null)
@@ -181,78 +182,8 @@ namespace doppelganger
 
         private void SavePathToConfig(string newPath)
         {
-            string configPath = Path.Combine(Application.streamingAssetsPath, "config.ini");
-            List<string> lines = File.Exists(configPath) ? new List<string>(File.ReadAllLines(configPath)) : new List<string>();
-            bool sectionFound = false;
-            bool pathUpdated = false;
-
-            for (int i = 0; i < lines.Count; i++)
-            {
-                if (lines[i].Trim().Equals("[SavePath]", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    sectionFound = true;
-                    if (i + 1 < lines.Count && !lines[i + 1].StartsWith("["))
-                    {
-                        lines[i + 1] = newPath;
-                        pathUpdated = true;
-                    }
-                    else
-                    {
-                        lines.Insert(i + 1, newPath);
-                        pathUpdated = true;
-                    }
-                    break;
-                }
-            }
-
-            if (!sectionFound)
-            {
-                lines.Add("[SavePath]");
-                lines.Add(newPath);
-                pathUpdated = true;
-            }
-
-            if (pathUpdated)
-            {
-                try
-                {
-                    File.WriteAllLines(configPath, lines);
-                    Debug.Log($"Path saved to config: {newPath}");
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError($"Failed to save path to config: {e.Message}");
-                }
-            }
-        }
-
-        private string LoadPathFromConfig()
-        {
-            string configPath = Path.Combine(Application.streamingAssetsPath, "config.ini");
-            bool savePathSectionFound = false;
-
-            if (File.Exists(configPath))
-            {
-                foreach (var line in File.ReadLines(configPath))
-                {
-                    if (savePathSectionFound)
-                    {
-                        if (!line.StartsWith("["))
-                        {
-                            return line;
-                        }
-                        break;
-                    }
-
-                    if (line.Trim().Equals("[SavePath]", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        savePathSectionFound = true;
-                    }
-                }
-            }
-
-            Debug.Log("No saved path in config.");
-            return null; // Return null if no path found
+            ConfigManager.SaveSetting("SavePath", "Path", newPath);
+            Debug.Log($"Path saved to config: {newPath}");
         }
 
         public void WriteCurrentConfigurationToJson()
@@ -263,7 +194,7 @@ namespace doppelganger
                 return;
             }
             
-            string customBasePath = LoadPathFromConfig();
+            string customBasePath = ConfigManager.LoadSetting("SavePath", "Path");
             string targetPath = Path.Combine(customBasePath, "ph/source");
 
             if (!Directory.Exists(targetPath))
@@ -464,6 +395,7 @@ namespace doppelganger
                 //{
                 //    Debug.LogError($"Failed to delete {modelOutputPath}: {e.Message}");
                 //}
+                audioSource.Play();
             }
             else
             {

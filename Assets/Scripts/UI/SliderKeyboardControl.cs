@@ -1,132 +1,207 @@
+using doppelganger;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-
-namespace doppelganger
+public class SliderKeyboardControl : MonoBehaviour
 {
-    public class SliderKeyboardControl : MonoBehaviour
+    public CharacterBuilder_InterfaceManager characterBuilder; // Assuming this has a reference to your UI elements
+    
+    public bool DebugMode = false;
+    private List<Slider> sliders = new List<Slider>();
+    private int currentSliderIndex = 0;
+
+    void Start()
     {
-        public CharacterBuilder_InterfaceManager characterBuilder;
+        RefreshSliders();
+    }
 
-        private List<Slider> sliders = new List<Slider>();
-        private int currentSliderIndex = 0;
-
-        void Start()
+    void Update()
+    {
+        if (Input.GetKey(KeyCode.UpArrow))
         {
-            // Initialize sliders list
-            InitializeSliders();
-        }
-
-        void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.UpArrow))
+            if (!isMovingSlider)
             {
                 MoveToPreviousSlider();
-                Debug.Log("Up Arrow Pressed");
+                StartCoroutine(ContinuousSliderMovement(KeyCode.UpArrow));
             }
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
+        }
+        else if (Input.GetKey(KeyCode.DownArrow))
+        {
+            if (!isMovingSlider)
+            {
+                MoveToNextSlider();
+                StartCoroutine(ContinuousSliderMovement(KeyCode.DownArrow));
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            AdjustCurrentSlider(-1.0f); // Adjust the value by a small increment to the left
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            AdjustCurrentSlider(1.0f); // Adjust the value by a small increment to the right
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            ResetCurrentSlider();
+        }
+    }
+
+    private void ResetCurrentSlider()
+    {
+        if (sliders.Count > 0 && currentSliderIndex >= 0 && currentSliderIndex < sliders.Count)
+        {
+            // Set the current slider's value to 0
+            sliders[currentSliderIndex].value = 0;
+            Debug.Log($"Slider '{sliders[currentSliderIndex].name}' reset to 0.");
+        }
+    }
+
+    private bool isMovingSlider = false; // To prevent multiple coroutine instances
+
+    private IEnumerator ContinuousSliderMovement(KeyCode keyCode)
+    {
+        isMovingSlider = true;
+        yield return new WaitForSeconds(0.2f); // Initial delay before continuous movement starts
+
+        while (Input.GetKey(keyCode))
+        {
+            if (keyCode == KeyCode.UpArrow)
+            {
+                MoveToPreviousSlider();
+            }
+            else if (keyCode == KeyCode.DownArrow)
             {
                 MoveToNextSlider();
             }
-            else if (Input.GetKeyDown(KeyCode.LeftArrow))
+            else if (keyCode == KeyCode.LeftArrow)
             {
-                AdjustCurrentSlider(-1);
+                AdjustCurrentSlider(-1.0f);
             }
-            else if (Input.GetKeyDown(KeyCode.RightArrow))
+            else if (keyCode == KeyCode.RightArrow)
             {
-                AdjustCurrentSlider(1);
+                AdjustCurrentSlider(1.0f);
             }
+
+            yield return new WaitForSeconds(0.1f); // Adjust this value as needed for faster or slower movement
         }
 
-        public void RefreshSliders()
-        {
-            StopAllCoroutines();
-            StartCoroutine(RefreshSlidersCoroutine());
-        }
+        isMovingSlider = false;
+    }
 
-        private IEnumerator RefreshSlidersCoroutine()
-        {
-            yield return new WaitForSeconds(2.0f);
-            sliders.Clear();
-            InitializeSliders();
-            HighlightCurrentSlider();
-        }
+    public void RefreshSliders()
+    {
+        StopAllCoroutines();
+        StartCoroutine(RefreshSlidersCoroutine());
+    }
 
-        private void InitializeSliders()
+    private IEnumerator RefreshSlidersCoroutine()
+    {
+        yield return new WaitForSeconds(2.0f); // Wait for potential UI updates
+        sliders.Clear();
+        GameObject[] taggedObjects = GameObject.FindGameObjectsWithTag("PrimarySlider");
+        foreach (GameObject obj in taggedObjects)
         {
-            // Assuming slidersPanel is a parent object containing all slider objects
-            foreach (Transform child in characterBuilder.slidersPanel.transform)
+            // Attempt to find a child named "PrimarySlider" which should contain the actual Slider component
+            Transform primarySliderChild = obj.transform.Find("primarySlider");
+            if (primarySliderChild != null)
             {
-                Slider slider = child.GetComponentInChildren<Slider>();
+                Slider slider = primarySliderChild.GetComponent<Slider>();
                 if (slider != null)
                 {
-                    Debug.Log($"Added slider inside {characterBuilder.slidersPanel.transform} for: " + child.name);
                     sliders.Add(slider);
                 }
-
+            }
+            else
+            {
+                // Fallback to checking the parent object if no such child is found
+                Slider sliderFallback = obj.GetComponent<Slider>();
+                if (sliderFallback != null)
+                {
+                    sliders.Add(sliderFallback);
+                }
             }
         }
+        HighlightCurrentSlider();
+    }
 
-        private void MoveToNextSlider()
+    private void MoveToNextSlider()
+    {
+        if (sliders.Count == 0) return;
+
+        currentSliderIndex = (currentSliderIndex + 1) % sliders.Count; // Loop through sliders
+        HighlightCurrentSlider();
+    }
+
+    private void MoveToPreviousSlider()
+    {
+        if (sliders.Count == 0) return;
+
+        currentSliderIndex--;
+        if (currentSliderIndex < 0) currentSliderIndex = sliders.Count - 1; // Loop to the last slider
+        HighlightCurrentSlider();
+    }
+
+    private void AdjustCurrentSlider(float direction)
+    {
+        if (sliders.Count == 0 || currentSliderIndex < 0 || currentSliderIndex >= sliders.Count) return;
+
+        Slider currentSlider = sliders[currentSliderIndex];
+        currentSlider.value += direction; // Adjust the slider value by the direction
+    }
+
+    private void HighlightCurrentSlider()
+    {
+        bool DebugMode = false; // Assuming DebugMode is defined elsewhere, set it accordingly
+
+        // Default color for deselected sliders
+        Color defaultColor = new Color(1f, 1f, 1f, 1f); // White color, adjust if necessary
+
+        // Color to use for the selected slider's background when not in DebugMode
+        Color selectedBackgroundColor = new Color(0.3803922f, 0.3803922f, 0.3803922f, 1f); // Equivalent to #616161
+
+        GameObject[] primarySliders = GameObject.FindGameObjectsWithTag("PrimarySlider");
+        for (int i = 0; i < primarySliders.Length; i++)
         {
-            Debug.Log("Moving to the next slider.");
+            GameObject sliderParent = primarySliders[i];
 
-            if (sliders.Count == 0)
+            // Find the "bckgrd" and "labelText" child GameObjects within each primary slider
+            Image bckgrdImage = sliderParent.transform.Find("bckgrd")?.GetComponent<Image>();
+            TMP_Text labelText = sliderParent.transform.Find("labelText")?.GetComponent<TMP_Text>();
+
+            if (bckgrdImage != null && labelText != null)
             {
-                Debug.LogWarning("No sliders found. Cannot proceed.");
-                return;
-            }
+                if (i == currentSliderIndex)
+                {
+                    labelText.fontStyle = FontStyles.Bold;
+                    labelText.fontSize += 2; // Increase font size for the selected slider
 
-            currentSliderIndex++;
-            if (currentSliderIndex >= sliders.Count)
+                    if (!DebugMode)
+                    {
+                        bckgrdImage.color = selectedBackgroundColor;
+                    }
+                }
+                else
+                {
+                    labelText.fontStyle = FontStyles.Normal;
+                    labelText.fontSize = Mathf.Max(labelText.fontSize - 2, 24); // Ensure font size does not go below a minimum value
+
+                    // Revert the background color for non-selected sliders
+                    if (bckgrdImage != null)
+                    {
+                        bckgrdImage.color = defaultColor;
+                    }
+                    bckgrdImage.color = DebugMode ? defaultColor : new Color(0, 0, 0, 0); // Make transparent if not in DebugMode
+                }
+            }
+            else
             {
-                currentSliderIndex = 0; // Loop back to the first slider
-                Debug.Log("Reached the end of the sliders. Looping back to the first slider.");
+                if (bckgrdImage == null) Debug.LogError($"'bckgrd' Image component not found on {sliderParent.name}");
+                if (labelText == null) Debug.LogError($"'labelText' TextMeshPro component not found on {sliderParent.name}");
             }
-
-            HighlightCurrentSlider();
-        }
-
-
-        private void MoveToPreviousSlider()
-        {
-            if (sliders.Count == 0) return;
-
-            currentSliderIndex--;
-            if (currentSliderIndex < 0) currentSliderIndex = sliders.Count - 1; // Loop to the last slider
-
-            HighlightCurrentSlider();
-        }
-
-        private void AdjustCurrentSlider(int direction)
-        {
-            if (sliders.Count == 0 || currentSliderIndex < 0 || currentSliderIndex >= sliders.Count)
-            {
-                Debug.LogWarning("No sliders found or invalid current slider index. Cannot proceed with adjustment.");
-                return;
-            }
-
-            Debug.Log($"Adjusting current slider ({currentSliderIndex}) by direction: {direction}");
-
-            Slider currentSlider = sliders[currentSliderIndex];
-            currentSlider.value += direction; // Adjust the slider value by direction (-1 for left, 1 for right)
-            Debug.Log($"Slider '{currentSlider.name}' value adjusted to: {currentSlider.value}");
-        }
-
-        private void HighlightCurrentSlider()
-        {
-            foreach (var slider in sliders)
-            {
-                // Reset all sliders to a default state
-                var background = slider.transform.Find("Background");
-                if (background != null) background.GetComponent<Image>().color = Color.white;
-            }
-
-            // Highlight the current slider
-            var currentBackground = sliders[currentSliderIndex].transform.Find("Background");
-            if (currentBackground != null) currentBackground.GetComponent<Image>().color = Color.yellow; // Example color
         }
     }
 }
