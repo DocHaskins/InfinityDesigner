@@ -270,12 +270,12 @@ namespace doppelganger
                                     }
                                     else
                                     {
-                                        Debug.LogError($"Model index not found for {modelInfo.name} in slot {slotName}");
+                                        Debug.LogWarning($"Model index not found for {modelInfo.name} in slot {slotName}");
                                     }
                                 }
                                 else
                                 {
-                                    Debug.LogError($"Slot not found for model {modelInfo.name}");
+                                    Debug.LogWarning($"Slot not found for model {modelInfo.name}");
                                 }
                                 
                             }
@@ -288,12 +288,12 @@ namespace doppelganger
                 }
                 else
                 {
-                    Debug.LogError("Failed to deserialize JSON data");
+                    Debug.LogWarning("Failed to deserialize JSON data");
                 }
             }
             else
             {
-                Debug.LogError("Preset JSON file not found: " + jsonPath);
+                Debug.LogWarning("Preset JSON file not found: " + jsonPath);
             }
         }
 
@@ -333,14 +333,14 @@ namespace doppelganger
                 }
                 else
                 {
-                    Debug.LogError("Pelvis not found in the skeleton prefab: " + skeletonName);
+                    Debug.LogWarning("Pelvis not found in the skeleton prefab: " + skeletonName);
                 }
 
                 UpdateCameraTarget(loadedSkeleton.transform, currentFocusPoint);
             }
             else
             {
-                Debug.LogError("Skeleton prefab not found in Resources: " + resourcePath);
+                Debug.LogWarning("Skeleton prefab not found in Resources: " + resourcePath);
             }
         }
 
@@ -430,13 +430,13 @@ namespace doppelganger
                     }
                     else
                     {
-                        Debug.LogError("Pelvis not found in the skeleton prefab: " + selectedSkeleton);
+                        Debug.LogWarning("Pelvis not found in the skeleton prefab: " + selectedSkeleton);
                     }
                     UpdateCameraTarget(loadedSkeleton.transform);
                 }
                 else
                 {
-                    Debug.LogError("Skeleton prefab not found in Resources: " + resourcePath);
+                    Debug.LogWarning("Skeleton prefab not found in Resources: " + resourcePath);
                 }
             }
             else
@@ -526,12 +526,12 @@ namespace doppelganger
                 }
                 else
                 {
-                    Debug.LogError("Mesh data is null or empty for slot: " + slotName);
+                    Debug.LogWarning("Mesh data is null or empty for slot: " + slotName);
                 }
             }
             else
             {
-                Debug.LogError("Slot JSON file not found: " + slotJsonFilePath);
+                Debug.LogWarning("Slot JSON file not found: " + slotJsonFilePath);
             }
         }
 
@@ -560,7 +560,7 @@ namespace doppelganger
             }
             else
             {
-                Debug.LogError("Material JSON file not found: " + materialJsonFilePath);
+                Debug.LogWarning("Material JSON file not found: " + materialJsonFilePath);
             }
         }
 
@@ -586,7 +586,7 @@ namespace doppelganger
                     }
                     else
                     {
-                        Debug.LogError($"Renderer index out of bounds: {rendererIndex} for material resource number {materialResource.number} in model '{modelInstance.name}'");
+                        Debug.LogWarning($"Renderer index out of bounds: {rendererIndex} for material resource number {materialResource.number} in model '{modelInstance.name}'");
                     }
                 }
             }
@@ -606,7 +606,7 @@ namespace doppelganger
             }
             else
             {
-                Debug.LogError("Prefab not found: " + prefabPath);
+                Debug.LogWarning("Prefab not found: " + prefabPath);
                 return null;
             }
         }
@@ -626,7 +626,7 @@ namespace doppelganger
         {
             if (modelInstance == null || modelInfo == null || modelInfo.materialsResources == null)
             {
-                Debug.LogError("ApplyMaterials: modelInstance or modelInfo is null.");
+                Debug.LogWarning("ApplyMaterials: modelInstance or modelInfo is null.");
                 return;
             }
 
@@ -641,7 +641,7 @@ namespace doppelganger
             {
                 if (materialResource == null || materialResource.resources == null || materialResource.resources.Count == 0)
                 {
-                    Debug.LogError("Material resource data is null or empty.");
+                    Debug.LogWarning("Material resource data is null or empty.");
                     continue;
                 }
 
@@ -658,7 +658,7 @@ namespace doppelganger
                 }
                 else
                 {
-                    Debug.LogError($"Renderer index out of bounds: {rendererIndex} for material number {materialResource.number} in model '{modelInfo.name}'");
+                    Debug.LogWarning($"Renderer index out of bounds: {rendererIndex} for material number {materialResource.number} in model '{modelInfo.name}'");
                 }
             }
         }
@@ -700,12 +700,12 @@ namespace doppelganger
                 }
                 else
                 {
-                    Debug.LogError($"Renderer {renderer.gameObject.name} has no materials to apply to");
+                    Debug.LogWarning($"Renderer {renderer.gameObject.name} has no materials to apply to");
                 }
             }
             else
             {
-                Debug.LogError($"Material not found: '{materialName}' for renderer '{renderer.gameObject.name}'");
+                Debug.LogWarning($"Material not found: '{materialName}' for renderer '{renderer.gameObject.name}'");
             }
         }
 
@@ -747,7 +747,7 @@ namespace doppelganger
 
             if (shaderProperty == null)
             {
-                Debug.LogError($"Unsupported RTTI Value Name: {rttiValueName}. Unable to determine shader property.");
+                Debug.LogWarning($"Unsupported RTTI Value Name: {rttiValueName}. Unable to determine shader property.");
                 return;
             }
 
@@ -769,7 +769,7 @@ namespace doppelganger
                 }
                 else
                 {
-                    Debug.LogError($"Texture '{texturePath}' not found in Resources for RTTI: {rttiValueName}.");
+                    Debug.LogWarning($"Texture '{texturePath}' not found in Resources for RTTI: {rttiValueName}.");
                 }
             }
             else

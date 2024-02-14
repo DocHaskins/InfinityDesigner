@@ -28,6 +28,7 @@ namespace doppelganger
         public CharacterBuilder characterBuilder;
         public ConfigManager configManager;
         public ModelWriter modelWriter;
+        public ScreenshotManager screenshotManager;
         public SkeletonLookup skeletonLookup;
 
         [Header("Save Fields")]
@@ -43,6 +44,7 @@ namespace doppelganger
         public AudioSource audioSource;
         public string dateSubfolder = DateTime.Now.ToString("yyyy_MM_dd");
         public string jsonOutputDirectory = Path.Combine(Application.streamingAssetsPath, "Output");
+        public string outputDirectoryName = "Output";
         public string skeletonJsonPath = "Assets/StreamingAssets/Jsons/Human/Player/player_tpp_skeleton.json";
         public string slotUIDLookupRelativePath = "SlotData/SlotUIDLookup.json";
         private Dictionary<string, int> slotNameToUidMap = new Dictionary<string, int>();
@@ -159,7 +161,7 @@ namespace doppelganger
                 characterBuilder = FindObjectOfType<CharacterBuilder>();
                 Debug.Log("CharacterBuilder found: " + (characterBuilder != null));
             }
-
+            string jsonOutputPath = Path.Combine(Application.dataPath, "StreamingAssets/Output", dateSubfolder, saveName.text + ".json");
             LoadSlotUidLookup();
         }
 
@@ -208,11 +210,10 @@ namespace doppelganger
             string saveClass = saveClassDropdown.options[saveClassDropdown.value].text;
             string saveNameText = saveName.text;
             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(saveNameText);
+            string screenshotFileName = fileNameWithoutExtension + ".png";
             string slotUIDLookupFullPath = Path.Combine(Application.streamingAssetsPath, slotUIDLookupRelativePath);
             SlotUIDLookup slotUIDLookup = SlotUIDLookup.LoadFromJson(slotUIDLookupFullPath);
             Debug.Log($"saveNameText {saveNameText} found in lookup for {fileNameWithoutExtension}.");
-
-            Directory.CreateDirectory(jsonOutputDirectory);
 
             Dictionary<string, string> skeletonDictLookup = ReadSkeletonLookup();
             string skeletonName;
@@ -244,8 +245,11 @@ namespace doppelganger
             }
 
             // Constructing the JSON and .model file paths dynamically based on the fileName
-            string jsonOutputPath = Path.Combine(Application.streamingAssetsPath, "Output", DateTime.Now.ToString("yyyy_MM_dd"), saveName.text + ".json");
+            string jsonOutputPath = Path.Combine(Application.dataPath, "StreamingAssets/Output", DateTime.Now.ToString("yyyy_MM_dd"), saveName.text + ".json");
+            string screenshotPath = Path.Combine(Application.dataPath, "StreamingAssets/Output", DateTime.Now.ToString("yyyy_MM_dd"), screenshotFileName);
             string modelOutputPath = Path.Combine(customBasePath, "ph/source", fileName + ".model");
+            
+            Debug.Log($"jsonOutputDirectory {jsonOutputDirectory}, screenshotPath {screenshotPath}, modelOutputPath {modelOutputPath}");
 
             var sliderValues = interfaceManager.GetSliderValues();
             var currentlyLoadedModels = characterBuilder.GetCurrentlyLoadedModels();
@@ -348,7 +352,7 @@ namespace doppelganger
 
             // Ensure slotPairs are sorted after appending empty slots
             slotPairs = slotPairs.OrderBy(pair => pair.slotData.slotUid).ToList();
-
+            screenshotManager.CaptureAndMoveScreenshot(screenshotPath);
             // Write the configuration to JSON
             var outputData = new ModelData
             {
@@ -476,30 +480,57 @@ namespace doppelganger
 
             public static SlotUIDLookup LoadFromJson(string path)
             {
-                string jsonText = File.ReadAllText(path);
-                return JsonConvert.DeserializeObject<SlotUIDLookup>(jsonText);
+                if (!File.Exists(path))
+                {
+                    Debug.LogError($"File not found at path: {path}");
+                    return null;
+                }
+
+                try
+                {
+                    string jsonText = File.ReadAllText(path);
+                    SlotUIDLookup slotUIDLookup = JsonConvert.DeserializeObject<SlotUIDLookup>(jsonText);
+
+                    // Debug log: Print the loaded ModelSlots
+                    Debug.Log($"Loaded ModelSlots from JSON: {slotUIDLookup.ModelSlots.Count} entries");
+
+                    return slotUIDLookup;
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogError($"Failed to load SlotUIDLookup from JSON: {ex.Message}");
+                    return null;
+                }
             }
         }
 
         private string GetAvailableSlot(string initialSlot, HashSet<string> usedSlots)
         {
+            Debug.Log($"Checking availability of slot: {initialSlot}");
+
             if (!usedSlots.Contains(initialSlot))
             {
+                Debug.Log($"Slot {initialSlot} is available");
                 return initialSlot;
             }
 
             if (fallbackSlots.TryGetValue(initialSlot, out List<string> fallbacks))
             {
+                Debug.Log($"Fallback slots for {initialSlot}:");
+
                 foreach (var fallback in fallbacks)
                 {
+                    Debug.Log($"  Checking fallback slot: {fallback}");
                     // Recursively check for available slots in the fallback list
                     string availableSlot = GetAvailableSlot(fallback, usedSlots);
                     if (availableSlot != null)
                     {
+                        Debug.Log($"  Found available fallback slot: {availableSlot}");
                         return availableSlot; // Found an available fallback slot
                     }
                 }
             }
+            Debug.Log($"No available slots found for {initialSlot}");
             return null; // No available slots found
         }
 

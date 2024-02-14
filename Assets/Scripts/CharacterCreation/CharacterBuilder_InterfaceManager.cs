@@ -106,7 +106,7 @@ namespace doppelganger
             }
             else
             {
-                Debug.LogError("Player type not found in dropdown options.");
+                Debug.LogWarning("Player type not found in dropdown options.");
             }
 
             // Manually trigger the interface update as if the dropdown values were changed
@@ -211,7 +211,7 @@ namespace doppelganger
             }
             else
             {
-                Debug.LogError("Index out of range: " + index);
+                Debug.LogWarning("Index out of range: " + index);
                 return string.Empty;
             }
         }
