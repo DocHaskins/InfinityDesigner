@@ -22,7 +22,7 @@ namespace doppelganger
 
         private static void GeneratePrefabThumbnails()
         {
-            string[] guids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/PathToYourPrefabs" });
+            string[] guids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Resources/Prefabs" });
             foreach (string guid in guids)
             {
                 string path = AssetDatabase.GUIDToAssetPath(guid);
@@ -37,18 +37,18 @@ namespace doppelganger
 
         private static void GenerateThumbnail(GameObject prefab, string filePath)
         {
-            // Setup a temporary scene and camera
-            GameObject tempPrefab = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+            // Ensure the prefab is instantiated in a scene, keeping the original prefab asset unchanged
+            GameObject tempPrefabInstance = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
 
-            // Create a new camera for capturing the thumbnail
+            // Create a new camera for capturing the thumbnail, ensuring it's separate from the prefab
             GameObject cameraGameObject = new GameObject("TemporaryCamera");
             Camera camera = cameraGameObject.AddComponent<Camera>();
             camera.backgroundColor = Color.clear; // Set background color to clear or any preferred color
             camera.clearFlags = CameraClearFlags.SolidColor;
 
             // Position the camera (this is a simple setup, adjust as needed)
-            camera.transform.position = tempPrefab.transform.position + new Vector3(0, 0, -10);
-            camera.transform.LookAt(tempPrefab.transform);
+            camera.transform.position = tempPrefabInstance.transform.position + new Vector3(0, 0, -1);
+            camera.transform.LookAt(tempPrefabInstance.transform);
 
             // Setup and capture the image
             RenderTexture rt = new RenderTexture(256, 256, 24);
@@ -63,8 +63,8 @@ namespace doppelganger
             byte[] bytes = screenShot.EncodeToPNG();
             File.WriteAllBytes(filePath, bytes);
 
-            // Clean up
-            DestroyImmediate(tempPrefab);
+            // Clean up instantiated objects to ensure no changes are made to the original prefab
+            DestroyImmediate(tempPrefabInstance);
             DestroyImmediate(cameraGameObject); // Destroy the camera after capturing the thumbnail
         }
     }

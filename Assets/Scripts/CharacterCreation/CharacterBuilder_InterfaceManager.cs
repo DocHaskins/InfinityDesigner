@@ -20,6 +20,7 @@ namespace doppelganger
     {
         [Header("Managers")]
         public CharacterBuilder characterBuilder;
+        public AutoTargetCinemachineCamera autoTargetCinemachineCamera;
         public VariationBuilder variationBuilder;
         public SliderKeyboardControl sliderKeyboardControl;
         public FilterMapping filterMapping;
@@ -233,7 +234,6 @@ namespace doppelganger
             // Use the selectedType to populate the classDropdown based on the selected category
             PopulateDropdown(classDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType, selectedCategory), "ALL");
             PopulateDropdown(saveClassDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType, selectedCategory), "ALL");
-
             UpdateInterfaceBasedOnDropdownSelection();
         }
 

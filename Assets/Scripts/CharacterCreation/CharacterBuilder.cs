@@ -21,6 +21,7 @@ namespace doppelganger
         public SkeletonLookup skeletonLookup;
         public FilterMapping filterMapping;
         public CinemachineFreeLook ingameCamera;
+        public AutoTargetCinemachineCamera autoTargetCinemachineCamera;
         public CinemachineCameraZoomTool cameraTool;
         public VariationBuilder variationBuilder;
 
@@ -312,12 +313,10 @@ namespace doppelganger
             GameObject skeletonPrefab = Resources.Load<GameObject>(resourcePath);
             if (skeletonPrefab != null)
             {
-                // Check for the current skeleton in the scene and get its focus point
-                Transform currentFocusPoint = cameraTool.GetCurrentFocusPoint(); // Assuming this method exists
-
                 GameObject loadedSkeleton = Instantiate(skeletonPrefab, Vector3.zero, Quaternion.Euler(-90, 0, 0));
                 loadedSkeleton.tag = "Skeleton";
-
+                autoTargetCinemachineCamera.FocusOnSkeleton(loadedSkeleton);
+                Debug.Log("LoadSkeleton: Setting Camera to focus on:" + skeletonName);
                 // Find the 'pelvis' child in the loaded skeleton
                 Transform pelvis = loadedSkeleton.transform.Find("pelvis");
                 if (pelvis != null)
@@ -335,55 +334,10 @@ namespace doppelganger
                 {
                     Debug.LogWarning("Pelvis not found in the skeleton prefab: " + skeletonName);
                 }
-
-                UpdateCameraTarget(loadedSkeleton.transform, currentFocusPoint);
             }
             else
             {
                 Debug.LogWarning("Skeleton prefab not found in Resources: " + resourcePath);
-            }
-        }
-
-        private void UpdateCameraTarget(Transform loadedModelTransform, Transform currentFocusPoint = null)
-        {
-            if (cameraTool != null && loadedModelTransform != null)
-            {
-                cameraTool.targets.Clear();
-                string[] pointNames = { "pelvis", "spine1", "spine3", "neck", "legs", "r_hand", "l_hand", "l_foot", "r_foot" };
-
-                // Rebuild the targets list
-                foreach (var pointName in pointNames)
-                {
-                    Transform targetTransform = DeepFind(loadedModelTransform, pointName);
-                    if (targetTransform != null)
-                    {
-                        cameraTool.targets.Add(targetTransform);
-                    }
-                }
-
-                // Attempt to maintain focus on the current or similar point in the new model
-                if (currentFocusPoint != null)
-                {
-                    int newIndex = cameraTool.targets.IndexOf(currentFocusPoint);
-                    if (newIndex != -1)
-                    {
-                        // If the current focus point exists in the new skeleton, focus there
-                        cameraTool.CurrentTargetIndex = newIndex;
-                    }
-                    else
-                    {
-                        // If the exact point doesn't exist, default to the first target or a similar point
-                        cameraTool.CurrentTargetIndex = 0;
-                    }
-                }
-                else if (cameraTool.targets.Count > 0)
-                {
-                    // If there was no previous focus, default to the first target
-                    cameraTool.CurrentTargetIndex = 0;
-                }
-
-                // Update the camera target based on the new index
-                cameraTool.UpdateCameraTarget();
             }
         }
 
@@ -419,7 +373,8 @@ namespace doppelganger
                     GameObject loadedSkeleton = Instantiate(skeletonPrefab, Vector3.zero, Quaternion.Euler(-90, 0, 0));
                     loadedSkeleton.tag = "Skeleton";
                     loadedSkeleton.name = selectedSkeleton; // Optionally set the name to manage future checks
-
+                    Debug.Log("LoadSkeleton: Setting Camera to focus on:" + loadedSkeleton);
+                    autoTargetCinemachineCamera.FocusOnSkeleton(loadedSkeleton);
                     // Find the 'pelvis' child in the loaded skeleton and handle 'legs' creation
                     Transform pelvis = loadedSkeleton.transform.Find("pelvis");
                     if (pelvis != null)
@@ -432,7 +387,6 @@ namespace doppelganger
                     {
                         Debug.LogWarning("Pelvis not found in the skeleton prefab: " + selectedSkeleton);
                     }
-                    UpdateCameraTarget(loadedSkeleton.transform);
                 }
                 else
                 {
