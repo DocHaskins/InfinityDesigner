@@ -1,24 +1,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
-using doppelganger;
-using System.Collections;
 
-public class AutoTargetCinemachineCamera : MonoBehaviour
+namespace doppelganger
 {
-    public CinemachineVirtualCamera cinemachineCamera;
-    public CinemachineFollowZoom cameraZoomTool;
-    public CharacterBuilder characterBuilder;
+    public class AutoTargetCinemachineCamera : MonoBehaviour
+    {
+        public CinemachineVirtualCamera cinemachineCamera;
+        public CinemachineFollowZoom cameraZoomTool;
+        public CharacterBuilder characterBuilder;
 
-    public string targetTag = "Player";
-    public float padding = 1.1f;
-    public bool debugBounds = true;
-    private GameObject currentTarget;
-    private Transform lookAtTarget;
-    private Dictionary<string, GameObject> currentlyLoadedModels;
-    private List<Bounds> debugBoundsList = new List<Bounds>();
+        public string targetTag = "Player";
+        public float padding = 1.1f;
+        public bool debugBounds = true;
+        private GameObject currentTarget;
+        private Transform lookAtTarget;
+        private Dictionary<string, GameObject> currentlyLoadedModels;
+        private List<Bounds> debugBoundsList = new List<Bounds>();
 
-    private Dictionary<string, float> areaToZoomMapping = new Dictionary<string, float>()
+        private Dictionary<string, float> areaToZoomMapping = new Dictionary<string, float>()
     {
         { "All", 2.0f },
         { "Face", 0.85f },
@@ -28,289 +28,290 @@ public class AutoTargetCinemachineCamera : MonoBehaviour
         { "Feet", 0.9f }
     };
 
-    void Start()
-    {
-        if (cinemachineCamera == null)
+        void Start()
         {
-            cinemachineCamera = GetComponent<CinemachineVirtualCamera>();
+            if (cinemachineCamera == null)
+            {
+                cinemachineCamera = GetComponent<CinemachineVirtualCamera>();
+            }
+
+            lookAtTarget = new GameObject("CinemachineLookAtTarget").transform;
+            // Initialize currentlyLoadedModels from the characterBuilder reference
+            if (characterBuilder != null)
+            {
+                currentlyLoadedModels = characterBuilder.currentlyLoadedModels;
+            }
         }
 
-        lookAtTarget = new GameObject("CinemachineLookAtTarget").transform;
-        // Initialize currentlyLoadedModels from the characterBuilder reference
-        if (characterBuilder != null)
+        void OnDrawGizmos()
         {
-            currentlyLoadedModels = characterBuilder.currentlyLoadedModels;
+            if (!debugBounds) return;
+
+            Gizmos.color = Color.green; // Set the color of the Gizmos
+            foreach (var bounds in debugBoundsList)
+            {
+                // Draw a wire cube for each bounds
+                Gizmos.DrawWireCube(bounds.center, bounds.size);
+            }
         }
-    }
 
-    void OnDrawGizmos()
-    {
-        if (!debugBounds) return;
-
-        Gizmos.color = Color.green; // Set the color of the Gizmos
-        foreach (var bounds in debugBoundsList)
+        public void FocusOnSingleObject(GameObject targetObject)
         {
-            // Draw a wire cube for each bounds
-            Gizmos.DrawWireCube(bounds.center, bounds.size);
-        }
-    }
-
-    public void FocusOnSingleObject(GameObject targetObject)
-    {
-        currentTarget = targetObject;
-        if (debugBounds)
-        {
-            debugBoundsList.Clear();
-        }
-        AdjustCameraToFitObject(targetObject);
-    }
-
-    public void FocusOnGroup()
-    {
-        if (currentlyLoadedModels != null && currentlyLoadedModels.Count > 0)
-        {
+            currentTarget = targetObject;
             if (debugBounds)
             {
                 debugBoundsList.Clear();
             }
-            AdjustCameraToFitObjects(currentlyLoadedModels);
+            AdjustCameraToFitObject(targetObject);
         }
-    }
 
-    public void FocusOnSkeleton(GameObject skeleton)
-    {
-        AdjustCameraZoom(2.0f);
-        if (skeleton == null)
+        public void FocusOnGroup()
         {
-            Debug.LogError("Skeleton GameObject is null.");
-            return;
+            if (currentlyLoadedModels != null && currentlyLoadedModels.Count > 0)
+            {
+                if (debugBounds)
+                {
+                    debugBoundsList.Clear();
+                }
+                AdjustCameraToFitObjects(currentlyLoadedModels);
+            }
         }
 
-        Debug.Log($"FocusSkeleton called with {skeleton.name}");
-
-        ParentSkeleton parentSkeleton = skeleton.GetComponent<ParentSkeleton>();
-        if (parentSkeleton == null)
+        public void FocusOnSkeleton(GameObject skeleton)
         {
-            Debug.LogError("ParentSkeleton component not found on the target object.");
-            return;
-        }
+            AdjustCameraZoom(2.0f);
+            if (skeleton == null)
+            {
+                Debug.LogError("Skeleton GameObject is null.");
+                return;
+            }
 
-        // Use the bounds directly from the ParentSkeleton component
-        Bounds bounds = parentSkeleton.SkeletonBounds;
+            Debug.Log($"FocusSkeleton called with {skeleton.name}");
 
-        if (debugBounds)
-        {
-            debugBoundsList.Clear();
-            debugBoundsList.Add(bounds); // Add bounds to list for debugging
-        }
+            ParentSkeleton parentSkeleton = skeleton.GetComponent<ParentSkeleton>();
+            if (parentSkeleton == null)
+            {
+                Debug.LogError("ParentSkeleton component not found on the target object.");
+                return;
+            }
 
-        AdjustCameraToFitSkeleton(bounds);
+            // Use the bounds directly from the ParentSkeleton component
+            Bounds bounds = parentSkeleton.SkeletonBounds;
+
+            if (debugBounds)
+            {
+                debugBoundsList.Clear();
+                debugBoundsList.Add(bounds); // Add bounds to list for debugging
+            }
+
+            AdjustCameraToFitSkeleton(bounds);
 
 #if UNITY_EDITOR // Conditional compilation to ensure it's only compiled in the editor
-        Debug.Log($"Focusing on skeleton: {skeleton.name}, Bounds: Center = {bounds.center}, Size = {bounds.size}");
+            Debug.Log($"Focusing on skeleton: {skeleton.name}, Bounds: Center = {bounds.center}, Size = {bounds.size}");
 #endif
-    }
-
-    public void FocusOnArea(string areaName)
-    {
-        GameObject skeleton = GameObject.FindGameObjectWithTag("Skeleton");
-        if (skeleton == null)
-        {
-            Debug.LogError("Skeleton GameObject is null.");
-            return;
         }
 
-        ParentSkeleton parentSkeleton = skeleton.GetComponent<ParentSkeleton>();
-        if (parentSkeleton == null)
+        public void FocusOnArea(string areaName)
         {
-            Debug.LogError("ParentSkeleton component not found on the target object.");
-            return;
-        }
+            GameObject skeleton = GameObject.FindGameObjectWithTag("Skeleton");
+            if (skeleton == null)
+            {
+                Debug.LogError("Skeleton GameObject is null.");
+                return;
+            }
 
-        // Check if the area-specific bounds are available
-        if (!parentSkeleton.AreaSpecificBounds.ContainsKey(areaName))
-        {
-            Debug.LogError($"Area-specific bounds not found for area: {areaName}");
-            return;
-        }
+            ParentSkeleton parentSkeleton = skeleton.GetComponent<ParentSkeleton>();
+            if (parentSkeleton == null)
+            {
+                Debug.LogError("ParentSkeleton component not found on the target object.");
+                return;
+            }
 
-        Bounds bounds = parentSkeleton.AreaSpecificBounds[areaName];
+            // Check if the area-specific bounds are available
+            if (!parentSkeleton.AreaSpecificBounds.ContainsKey(areaName))
+            {
+                Debug.LogError($"Area-specific bounds not found for area: {areaName}");
+                return;
+            }
 
-        if (debugBounds)
-        {
-            debugBoundsList.Clear();
-            debugBoundsList.Add(bounds); // Add bounds to list for debugging
-        }
+            Bounds bounds = parentSkeleton.AreaSpecificBounds[areaName];
 
-        if (areaToZoomMapping.TryGetValue(areaName, out float zoomLevel))
-        {
-            AdjustCameraZoom(zoomLevel);
-        }
-        else
-        {
-            Debug.LogWarning($"Zoom level not defined for area: {areaName}");
-        }
+            if (debugBounds)
+            {
+                debugBoundsList.Clear();
+                debugBoundsList.Add(bounds); // Add bounds to list for debugging
+            }
 
-        AdjustCameraToFitSkeleton(bounds);
+            if (areaToZoomMapping.TryGetValue(areaName, out float zoomLevel))
+            {
+                AdjustCameraZoom(zoomLevel);
+            }
+            else
+            {
+                Debug.LogWarning($"Zoom level not defined for area: {areaName}");
+            }
+
+            AdjustCameraToFitSkeleton(bounds);
 
 #if UNITY_EDITOR
-        Debug.Log($"Focusing on area: {areaName}, Bounds: Center = {bounds.center}, Size = {bounds.size}");
+            Debug.Log($"Focusing on area: {areaName}, Bounds: Center = {bounds.center}, Size = {bounds.size}");
 #endif
-    }
-
-    private void AdjustCameraZoom(float zoomLevel)
-    {
-        if (cameraZoomTool)
-        {
-            cameraZoomTool.m_Width = zoomLevel;
-        }
-    }
-
-    private void AdjustCameraToFitSkeleton(Bounds bounds)
-    {
-        lookAtTarget.position = bounds.center;
-        cinemachineCamera.LookAt = lookAtTarget;
-        AdjustCameraBasedOnBounds(bounds);
-    }
-
-    private void AdjustCameraToFitObject(GameObject targetObject)
-    {
-        Bounds bounds = CalculateBounds(targetObject);
-        lookAtTarget.position = bounds.center;
-        cinemachineCamera.LookAt = lookAtTarget;
-        AdjustCameraBasedOnBounds(bounds);
-    }
-
-    private void AdjustCameraToFitObjects(Dictionary<string, GameObject> models)
-    {
-        Bounds combinedBounds = CalculateCombinedBounds(models);
-        lookAtTarget.position = combinedBounds.center;
-        cinemachineCamera.LookAt = lookAtTarget;
-        AdjustCameraBasedOnBounds(combinedBounds);
-    }
-
-    Bounds CalculateBounds(GameObject obj)
-    {
-        Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
-        bool boundsSet = false;
-        SkinnedMeshRenderer skinnedMeshRenderer = obj.GetComponentInChildren<SkinnedMeshRenderer>();
-        if (skinnedMeshRenderer != null)
-        {
-            bounds = skinnedMeshRenderer.bounds;
-            boundsSet = true;
         }
 
-        if (!boundsSet)
+        private void AdjustCameraZoom(float zoomLevel)
         {
-            MeshRenderer meshRenderer = obj.GetComponentInChildren<MeshRenderer>();
-            if (meshRenderer != null)
+            if (cameraZoomTool)
             {
-                bounds = meshRenderer.bounds;
+                cameraZoomTool.m_Width = zoomLevel;
+            }
+        }
+
+        private void AdjustCameraToFitSkeleton(Bounds bounds)
+        {
+            lookAtTarget.position = bounds.center;
+            cinemachineCamera.LookAt = lookAtTarget;
+            AdjustCameraBasedOnBounds(bounds);
+        }
+
+        private void AdjustCameraToFitObject(GameObject targetObject)
+        {
+            Bounds bounds = CalculateBounds(targetObject);
+            lookAtTarget.position = bounds.center;
+            cinemachineCamera.LookAt = lookAtTarget;
+            AdjustCameraBasedOnBounds(bounds);
+        }
+
+        private void AdjustCameraToFitObjects(Dictionary<string, GameObject> models)
+        {
+            Bounds combinedBounds = CalculateCombinedBounds(models);
+            lookAtTarget.position = combinedBounds.center;
+            cinemachineCamera.LookAt = lookAtTarget;
+            AdjustCameraBasedOnBounds(combinedBounds);
+        }
+
+        Bounds CalculateBounds(GameObject obj)
+        {
+            Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
+            bool boundsSet = false;
+            SkinnedMeshRenderer skinnedMeshRenderer = obj.GetComponentInChildren<SkinnedMeshRenderer>();
+            if (skinnedMeshRenderer != null)
+            {
+                bounds = skinnedMeshRenderer.bounds;
                 boundsSet = true;
             }
-        }
 
-        if (!boundsSet)
-        {
-            Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
-            foreach (Renderer renderer in renderers)
+            if (!boundsSet)
             {
-                if (boundsSet)
+                MeshRenderer meshRenderer = obj.GetComponentInChildren<MeshRenderer>();
+                if (meshRenderer != null)
                 {
-                    bounds.Encapsulate(renderer.bounds);
-                }
-                else
-                {
-                    bounds = renderer.bounds;
+                    bounds = meshRenderer.bounds;
                     boundsSet = true;
                 }
             }
-        }
 
-        if (debugBounds)
-        {
-            debugBoundsList.Add(bounds);
-        }
-
-        return bounds;
-    }
-
-    Bounds CalculateCombinedBounds(Dictionary<string, GameObject> models)
-    {
-        Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
-        bool boundsSet = false;
-
-        foreach (var model in models.Values)
-        {
-            Renderer[] renderers = model.GetComponentsInChildren<Renderer>();
-            foreach (Renderer renderer in renderers)
+            if (!boundsSet)
             {
-                if (boundsSet)
+                Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
+                foreach (Renderer renderer in renderers)
                 {
-                    bounds.Encapsulate(renderer.bounds);
+                    if (boundsSet)
+                    {
+                        bounds.Encapsulate(renderer.bounds);
+                    }
+                    else
+                    {
+                        bounds = renderer.bounds;
+                        boundsSet = true;
+                    }
                 }
-                else
+            }
+
+            if (debugBounds)
+            {
+                debugBoundsList.Add(bounds);
+            }
+
+            return bounds;
+        }
+
+        Bounds CalculateCombinedBounds(Dictionary<string, GameObject> models)
+        {
+            Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
+            bool boundsSet = false;
+
+            foreach (var model in models.Values)
+            {
+                Renderer[] renderers = model.GetComponentsInChildren<Renderer>();
+                foreach (Renderer renderer in renderers)
                 {
-                    bounds = renderer.bounds;
-                    boundsSet = true;
+                    if (boundsSet)
+                    {
+                        bounds.Encapsulate(renderer.bounds);
+                    }
+                    else
+                    {
+                        bounds = renderer.bounds;
+                        boundsSet = true;
+                    }
                 }
+            }
+
+            if (debugBounds)
+            {
+                debugBoundsList.Add(bounds); // Add bounds to list for debugging
+            }
+
+            return bounds;
+        }
+
+        void AdjustCameraBasedOnBounds(Bounds bounds)
+        {
+            if (debugBounds)
+            {
+                debugBoundsList.Clear();
+                debugBoundsList.Add(bounds);
+            }
+
+            // Calculate the required distance to ensure the object fits within the view
+            float objectSize = Mathf.Max(bounds.size.x, bounds.size.y, bounds.size.z);
+            float distance = CalculateRequiredDistance(objectSize);
+
+            // Set camera distance
+            SetCameraDistance(distance);
+
+            // Optionally, adjust the camera's position or the follow target's position
+            // This example assumes you want to keep the camera at a certain height but focus on the bounds center
+            Vector3 cameraPosition = lookAtTarget.position - cinemachineCamera.transform.forward * distance;
+            cameraPosition.y = bounds.center.y; // Adjust based on your requirements
+            lookAtTarget.position = cameraPosition;
+
+            // Ensure the camera's LookAt is set to the center of the bounds
+            cinemachineCamera.LookAt = lookAtTarget;
+            cinemachineCamera.Follow = lookAtTarget;
+
+            // If you're using a CinemachineTransposer for following, you might adjust its offset instead
+            var transposer = cinemachineCamera.GetCinemachineComponent<CinemachineTransposer>();
+            if (transposer != null)
+            {
+                transposer.m_FollowOffset = cinemachineCamera.transform.position - bounds.center;
             }
         }
 
-        if (debugBounds)
+        float CalculateRequiredDistance(float objectSize)
         {
-            debugBoundsList.Add(bounds); // Add bounds to list for debugging
+            float cameraFOV = cinemachineCamera.m_Lens.FieldOfView;
+            float distance = (objectSize / 2.0f) / Mathf.Tan(Mathf.Deg2Rad * cameraFOV / 2.0f);
+            return distance * padding;
         }
 
-        return bounds;
-    }
-
-    void AdjustCameraBasedOnBounds(Bounds bounds)
-    {
-        if (debugBounds)
+        void SetCameraDistance(float distance)
         {
-            debugBoundsList.Clear();
-            debugBoundsList.Add(bounds);
-        }
-
-        // Calculate the required distance to ensure the object fits within the view
-        float objectSize = Mathf.Max(bounds.size.x, bounds.size.y, bounds.size.z);
-        float distance = CalculateRequiredDistance(objectSize);
-
-        // Set camera distance
-        SetCameraDistance(distance);
-
-        // Optionally, adjust the camera's position or the follow target's position
-        // This example assumes you want to keep the camera at a certain height but focus on the bounds center
-        Vector3 cameraPosition = lookAtTarget.position - cinemachineCamera.transform.forward * distance;
-        cameraPosition.y = bounds.center.y; // Adjust based on your requirements
-        lookAtTarget.position = cameraPosition;
-
-        // Ensure the camera's LookAt is set to the center of the bounds
-        cinemachineCamera.LookAt = lookAtTarget;
-        cinemachineCamera.Follow = lookAtTarget;
-
-        // If you're using a CinemachineTransposer for following, you might adjust its offset instead
-        var transposer = cinemachineCamera.GetCinemachineComponent<CinemachineTransposer>();
-        if (transposer != null)
-        {
-            transposer.m_FollowOffset = cinemachineCamera.transform.position - bounds.center;
-        }
-    }
-
-    float CalculateRequiredDistance(float objectSize)
-    {
-        float cameraFOV = cinemachineCamera.m_Lens.FieldOfView;
-        float distance = (objectSize / 2.0f) / Mathf.Tan(Mathf.Deg2Rad * cameraFOV / 2.0f);
-        return distance * padding;
-    }
-
-    void SetCameraDistance(float distance)
-    {
-        var transposer = cinemachineCamera.GetCinemachineComponent<CinemachineTransposer>();
-        if (transposer != null)
-        {
-            transposer.m_FollowOffset.z = -distance;
+            var transposer = cinemachineCamera.GetCinemachineComponent<CinemachineTransposer>();
+            if (transposer != null)
+            {
+                transposer.m_FollowOffset.z = -distance;
+            }
         }
     }
 }

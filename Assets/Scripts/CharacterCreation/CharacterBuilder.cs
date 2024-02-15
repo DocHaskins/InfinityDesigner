@@ -17,6 +17,7 @@ namespace doppelganger
     public class CharacterBuilder : MonoBehaviour
     {
         [Header("Managers")]
+        public Platform platform;
         public CharacterBuilder_InterfaceManager interfaceManager;
         public SkeletonLookup skeletonLookup;
         public FilterMapping filterMapping;
@@ -25,6 +26,7 @@ namespace doppelganger
         public CinemachineCameraZoomTool cameraTool;
         public VariationBuilder variationBuilder;
 
+        public GameObject currentModelsParent;
         private Dictionary<GameObject, List<int>> disabledRenderers = new Dictionary<GameObject, List<int>>();
         private Dictionary<GameObject, bool[]> initialRendererStates = new Dictionary<GameObject, bool[]>();
         public Dictionary<string, List<Material>> originalMaterials = new Dictionary<string, List<Material>>();
@@ -313,7 +315,7 @@ namespace doppelganger
             GameObject skeletonPrefab = Resources.Load<GameObject>(resourcePath);
             if (skeletonPrefab != null)
             {
-                GameObject loadedSkeleton = Instantiate(skeletonPrefab, Vector3.zero, Quaternion.Euler(-90, 0, 0));
+                GameObject loadedSkeleton = Instantiate(skeletonPrefab, Vector3.zero, Quaternion.Euler(-90, 0, 0), currentModelsParent.transform);
                 loadedSkeleton.tag = "Skeleton";
                 autoTargetCinemachineCamera.FocusOnSkeleton(loadedSkeleton);
                 Debug.Log("LoadSkeleton: Setting Camera to focus on:" + skeletonName);
@@ -354,7 +356,6 @@ namespace doppelganger
             // If there is a current skeleton, check its prefab name against the selected skeleton
             if (currentSkeleton != null && currentSkeleton.name.StartsWith(selectedSkeleton))
             {
-                // If names match (considering "(Clone)" suffix Unity adds to instantiated objects), skip loading a new one
                 shouldLoadSkeleton = false;
             }
             else if (currentSkeleton != null)
@@ -370,7 +371,7 @@ namespace doppelganger
                 GameObject skeletonPrefab = Resources.Load<GameObject>(resourcePath);
                 if (skeletonPrefab != null)
                 {
-                    GameObject loadedSkeleton = Instantiate(skeletonPrefab, Vector3.zero, Quaternion.Euler(-90, 0, 0));
+                    GameObject loadedSkeleton = Instantiate(skeletonPrefab, Vector3.zero, Quaternion.Euler(-90, 0, 0), currentModelsParent.transform);
                     loadedSkeleton.tag = "Skeleton";
                     loadedSkeleton.name = selectedSkeleton; // Optionally set the name to manage future checks
                     Debug.Log("LoadSkeleton: Setting Camera to focus on:" + loadedSkeleton);
@@ -547,15 +548,17 @@ namespace doppelganger
         }
 
 
-        public GameObject LoadModelPrefab(string modelName, string slotName) // Add slotName as parameter
+        public GameObject LoadModelPrefab(string modelName, string slotName)
         {
             string prefabPath = Path.Combine("Prefabs", modelName);
             GameObject prefab = Resources.Load<GameObject>(prefabPath);
 
             if (prefab != null)
             {
-                GameObject modelInstance = Instantiate(prefab, Vector3.zero, Quaternion.identity);
-                currentlyLoadedModels[slotName] = modelInstance; // Now slotName is in the correct context
+                // Instantiate the model as a child of 'CurrentModels'
+                GameObject modelInstance = Instantiate(prefab, Vector3.zero, Quaternion.Euler(0,0,0), currentModelsParent.transform);
+                platform.ResetChildRotations();
+                currentlyLoadedModels[slotName] = modelInstance;
                 return modelInstance;
             }
             else
