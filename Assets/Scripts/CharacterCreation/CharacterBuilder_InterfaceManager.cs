@@ -642,15 +642,6 @@ namespace doppelganger
             }
         }
 
-        public void UpdateOrOpenModelInfoPanel(string currentSlider)
-        {
-            if (variationBuilder.isPanelOpen)
-            {
-                // Panel is open and for the correct slot, update it
-                variationBuilder.UpdateModelInfoPanel(currentSlider);
-            }
-        }
-
 
         public void OnSliderValueChanged(string slotName, float value, bool userChanged)
         {
@@ -665,13 +656,13 @@ namespace doppelganger
                 characterBuilder.RemoveModelAndVariationSlider(slotName);
                 selectedVariationIndexes.Remove(slotName);
                 Debug.Log($"OnSliderValueChanged: Slot '{slotName}' removed. Updated selectedVariationIndexes: {string.Join(", ", selectedVariationIndexes.Keys)}");
-                UpdateOrOpenModelInfoPanel(null);
+                variationBuilder.UpdateModelInfoPanel(null);
             }
             else
             {
                 int modelIndex = Mathf.Clamp((int)(value - 1), 0, int.MaxValue);
                 characterBuilder.LoadModelAndCreateVariationSlider(slotName, modelIndex);
-                UpdateOrOpenModelInfoPanel(currentSlider);
+                variationBuilder.UpdateModelInfoPanel(currentSlider);
             }
         }
 
@@ -760,7 +751,7 @@ namespace doppelganger
             }
             string currentSlider = slotName;
             Debug.Log($"OnVariationSliderValueChanged: currentSlider {currentSlider}");
-            UpdateOrOpenModelInfoPanel(currentSlider);
+            variationBuilder.UpdateModelInfoPanel(currentSlider);
             variationBuilder.UpdateMaterialDropdowns(slotName);
             selectedVariationIndexes[slotName] = Mathf.Clamp((int)value - 1, 0, int.MaxValue);
 

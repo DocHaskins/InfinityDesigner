@@ -16,6 +16,9 @@ namespace doppelganger
         public CharacterBuilder_InterfaceManager interfaceManager;
 
         [Header("Interface")]
+        public GameObject modelInfoPanel;
+        public TextMeshProUGUI meshNameText;
+        public Transform materialSpawn;
         public GameObject modelInfoPanelPrefab;
         public GameObject variationMaterialDropdownPrefab;
         public GameObject currentModelInfoPanel;
@@ -108,54 +111,8 @@ namespace doppelganger
             return null; // File not found
         }
 
-        public void ToggleModelInfoPanel(string slotName)
-        {
-            Debug.Log($"ToggleModelInfoPanel: slotName: {slotName}");
-            if (isPanelOpen && currentModelInfoPanel != null && openPanelSlotName == slotName)
-            {
-                Destroy(currentModelInfoPanel);
-                currentModelInfoPanel = null;
-                isPanelOpen = false;
-            }
-            else
-            {
-                if (currentModelInfoPanel != null)
-                {
-                    Destroy(currentModelInfoPanel);
-                }
-                OpenModelInfoPanel(slotName);
-                isPanelOpen = true;
-                openPanelSlotName = slotName;
-
-            }
-        }
-
-        public void OpenModelInfoPanel(string slotName)
-        {
-            // Check if ModelInfoPanel already exists
-            if (currentModelInfoPanel == null)
-            {
-                // Instantiate a new modelInfoPanelPrefab if it does not exist
-                currentModelInfoPanel = Instantiate(modelInfoPanelPrefab, FindObjectOfType<Canvas>().transform, false);
-                TextMeshProUGUI meshNameText = currentModelInfoPanel.transform.Find("MeshName").GetComponent<TextMeshProUGUI>();
-                if (string.IsNullOrEmpty(slotName) || !characterBuilder.currentlyLoadedModels.TryGetValue(slotName, out GameObject currentModel))
-                {
-                    meshNameText.text = "Variation Builder";
-                    return;
-                }
-            }
-            // Always reset the name to a generic one since we are reusing the panel
-            currentModelInfoPanel.name = "VariationInfoPanel";
-
-            UpdateModelInfoPanelContent(slotName); // Call a method to update panel content
-        }
-
-
         public void UpdateModelInfoPanel(string slotName)
         {
-            //Debug.Log($"UpdateModelInfoPanel: slotName: {slotName}");
-            GameObject modelInfoPanel = GameObject.Find("VariationInfoPanel");
-
             if (modelInfoPanel != null)
             {
                 //Debug.Log("ModelInfoPanel found, updating content.");
@@ -163,11 +120,9 @@ namespace doppelganger
             }
         }
 
-        private void UpdateModelInfoPanelContent(string slotName)
-        {
-            TextMeshProUGUI meshNameText = currentModelInfoPanel.transform.Find("MeshName").GetComponent<TextMeshProUGUI>();
-            Transform materialSpawn = currentModelInfoPanel.transform.Find("VariationSubPanel/GridScrollView/Viewport/materialSpawn");
 
+        public void UpdateModelInfoPanelContent(string slotName)
+        {
             // Clear existing materials to repopulate
             foreach (Transform child in materialSpawn)
             {

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using UnlimitedScrollUI.Example;
 
 namespace doppelganger
@@ -15,11 +16,12 @@ namespace doppelganger
         public bool autoGenerate; // Control the generation process
         private List<Texture2D> allTextures;
         public string searchTerm = "_msk";
+        private string additionalFilterTerm = ""; // New field for the additional filter term
+        public TMP_InputField filterInputField; // Reference to the TMP Input Field
         private UnlimitedScrollUI.IUnlimitedScroller unlimitedScroller;
         public GameObject currentModel;
         public string currentSlotName;
         public event Action<Texture2D> onTextureSelected;
-        public delegate void TextureSelectedHandler(Texture2D texture, GameObject model, string slotName);
         public event Action<Texture2D, GameObject, string> TextureSelected;
 
         private void Start()
@@ -34,7 +36,10 @@ namespace doppelganger
 
         public void LoadTextures(string filter)
         {
-            // Load and filter textures based on the search term
+            // Retrieve the additional filter term from the TMP Input Field
+            additionalFilterTerm = filterInputField.text.Trim().ToLower();
+
+            // Load and filter textures based on both the search term and the additional filter term
             allTextures = Resources.LoadAll<Texture2D>("Textures").Where(t => t.name.EndsWith(filter)).ToList();
             Debug.Log($"Total Textures: {allTextures.Count}");
             GenerateTextures();
@@ -107,6 +112,10 @@ namespace doppelganger
         public void ClearOnTextureSelectedSubscriptions()
         {
             onTextureSelected = null;
+        }
+        public void RefreshTexturesWithAdditionalFilter()
+        {
+            LoadTextures(searchTerm);
         }
 
         public void RefreshTextures(string newSearchTerm)
