@@ -30,7 +30,7 @@ namespace doppelganger
         public bool isPanelOpen = false;
         public string openPanelSlotName = "";
 
-        private Dictionary<GameObject, GameObject> dropdownToPanelMap = new Dictionary<GameObject, GameObject>();
+        public static List<GameObject> allDropdowns = new List<GameObject>();
         private Dictionary<GameObject, bool> originalActiveStates = new Dictionary<GameObject, bool>();
         public List<RttiValue> currentMaterialResources = new List<RttiValue>();
 
@@ -156,12 +156,18 @@ namespace doppelganger
                 {
                     GameObject dropdownGameObject = Instantiate(variationMaterialDropdownPrefab, materialSpawn);
                     //Debug.Log($"Created dropdowns {dropdownGameObject} at {materialSpawn}");
+                    allDropdowns.Add(dropdownGameObject);
                     TMP_Dropdown tmpDropdown = dropdownGameObject.GetComponentInChildren<TMP_Dropdown>();
                     List<string> additionalMaterialNames = GetAvailableMaterialNamesForSlot(slotNumber, slotName);
                     SetupDropdownWithMaterials(tmpDropdown, currentMaterial.name, slotNumber, slotName);
 
                     Button optionsButton = dropdownGameObject.transform.Find("Button_Options").GetComponent<Button>();
                     TogglePanelVisibility toggleScript = optionsButton.GetComponent<TogglePanelVisibility>();
+                    if (toggleScript == null)
+                    {
+                        toggleScript = optionsButton.gameObject.AddComponent<TogglePanelVisibility>();
+                    }
+                    toggleScript.variationBuilder = this;
                     if (toggleScript == null)
                     {
                         toggleScript = optionsButton.gameObject.AddComponent<TogglePanelVisibility>();
@@ -177,7 +183,21 @@ namespace doppelganger
                         toggleScript.variationTextureSlotPanelPrefab = variationTextureSlotPanelPrefab;
                     }
 
-                    optionsButton.onClick.AddListener(() => toggleScript.TogglePanel(slotName, currentMaterial, currentModel));
+                    optionsButton.onClick.AddListener(() =>
+                    {
+                        bool panelIsActiveBeforeToggle = toggleScript.panelGameObject.activeSelf;
+                        toggleScript.TogglePanel(slotName, currentMaterial, currentModel);
+
+                        // If opening the panel, disable others. If closing, enable them.
+                        bool disableOthers = !panelIsActiveBeforeToggle;
+                        toggleScript.ToggleOtherDropdowns(!disableOthers);
+                    });
+
+                    GameObject panelGameObject = Instantiate(variationTextureSlotPanelPrefab, toggleScript.texturePrefabSpawnPoint.transform, false);
+                    panelGameObject.SetActive(false); // Start with the panel disabled
+
+                    // Adjust TogglePanelVisibility script to reference this new panel
+                    toggleScript.panelGameObject = panelGameObject;
 
                     // Correctly capture slotNumber for the listener
                     int capturedSlotNumber = slotNumber;
@@ -191,8 +211,8 @@ namespace doppelganger
 
                     
 
-                    TextMeshProUGUI nameText = dropdownGameObject.transform.Find("Name").GetComponent<TextMeshProUGUI>();
-                    nameText.text = "Slot #" + slotNumber;
+                    TextMeshProUGUI nameText = dropdownGameObject.transform.Find("Button_Options/Name").GetComponent<TextMeshProUGUI>();
+                    nameText.text = "" + slotNumber;
 
                     slotNumber++;
                 }
@@ -293,7 +313,15 @@ namespace doppelganger
             {
                 Debug.LogWarning($"Renderer for slot {slotNumber} not found!");
             }
-            
+        }
+
+        void UpdatePanelForMaterial(Material material)
+        {
+            VariationTextureSlotsPanel panelScript = FindObjectOfType<VariationTextureSlotsPanel>();
+            if (panelScript != null && panelScript.currentMaterial == material)
+            {
+                panelScript.UpdatePanel();
+            }
         }
 
         public void RecordTextureChange(string slotName, Texture2D texture, Material material)

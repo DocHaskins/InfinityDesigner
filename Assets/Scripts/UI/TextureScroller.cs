@@ -12,12 +12,13 @@ namespace doppelganger
     public class TextureScroller : MonoBehaviour
     {
         public Transform contentPanel;
-        public GameObject cellPrefab; // Assuming this is your cell prefab
-        public bool autoGenerate; // Control the generation process
+        public GameObject cellPrefab;
+        public bool autoGenerate;
         private List<Texture2D> allTextures;
         public string searchTerm = "_msk";
-        private string additionalFilterTerm = ""; // New field for the additional filter term
-        public TMP_InputField filterInputField; // Reference to the TMP Input Field
+        public string additionalFilterTerm = "";
+        public TMP_Dropdown imageTypeDropdown;
+        public TMP_InputField filterInputField;
         private UnlimitedScrollUI.IUnlimitedScroller unlimitedScroller;
         public GameObject currentModel;
         public string currentSlotName;
@@ -27,20 +28,46 @@ namespace doppelganger
         private void Start()
         {
             unlimitedScroller = GetComponent<UnlimitedScrollUI.IUnlimitedScroller>();
-            LoadTextures(searchTerm);
+            LoadTextures(searchTerm + additionalFilterTerm); // Initialize with both terms combined
             if (autoGenerate)
             {
                 StartCoroutine(DelayGenerate());
+            }
+
+            // Add listener to filter input field to refresh textures on change
+            filterInputField.onEndEdit.AddListener(delegate { RefreshTexturesWithAdditionalFilter(); });
+
+            imageTypeDropdown.onValueChanged.AddListener(delegate {
+                DropdownIndexChanged(imageTypeDropdown);
+            });
+        }
+
+        public void DropdownIndexChanged(TMP_Dropdown dropdown)
+        {
+            searchTerm = dropdown.options[dropdown.value].text.Trim().ToLower();
+            additionalFilterTerm = filterInputField.text.Trim().ToLower();
+            RefreshTextures(searchTerm);
+        }
+
+        public void UpdateDropdownSelection(string searchTerm)
+        {
+            for (int i = 0; i < imageTypeDropdown.options.Count; i++)
+            {
+                if (imageTypeDropdown.options[i].text.Trim().ToLower() == searchTerm)
+                {
+                    imageTypeDropdown.value = i;
+                    break;
+                }
             }
         }
 
         public void LoadTextures(string filter)
         {
-            // Retrieve the additional filter term from the TMP Input Field
-            additionalFilterTerm = filterInputField.text.Trim().ToLower();
+            // Use both searchTerm and additionalFilterTerm for filtering
+            string combinedFilter = searchTerm + additionalFilterTerm; // This assumes your logic for combining terms is correct
 
-            // Load and filter textures based on both the search term and the additional filter term
-            allTextures = Resources.LoadAll<Texture2D>("Textures").Where(t => t.name.EndsWith(filter)).ToList();
+            // Update filtering logic to use combinedFilter
+            allTextures = Resources.LoadAll<Texture2D>("Textures").Where(t => t.name.Contains(searchTerm) && t.name.Contains(additionalFilterTerm)).ToList();
             Debug.Log($"Total Textures: {allTextures.Count}");
             GenerateTextures();
         }
@@ -115,18 +142,30 @@ namespace doppelganger
         }
         public void RefreshTexturesWithAdditionalFilter()
         {
-            LoadTextures(searchTerm);
+            // Update the additionalFilterTerm from the input field
+            additionalFilterTerm = filterInputField.text.Trim().ToLower();
+
+            // Now clear existing cells and load textures again with the new filter
+            ClearExistingCells();
+            LoadTextures(searchTerm); // This method now inherently uses both searchTerm and additionalFilterTerm
+        }
+
+        public void SetSearchTermFromOtherUI(string newSearchTerm)
+        {
+            searchTerm = newSearchTerm.Trim().ToLower();
+            UpdateDropdownSelection(searchTerm);
+            RefreshTextures(searchTerm);
         }
 
         public void RefreshTextures(string newSearchTerm)
         {
             // Update the searchTerm
-            searchTerm = newSearchTerm;
+            searchTerm = newSearchTerm.Trim().ToLower();
 
             // Clear existing textures and UI cells
             ClearExistingCells();
 
-            // Load and display new textures based on the updated searchTerm
+            // Load and display new textures using both the searchTerm and additionalFilterTerm
             LoadTextures(searchTerm);
         }
 

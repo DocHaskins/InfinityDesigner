@@ -1,49 +1,37 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace doppelganger
 {
-
     public class TogglePanelVisibility : MonoBehaviour
     {
+        public VariationBuilder variationBuilder;
+
         public Transform spawnPoint;
+        public Transform texturePrefabSpawnPoint;
+        public GameObject panelGameObject;
         public GameObject dropdownGameObject;
         public GameObject variationTextureSlotPanelPrefab;
-        private static GameObject existingPanel = null; // Make static to keep track across instances
+        private static GameObject existingPanel = null;
 
-        // Adjusted to toggle visibility instead of destroying and recreating
         public void TogglePanel(string slotName, Material material, GameObject currentModel)
         {
-            // Check if the panel already exists
-            if (existingPanel != null)
+            // Ensure panelGameObject is not null before attempting to toggle its visibility
+            if (panelGameObject != null)
             {
-                // Toggle the visibility of the existing panel
-                bool isActive = existingPanel.activeSelf;
-                existingPanel.SetActive(!isActive);
-
-                // Re-enable siblings if hiding the panel
-                ToggleSiblings(isActive);
+                bool panelIsActive = panelGameObject.activeSelf;
+                panelGameObject.SetActive(!panelIsActive);
             }
             else
             {
-                // Instantiate a new panel if it doesn't exist
-                existingPanel = Instantiate(variationTextureSlotPanelPrefab, spawnPoint, false);
-                SetupPanel(existingPanel, slotName, material, currentModel);
-
-                // Disable siblings
-                ToggleSiblings(false);
+                Debug.LogError("panelGameObject is null. Ensure it's correctly assigned before calling TogglePanel.");
             }
 
-            if (existingPanel != null && existingPanel.activeSelf)
+            // If additional logic for updating panel setup is needed, ensure it's safely executed
+            if (panelGameObject != null && panelGameObject.activeSelf)
             {
-                var panelScript = existingPanel.GetComponent<VariationTextureSlotsPanel>();
-                if (panelScript != null)
-                {
-                    panelScript.currentModel = currentModel;
-                    panelScript.currentSlotName = slotName;
-                    panelScript.currentMaterial = material;
-                    panelScript.UpdatePanel();
-                }
+                UpdatePanelSetup(panelGameObject, slotName, material, currentModel);
             }
         }
 
@@ -58,15 +46,42 @@ namespace doppelganger
             }
         }
 
-        private void ToggleSiblings(bool enable)
+        private void UpdatePanelSetup(GameObject panel, string slotName, Material material, GameObject currentModel)
         {
-            // Toggle the active state of all sibling elements, except the dropdown and the panel itself
-            foreach (Transform child in spawnPoint)
+            if (panel.activeSelf)
             {
-                if (child.gameObject != dropdownGameObject && child.gameObject != existingPanel)
+                var panelScript = panel.GetComponent<VariationTextureSlotsPanel>();
+                if (panelScript != null)
                 {
-                    child.gameObject.SetActive(enable);
+                    panelScript.currentModel = currentModel;
+                    panelScript.currentSlotName = slotName;
+                    panelScript.currentMaterial = material;
+                    panelScript.UpdatePanel();
                 }
+            }
+        }
+
+        public void ToggleOtherDropdowns(bool enable)
+        {
+            if (variationBuilder != null && VariationBuilder.allDropdowns != null)
+            {
+                for (int i = VariationBuilder.allDropdowns.Count - 1; i >= 0; i--)
+                {
+                    var dropdown = VariationBuilder.allDropdowns[i];
+                    // Check if the GameObject reference is still valid
+                    if (dropdown != null && dropdown != this.dropdownGameObject)
+                    {
+                        // Check if the GameObject has not been destroyed
+                        if (dropdown.activeSelf != enable) // This also acts as an indirect check for existence
+                        {
+                            dropdown.SetActive(enable);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogError("VariationBuilder reference or its dropdowns list is not set.");
             }
         }
     }

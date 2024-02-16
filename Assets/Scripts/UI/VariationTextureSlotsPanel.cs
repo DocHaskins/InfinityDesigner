@@ -119,7 +119,6 @@ namespace doppelganger
 
         public void UpdatePanel()
         {
-            Debug.Log("UpdatePanel");
             ClearExistingSlots();
 
             if (currentMaterial != null)
