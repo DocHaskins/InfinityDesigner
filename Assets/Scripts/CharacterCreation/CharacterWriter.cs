@@ -10,6 +10,7 @@ using System.Text;
 using System.Linq;
 using static ModelData;
 using static doppelganger.CharacterWriter;
+using UnityEngine.Rendering.HighDefinition;
 
 
 /// <summary>
@@ -620,6 +621,8 @@ namespace doppelganger
 
         private ModelData.SlotDataPair CreateSlotDataPair(GameObject model, string slotKey, int slotUid)
         {
+            VariationBuilder variationBuilder = FindObjectOfType<VariationBuilder>();
+
             // Store the original slotKey for exporting purposes
             string originalSlotKey = slotKey;
 
@@ -657,19 +660,31 @@ namespace doppelganger
                         Variation selectedVariation = variationOutput.variations.FirstOrDefault(v => int.Parse(v.id) == variationIndex + 1);
                         if (selectedVariation != null)
                         {
-                            Debug.Log($"Applying variation {variationIndex} to slot {lookupSlotKey}");
-                            // Apply the selected variation's materials data and resources
                             slotData.models.Add(new ModelData.ModelInfo
                             {
                                 name = formattedModelName,
                                 materialsData = selectedVariation.materialsData,
                                 materialsResources = selectedVariation.materialsResources
                             });
+                            SkinnedMeshRenderer[] renderers = model.GetComponentsInChildren<SkinnedMeshRenderer>();
+                            foreach (var modelInfo in slotData.models)
+                            {
+                                foreach (var materialResource in modelInfo.materialsResources)
+                                {
+                                    // Attempt to apply changes based on material name
+                                    string materialName = materialResource.resources.First().name.Replace(".mat", "");
+                                    if (variationBuilder.materialChanges.TryGetValue(materialName, out List<RttiValue> changes))
+                                    {
+                                        materialResource.resources.First().rttiValues = changes;
+                                    }
+                                }
+                            }
                         }
                         else
                         {
                             Debug.LogWarning($"No matching variation found for index {variationIndex} in slot {lookupSlotKey}.");
                         }
+
                     }
                     else
                     {

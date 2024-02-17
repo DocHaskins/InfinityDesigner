@@ -35,18 +35,7 @@ namespace doppelganger
             }
         }
 
-        private void SetupPanel(GameObject panel, string slotName, Material material, GameObject currentModel)
-        {
-            VariationTextureSlotsPanel panelScript = panel.GetComponent<VariationTextureSlotsPanel>();
-            if (panelScript != null)
-            {
-                panelScript.currentModel = currentModel;
-                panelScript.currentSlotName = slotName;
-                panelScript.SetupPanel(material);
-            }
-        }
-
-        private void UpdatePanelSetup(GameObject panel, string slotName, Material material, GameObject currentModel)
+        public void UpdatePanelSetup(GameObject panel, string slotName, Material material, GameObject currentModel)
         {
             if (panel.activeSelf)
             {

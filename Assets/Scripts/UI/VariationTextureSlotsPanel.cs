@@ -123,6 +123,8 @@ namespace doppelganger
 
             if (currentMaterial != null)
             {
+                Debug.Log($"Current material: {currentMaterial.name}");
+
                 // Iterate through each slotName defined in textureSlots
                 foreach (string slotName in textureSlots)
                 {
@@ -133,6 +135,12 @@ namespace doppelganger
                     }
                 }
             }
+            else
+            {
+                Debug.LogWarning("No current material set.");
+            }
+
+            Debug.Log("Panel update complete.");
         }
 
         private void ClearExistingSlots()
@@ -190,10 +198,6 @@ namespace doppelganger
                     Debug.LogError("No Canvas found in the scene for the TextureScrollerPanel.");
                     return;
                 }
-
-                // Instantiate the TextureScrollerPanel as a child of the found Canvas
-                GameObject textureScrollerPanelObject = Instantiate(textureScrollerPanelPrefab, canvas.transform, false);
-                textureScroller = textureScrollerPanelObject.GetComponentInChildren<TextureScroller>();
             }
 
             if (textureScroller != null)
@@ -216,25 +220,30 @@ namespace doppelganger
 
         void ApplyTextureToMaterial(Material material, GameObject model, string slotName, Texture2D texture)
         {
+            Debug.Log($"Applying texture {texture.name} to material {material.name}, slot {slotName}, on model {model.name}");
+
             var propertyBlock = new MaterialPropertyBlock();
-            SkinnedMeshRenderer[] renderers = model.GetComponentsInChildren<SkinnedMeshRenderer>();
+            SkinnedMeshRenderer[] renderers = model.GetComponentsInChildren<SkinnedMeshRenderer>(true); // Use true to include inactive children if necessary
             bool textureApplied = false;
 
             foreach (var renderer in renderers)
             {
-                for (int i = 0; i < renderer.materials.Length; i++)
+                Material[] materials = renderer.sharedMaterials; // Consider using sharedMaterials to avoid creating material copies
+
+                for (int i = 0; i < materials.Length; i++)
                 {
-                    if (renderer.materials[i].HasProperty(slotName))
+                    // Check if this is the exact material instance we want to modify
+                    if (materials[i] == material && material.HasProperty(slotName))
                     {
                         renderer.GetPropertyBlock(propertyBlock, i);
                         propertyBlock.SetTexture(slotName, texture);
                         renderer.SetPropertyBlock(propertyBlock, i);
+
                         Debug.Log($"Applied {texture.name} to {slotName} on renderer {renderer.name} for material index {i}.");
 
-                        // Ensure VariationBuilder is not null
+                        // Record the texture change if needed
                         if (variationBuilder != null)
                         {
-                            // Call RecordTextureChange on VariationBuilder
                             variationBuilder.RecordTextureChange(slotName, texture, material);
                         }
                         else
@@ -243,18 +252,19 @@ namespace doppelganger
                         }
 
                         textureApplied = true;
+                        break; // Exit the loop after applying the texture to the intended material
                     }
                 }
 
                 if (textureApplied)
                 {
-                    UpdatePanel();
+                    break; // Stop checking other renderers once the texture has been applied to the intended material
                 }
             }
 
             if (!textureApplied)
             {
-                Debug.LogWarning($"No material found on {model.name} with slot '{slotName}' capable of receiving the texture {texture.name}.");
+                Debug.LogWarning($"No material found on {model.name} capable of receiving the texture {texture.name} for slot '{slotName}'.");
             }
         }
     }

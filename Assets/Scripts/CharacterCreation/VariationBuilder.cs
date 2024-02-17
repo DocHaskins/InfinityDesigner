@@ -33,6 +33,7 @@ namespace doppelganger
         public static List<GameObject> allDropdowns = new List<GameObject>();
         private Dictionary<GameObject, bool> originalActiveStates = new Dictionary<GameObject, bool>();
         public List<RttiValue> currentMaterialResources = new List<RttiValue>();
+        public Dictionary<string, List<RttiValue>> materialChanges = new Dictionary<string, List<RttiValue>>();
 
         public List<string> GetAvailableMaterialNamesForSlot(int slotNumber, string slotName)
         {
@@ -155,68 +156,77 @@ namespace doppelganger
                 if (currentMaterial != null)
                 {
                     GameObject dropdownGameObject = Instantiate(variationMaterialDropdownPrefab, materialSpawn);
-                    //Debug.Log($"Created dropdowns {dropdownGameObject} at {materialSpawn}");
                     allDropdowns.Add(dropdownGameObject);
                     TMP_Dropdown tmpDropdown = dropdownGameObject.GetComponentInChildren<TMP_Dropdown>();
                     List<string> additionalMaterialNames = GetAvailableMaterialNamesForSlot(slotNumber, slotName);
                     SetupDropdownWithMaterials(tmpDropdown, currentMaterial.name, slotNumber, slotName);
 
                     Button optionsButton = dropdownGameObject.transform.Find("Button_Options").GetComponent<Button>();
-                    TogglePanelVisibility toggleScript = optionsButton.GetComponent<TogglePanelVisibility>();
-                    if (toggleScript == null)
-                    {
-                        toggleScript = optionsButton.gameObject.AddComponent<TogglePanelVisibility>();
-                    }
+                    TogglePanelVisibility toggleScript = optionsButton.GetComponent<TogglePanelVisibility>() ?? optionsButton.gameObject.AddComponent<TogglePanelVisibility>();
                     toggleScript.variationBuilder = this;
-                    if (toggleScript == null)
-                    {
-                        toggleScript = optionsButton.gameObject.AddComponent<TogglePanelVisibility>();
-                        toggleScript.spawnPoint = materialSpawn;
-                        toggleScript.dropdownGameObject = dropdownGameObject;
-                        toggleScript.variationTextureSlotPanelPrefab = variationTextureSlotPanelPrefab;
-                    }
-                    else
-                    {
-                        // Ensure spawnPoint is properly assigned
-                        toggleScript.spawnPoint = materialSpawn;
-                        toggleScript.dropdownGameObject = dropdownGameObject;
-                        toggleScript.variationTextureSlotPanelPrefab = variationTextureSlotPanelPrefab;
-                    }
-
-                    optionsButton.onClick.AddListener(() =>
-                    {
-                        bool panelIsActiveBeforeToggle = toggleScript.panelGameObject.activeSelf;
-                        toggleScript.TogglePanel(slotName, currentMaterial, currentModel);
-
-                        // If opening the panel, disable others. If closing, enable them.
-                        bool disableOthers = !panelIsActiveBeforeToggle;
-                        toggleScript.ToggleOtherDropdowns(!disableOthers);
-                    });
+                    toggleScript.spawnPoint = materialSpawn;
+                    toggleScript.dropdownGameObject = dropdownGameObject;
+                    toggleScript.variationTextureSlotPanelPrefab = variationTextureSlotPanelPrefab;
 
                     GameObject panelGameObject = Instantiate(variationTextureSlotPanelPrefab, toggleScript.texturePrefabSpawnPoint.transform, false);
                     panelGameObject.SetActive(false); // Start with the panel disabled
+                    toggleScript.panelGameObject = panelGameObject; // Adjust TogglePanelVisibility script to reference this new panel
 
-                    // Adjust TogglePanelVisibility script to reference this new panel
-                    toggleScript.panelGameObject = panelGameObject;
-
-                    // Correctly capture slotNumber for the listener
-                    int capturedSlotNumber = slotNumber;
-
-                    // Inline listener logic to apply the selected material
-                    tmpDropdown.onValueChanged.AddListener(delegate (int index) {
-                        string selectedMaterialName = tmpDropdown.options[index].text;
-                        Debug.Log($"Dropdown Value Changed for Slot #{capturedSlotNumber}: {selectedMaterialName}");
-                        ApplyMaterialToSlot(currentModel, capturedSlotNumber, selectedMaterialName);
+                    // Ensure updating panel setup without toggling visibility when dropdown value changes
+                    tmpDropdown.onValueChanged.AddListener((int selectedIndex) => {
+                        string selectedMaterialName = tmpDropdown.options[selectedIndex].text;
+                        Material selectedMaterial = GetSelectedMaterial(selectedMaterialName, currentModel);
+                        if (selectedMaterial != null)
+                        {
+                            ApplyMaterialToSlot(currentModel, slotNumber, selectedMaterialName);
+                            Debug.Log($"Dropdown Value Changed for Slot #{slotNumber}: {selectedMaterialName}");
+                            // Update panel setup without toggling visibility
+                            toggleScript.UpdatePanelSetup(panelGameObject, slotName, selectedMaterial, currentModel);
+                        }
                     });
 
-                    
+                    // Toggle visibility and ensure panel is updated when options button is clicked
+                    optionsButton.onClick.AddListener(() => {
+                        string selectedMaterialName = tmpDropdown.options[tmpDropdown.value].text; // Use current dropdown value
+                        Material selectedMaterial = GetSelectedMaterial(selectedMaterialName, currentModel);
+                        if (selectedMaterial != null)
+                        {
+                            // Optionally update the panel setup here if dropdown does not trigger on same selection
+                            toggleScript.UpdatePanelSetup(panelGameObject, slotName, selectedMaterial, currentModel);
+                            toggleScript.TogglePanel(slotName, selectedMaterial, currentModel); // Toggle visibility
+                        }
+                    });
 
                     TextMeshProUGUI nameText = dropdownGameObject.transform.Find("Button_Options/Name").GetComponent<TextMeshProUGUI>();
                     nameText.text = "" + slotNumber;
-
                     slotNumber++;
                 }
             }
+        }
+
+        Material GetSelectedMaterial(string materialName, GameObject currentModel)
+        {
+            SkinnedMeshRenderer[] renderers = currentModel.GetComponentsInChildren<SkinnedMeshRenderer>();
+            foreach (var renderer in renderers)
+            {
+                foreach (var material in renderer.sharedMaterials)
+                {
+                    // Log the material being checked
+                    Debug.Log($"Checking material: {material.name}");
+
+                    // Replace " (Instance)" with "" to handle instances of materials
+                    if (material.name.Replace(" (Instance)", "") == materialName || material.name == materialName)
+                    {
+                        // Log when a matching material is found
+                        Debug.Log($"Material '{materialName}' found in the current model.");
+                        return material;
+                    }
+                }
+            }
+
+            // Log an error if the material is not found
+            Debug.LogError($"Material '{materialName}' not found in the current model.");
+            return null; // Return null if the material is not found
         }
 
         void SetupDropdownWithMaterials(TMP_Dropdown tmpDropdown, string currentMaterialName, int slotNumber, string slotName)
@@ -280,33 +290,41 @@ namespace doppelganger
 
         void ApplyMaterialToSlot(GameObject model, int slotNumber, string selectedMaterialName)
         {
-            //Debug.Log($"Selected Material: {selectedMaterialName}");
             SkinnedMeshRenderer[] renderers = model.GetComponentsInChildren<SkinnedMeshRenderer>();
             if (slotNumber - 1 < renderers.Length)
             {
-                var renderer = renderers[slotNumber - 1]; // Adjust based on how you map slotNumber to renderer index
-                Material selectedMaterial = LoadMaterialByName(selectedMaterialName);
+                var renderer = renderers[slotNumber - 1];
+                Material newMaterial = LoadMaterialByName(selectedMaterialName);
 
-                if (selectedMaterial != null)
+                if (newMaterial != null)
                 {
-                    //Debug.Log($"Attempting to apply material: {selectedMaterialName}");
+                    // Directly apply the new material to the renderer
                     Material[] materials = renderer.sharedMaterials;
                     if (materials.Length > 0)
                     {
-                        materials[0] = selectedMaterial; // Assuming you're applying to the first material slot
-                        renderer.sharedMaterials = materials;
-                        //Debug.Log($"Material applied successfully to slot {slotNumber}");
+                        Material originalMaterial = materials[0]; // Capture the original material for change recording
+
+                        // Record the change from original material to the new material
+                        RecordMaterialChange(originalMaterial.name, newMaterial.name);
+
+                        materials[0] = newMaterial; // Apply the new material to the first slot
+                        renderer.sharedMaterials = materials; // Update the renderer's materials
+
+                        // Find the VariationTextureSlotsPanel and update its currentMaterial
+                        VariationTextureSlotsPanel panelScript = FindObjectOfType<VariationTextureSlotsPanel>();
+                        if (panelScript != null)
+                        {
+                            panelScript.currentMaterial = newMaterial;
+                            Debug.Log($"'{newMaterial}' sent to {panelScript}.");
+                            panelScript.UpdatePanel();
+                        }
+
+                        Debug.Log($"Material '{selectedMaterialName}' applied successfully to slot {slotNumber}.");
                     }
                 }
                 else
                 {
-                    Debug.LogWarning($"Material {selectedMaterialName} not found!");
-                }
-                VariationTextureSlotsPanel panelScript = FindObjectOfType<VariationTextureSlotsPanel>(); // Find the active panel in the scene
-                if (panelScript != null)
-                {
-                    panelScript.currentMaterial = selectedMaterial;
-                    panelScript.UpdatePanel();
+                    Debug.LogWarning($"Material '{selectedMaterialName}' not found!");
                 }
             }
             else
@@ -315,10 +333,24 @@ namespace doppelganger
             }
         }
 
-        void UpdatePanelForMaterial(Material material)
+        void RecordMaterialChange(string originalMaterialName, string newMaterialName)
+        {
+            if (!materialChanges.ContainsKey(originalMaterialName))
+            {
+                materialChanges[originalMaterialName] = new List<RttiValue>();
+            }
+
+            RttiValue change = new RttiValue { name = "materialChange", type = 7, val_str = newMaterialName };
+            materialChanges[originalMaterialName].Add(change);
+
+            Debug.Log($"Recorded change for material '{originalMaterialName}' to '{newMaterialName}'");
+        }
+
+        // This method needs adjustment if it's still intended to use Material objects directly
+        void UpdatePanelForMaterial(string materialName)
         {
             VariationTextureSlotsPanel panelScript = FindObjectOfType<VariationTextureSlotsPanel>();
-            if (panelScript != null && panelScript.currentMaterial == material)
+            if (panelScript != null && panelScript.currentMaterial.name == materialName)
             {
                 panelScript.UpdatePanel();
             }
@@ -329,34 +361,33 @@ namespace doppelganger
             string textureName = texture != null ? texture.name : "None";
             string formattedSlotName = slotName.Replace("_", "") + "_0_tex";
 
-            // Ensure only one entry per slotName-material combination
-            var existingEntry = currentMaterialResources.FirstOrDefault(r => r.name == formattedSlotName);
+            // Ensure you're using string identifiers consistently
+            string materialName = material.name;
+            if (!materialChanges.ContainsKey(materialName))
+            {
+                materialChanges[materialName] = new List<RttiValue>();
+            }
+
+            var existingEntry = materialChanges[materialName].FirstOrDefault(r => r.name == formattedSlotName);
             if (existingEntry != null)
             {
-                // Update existing entry
                 existingEntry.val_str = textureName + ".png";
-                Debug.Log($"Updated {formattedSlotName} with new texture: {textureName}");
             }
             else
             {
-                // Add new entry if not exist
-                currentMaterialResources.Add(new RttiValue
-                {
-                    name = formattedSlotName,
-                    type = 7, // Assuming type 7 is for textures
-                    val_str = textureName + ".png"
-                });
-                Debug.Log($"Added new texture entry: {formattedSlotName} = {textureName}");
+                materialChanges[materialName].Add(new RttiValue { name = formattedSlotName, type = 7, val_str = textureName + ".png" });
             }
+
+            Debug.Log($"Recorded texture change for material '{materialName}': {formattedSlotName} = {textureName}");
         }
 
+        // Adjust LoadMaterialByName to ensure it correctly handles material loading
         Material LoadMaterialByName(string materialName)
         {
-            string MaterialName = Path.GetFileNameWithoutExtension(materialName);
-            Material loadedMaterial = Resources.Load<Material>("Materials/" + MaterialName);
+            // Ensure this method correctly loads materials by name, handling any necessary path adjustments
+            Material loadedMaterial = Resources.Load<Material>("Materials/" + materialName);
             return loadedMaterial;
         }
 
-        
     }
 }
