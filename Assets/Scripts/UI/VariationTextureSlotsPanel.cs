@@ -13,11 +13,11 @@ namespace doppelganger
         private VariationBuilder variationBuilder;
 
         public GameObject slotPrefab;
-        [SerializeField] GameObject textureScrollerPanelPrefab;
+        [SerializeField] private GameObject textureScrollerPanelPrefab;
         private GameObject currentPanel;
         public Material currentMaterial;
         public string currentSlotName;
-        public GameObject currentModel;
+        public GameObject currentModel; // This remains constant as per your new requirements
 
         public List<RttiValue> currentMaterialResources = new List<RttiValue>();
 
@@ -28,75 +28,39 @@ namespace doppelganger
 
         void Awake()
         {
-            // Find the VariationBuilder instance in the scene
             variationBuilder = FindObjectOfType<VariationBuilder>();
         }
 
         public void ToggleVisibility(Material material, GameObject dropdownGameObject)
         {
-            // Check if the panel is already active and if it's showing the current material
-            bool panelIsActive = currentPanel != null && currentPanel.activeSelf;
-            bool showingCurrentMaterial = currentMaterial == material;
-
-            if (panelIsActive && showingCurrentMaterial)
+            // Simplify logic to just check if material has changed
+            if (currentMaterial != material)
             {
-                // If the panel is active and showing the current material, simply toggle it off
-                currentPanel.SetActive(false);
+                ClearExistingSlots();
+                currentMaterial = material;
+                SetupPanel(material);
+                // Ensure the panel is active after updating
+                if (currentPanel != null) currentPanel.SetActive(true);
             }
             else
             {
-                // Either the panel is not active or it's showing a different material
-                // Clear existing slots only if we are switching materials
-                if (!showingCurrentMaterial)
-                {
-                    ClearExistingSlots();
-                    currentMaterial = material; // Update the reference to the current material
-                }
-
-                // Generate slots for the material if not already showing the current material
-                if (!showingCurrentMaterial)
-                {
-                    SetupPanel(material);
-                }
+                // Toggle visibility if the same material is selected again
+                if (currentPanel != null) currentPanel.SetActive(!currentPanel.activeSelf);
             }
         }
 
         public void SetupPanel(Material material)
         {
-            // Disable existing slots instead of destroying them
-            foreach (Transform child in transform)
-            {
-                child.gameObject.SetActive(false);
-            }
-
-            // Generate new slots or reuse existing ones based on the provided material
+            // Assume all slots are always cleared before calling this method
             foreach (string slotName in textureSlots)
             {
                 if (material.HasProperty(slotName))
                 {
                     Texture texture = material.GetTexture(slotName);
-                    GameObject slotInstance = null;
-
-                    // Try to find an existing slot that matches the slotName and reuse it
-                    foreach (Transform child in transform)
-                    {
-                        if (child.name == slotName)
-                        {
-                            slotInstance = child.gameObject;
-                            break;
-                        }
-                    }
-
-                    // If no existing slot was found, create a new one
-                    if (slotInstance == null)
-                    {
-                        slotInstance = Instantiate(slotPrefab, transform);
-                        slotInstance.name = slotName; // Set the name of the slotInstance to match the slotName for easy identification
-                    }
-
-                    // Update the slotInstance's visibility and contents
-                    slotInstance.SetActive(true);
+                    GameObject slotInstance = Instantiate(slotPrefab, transform);
+                    slotInstance.name = slotName; // Use slotName directly for identification
                     UpdateSlot(slotInstance, material, slotName, texture);
+                    slotInstance.SetActive(true); // Activate the new slot
                 }
             }
         }
@@ -145,10 +109,9 @@ namespace doppelganger
 
         private void ClearExistingSlots()
         {
-            // Disable existing slots instead of destroying them
             foreach (Transform child in transform)
             {
-                child.gameObject.SetActive(false);
+                Destroy(child.gameObject); // If reusing slots is not needed, otherwise set to inactive
             }
         }
 
@@ -204,8 +167,7 @@ namespace doppelganger
             {
                 textureScroller.SetCurrentSlotName(slotName);
                 textureScroller.TextureSelected += (texture, model, _) => {
-                    ApplyTextureToMaterial(currentMaterial, model, textureScroller.currentSlotName, texture);
-                    UpdatePanel();
+                    ApplyTextureToMaterial(currentMaterial, currentModel, slotName, texture);
                 };
                 textureScroller.currentModel = currentModel;
                 textureScroller.searchTerm = slotName;

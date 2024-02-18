@@ -719,6 +719,7 @@ namespace doppelganger
                 {
                     Debug.Log($"Applying texture to shader property: {shaderProperty}. RTTI Value Name: {rttiValueName}, Texture Name: {textureName}.");
                     material.SetTexture(shaderProperty, texture);
+                    variationBuilder.RecordTextureChange(shaderProperty, texture, material);
                     ApplyAdditionalSettings(material, rttiValueName, texture);
                 }
                 else

@@ -649,59 +649,14 @@ namespace doppelganger
             {
                 Debug.Log($"Found material JSON for {formattedModelName}");
                 string materialJsonData = File.ReadAllText(materialJsonFilePath);
-                VariationOutput variationOutput = JsonUtility.FromJson<VariationOutput>(materialJsonData);
-
-                Debug.Log($"Checking selectedVariationIndexes for key: {lookupSlotKey}");
-                if (interfaceManager.selectedVariationIndexes.TryGetValue(lookupSlotKey, out int variationIndex))
+                Debug.Log($"No variation index found for slot {lookupSlotKey}. Using original materials data and resources.");
+                // Fallback to using original materials data and resources
+                slotData.models.Add(new ModelData.ModelInfo
                 {
-                    Debug.Log($"Found variation index: {variationIndex} for slot {lookupSlotKey}");
-                    if (variationIndex > 0)
-                    {
-                        Variation selectedVariation = variationOutput.variations.FirstOrDefault(v => int.Parse(v.id) == variationIndex + 1);
-                        if (selectedVariation != null)
-                        {
-                            slotData.models.Add(new ModelData.ModelInfo
-                            {
-                                name = formattedModelName,
-                                materialsData = selectedVariation.materialsData,
-                                materialsResources = selectedVariation.materialsResources
-                            });
-                            SkinnedMeshRenderer[] renderers = model.GetComponentsInChildren<SkinnedMeshRenderer>();
-                            foreach (var modelInfo in slotData.models)
-                            {
-                                foreach (var materialResource in modelInfo.materialsResources)
-                                {
-                                    // Attempt to apply changes based on material name
-                                    string materialName = materialResource.resources.First().name.Replace(".mat", "");
-                                    if (variationBuilder.materialChanges.TryGetValue(materialName, out List<RttiValue> changes))
-                                    {
-                                        materialResource.resources.First().rttiValues = changes;
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            Debug.LogWarning($"No matching variation found for index {variationIndex} in slot {lookupSlotKey}.");
-                        }
-
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"Variation index for slot {lookupSlotKey} is not valid: {variationIndex}");
-                    }
-                }
-                else
-                {
-                    Debug.Log($"No variation index found for slot {lookupSlotKey}. Using original materials data and resources.");
-                    // Fallback to using original materials data and resources
-                    slotData.models.Add(new ModelData.ModelInfo
-                    {
-                        name = formattedModelName,
-                        materialsData = GetMaterialsDataFromStreamingAssets(formattedModelName.Replace(".msh", "")), // Get original materials data
-                        materialsResources = GetMaterialsResourcesFromModel(model)
-                    });
-                }
+                    name = formattedModelName,
+                    materialsData = GetMaterialsDataFromStreamingAssets(formattedModelName.Replace(".msh", "")), // Get original materials data
+                    materialsResources = GetMaterialsResourcesFromModel(model)
+                });
             }
             else
             {
@@ -768,6 +723,7 @@ namespace doppelganger
 
         private List<ModelData.MaterialResource> GetMaterialsResourcesFromModel(GameObject model)
         {
+            VariationBuilder variationBuilder = FindObjectOfType<VariationBuilder>();
             List<ModelData.MaterialResource> materialsResources = new List<ModelData.MaterialResource>();
             var renderers = model.GetComponentsInChildren<SkinnedMeshRenderer>();
 
@@ -778,11 +734,19 @@ namespace doppelganger
                 foreach (var material in renderer.sharedMaterials)
                 {
                     string materialName = material.name + (material.name.EndsWith(".mat") ? "" : ".mat");
-
                     var resource = new ModelData.Resource
                     {
                         name = materialName,
+                        // Initialize rttiValues with an empty list to avoid null references
+                        rttiValues = new List<RttiValue>()
                     };
+
+                    // Check if there are any changes recorded for this material
+                    if (variationBuilder.materialChanges.TryGetValue(materialName.Replace(".mat", ""), out List<RttiValue> changes))
+                    {
+                        // If so, filter for texture changes and add them to rttiValues
+                        resource.rttiValues = changes.Where(change => change.name.Contains("_tex")).ToList();
+                    }
 
                     materialsResources.Add(new ModelData.MaterialResource
                     {
