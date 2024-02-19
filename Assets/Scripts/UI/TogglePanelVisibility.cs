@@ -8,66 +8,20 @@ namespace doppelganger
     public class TogglePanelVisibility : MonoBehaviour
     {
         public VariationBuilder variationBuilder;
-
         public Transform spawnPoint;
         public Transform texturePrefabSpawnPoint;
         public GameObject panelGameObject;
         public GameObject dropdownGameObject;
         public GameObject variationTextureSlotPanelPrefab;
-        private static GameObject existingPanel = null;
 
-        public void TogglePanel(string slotName, Material material, GameObject currentModel)
+        public void TogglePanel(string slotName, Material material, SkinnedMeshRenderer renderer)
         {
-            bool isPanelActiveBeforeToggle = panelGameObject.activeSelf;
+            // Toggle the panel's visibility
+            panelGameObject.SetActive(!panelGameObject.activeSelf);
 
-            if (!isPanelActiveBeforeToggle)
+            if (panelGameObject.activeSelf)
             {
-                // If the panel is about to be opened, set the material first
-                var panelScript = panelGameObject.GetComponent<VariationTextureSlotsPanel>();
-                if (panelScript != null)
-                {
-                    panelScript.SetMaterial(material);
-                    panelScript.currentModel = currentModel;
-                    panelScript.currentSlotName = slotName;
-                    panelScript.UpdatePanel();
-                }
-            }
-
-            // Toggle the panel's visibility after ensuring the material is set
-            panelGameObject.SetActive(!isPanelActiveBeforeToggle);
-
-            if (isPanelActiveBeforeToggle)
-            {
-                // Additional actions if needed when the panel is being closed
-            }
-        }
-
-        public void InitializePanel(GameObject model, Material material, string slotName)
-        {
-            if (panelGameObject != null)
-            {
-                var panelScript = panelGameObject.GetComponent<VariationTextureSlotsPanel>();
-                if (panelScript != null)
-                {
-                    // Direct assignment of the material to the panel script
-                    panelScript.currentModel = model;
-                    panelScript.currentMaterial = material;
-                    panelScript.currentSlotName = slotName;
-                    panelScript.UpdatePanel(); // Update the panel to reflect the new material's textures
-                }
-            }
-        }
-
-        public void UpdatePanelSetup(GameObject panel, string slotName, Material material, GameObject currentModel)
-        {
-            var panelScript = panel.GetComponent<VariationTextureSlotsPanel>();
-            if (panelScript != null)
-            {
-                // Update the panel script with the current material and model
-                panelScript.currentModel = currentModel;
-                panelScript.currentMaterial = material;
-                panelScript.currentSlotName = slotName;
-                panelScript.UpdatePanel(); // Refresh the panel to show the correct texture slots
+                // Initialize or update the panel only if it's being opened
             }
         }
 

@@ -10,15 +10,16 @@ namespace doppelganger
 {
     public class VariationTextureSlotsPanel : MonoBehaviour
     {
-        private TextureScroller textureScroller;
-        private VariationBuilder variationBuilder;
+        public TextureScroller textureScroller;
+        public VariationBuilder variationBuilder;
 
+        public SkinnedMeshRenderer TargetRenderer { get; private set; }
         public GameObject slotPrefab;
         [SerializeField] private GameObject textureScrollerPanelPrefab;
         private GameObject currentPanel;
+        public GameObject currentModel;
         public Material currentMaterial;
         public string currentSlotName;
-        public GameObject currentModel; // This remains constant as per your new requirements
 
         private readonly string[] textureSlots = {
         "_msk", "_idx", "_gra", "_spc", "_clp", "_rgh", "_ocl", "_ems", "_dif_1", "_dif", "_nrm",
@@ -27,30 +28,26 @@ namespace doppelganger
 
         void Awake()
         {
-            textureScroller = FindObjectOfType<TextureScroller>();
             variationBuilder = FindObjectOfType<VariationBuilder>();
-
+            textureScroller = FindObjectOfType<TextureScroller>();
             if (textureScroller != null)
             {
-                // Ensure this matches the new method signature
-                textureScroller.TextureSelected += OnTextureSelected;
+                textureScroller.TextureSelected += (texture, renderer, material, slotName) => ApplyTextureChange(texture, slotName);
             }
         }
 
-        public void SetMaterial(Material material)
+        public void SetVariationBuilder(VariationBuilder builder)
         {
-            this.currentMaterial = material;
-            Debug.Log($"SetMaterial called with {material.name}");
-            UpdatePanel();
+            this.variationBuilder = builder;
         }
 
-
-        public void InitializePanel(GameObject model, Material material, string slotName)
+        public void SetMaterialModelAndRenderer(Material material, GameObject model, SkinnedMeshRenderer renderer, string slotName)
         {
-            this.currentModel = model;
             this.currentMaterial = material;
+            this.currentModel = model;
+            this.TargetRenderer = renderer;
             this.currentSlotName = slotName;
-            Debug.Log($"InitializePanel called with Model: {model.name}, Material: {material.name}, Slot: {slotName}");
+            Debug.Log($"Material, model, and renderer set. Material: {material.name}, Model: {model.name}, renderer: {renderer}, Slot Name: {slotName}");
             UpdatePanel();
         }
 
@@ -95,91 +92,49 @@ namespace doppelganger
             slotText.text = slotName;
             buttonText.text = texture ? texture.name : "None";
 
-            // Setup button listener
+            // Setup button listener to pass slotName along with current context
             Button textureButton = slotInstance.transform.Find("TextureButton").GetComponent<Button>();
             textureButton.onClick.RemoveAllListeners();
             textureButton.onClick.AddListener(() => {
-                this.currentSlotName = slotName;
                 OpenTextureSelection(slotName);
             });
         }
 
         private void OpenTextureSelection(string slotName)
         {
-            // Direct the TextureScroller to refresh textures based on the current slot's needs
+            Debug.Log($"OpenTextureSelection for slot {slotName} on material {currentMaterial.name}, Shader {currentMaterial.shader.name}");
             if (textureScroller != null)
             {
-                textureScroller.RefreshTextures(slotName);
+                // Pass the current renderer, material, and slot to texture scroller
+                textureScroller.PrepareForSelection(this, slotName);
             }
         }
 
-        private void OnTextureSelected(Texture2D texture, GameObject model, string slotName)
+        public void ApplyTextureChange(Texture2D texture, string slotName)
         {
-            this.currentSlotName = slotName;
-            ApplyTextureToMaterial(texture, slotName);
-        }
-
-        private void ApplyTextureToMaterial(Texture2D texture, string slotName)
-        {
-            Debug.Log($"Attempting to apply texture {texture.name} to slot {slotName} of material {currentMaterial?.name ?? "null"}.");
-            if (currentMaterial == null)
+            if (TargetRenderer != null && currentMaterial != null)
             {
-                Debug.LogError("currentMaterial is null. Ensure it's assigned before calling ApplyTextureToMaterial.");
-                return;
-            }
-            if (currentMaterial != null && currentMaterial.HasProperty(slotName))
-            {
-                Debug.Log($"Applying texture {texture.name} to material {currentMaterial.name} for slot {slotName}");
-
-                // Create a new instance of the material
-                Material materialInstance = new Material(currentMaterial);
-                Debug.Log($"Created new material instance {materialInstance.name} from {currentMaterial.name}.");
-                materialInstance.SetTexture(slotName, texture);
-                Debug.Log($"Set texture {texture.name} to slot {slotName} on material instance {materialInstance.name}.");
-
-                // Apply the material instance to the object
-                ApplyMaterialInstanceToModel(materialInstance);
-
-                Debug.Log($"Applied texture {texture.name} to {slotName}");
-
-                if (variationBuilder != null)
-                {
-                    variationBuilder.RecordTextureChange(slotName, texture, materialInstance, currentModel);
-                    Debug.Log($"Recorded texture change for slot {slotName}");
-                }
+                variationBuilder.ApplyTextureChange(TargetRenderer, currentMaterial, slotName, texture);
             }
             else
             {
-                Debug.LogWarning($"Material {currentMaterial?.name ?? "null"} does not have slot {slotName} or is null.");
+                Debug.LogError("Incomplete context for applying texture change.");
             }
         }
 
-        private void ApplyMaterialInstanceToModel(Material materialInstance)
+
+#if UNITY_EDITOR
+        private void LogShaderProperties(Material material)
         {
-            SkinnedMeshRenderer renderer = currentModel.GetComponentInChildren<SkinnedMeshRenderer>();
-            if (renderer != null)
+            Debug.Log($"Logging properties for shader: {material.shader.name}");
+            int propertyCount = UnityEditor.ShaderUtil.GetPropertyCount(material.shader);
+            for (int i = 0; i < propertyCount; i++)
             {
-                Debug.Log($"Applying material instance {materialInstance.name} to renderer on {currentModel.name}.");
-                // Assume you want to apply the material instance to the first material slot
-                Material[] materials = renderer.materials;
-                materials[0] = materialInstance;
-                renderer.materials = materials;
-
-                // Update the currentMaterial to the new instance
-                currentMaterial = materialInstance;
-            }
-            else
-            {
-                Debug.LogWarning($"Renderer not found on {currentModel?.name ?? "null"}.");
+                var propName = UnityEditor.ShaderUtil.GetPropertyName(material.shader, i);
+                var propType = UnityEditor.ShaderUtil.GetPropertyType(material.shader, i);
+                Debug.Log($"Property {i}: Name = {propName}, Type = {propType}");
             }
         }
-
-        void OnDestroy()
-        {
-            if (textureScroller != null)
-            {
-                textureScroller.TextureSelected -= OnTextureSelected; // Correctly unsubscribe
-            }
-        }
+#endif
     }
 }

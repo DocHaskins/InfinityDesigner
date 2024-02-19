@@ -20,10 +20,13 @@ namespace doppelganger
         public TMP_Dropdown imageTypeDropdown;
         public TMP_InputField filterInputField;
         private UnlimitedScrollUI.IUnlimitedScroller unlimitedScroller;
-        public string currentSlotName;
+        private VariationTextureSlotsPanel currentSelectionPanel;
+        private string currentSlotForSelection;
         public GameObject currentModel;
+        private SkinnedMeshRenderer currentRenderer;
+        private Material currentMaterialForSelection;
         public event Action<Texture2D> onTextureSelected;
-        public event Action<Texture2D, GameObject, string> TextureSelected;
+        public event Action<Texture2D, SkinnedMeshRenderer, Material, string> TextureSelected;
 
         private void Start()
         {
@@ -40,6 +43,14 @@ namespace doppelganger
             imageTypeDropdown.onValueChanged.AddListener(delegate {
                 DropdownIndexChanged(imageTypeDropdown);
             });
+        }
+
+        public void PrepareForSelection(VariationTextureSlotsPanel selectionPanel, string slotName)
+        {
+            currentSelectionPanel = selectionPanel;
+            currentSlotForSelection = slotName;
+            Debug.Log($"Preparing for texture selection for selectionPanel {selectionPanel} on slotName {slotName}");
+            SetSearchTermFromOtherUI(slotName);
         }
 
         public void DropdownIndexChanged(TMP_Dropdown dropdown)
@@ -123,7 +134,10 @@ namespace doppelganger
 
         private void SelectTexture(Texture2D texture)
         {
-            TextureSelected?.Invoke(texture, currentModel, currentSlotName);
+            if (currentSelectionPanel != null)
+            {
+                currentSelectionPanel.ApplyTextureChange(texture, currentSlotForSelection);
+            }
         }
 
         public void RefreshTexturesWithAdditionalFilter()

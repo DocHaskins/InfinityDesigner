@@ -5,6 +5,9 @@ namespace doppelganger
 {
     public class SecondaryPanelController : MonoBehaviour
     {
+        public CharacterBuilder_InterfaceManager interfaceManager;
+        public VariationBuilder variationBuilder;
+        
         public Animator animator;
         public bool isPresets = false;
         public bool isSaves = false;
@@ -39,6 +42,7 @@ namespace doppelganger
         {
             UpdateState(ref isVariations, ref isPresets, ref isSaves);
             animator.SetBool("isVariations", isVariations);
+            variationBuilder.UpdateModelInfoPanel(interfaceManager.currentSlider);
         }
 
         // Helper method to update state bools and ensure only one is true at a time

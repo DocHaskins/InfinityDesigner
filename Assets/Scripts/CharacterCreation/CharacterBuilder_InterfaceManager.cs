@@ -21,6 +21,7 @@ namespace doppelganger
         [Header("Managers")]
         public CharacterBuilder characterBuilder;
         public AutoTargetCinemachineCamera autoTargetCinemachineCamera;
+        public SecondaryPanelController secondaryPanelController;
         public VariationBuilder variationBuilder;
         public SliderKeyboardControl sliderKeyboardControl;
         public FilterMapping filterMapping;
@@ -655,14 +656,21 @@ namespace doppelganger
             {
                 characterBuilder.RemoveModelAndVariationSlider(slotName);
                 selectedVariationIndexes.Remove(slotName);
-                Debug.Log($"OnSliderValueChanged: Slot '{slotName}' removed. Updated selectedVariationIndexes: {string.Join(", ", selectedVariationIndexes.Keys)}");
-                variationBuilder.UpdateModelInfoPanel(null);
+
+                if (secondaryPanelController.isVariations)
+                {
+                    variationBuilder.UpdateModelInfoPanel(null);
+                }
             }
             else
             {
                 int modelIndex = Mathf.Clamp((int)(value - 1), 0, int.MaxValue);
                 characterBuilder.LoadModelAndCreateVariationSlider(slotName, modelIndex);
-                variationBuilder.UpdateModelInfoPanel(currentSlider);
+
+                if (secondaryPanelController.isVariations)
+                {
+                    variationBuilder.UpdateModelInfoPanel(currentSlider);
+                }
             }
         }
 
@@ -751,7 +759,6 @@ namespace doppelganger
             }
             string currentSlider = slotName;
             Debug.Log($"OnVariationSliderValueChanged: currentSlider {currentSlider}");
-            variationBuilder.UpdateModelInfoPanel(currentSlider);
             selectedVariationIndexes[slotName] = Mathf.Clamp((int)value - 1, 0, int.MaxValue);
 
             // Debug log to show the actual stored index for each slot
