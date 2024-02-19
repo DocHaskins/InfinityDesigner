@@ -36,67 +36,63 @@ namespace doppelganger
                 Variation newVariation = new Variation
                 {
                     id = nextVariationId.ToString(),
-                    materialsData = variationOutput.materialsData, // Assuming materialsData is correct and should not change
+                    materialsData = variationOutput.materialsData,
                     materialsResources = new List<MaterialResource>()
                 };
 
-                // Correctly handle material and texture changes
-                if (variationBuilder.modelSpecificChanges.TryGetValue(currentlyLoadedModelName, out ModelChange materialChangesForModel))
+                // Log all current modelSpecificChanges
+                foreach (var kvp in variationBuilder.modelSpecificChanges)
                 {
-                    foreach (var materialData in variationOutput.materialsData)
+                    string modelChangesJson = JsonConvert.SerializeObject(kvp.Value, Formatting.Indented);
+                    Debug.Log($"ModelSpecificChanges for Key: {kvp.Key}, Detailed Changes: \n{modelChangesJson}");
+                }
+
+                foreach (var materialData in variationOutput.materialsData)
+                {
+                    MaterialResource materialResource = new MaterialResource
                     {
-                        Resource newResource = new Resource
+                        number = materialData.number,
+                        resources = new List<Resource>()
+                    };
+
+                    // Check if there's a change for the current material slot
+                    if (variationBuilder.modelSpecificChanges.TryGetValue(currentlyLoadedModelName, out ModelChange materialChanges) &&
+                        materialChanges.MaterialsByRenderer.TryGetValue(materialData.number - 1, out MaterialChange materialChange)) // Adjusting for zero-based indexing
+                    {
+                        // Ensure .mat extension is added if missing
+                        string materialNameWithExtension = materialChange.NewName.EndsWith(".mat") ? materialChange.NewName : $"{materialChange.NewName}.mat";
+
+                        Resource resource = new Resource
                         {
-                            name = materialData.name, // Default name
+                            name = materialNameWithExtension,
                             selected = true,
                             layoutId = 4,
                             loadFlags = "S",
-                            rttiValues = new List<RttiValue>() // Initialize with empty list for textures
+                            rttiValues = materialChange.TextureChanges
                         };
 
-                        // If there's a material change for this slot, update the resource name and textures
-                        if (materialChangesForModel.Materials.TryGetValue(materialData.number, out MaterialChange materialChange))
-                        {
-                            newResource.name = materialChange.MaterialName; // Update name if changed
-                            newResource.rttiValues = materialChange.TextureChanges; // Include texture changes
-                        }
-
-                        // Add this resource to the materialsResources list for the new variation
-                        MaterialResource materialResource = new MaterialResource
-                        {
-                            number = materialData.number,
-                            resources = new List<Resource> { newResource }
-                        };
-
-                        newVariation.materialsResources.Add(materialResource);
+                        materialResource.resources.Add(resource);
                     }
-                }
-                else
-                {
-                    // No material changes detected, populate materialsResources with default data
-                    foreach (var materialData in variationOutput.materialsData)
+                    else
                     {
-                        newVariation.materialsResources.Add(new MaterialResource
+                        // Fallback to using the original material name from materialsData
+                        Resource fallbackResource = new Resource
                         {
-                            number = materialData.number,
-                            resources = new List<Resource>
-                        {
-                            new Resource
-                            {
-                                name = materialData.name,
-                                selected = true,
-                                layoutId = 4,
-                                loadFlags = "S",
-                                rttiValues = new List<RttiValue>() // Initialize without changes
-                            }
-                        }
-                        });
+                            name = materialData.name,
+                            selected = true,
+                            layoutId = 4,
+                            loadFlags = "S",
+                            rttiValues = new List<RttiValue>() // No changes
+                        };
+
+                        materialResource.resources.Add(fallbackResource);
                     }
+
+                    newVariation.materialsResources.Add(materialResource);
                 }
 
                 variationOutput.variations.Add(newVariation);
 
-                // Use Newtonsoft.Json for serializing the updated data
                 string newJsonData = JsonConvert.SerializeObject(variationOutput, Formatting.Indented);
                 File.WriteAllText(materialJsonFilePath, newJsonData);
 

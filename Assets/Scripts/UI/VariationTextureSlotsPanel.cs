@@ -128,7 +128,7 @@ namespace doppelganger
                 if (foundMaterial != null)
                 {
                     // Delegate the task to VariationBuilder, providing the found material instance
-                    variationBuilder.ApplyTextureChange(TargetRenderer, foundMaterial, slotName, texture);
+                    variationBuilder.ApplyTextureChange(TargetRenderer, slotName, texture);
 
                     // Refresh the currentMaterial reference to ensure it points to the updated instance
                     currentMaterial = foundMaterial;

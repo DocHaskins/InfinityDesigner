@@ -29,12 +29,13 @@ public class ModelData
 
     public class ModelChange
     {
-        public Dictionary<int, MaterialChange> Materials { get; set; } = new Dictionary<int, MaterialChange>();
+        public Dictionary<int, MaterialChange> MaterialsByRenderer { get; set; } = new Dictionary<int, MaterialChange>();
     }
 
     public class MaterialChange
     {
-        public string MaterialName { get; set; }
+        public string OriginalName { get; set; }
+        public string NewName { get; set; }
         public List<RttiValue> TextureChanges { get; set; } = new List<RttiValue>();
     }
 

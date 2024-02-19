@@ -535,18 +535,6 @@ namespace doppelganger
                         var renderer = skinnedMeshRenderers[rendererIndex];
                         ApplyMaterialToRenderer(renderer, resource.name, modelInstance, resource.rttiValues);
 
-                        // Record the material change
-                        variationBuilder.RecordMaterialChange(modelInstance, materialResource.number, resource.name);
-                        Debug.Log($"Recorded Material change '{resource.name}' materialResource.number '{materialResource.number}' in model '{modelInstance.name}'");
-
-                        // Record texture changes
-                        foreach (var rttiValue in resource.rttiValues)
-                        {
-                            // Assuming you have a way to resolve material from renderer for recording texture changes
-                            variationBuilder.RecordTextureChange(resource.name, null, renderer.sharedMaterial, modelInstance);
-                            Debug.Log($"Recorded Texture change '{resource.name}' applied to renderer '{renderer.sharedMaterial}' in model '{modelInstance.name}'");
-                        }
-
                         // Debug loaded material and applied changes
                         Debug.Log($"Loaded material '{resource.name}' applied to renderer '{renderer.name}' in model '{modelInstance.name}'");
                         Debug.Log($"Changes applied to material '{resource.name}': {string.Join(", ", resource.rttiValues)}");
@@ -734,7 +722,6 @@ namespace doppelganger
                 {
                     Debug.Log($"Applying texture to shader property: {shaderProperty}. RTTI Value Name: {rttiValueName}, Texture Name: {textureName}.");
                     material.SetTexture(shaderProperty, texture);
-                    variationBuilder.RecordTextureChange(shaderProperty, texture, material, modelInstance);
                     ApplyAdditionalSettings(material, rttiValueName, texture);
                 }
                 else

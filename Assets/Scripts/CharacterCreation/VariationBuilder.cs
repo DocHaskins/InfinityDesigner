@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.UI;
 using static ModelData;
+using static TreeEditor.TextureAtlas;
 
 namespace doppelganger
 {
@@ -295,125 +296,137 @@ namespace doppelganger
             });
         }
 
-        void ApplyMaterialDirectly(SkinnedMeshRenderer renderer, string materialName)
+        public int GetRendererIndexByName(string rendererName)
         {
-            Material newMaterial = materialName.Equals("null.mat")
-                ? Resources.Load<Material>("Materials/null")
-                : LoadMaterialByName(materialName);
-
-            if (newMaterial == null)
-            {
-                Debug.LogError($"Material '{materialName}' not found.");
-                return;
-            }
-
-            // Since only one material slot exists, directly set to index 0
-            Material[] materials = renderer.sharedMaterials;
-            if (materials.Length > 0)
-            {
-                materials[0] = newMaterial;
-                renderer.sharedMaterials = materials;
-                Debug.Log($"Applied '{materialName}' to slot '0' of '{renderer.gameObject.name}'.");
-            }
-            else
-            {
-                Debug.LogError($"Renderer '{renderer.name}' does not have any material slots.");
-            }
-            if (rendererPanelMap.TryGetValue(renderer, out VariationTextureSlotsPanel panelScript))
-            {
-                panelScript.RefreshMaterial(renderer.sharedMaterials[0]);
-            }
-        }
-
-        public void ApplyTextureChange(SkinnedMeshRenderer renderer, Material material, string slotName, Texture2D texture)
-        {
-            int materialIndex = Array.IndexOf(renderer.sharedMaterials, material);
-            if (materialIndex != -1)
-            {
-                Material[] materials = renderer.sharedMaterials;
-                Material clonedMaterial = new Material(material);
-                clonedMaterial.SetTexture(slotName, texture);
-
-                materials[materialIndex] = clonedMaterial;
-                renderer.sharedMaterials = materials;
-                Debug.Log($"Successfully applied texture {texture.name} to slot {slotName} on {renderer.gameObject.name}.");
-            }
-            else
-            {
-                Debug.LogError($"Material {material.name} not found on renderer {renderer.gameObject.name}.");
-            }
-        }
-
-        public void RecordMaterialChange(GameObject model, int slotNumber, string newMaterialName)
-        {
-            string modelName = model.name.Replace("(Clone)", "");
-            if (!modelSpecificChanges.ContainsKey(modelName))
-            {
-                modelSpecificChanges[modelName] = new ModelChange();
-            }
-
-            if (!modelSpecificChanges[modelName].Materials.ContainsKey(slotNumber))
-            {
-                modelSpecificChanges[modelName].Materials[slotNumber] = new MaterialChange { MaterialName = newMaterialName };
-            }
-            else
-            {
-                // If the slot already exists, update the material name (assuming material changes are relevant).
-                modelSpecificChanges[modelName].Materials[slotNumber].MaterialName = newMaterialName;
-            }
-
-            Debug.Log($"Material Change Recorded: Model: {modelName}, Slot: {slotNumber}, Material: {newMaterialName}");
-        }
-
-        public void RecordTextureChange(string slotName, Texture2D texture, Material material, GameObject model)
-        {
-            string textureName = texture != null ? texture.name : "None";
-            string modelName = model.name.Replace("(Clone)", "");
-            string materialName = material.name;
-            int slotNumber = GetSlotNumberFromMaterial(material, model); // Implement this method based on your slot management logic
-
-            // Ensure the model has an entry in modelSpecificChanges
-            if (!modelSpecificChanges.ContainsKey(modelName))
-            {
-                modelSpecificChanges[modelName] = new ModelChange();
-            }
-
-            var modelChange = modelSpecificChanges[modelName];
-
-            // Ensure the material slot has an entry in the ModelChange
-            if (!modelChange.Materials.ContainsKey(slotNumber))
-            {
-                modelChange.Materials[slotNumber] = new MaterialChange { MaterialName = materialName };
-            }
-
-            var materialChange = modelChange.Materials[slotNumber];
-
-            // Add or update the texture change in the MaterialChange
-            var existingTextureChange = materialChange.TextureChanges.FirstOrDefault(tc => tc.name == slotName);
-            if (existingTextureChange != null)
-            {
-                existingTextureChange.val_str = textureName + ".png";
-            }
-            else
-            {
-                materialChange.TextureChanges.Add(new RttiValue { name = slotName, type = 7, val_str = textureName + ".png" });
-            }
-
-            Debug.Log($"Recorded texture change for material '{materialName}' on model '{modelName}': {slotName} = {textureName}");
-        }
-        private int GetSlotNumberFromMaterial(Material material, GameObject model)
-        {
-            SkinnedMeshRenderer[] renderers = model.GetComponentsInChildren<SkinnedMeshRenderer>();
+            SkinnedMeshRenderer[] renderers = currentModel.GetComponentsInChildren<SkinnedMeshRenderer>(true);
             for (int i = 0; i < renderers.Length; i++)
             {
-                if (renderers[i].sharedMaterials.Contains(material))
+                if (renderers[i].name.Equals(rendererName, StringComparison.OrdinalIgnoreCase))
                 {
-                    return i + 1;
+                    // Return the index of the found renderer
+                    return i;
                 }
             }
+            // Return -1 or handle this scenario as needed if the renderer was not found
             return -1;
         }
 
+        void ApplyMaterialDirectly(SkinnedMeshRenderer renderer, string newMaterialName)
+        {
+            if (renderer.sharedMaterials.Length == 0)
+            {
+                Debug.LogError("Renderer does not have any materials.");
+                return;
+            }
+
+            string originalName = renderer.sharedMaterials[0].name;
+            Material newMaterial = newMaterialName.Equals("null.mat")
+                ? Resources.Load<Material>("Materials/null")
+                : LoadMaterialByName(newMaterialName);
+
+            if (newMaterial == null)
+            {
+                Debug.LogError($"Material '{newMaterialName}' not found.");
+                return;
+            }
+
+            // Get the index of the renderer within the current model
+            int rendererIndex = GetRendererIndexByName(renderer.name);
+            if (rendererIndex == -1)
+            {
+                Debug.LogError($"Renderer '{renderer.name}' not found in the current model.");
+                return;
+            }
+
+            // Apply the new material
+            Material[] materials = renderer.sharedMaterials;
+            materials[0] = newMaterial;
+            renderer.sharedMaterials = materials;
+            Debug.Log($"Applied '{newMaterialName}' to slot '0' of '{renderer.gameObject.name}'.");
+
+            // Adjusted to pass renderer index to the recording method
+            string modelName = currentModelName.Replace("(Clone)", "");
+            RecordMaterialChange(modelName, originalName, newMaterialName, rendererIndex);
+
+            if (rendererPanelMap.TryGetValue(renderer, out VariationTextureSlotsPanel panelScript))
+            {
+                panelScript.RefreshMaterial(newMaterial);
+            }
+        }
+
+        public void ApplyTextureChange(SkinnedMeshRenderer renderer, string slotName, Texture2D texture)
+        {
+            int rendererIndex = GetRendererIndexByName(renderer.name);
+            if (rendererIndex == -1)
+            {
+                Debug.LogError($"Renderer '{renderer.name}' not found in the current model.");
+                return;
+            }
+
+            string modelName = currentModelName.Replace("(Clone)", "");
+            string materialName = renderer.sharedMaterials[0].name; // Assuming the material to change is always at index 0
+
+            // Apply the texture change
+            Material[] materials = renderer.sharedMaterials;
+            Material clonedMaterial = new Material(materials[0]);
+            clonedMaterial.SetTexture(slotName, texture);
+            materials[0] = clonedMaterial;
+            renderer.sharedMaterials = materials;
+
+            Debug.Log($"Successfully applied texture {texture.name} to slot {slotName} on {renderer.gameObject.name}.");
+
+            // Record the texture change along with any material change
+            RecordTextureChange(modelName, materialName, slotName, texture.name, rendererIndex);
+        }
+
+        void RecordMaterialChange(string modelName, string originalMaterialName, string newMaterialName, int rendererIndex)
+        {
+            if (!modelSpecificChanges.TryGetValue(modelName, out ModelChange modelChange))
+            {
+                modelChange = new ModelChange();
+                modelSpecificChanges[modelName] = modelChange;
+            }
+
+            if (!modelChange.MaterialsByRenderer.ContainsKey(rendererIndex))
+            {
+                modelChange.MaterialsByRenderer[rendererIndex] = new MaterialChange
+                {
+                    OriginalName = originalMaterialName,
+                    NewName = newMaterialName,
+                    TextureChanges = new List<RttiValue>()
+                };
+            }
+            else
+            {
+                // If there's already a material change recorded, update the NewName and keep texture changes
+                modelChange.MaterialsByRenderer[rendererIndex].NewName = newMaterialName;
+            }
+
+            Debug.Log($"Material change recorded for model: {modelName}, renderer index: {rendererIndex}, from: {originalMaterialName} to: {newMaterialName}");
+        }
+
+        void RecordTextureChange(string modelName, string materialName, string slotName, string textureName, int rendererIndex)
+        {
+            if (!modelSpecificChanges.TryGetValue(modelName, out var modelChange))
+            {
+                modelChange = new ModelChange();
+                modelSpecificChanges[modelName] = modelChange;
+            }
+
+            if (!modelChange.MaterialsByRenderer.ContainsKey(rendererIndex))
+            {
+                Debug.LogError($"Attempting to record a texture change for a non-existing material change at renderer index {rendererIndex}.");
+                return;
+            }
+
+            string modifiedSlotName = slotName.Replace("_", "");
+            string finalSlotName = modifiedSlotName + "_0_tex";
+            // Add the texture change to this material's list of texture changes
+            var materialChange = modelChange.MaterialsByRenderer[rendererIndex];
+            materialChange.TextureChanges.Add(new RttiValue { name = finalSlotName, val_str = textureName + ".png" });
+
+            Debug.Log($"Texture change recorded for model: {modelName}, finalSlotName {finalSlotName}, renderer index: {rendererIndex}, material: {materialName}, texture: {textureName}");
+        }
 
         // Adjust LoadMaterialByName to ensure it correctly handles material loading
         Material LoadMaterialByName(string materialName)
