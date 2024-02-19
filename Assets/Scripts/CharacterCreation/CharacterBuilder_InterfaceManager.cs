@@ -752,7 +752,6 @@ namespace doppelganger
             string currentSlider = slotName;
             Debug.Log($"OnVariationSliderValueChanged: currentSlider {currentSlider}");
             variationBuilder.UpdateModelInfoPanel(currentSlider);
-            variationBuilder.UpdateMaterialDropdowns(slotName);
             selectedVariationIndexes[slotName] = Mathf.Clamp((int)value - 1, 0, int.MaxValue);
 
             // Debug log to show the actual stored index for each slot

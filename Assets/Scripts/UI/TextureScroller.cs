@@ -20,8 +20,8 @@ namespace doppelganger
         public TMP_Dropdown imageTypeDropdown;
         public TMP_InputField filterInputField;
         private UnlimitedScrollUI.IUnlimitedScroller unlimitedScroller;
-        public GameObject currentModel;
         public string currentSlotName;
+        public GameObject currentModel;
         public event Action<Texture2D> onTextureSelected;
         public event Action<Texture2D, GameObject, string> TextureSelected;
 
@@ -46,19 +46,7 @@ namespace doppelganger
         {
             searchTerm = dropdown.options[dropdown.value].text.Trim().ToLower();
             additionalFilterTerm = filterInputField.text.Trim().ToLower();
-            RefreshTextures(searchTerm);
-        }
-
-        public void UpdateDropdownSelection(string searchTerm)
-        {
-            for (int i = 0; i < imageTypeDropdown.options.Count; i++)
-            {
-                if (imageTypeDropdown.options[i].text.Trim().ToLower() == searchTerm)
-                {
-                    imageTypeDropdown.value = i;
-                    break;
-                }
-            }
+            RefreshTextures(searchTerm + additionalFilterTerm);
         }
 
         public void LoadTextures(string filter)
@@ -79,10 +67,28 @@ namespace doppelganger
             GenerateTextures();
         }
 
+        public void UpdateDropdownSelection(string searchTerm)
+        {
+            for (int i = 0; i < imageTypeDropdown.options.Count; i++)
+            {
+                if (imageTypeDropdown.options[i].text.Trim().ToLower() == searchTerm)
+                {
+                    imageTypeDropdown.value = i;
+                    break;
+                }
+            }
+        }
+
+        public void TriggerGenerateTextures()
+        {
+            if (!autoGenerate)
+            {
+                StartCoroutine(DelayGenerate());
+            }
+        }
+
         private void GenerateTextures()
         {
-            //ClearExistingCells();
-
             unlimitedScroller.Generate(cellPrefab, allTextures.Count, (index, iCell) =>
             {
                 var cell = iCell as UnlimitedScrollUI.RegularCell; // Assuming RegularCell is your cell class
@@ -115,31 +121,11 @@ namespace doppelganger
             return thumbnail;
         }
 
-        public void SetCurrentSlotName(string slotName)
-        {
-            currentSlotName = slotName;
-            Debug.Log($"TextureScroller currentSlotName set to: {currentSlotName}");
-        }
-
         private void SelectTexture(Texture2D texture)
         {
-            Debug.Log($"SelectTexture: currentModel is {(currentModel == null ? "null" : currentModel.name)}, slotName is {currentSlotName}");
             TextureSelected?.Invoke(texture, currentModel, currentSlotName);
         }
 
-        // Optionally, add a public method to trigger texture generation manually
-        public void TriggerGenerateTextures()
-        {
-            if (!autoGenerate)
-            {
-                StartCoroutine(DelayGenerate());
-            }
-        }
-
-        public void ClearOnTextureSelectedSubscriptions()
-        {
-            onTextureSelected = null;
-        }
         public void RefreshTexturesWithAdditionalFilter()
         {
             // Update the additionalFilterTerm from the input field
@@ -148,6 +134,20 @@ namespace doppelganger
             // Now clear existing cells and load textures again with the new filter
             ClearExistingCells();
             LoadTextures(searchTerm); // This method now inherently uses both searchTerm and additionalFilterTerm
+        }
+
+        private void ClearExistingCells()
+        {
+            allTextures.Clear();
+
+            if (unlimitedScroller != null)
+            {
+                unlimitedScroller.Clear();
+            }
+            else
+            {
+                Debug.LogError("unlimitedScroller is null.");
+            }
         }
 
         public void SetSearchTermFromOtherUI(string newSearchTerm)
@@ -167,20 +167,6 @@ namespace doppelganger
 
             // Load and display new textures using both the searchTerm and additionalFilterTerm
             LoadTextures(searchTerm);
-        }
-
-        private void ClearExistingCells()
-        {
-            allTextures.Clear();
-
-            if (unlimitedScroller != null)
-            {
-                unlimitedScroller.Clear();
-            }
-            else
-            {
-                Debug.LogError("unlimitedScroller is null.");
-            }
         }
     }
 }

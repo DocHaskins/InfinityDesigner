@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.UI;
 
 namespace doppelganger
@@ -17,36 +18,56 @@ namespace doppelganger
 
         public void TogglePanel(string slotName, Material material, GameObject currentModel)
         {
-            // Ensure panelGameObject is not null before attempting to toggle its visibility
-            if (panelGameObject != null)
+            bool isPanelActiveBeforeToggle = panelGameObject.activeSelf;
+
+            if (!isPanelActiveBeforeToggle)
             {
-                bool panelIsActive = panelGameObject.activeSelf;
-                panelGameObject.SetActive(!panelIsActive);
-            }
-            else
-            {
-                Debug.LogError("panelGameObject is null. Ensure it's correctly assigned before calling TogglePanel.");
+                // If the panel is about to be opened, set the material first
+                var panelScript = panelGameObject.GetComponent<VariationTextureSlotsPanel>();
+                if (panelScript != null)
+                {
+                    panelScript.SetMaterial(material);
+                    panelScript.currentModel = currentModel;
+                    panelScript.currentSlotName = slotName;
+                    panelScript.UpdatePanel();
+                }
             }
 
-            // If additional logic for updating panel setup is needed, ensure it's safely executed
-            if (panelGameObject != null && panelGameObject.activeSelf)
+            // Toggle the panel's visibility after ensuring the material is set
+            panelGameObject.SetActive(!isPanelActiveBeforeToggle);
+
+            if (isPanelActiveBeforeToggle)
             {
-                UpdatePanelSetup(panelGameObject, slotName, material, currentModel);
+                // Additional actions if needed when the panel is being closed
+            }
+        }
+
+        public void InitializePanel(GameObject model, Material material, string slotName)
+        {
+            if (panelGameObject != null)
+            {
+                var panelScript = panelGameObject.GetComponent<VariationTextureSlotsPanel>();
+                if (panelScript != null)
+                {
+                    // Direct assignment of the material to the panel script
+                    panelScript.currentModel = model;
+                    panelScript.currentMaterial = material;
+                    panelScript.currentSlotName = slotName;
+                    panelScript.UpdatePanel(); // Update the panel to reflect the new material's textures
+                }
             }
         }
 
         public void UpdatePanelSetup(GameObject panel, string slotName, Material material, GameObject currentModel)
         {
-            if (panel.activeSelf)
+            var panelScript = panel.GetComponent<VariationTextureSlotsPanel>();
+            if (panelScript != null)
             {
-                var panelScript = panel.GetComponent<VariationTextureSlotsPanel>();
-                if (panelScript != null)
-                {
-                    panelScript.currentModel = currentModel;
-                    panelScript.currentSlotName = slotName;
-                    panelScript.currentMaterial = material;
-                    panelScript.UpdatePanel();
-                }
+                // Update the panel script with the current material and model
+                panelScript.currentModel = currentModel;
+                panelScript.currentMaterial = material;
+                panelScript.currentSlotName = slotName;
+                panelScript.UpdatePanel(); // Refresh the panel to show the correct texture slots
             }
         }
 
