@@ -725,36 +725,44 @@ namespace doppelganger
         {
             VariationBuilder variationBuilder = FindObjectOfType<VariationBuilder>();
             List<ModelData.MaterialResource> materialsResources = new List<ModelData.MaterialResource>();
+
+            string modelName = model.name.Replace("(Clone)", "");
             var renderers = model.GetComponentsInChildren<SkinnedMeshRenderer>();
 
-            int materialNumber = 1; // Start numbering from 1
-
-            foreach (var renderer in renderers)
+            if (!variationBuilder.modelSpecificChanges.TryGetValue(modelName, out ModelChange modelChanges))
             {
+                Debug.LogWarning($"No specific changes found for model '{modelName}'. Using default materials.");
+                // Optionally handle the case where no changes are recorded for this model
+            }
+
+            for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+            {
+                var renderer = renderers[rendererIndex];
                 foreach (var material in renderer.sharedMaterials)
                 {
-                    string materialName = material.name + (material.name.EndsWith(".mat") ? "" : ".mat");
+                    // Construct the default material name, ensuring the .mat extension
+                    string materialNameWithExtension = material.name + (material.name.EndsWith(".mat") ? "" : ".mat");
                     var resource = new ModelData.Resource
                     {
-                        name = materialName,
-                        // Initialize rttiValues with an empty list to avoid null references
-                        rttiValues = new List<RttiValue>()
+                        name = materialNameWithExtension,
+                        rttiValues = new List<RttiValue>() // Initialize with an empty list to avoid null references
                     };
 
-                    // Check if there are any changes recorded for this material
-                    if (variationBuilder.materialChanges.TryGetValue(materialName.Replace(".mat", ""), out List<RttiValue> changes))
+                    // Adjust the resource based on recorded changes
+                    if (modelChanges != null && modelChanges.MaterialsByRenderer.TryGetValue(rendererIndex, out MaterialChange materialChange))
                     {
-                        // If so, filter for texture changes and add them to rttiValues
-                        resource.rttiValues = changes.Where(change => change.name.Contains("_tex")).ToList();
+                        // Update the resource name if there's a new name
+                        resource.name = materialChange.NewName.EndsWith(".mat") ? materialChange.NewName : $"{materialChange.NewName}.mat";
+                        // Include any texture changes
+                        resource.rttiValues = materialChange.TextureChanges;
                     }
 
+                    // Create a material resource for this renderer/material
                     materialsResources.Add(new ModelData.MaterialResource
                     {
-                        number = materialNumber,
+                        number = rendererIndex + 1, // Assuming numbering starts from 1 for materials
                         resources = new List<ModelData.Resource> { resource }
                     });
-
-                    materialNumber++;
                 }
             }
 

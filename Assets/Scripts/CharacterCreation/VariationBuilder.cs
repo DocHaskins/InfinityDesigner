@@ -175,6 +175,7 @@ namespace doppelganger
             {
                 Material currentMaterial = renderer.sharedMaterials[0]; // Assuming each renderer has only one material slot (index 0)
                 GameObject dropdownGameObject = Instantiate(variationMaterialDropdownPrefab, materialSpawn);
+                allDropdowns.Add(dropdownGameObject);
                 TMP_Dropdown tmpDropdown = dropdownGameObject.GetComponentInChildren<TMP_Dropdown>();
                 SetupDropdownWithMaterials(tmpDropdown, renderer, currentMaterial.name, 0, slotName); // Using 0 for materialIndex
 
@@ -216,6 +217,7 @@ namespace doppelganger
                     {
                         // The TogglePanel method now handles initializing or updating the panel as needed
                         toggleScript.TogglePanel(slotName, selectedMaterial, renderer);
+                        toggleScript.ToggleOtherDropdowns(!panelGameObject.activeSelf);
                     }
                 });
 
@@ -421,11 +423,24 @@ namespace doppelganger
 
             string modifiedSlotName = slotName.Replace("_", "");
             string finalSlotName = modifiedSlotName + "_0_tex";
-            // Add the texture change to this material's list of texture changes
-            var materialChange = modelChange.MaterialsByRenderer[rendererIndex];
-            materialChange.TextureChanges.Add(new RttiValue { name = finalSlotName, val_str = textureName + ".png" });
 
-            Debug.Log($"Texture change recorded for model: {modelName}, finalSlotName {finalSlotName}, renderer index: {rendererIndex}, material: {materialName}, texture: {textureName}");
+            var materialChange = modelChange.MaterialsByRenderer[rendererIndex];
+
+            // Check if a change for this slot already exists
+            var existingChange = materialChange.TextureChanges.FirstOrDefault(tc => tc.name.Equals(finalSlotName, StringComparison.OrdinalIgnoreCase));
+
+            if (existingChange != null)
+            {
+                // Update existing entry
+                existingChange.val_str = textureName + ".png";
+                Debug.Log($"Updated texture change for model: {modelName}, slot: {finalSlotName}, renderer index: {rendererIndex}, material: {materialName}, to texture: {textureName}");
+            }
+            else
+            {
+                // Add new texture change
+                materialChange.TextureChanges.Add(new RttiValue { name = finalSlotName, val_str = textureName + ".png" });
+                Debug.Log($"Recorded new texture change for model: {modelName}, slot: {finalSlotName}, renderer index: {rendererIndex}, material: {materialName}, texture: {textureName}");
+            }
         }
 
         // Adjust LoadMaterialByName to ensure it correctly handles material loading

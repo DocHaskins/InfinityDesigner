@@ -16,13 +16,15 @@ namespace doppelganger
 
         public void TogglePanel(string slotName, Material material, SkinnedMeshRenderer renderer)
         {
-            // Toggle the panel's visibility
-            panelGameObject.SetActive(!panelGameObject.activeSelf);
+            bool isPanelActiveBeforeToggle = panelGameObject.activeSelf;
 
-            if (panelGameObject.activeSelf)
+            if (!isPanelActiveBeforeToggle)
             {
-                // Initialize or update the panel only if it's being opened
+
             }
+
+            // Toggle the panel's visibility after ensuring the material is set
+            panelGameObject.SetActive(!isPanelActiveBeforeToggle);
         }
 
         public void ToggleOtherDropdowns(bool enable)
