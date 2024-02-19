@@ -20,7 +20,7 @@ namespace doppelganger
         public TMP_Dropdown imageTypeDropdown;
         public TMP_InputField filterInputField;
         private UnlimitedScrollUI.IUnlimitedScroller unlimitedScroller;
-        private VariationTextureSlotsPanel currentSelectionPanel;
+        public VariationTextureSlotsPanel currentSelectionPanel;
         private string currentSlotForSelection;
         public GameObject currentModel;
         private SkinnedMeshRenderer currentRenderer;
@@ -134,9 +134,13 @@ namespace doppelganger
 
         private void SelectTexture(Texture2D texture)
         {
-            if (currentSelectionPanel != null)
+            if (currentSelectionPanel != null && !string.IsNullOrWhiteSpace(currentSlotForSelection))
             {
-                currentSelectionPanel.ApplyTextureChange(texture, currentSlotForSelection);
+                currentSelectionPanel.GetTextureChange(texture, currentSlotForSelection);
+            }
+            else
+            {
+                Debug.LogError("Slot selection lost or not set.");
             }
         }
 

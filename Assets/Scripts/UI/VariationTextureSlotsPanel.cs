@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering.HighDefinition;
@@ -32,7 +34,7 @@ namespace doppelganger
             textureScroller = FindObjectOfType<TextureScroller>();
             if (textureScroller != null)
             {
-                textureScroller.TextureSelected += (texture, renderer, material, slotName) => ApplyTextureChange(texture, slotName);
+                textureScroller.TextureSelected += (texture, renderer, material, slotName) => GetTextureChange(texture, slotName);
             }
         }
 
@@ -41,13 +43,18 @@ namespace doppelganger
             this.variationBuilder = builder;
         }
 
+        public void RefreshMaterial(Material updatedMaterial)
+        {
+            this.currentMaterial = updatedMaterial;
+        }
+
         public void SetMaterialModelAndRenderer(Material material, GameObject model, SkinnedMeshRenderer renderer, string slotName)
         {
-            this.currentMaterial = material;
+            this.currentMaterial = renderer.sharedMaterials.FirstOrDefault(m => m.name == material.name) ?? material;
             this.currentModel = model;
             this.TargetRenderer = renderer;
             this.currentSlotName = slotName;
-            Debug.Log($"Material, model, and renderer set. Material: {material.name}, Model: {model.name}, renderer: {renderer}, Slot Name: {slotName}");
+            variationBuilder.RegisterPanelScript(renderer, this); // Register this panel script
             UpdatePanel();
         }
 
@@ -103,18 +110,35 @@ namespace doppelganger
         private void OpenTextureSelection(string slotName)
         {
             Debug.Log($"OpenTextureSelection for slot {slotName} on material {currentMaterial.name}, Shader {currentMaterial.shader.name}");
+            this.currentSlotName = slotName;
             if (textureScroller != null)
             {
-                // Pass the current renderer, material, and slot to texture scroller
+                // Update the textureScroller with the current context
                 textureScroller.PrepareForSelection(this, slotName);
             }
         }
 
-        public void ApplyTextureChange(Texture2D texture, string slotName)
+        public void GetTextureChange(Texture2D texture, string slotName)
         {
             if (TargetRenderer != null && currentMaterial != null)
             {
-                variationBuilder.ApplyTextureChange(TargetRenderer, currentMaterial, slotName, texture);
+                // Attempt to find the material on the renderer that matches the currentMaterial by name
+                Material foundMaterial = TargetRenderer.sharedMaterials.FirstOrDefault(m => m.name.Split(' ')[0] == currentMaterial.name.Split(' ')[0]);
+
+                if (foundMaterial != null)
+                {
+                    // Delegate the task to VariationBuilder, providing the found material instance
+                    variationBuilder.ApplyTextureChange(TargetRenderer, foundMaterial, slotName, texture);
+
+                    // Refresh the currentMaterial reference to ensure it points to the updated instance
+                    currentMaterial = foundMaterial;
+
+                    RefreshMaterial(currentMaterial);
+                }
+                else
+                {
+                    Debug.LogError($"Material {currentMaterial.name} not found on renderer {TargetRenderer.gameObject.name}. Make sure you're referencing the correct material instance.");
+                }
             }
             else
             {

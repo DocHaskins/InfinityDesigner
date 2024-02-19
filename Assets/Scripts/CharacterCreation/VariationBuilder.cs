@@ -37,7 +37,8 @@ namespace doppelganger
         public List<RttiValue> currentMaterialResources = new List<RttiValue>();
         public Dictionary<string, List<RttiValue>> materialChanges = new Dictionary<string, List<RttiValue>>();
         public Dictionary<string, ModelChange> modelSpecificChanges = new Dictionary<string, ModelChange>();
-        public Dictionary<int, VariationTextureSlotsPanel> slotToPanelMap = new Dictionary<int, VariationTextureSlotsPanel>();
+        private Dictionary<SkinnedMeshRenderer, VariationTextureSlotsPanel> rendererPanelMap = new Dictionary<SkinnedMeshRenderer, VariationTextureSlotsPanel>();
+
 
         public List<string> GetAvailableMaterialNamesForRenderer(SkinnedMeshRenderer renderer, string slotName)
         {
@@ -196,14 +197,12 @@ namespace doppelganger
                 toggleScript.panelGameObject = panelGameObject;
 
                 // Listener for material change through the dropdown
-                tmpDropdown.onValueChanged.AddListener((int selectedIndex) =>
-                {
+                tmpDropdown.onValueChanged.AddListener((int selectedIndex) => {
                     string selectedMaterialName = tmpDropdown.options[selectedIndex].text;
                     Material selectedMaterial = GetSelectedMaterial(selectedMaterialName, currentModel);
                     if (selectedMaterial != null)
                     {
-                        ApplyMaterialDirectly(renderer, selectedMaterialName); // Apply material directly to renderer
-                                                                               // No need to call UpdatePanelSetup; the panel is updated via TogglePanel now
+                        ApplyMaterialDirectly(renderer, selectedMaterialName); // This now also updates the panel script
                     }
                 });
 
@@ -224,6 +223,18 @@ namespace doppelganger
                 rendererCounter++; // Increment for the next renderer
             }
         }
+        public void RegisterPanelScript(SkinnedMeshRenderer renderer, VariationTextureSlotsPanel panelScript)
+        {
+            if (!rendererPanelMap.ContainsKey(renderer))
+            {
+                rendererPanelMap.Add(renderer, panelScript);
+            }
+            else
+            {
+                rendererPanelMap[renderer] = panelScript; // Update existing entry
+            }
+        }
+
 
         Material GetSelectedMaterial(string materialName, GameObject currentModel)
         {
@@ -308,6 +319,10 @@ namespace doppelganger
             {
                 Debug.LogError($"Renderer '{renderer.name}' does not have any material slots.");
             }
+            if (rendererPanelMap.TryGetValue(renderer, out VariationTextureSlotsPanel panelScript))
+            {
+                panelScript.RefreshMaterial(renderer.sharedMaterials[0]);
+            }
         }
 
         public void ApplyTextureChange(SkinnedMeshRenderer renderer, Material material, string slotName, Texture2D texture)
@@ -321,7 +336,7 @@ namespace doppelganger
 
                 materials[materialIndex] = clonedMaterial;
                 renderer.sharedMaterials = materials;
-                Debug.Log($"Applied texture {texture.name} to slot {slotName} on {renderer.gameObject.name}");
+                Debug.Log($"Successfully applied texture {texture.name} to slot {slotName} on {renderer.gameObject.name}.");
             }
             else
             {
