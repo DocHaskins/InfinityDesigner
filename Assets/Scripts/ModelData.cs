@@ -27,6 +27,17 @@ public class ModelData
         return slots;
     }
 
+    public class ModelChange
+    {
+        public Dictionary<int, MaterialChange> Materials { get; set; } = new Dictionary<int, MaterialChange>();
+    }
+
+    public class MaterialChange
+    {
+        public string MaterialName { get; set; }
+        public List<RttiValue> TextureChanges { get; set; } = new List<RttiValue>();
+    }
+
     [Serializable]
     public class ModelSlotLookup
     {
