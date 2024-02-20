@@ -29,11 +29,12 @@ namespace doppelganger
         public GameObject currentModel;
         public Transform currentSpawn;
         public string currentModelName;
+        public string currentSlot;
         public bool isPanelOpen = false;
         public string openPanelSlotName = "";
         public Material CurrentlySelectedMaterial { get; private set; }
         public static List<GameObject> allDropdowns = new List<GameObject>();
-        private Dictionary<GameObject, bool> originalActiveStates = new Dictionary<GameObject, bool>();
+        private Dictionary<int, Material> originalMaterials = new Dictionary<int, Material>();
         public List<RttiValue> currentMaterialResources = new List<RttiValue>();
         public Dictionary<string, List<RttiValue>> materialChanges = new Dictionary<string, List<RttiValue>>();
         public Dictionary<string, ModelChange> modelSpecificChanges = new Dictionary<string, ModelChange>();
@@ -138,6 +139,7 @@ namespace doppelganger
                 //Debug.Log("ModelInfoPanel found, updating content.");
                 UpdateModelInfoPanelContent(slotName);
             }
+            string currentSlot = slotName;
         }
 
 
@@ -172,6 +174,12 @@ namespace doppelganger
 
             foreach (var renderer in renderers)
             {
+                int rendererIndex = GetRendererIndexByName(renderer.name);
+                if (!originalMaterials.ContainsKey(rendererIndex))
+                {
+                    originalMaterials[rendererIndex] = renderer.sharedMaterial != null ? new Material(renderer.sharedMaterial) : null;
+                }
+
                 Material currentMaterial = renderer.sharedMaterials[0]; // Assuming each renderer has only one material slot (index 0)
                 GameObject dropdownGameObject = Instantiate(variationMaterialDropdownPrefab, materialSpawn);
                 allDropdowns.Add(dropdownGameObject);
@@ -423,28 +431,35 @@ namespace doppelganger
             {
                 // If there is already a change recorded for this slot, update it
                 existingChange.val_str = finalTextureName;
+                existingChange.type = textureName == "null" ? existingChange.type : 7; // Set type to 7 for PNG changes
                 Debug.Log($"Updated texture change for model: {modelName}, slot: {finalSlotName}, renderer index: {rendererIndex}, material: {materialName}, to texture: {finalTextureName}");
             }
             else
             {
                 // If no change is recorded for this slot, add a new one
-                materialChange.TextureChanges.Add(new RttiValue { name = finalSlotName, val_str = finalTextureName });
+                materialChange.TextureChanges.Add(new RttiValue { name = finalSlotName, val_str = finalTextureName, type = textureName == "null" ? 0 : 7 });
                 Debug.Log($"Recorded new texture change for model: {modelName}, slot: {finalSlotName}, renderer index: {rendererIndex}, material: {materialName}, texture: {finalTextureName}");
             }
         }
 
         public void ClearAllChangesForModel()
         {
-            currentModelName = currentModelName.Replace("(Clone)", "");
-            if (modelSpecificChanges.ContainsKey(currentModelName))
+            string modelName = currentModelName.Replace("(Clone)", "");
+            if (modelSpecificChanges.ContainsKey(modelName))
             {
                 // Remove all changes for this model
-                modelSpecificChanges.Remove(currentModelName);
-                Debug.Log($"All changes cleared for model: {currentModelName}.");
+                modelSpecificChanges.Remove(modelName);
+                Debug.Log($"All changes cleared for model: {modelName}.");
+
+                // Reapply original materials and reset dropdowns
+                interfaceManager.ResetVariationSliderAndUpdate(currentSlot + "_VariationSlider");
+
+                UpdateModelInfoPanel(currentSlot);
+                Debug.Log($"Original materials reapplied and dropdowns reset for model: {modelName}.");
             }
             else
             {
-                Debug.LogWarning($"No changes found for model: {currentModelName} to clear.");
+                Debug.LogWarning($"No changes found for model: {modelName} to clear.");
             }
         }
 

@@ -11,6 +11,7 @@ namespace doppelganger
     public class VariationWriter : MonoBehaviour
     {
         private VariationBuilder variationBuilder;
+        public CharacterBuilder_InterfaceManager interfaceManager;
 
         private void Awake()
         {
@@ -95,7 +96,8 @@ namespace doppelganger
 
                 string newJsonData = JsonConvert.SerializeObject(variationOutput, Formatting.Indented);
                 File.WriteAllText(materialJsonFilePath, newJsonData);
-
+                Debug.Log($"New variation created on slider for model: {variationBuilder.currentModel.name} on slot: {interfaceManager.currentSlider}");
+                interfaceManager.CreateOrUpdateVariationSlider(interfaceManager.currentSlider, variationBuilder.currentModel.name);
                 Debug.Log($"New variation saved for model: {currentlyLoadedModelName} with ID: {newVariation.id}");
             }
             else

@@ -522,7 +522,6 @@ namespace doppelganger
             var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
             string modelName = modelInstance.name.Replace("(Clone)", "");
 
-            variationBuilder.ClearAllChangesForModel();
             Debug.Log($"Cleared all changes for {modelName}");
             ResetRenderersToInitialState(modelInstance, skinnedMeshRenderers);
 

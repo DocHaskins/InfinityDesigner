@@ -641,6 +641,16 @@ namespace doppelganger
             {
                 labelText.text = slotName.Replace("ALL_", "");
             }
+
+            Button currentSliderButton = sliderObject.transform.Find("Button_currentSlider").GetComponent<Button>();
+            if (currentSliderButton != null)
+            {
+                currentSliderButton.onClick.AddListener(() =>
+                {
+                    currentSlider = slotName;
+                    variationBuilder.UpdateModelInfoPanel(currentSlider);
+                });
+            }
         }
 
 
@@ -696,7 +706,7 @@ namespace doppelganger
         public void CreateVariationSlider(string slotName, int variationCount)
         {
             GameObject variationSliderObject = Instantiate(variationSliderPrefab, slidersPanel.transform, false);
-            variationSliderObject.name = slotName + "VariationSlider";
+            variationSliderObject.name = slotName + "_VariationSlider";
 
             // Find the index of the primary slider in the slidersPanel
             int primarySliderIndex = FindSliderIndex(slotName + "Slider");
@@ -720,7 +730,7 @@ namespace doppelganger
 
         public void OnVariationSliderValueChanged(string slotName, float value)
         {
-            //Debug.Log($"OnVariationSliderValueChanged for slot: {slotName} with value: {value}");
+            Debug.Log($"OnVariationSliderValueChanged for slot: {slotName} with value: {value}");
             if (!characterBuilder.currentlyLoadedModels.TryGetValue(slotName, out GameObject currentModel))
             {
                 Debug.LogError($"No model currently loaded for slot: {slotName}");
@@ -759,8 +769,9 @@ namespace doppelganger
             }
             string currentSlider = slotName;
             Debug.Log($"OnVariationSliderValueChanged: currentSlider {currentSlider}");
+            variationBuilder.currentSlot = currentSlider;
             selectedVariationIndexes[slotName] = Mathf.Clamp((int)value - 1, 0, int.MaxValue);
-
+            variationBuilder.UpdateModelInfoPanel(currentSlider);
             // Debug log to show the actual stored index for each slot
             Debug.Log("OnVariationSliderValueChanged:");
             foreach (var kvp in selectedVariationIndexes)
@@ -769,9 +780,27 @@ namespace doppelganger
             }
         }
 
+        public void ResetVariationSliderAndUpdate(string slotName)
+        {
+            GameObject variationSliderObject = slidersPanel.transform.Find(slotName)?.gameObject;
+            if (variationSliderObject != null)
+            {
+                Slider variationSlider = variationSliderObject.GetComponentInChildren<Slider>();
+
+                if (variationSlider != null)
+                {
+                    variationSlider.value = 0;
+                }
+            }
+            else
+            {
+                Debug.LogError($"Variation slider not found for slot: {slotName}");
+            }
+        }
+
         public void RemoveVariationSlider(string slotName)
         {
-            Transform existingVariationSlider = slidersPanel.transform.Find(slotName + "VariationSlider");
+            Transform existingVariationSlider = slidersPanel.transform.Find(slotName + "_VariationSlider");
             if (existingVariationSlider != null) Destroy(existingVariationSlider.gameObject);
         }
 

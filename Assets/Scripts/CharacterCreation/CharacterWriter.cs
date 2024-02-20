@@ -269,6 +269,7 @@ namespace doppelganger
                     {
                         if (sliderToSlotMapping.TryGetValue(slider.Key, out string slotKey))
                         {
+                            bool slotAssigned = false;
                             string modelName = model.name.Replace("(Clone)", ".msh").ToLower();
                             string potentialSkeletonName = skeletonLookup.FindMatchingSkeleton(modelName);
                             Debug.Log($"{potentialSkeletonName} Skeleton updated to {skeletonName} based on loaded models.");
@@ -281,7 +282,6 @@ namespace doppelganger
                             if (slotUIDLookup.ModelSlots.TryGetValue(modelName, out List<ModelData.SlotInfo> possibleSlots))
                             {
                                 Debug.Log($"Found possible slots for model {modelName}: {possibleSlots.Count}");
-                                bool slotAssigned = false;
                                 ModelData.SlotDataPair slotPair; // Declaration moved outside of the loop
 
                                 foreach (var possibleSlot in possibleSlots)
@@ -304,33 +304,40 @@ namespace doppelganger
 
                                         Debug.Log($"Fallback options for {initialFallbackSlotName}: {string.Join(", ", fallbackOptions)}");
 
-                                        foreach (var fallbackOption in fallbackOptions)
-                                        {
-                                            Debug.Log($"Considering fallback option: {fallbackOption}");
-                                            // Directly check if the fallback slot name is available and not yet used
-                                            if (!usedSlots.Contains(fallbackOption))
+                                        if (!slotAssigned)
+                                        { 
+                                            foreach (var fallbackOption in fallbackOptions)
                                             {
-                                                // Attempt to find a matching slot UID that hasn't been used yet
-                                                var nextAvailableSlotUid = DetermineNextAvailableSlotUid(fallbackOption, usedSlotUids);
-                                                if (nextAvailableSlotUid != -1) // Assuming -1 indicates failure to find an available UID
+                                                Debug.Log($"Considering fallback option: {fallbackOption}");
+                                                // Directly check if the fallback slot name is available and not yet used
+                                                if (!usedSlots.Contains(fallbackOption))
                                                 {
-                                                    Debug.Log($"Using next available Slot UID '{nextAvailableSlotUid}' for fallback slot '{fallbackOption}'.");
-                                                    slotPair = CreateSlotDataPair(model, fallbackOption, nextAvailableSlotUid);
-                                                    slotPairs.Add(slotPair);
-                                                    usedSlotUids.Add(nextAvailableSlotUid);
-                                                    usedSlots.Add(fallbackOption);
-                                                    Debug.Log($"Assigned fallback {fallbackOption} slot for {slider.Key} with Slot UID: {nextAvailableSlotUid}");
-                                                    slotAssigned = true;
-                                                    break; // Exit the loop since a fallback slot has been successfully assigned
+                                                    // Attempt to find a matching slot UID that hasn't been used yet
+                                                    var nextAvailableSlotUid = DetermineNextAvailableSlotUid(fallbackOption, usedSlotUids);
+                                                    if (nextAvailableSlotUid != -1) // Assuming -1 indicates failure to find an available UID
+                                                    {
+                                                        Debug.Log($"Using next available Slot UID '{nextAvailableSlotUid}' for fallback slot '{fallbackOption}'.");
+                                                        slotPair = CreateSlotDataPair(model, fallbackOption, nextAvailableSlotUid);
+                                                        slotPairs.Add(slotPair);
+                                                        usedSlotUids.Add(nextAvailableSlotUid);
+                                                        usedSlots.Add(fallbackOption);
+                                                        Debug.Log($"Assigned fallback {fallbackOption} slot for {slider.Key} with Slot UID: {nextAvailableSlotUid}");
+                                                        slotAssigned = true;
+                                                        
+                                                    }
+                                                    else
+                                                    {
+                                                        Debug.Log($"Fallback option '{fallbackOption}' available but no unused Slot UID found within the allowed range.");
+                                                    }
                                                 }
                                                 else
                                                 {
-                                                    Debug.Log($"Fallback option '{fallbackOption}' available but no unused Slot UID found within the allowed range.");
+                                                    Debug.Log($"Fallback option '{fallbackOption}' already used.");
                                                 }
-                                            }
-                                            else
-                                            {
-                                                Debug.Log($"Fallback option '{fallbackOption}' already used.");
+                                                if (slotAssigned)
+                                                {
+                                                    break;
+                                                }
                                             }
                                         }
 

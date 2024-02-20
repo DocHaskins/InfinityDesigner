@@ -65,7 +65,7 @@ public class SliderKeyboardControl : MonoBehaviour
     private IEnumerator ContinuousSliderMovement(KeyCode keyCode)
     {
         isMovingSlider = true;
-        yield return new WaitForSeconds(0.2f); // Initial delay before continuous movement starts
+        yield return new WaitForSeconds(0.1f); // Initial delay before continuous movement starts
 
         while (Input.GetKey(keyCode))
         {
@@ -158,10 +158,10 @@ public class SliderKeyboardControl : MonoBehaviour
         bool DebugMode = false; // Assuming DebugMode is defined elsewhere, set it accordingly
 
         // Default color for deselected sliders
-        Color defaultColor = new Color(1f, 1f, 1f, 1f); // White color, adjust if necessary
+        Color defaultColor = new Color(0f, 0f, 0f, 0.8f); // White color, adjust if necessary
 
         // Color to use for the selected slider's background when not in DebugMode
-        Color selectedBackgroundColor = new Color(0.3803922f, 0.3803922f, 0.3803922f, 1f); // Equivalent to #616161
+        Color selectedBackgroundColor = new Color(0.2803922f, 0.2803922f, 0.2803922f, 1f); // Equivalent to #616161
 
         GameObject[] primarySliders = GameObject.FindGameObjectsWithTag("PrimarySlider");
         for (int i = 0; i < primarySliders.Length; i++)
@@ -170,7 +170,7 @@ public class SliderKeyboardControl : MonoBehaviour
 
             // Find the "bckgrd" and "labelText" child GameObjects within each primary slider
             Image bckgrdImage = sliderParent.transform.Find("bckgrd")?.GetComponent<Image>();
-            TMP_Text labelText = sliderParent.transform.Find("labelText")?.GetComponent<TMP_Text>();
+            TMP_Text labelText = sliderParent.transform.Find("Button_currentSlider/labelText")?.GetComponent<TMP_Text>();
 
             if (bckgrdImage != null && labelText != null)
             {
@@ -194,7 +194,7 @@ public class SliderKeyboardControl : MonoBehaviour
                     {
                         bckgrdImage.color = defaultColor;
                     }
-                    bckgrdImage.color = DebugMode ? defaultColor : new Color(0, 0, 0, 0); // Make transparent if not in DebugMode
+                    bckgrdImage.color = DebugMode ? defaultColor : new Color(0f, 0f, 0f, 0.8f); // Make transparent if not in DebugMode
                 }
             }
             else
