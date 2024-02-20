@@ -7,7 +7,6 @@ using UnityEngine;
 using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.UI;
 using static ModelData;
-using static TreeEditor.TextureAtlas;
 
 namespace doppelganger
 {
@@ -201,24 +200,15 @@ namespace doppelganger
                 // Listener for material change through the dropdown
                 tmpDropdown.onValueChanged.AddListener((int selectedIndex) => {
                     string selectedMaterialName = tmpDropdown.options[selectedIndex].text;
-                    Material selectedMaterial = GetSelectedMaterial(selectedMaterialName, currentModel);
-                    if (selectedMaterial != null)
-                    {
-                        ApplyMaterialDirectly(renderer, selectedMaterialName); // This now also updates the panel script
-                    }
+                    ApplyMaterialDirectly(renderer, selectedMaterialName); // Assumes this method can directly use renderer.sharedMaterial
                 });
 
                 // Toggling panel visibility and ensuring it's updated with the current material
-                optionsButton.onClick.AddListener(() =>
-                {
-                    string selectedMaterialName = tmpDropdown.options[tmpDropdown.value].text;
-                    Material selectedMaterial = GetSelectedMaterial(selectedMaterialName, currentModel);
-                    if (selectedMaterial != null)
-                    {
+                optionsButton.onClick.AddListener(() => {
                         // The TogglePanel method now handles initializing or updating the panel as needed
-                        toggleScript.TogglePanel(slotName, selectedMaterial, renderer);
+                        toggleScript.TogglePanel();
                         toggleScript.ToggleOtherDropdowns(!panelGameObject.activeSelf);
-                    }
+                    
                 });
 
                 TextMeshProUGUI nameText = dropdownGameObject.transform.Find("Button_Options/Name").GetComponent<TextMeshProUGUI>();
@@ -238,39 +228,25 @@ namespace doppelganger
             }
         }
 
-
-        Material GetSelectedMaterial(string materialName, GameObject currentModel)
-        {
-            SkinnedMeshRenderer[] renderers = currentModel.GetComponentsInChildren<SkinnedMeshRenderer>();
-            foreach (var renderer in renderers)
-            {
-                foreach (var material in renderer.sharedMaterials)
-                {
-                    if (material.name.Equals(materialName, StringComparison.OrdinalIgnoreCase) ||
-                        material.name.Replace(" (Instance)", "").Equals(materialName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return material;
-                    }
-                }
-            }
-
-            Debug.LogError($"Material '{materialName}' not found in the current model.");
-            return null;
-        }
-
         void SetupDropdownWithMaterials(TMP_Dropdown tmpDropdown, SkinnedMeshRenderer renderer, string currentMaterialName, int materialSlot, string slotName)
         {
             List<string> availableMaterialNames = GetAvailableMaterialNamesForRenderer(renderer, slotName);
 
-            // First, clear existing options to repopulate the dropdown.
+            // Clear existing options to repopulate the dropdown.
             tmpDropdown.ClearOptions();
 
-            // Insert the original material name at index 0 if it's not already "null.mat".
-            string originalMaterialName = renderer.sharedMaterials.Length > 0 ? renderer.sharedMaterials[0].name.Replace(" (Instance)", "") : "null.mat";
-            if (!availableMaterialNames.Contains(originalMaterialName) && originalMaterialName != "null.mat")
-            {
-                availableMaterialNames.Insert(0, originalMaterialName);
-            }
+            // Clone the original material to ensure it's not modified.
+            Material originalMaterial = renderer.sharedMaterials[materialSlot];
+            Material clonedMaterial = new Material(originalMaterial);
+            string clonedMaterialName = clonedMaterial.name;
+
+            // Apply the cloned material immediately to the renderer.
+            Material[] materials = renderer.sharedMaterials;
+            materials[materialSlot] = clonedMaterial;
+            renderer.sharedMaterials = materials;
+
+            // Add the cloned material name to the available options.
+            availableMaterialNames.Insert(0, clonedMaterialName);
 
             // Ensure "null.mat" is at index 1.
             if (!availableMaterialNames.Contains("null.mat"))
@@ -286,11 +262,11 @@ namespace doppelganger
             // Add options to the dropdown.
             tmpDropdown.AddOptions(availableMaterialNames);
 
-            // Select the original material by default.
-            tmpDropdown.value = availableMaterialNames.IndexOf(originalMaterialName);
+            // Select the cloned material by default in the dropdown.
+            tmpDropdown.value = 0; // Cloned material is at index 0
             tmpDropdown.RefreshShownValue();
 
-            // Setup the listener for selection changes.
+            // Listen for selection changes to apply materials directly.
             tmpDropdown.onValueChanged.RemoveAllListeners();
             tmpDropdown.onValueChanged.AddListener(index => {
                 string selectedMaterialName = availableMaterialNames[index];
@@ -365,23 +341,34 @@ namespace doppelganger
                 return;
             }
 
-            string modelName = currentModelName.Replace("(Clone)", "");
-            string materialName = renderer.sharedMaterials[0].name; // Assuming the material to change is always at index 0
+            // Use the material directly from the renderer for modifications
+            Material materialToModify = renderer.sharedMaterials[0];
 
-            // Apply the texture change
+            // Apply texture change directly to this material
+            if (texture == null)
+            {
+                materialToModify.SetTexture(slotName, null);
+            }
+            else
+            {
+                materialToModify.SetTexture(slotName, texture);
+            }
+
+            // Reflect changes by reassigning modified material back to the renderer
             Material[] materials = renderer.sharedMaterials;
-            Material clonedMaterial = new Material(materials[0]);
-            clonedMaterial.SetTexture(slotName, texture);
-            materials[0] = clonedMaterial;
+            materials[0] = materialToModify;
             renderer.sharedMaterials = materials;
 
-            Debug.Log($"Successfully applied texture {texture.name} to slot {slotName} on {renderer.gameObject.name}.");
+            Debug.Log($"Applied texture '{texture?.name ?? "null"}' to slot '{slotName}' on '{renderer.gameObject.name}'.");
 
-            // Record the texture change along with any material change
-            RecordTextureChange(modelName, materialName, slotName, texture.name, rendererIndex);
+            // Record the change
+            string modelName = currentModelName.Replace("(Clone)", "");
+            string materialName = materialToModify.name;
+            string textureName = texture == null ? "null" : texture.name;
+            RecordTextureChange(modelName, materialName, slotName, textureName, rendererIndex);
         }
 
-        void RecordMaterialChange(string modelName, string originalMaterialName, string newMaterialName, int rendererIndex)
+        public void RecordMaterialChange(string modelName, string originalMaterialName, string newMaterialName, int rendererIndex)
         {
             if (!modelSpecificChanges.TryGetValue(modelName, out ModelChange modelChange))
             {
@@ -415,31 +402,49 @@ namespace doppelganger
                 modelSpecificChanges[modelName] = modelChange;
             }
 
-            if (!modelChange.MaterialsByRenderer.ContainsKey(rendererIndex))
+            if (!modelChange.MaterialsByRenderer.TryGetValue(rendererIndex, out var materialChange))
             {
-                Debug.LogError($"Attempting to record a texture change for a non-existing material change at renderer index {rendererIndex}.");
-                return;
+                materialChange = new MaterialChange
+                {
+                    OriginalName = materialName,
+                    NewName = materialName,
+                    TextureChanges = new List<RttiValue>()
+                };
+                modelChange.MaterialsByRenderer[rendererIndex] = materialChange;
             }
 
-            string modifiedSlotName = slotName.Replace("_", "");
-            string finalSlotName = modifiedSlotName + "_0_tex";
+            string finalSlotName = slotName.Replace("_", "") + "_0_tex";
 
-            var materialChange = modelChange.MaterialsByRenderer[rendererIndex];
+            // Determine the final texture name, appending ".png" only if the texture name is not "null"
+            string finalTextureName = textureName == "null" ? "null" : textureName + ".png";
 
-            // Check if a change for this slot already exists
-            var existingChange = materialChange.TextureChanges.FirstOrDefault(tc => tc.name.Equals(finalSlotName, StringComparison.OrdinalIgnoreCase));
-
+            var existingChange = materialChange.TextureChanges.FirstOrDefault(tc => tc.name == finalSlotName);
             if (existingChange != null)
             {
-                // Update existing entry
-                existingChange.val_str = textureName + ".png";
-                Debug.Log($"Updated texture change for model: {modelName}, slot: {finalSlotName}, renderer index: {rendererIndex}, material: {materialName}, to texture: {textureName}");
+                // If there is already a change recorded for this slot, update it
+                existingChange.val_str = finalTextureName;
+                Debug.Log($"Updated texture change for model: {modelName}, slot: {finalSlotName}, renderer index: {rendererIndex}, material: {materialName}, to texture: {finalTextureName}");
             }
             else
             {
-                // Add new texture change
-                materialChange.TextureChanges.Add(new RttiValue { name = finalSlotName, val_str = textureName + ".png" });
-                Debug.Log($"Recorded new texture change for model: {modelName}, slot: {finalSlotName}, renderer index: {rendererIndex}, material: {materialName}, texture: {textureName}");
+                // If no change is recorded for this slot, add a new one
+                materialChange.TextureChanges.Add(new RttiValue { name = finalSlotName, val_str = finalTextureName });
+                Debug.Log($"Recorded new texture change for model: {modelName}, slot: {finalSlotName}, renderer index: {rendererIndex}, material: {materialName}, texture: {finalTextureName}");
+            }
+        }
+
+        public void ClearAllChangesForModel()
+        {
+            currentModelName = currentModelName.Replace("(Clone)", "");
+            if (modelSpecificChanges.ContainsKey(currentModelName))
+            {
+                // Remove all changes for this model
+                modelSpecificChanges.Remove(currentModelName);
+                Debug.Log($"All changes cleared for model: {currentModelName}.");
+            }
+            else
+            {
+                Debug.LogWarning($"No changes found for model: {currentModelName} to clear.");
             }
         }
 

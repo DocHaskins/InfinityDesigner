@@ -14,7 +14,7 @@ namespace doppelganger
         public GameObject dropdownGameObject;
         public GameObject variationTextureSlotPanelPrefab;
 
-        public void TogglePanel(string slotName, Material material, SkinnedMeshRenderer renderer)
+        public void TogglePanel()
         {
             bool isPanelActiveBeforeToggle = panelGameObject.activeSelf;
 

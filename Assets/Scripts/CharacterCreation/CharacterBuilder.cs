@@ -520,8 +520,10 @@ namespace doppelganger
         public void ApplyVariationMaterials(GameObject modelInstance, List<ModelData.MaterialResource> materialsResources)
         {
             var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+            string modelName = modelInstance.name.Replace("(Clone)", "");
 
-            // Reset to initial state before applying new variation
+            variationBuilder.ClearAllChangesForModel();
+            Debug.Log($"Cleared all changes for {modelName}");
             ResetRenderersToInitialState(modelInstance, skinnedMeshRenderers);
 
             // Apply each materialResource to the appropriate renderer and record the changes
@@ -529,19 +531,27 @@ namespace doppelganger
             {
                 foreach (var resource in materialResource.resources)
                 {
-                    int rendererIndex = materialResource.number - 1; // Assuming 'number' indicates the renderer's index
+                    int rendererIndex = materialResource.number - 1; // Assuming 'number' indicates the renderer's index, adjusting for 0-based index
                     if (rendererIndex >= 0 && rendererIndex < skinnedMeshRenderers.Length)
                     {
                         var renderer = skinnedMeshRenderers[rendererIndex];
+                        string originalMaterialName = renderer.sharedMaterials.Length > 0 ? renderer.sharedMaterials[0].name : "UnknownOriginal"; // Placeholder for actual original material name logic
+
                         ApplyMaterialToRenderer(renderer, resource.name, modelInstance, resource.rttiValues);
 
+                        // Record the material change
+                        variationBuilder.RecordMaterialChange(modelName, originalMaterialName, resource.name, rendererIndex);
+
                         // Debug loaded material and applied changes
-                        Debug.Log($"Loaded material '{resource.name}' applied to renderer '{renderer.name}' in model '{modelInstance.name}'");
-                        Debug.Log($"Changes applied to material '{resource.name}': {string.Join(", ", resource.rttiValues)}");
+                        Debug.Log($"Loaded material '{resource.name}' applied to renderer '{renderer.name}' in model '{modelName}'. Original material was '{originalMaterialName}'.");
+                        if (resource.rttiValues.Any())
+                        {
+                            Debug.Log($"Changes applied to material '{resource.name}': {string.Join(", ", resource.rttiValues.Select(r => r.name + ": " + r.val_str))}");
+                        }
                     }
                     else
                     {
-                        Debug.LogWarning($"Renderer index out of bounds: {rendererIndex} for material resource number {materialResource.number} in model '{modelInstance.name}'");
+                        Debug.LogWarning($"Renderer index out of bounds: {rendererIndex} for material resource number {materialResource.number} in model '{modelName}'");
                     }
                 }
             }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using UnityEngine.EventSystems;
 using UnityEngine;
 using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.UI;
@@ -22,6 +23,7 @@ namespace doppelganger
         public GameObject currentModel;
         public Material currentMaterial;
         public string currentSlotName;
+        public TextMeshProUGUI currentButtonClickedText;
 
         private readonly string[] textureSlots = {
         "_msk", "_idx", "_gra", "_spc", "_clp", "_rgh", "_ocl", "_ems", "_dif_1", "_dif", "_nrm",
@@ -50,7 +52,7 @@ namespace doppelganger
 
         public void SetMaterialModelAndRenderer(Material material, GameObject model, SkinnedMeshRenderer renderer, string slotName)
         {
-            this.currentMaterial = renderer.sharedMaterials.FirstOrDefault(m => m.name == material.name) ?? material;
+            this.currentMaterial = new Material(renderer.sharedMaterials.FirstOrDefault(m => m.name == material.name) ?? material);
             this.currentModel = model;
             this.TargetRenderer = renderer;
             this.currentSlotName = slotName;
@@ -99,21 +101,40 @@ namespace doppelganger
             slotText.text = slotName;
             buttonText.text = texture ? texture.name : "None";
 
-            // Setup button listener to pass slotName along with current context
             Button textureButton = slotInstance.transform.Find("TextureButton").GetComponent<Button>();
             textureButton.onClick.RemoveAllListeners();
             textureButton.onClick.AddListener(() => {
-                OpenTextureSelection(slotName);
+                OpenTextureSelection(slotName, buttonText); // Pass buttonText to OpenTextureSelection
             });
+
+            // Add an EventTrigger component for detecting right-clicks
+            EventTrigger eventTrigger = textureButton.gameObject.AddComponent<EventTrigger>();
+            EventTrigger.Entry rightClickEntry = new EventTrigger.Entry
+            {
+                eventID = EventTriggerType.PointerClick
+            };
+
+            // Define what happens on a right-click
+            rightClickEntry.callback.AddListener((data) => {
+                if (((PointerEventData)data).button == PointerEventData.InputButton.Right)
+                {
+                    // Directly use GetTextureChange with null to clear the texture
+                    GetTextureChange(null, slotName);
+                    buttonText.text = "None"; // Update the button text to indicate no texture
+                }
+            });
+
+            // Add the entry to the event trigger
+            eventTrigger.triggers.Add(rightClickEntry);
         }
 
-        private void OpenTextureSelection(string slotName)
+        private void OpenTextureSelection(string slotName, TextMeshProUGUI buttonText)
         {
-            Debug.Log($"OpenTextureSelection for slot {slotName} on material {currentMaterial.name}, Shader {currentMaterial.shader.name}");
+            Debug.Log($"OpenTextureSelection for slot {slotName}");
             this.currentSlotName = slotName;
+            this.currentButtonClickedText = buttonText; // Store the buttonText for later use
             if (textureScroller != null)
             {
-                // Update the textureScroller with the current context
                 textureScroller.PrepareForSelection(this, slotName);
             }
         }
@@ -132,6 +153,12 @@ namespace doppelganger
 
                     // Refresh the currentMaterial reference to ensure it points to the updated instance
                     currentMaterial = foundMaterial;
+
+                    // Update the button text of the currently active slot to reflect the selected texture name
+                    if (currentButtonClickedText != null)
+                    {
+                        currentButtonClickedText.text = texture ? texture.name : "None";
+                    }
 
                     RefreshMaterial(currentMaterial);
                 }

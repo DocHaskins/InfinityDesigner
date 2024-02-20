@@ -137,10 +137,11 @@ namespace doppelganger
             if (currentSelectionPanel != null && !string.IsNullOrWhiteSpace(currentSlotForSelection))
             {
                 currentSelectionPanel.GetTextureChange(texture, currentSlotForSelection);
+                currentSelectionPanel.currentButtonClickedText.text = texture.name;
             }
             else
             {
-                Debug.LogError("Slot selection lost or not set.");
+                Debug.LogError("Select a material slot to change and try again");
             }
         }
 
