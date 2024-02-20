@@ -5,6 +5,7 @@ namespace doppelganger
 {
     public class SecondaryPanelController : MonoBehaviour
     {
+        public PresetScroller presetScroller;
         public CharacterBuilder_InterfaceManager interfaceManager;
         public VariationBuilder variationBuilder;
         
@@ -30,6 +31,7 @@ namespace doppelganger
         {
             UpdateState(ref isPresets, ref isSaves, ref isVariations);
             animator.SetBool("isPresets", isPresets);
+            presetScroller.LoadPresets();
         }
 
         public void SetSave()

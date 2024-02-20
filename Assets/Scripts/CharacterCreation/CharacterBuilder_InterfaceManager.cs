@@ -35,16 +35,16 @@ namespace doppelganger
         public TMP_Dropdown saveTypeDropdown;
         public TMP_Dropdown saveCategoryDropdown;
         public TMP_Dropdown saveClassDropdown;
-        public TMP_Dropdown presetDropdown;
         public GameObject slidersPanel;
         public GameObject sliderPrefab;
         public GameObject variationSliderPrefab;
         public GameObject buttonPrefab;
-        public Button presetLoadButton;
         public Button infoPanelButton;
 
         private string currentType;
         private string currentPath;
+        public string currentPreset;
+        public string currentPresetPath;
 
         private string lastFilterCategoryKey = "";
         private string selectedCategory;
@@ -89,12 +89,6 @@ namespace doppelganger
 
             StartCoroutine(SetInitialDropdownValues());
 
-            // Set up button listeners
-            if (presetLoadButton != null)
-            {
-                presetLoadButton.onClick.AddListener(OnPresetLoadButtonPressed);
-            }
-
             foreach (Transform child in slidersPanel.transform)
             {
                 string sliderName = child.name.Replace("Slider", "");
@@ -117,7 +111,6 @@ namespace doppelganger
             typeSelector.onValueChanged.AddListener((index) => OnTypeChanged(index));
 
             // Manually update preset dropdown based on initial dropdown selections
-            UpdatePresetDropdown();
             slotWeights = characterBuilder.LoadSlotWeights();
         }
 
@@ -243,75 +236,6 @@ namespace doppelganger
             UpdateInterfaceBasedOnDropdownSelection();
         }
 
-        public void UpdatePresetDropdown()
-        {
-            string type = GetTypeFromSelector(); // Assuming this method retrieves the selected type
-            string category = categoryDropdown.options[categoryDropdown.value].text;
-            string classSelection = classDropdown.options[classDropdown.value].text;
-
-            // Normalize case for comparison, but use original case for path and filtering
-            string normalizedClassSelection = classSelection.ToLower();
-
-            string presetsPath = Path.Combine(Application.streamingAssetsPath, "Jsons");
-
-            // The path is now only based on Type and Category selections
-            string searchPath = Path.Combine(presetsPath, type.Equals("ALL") ? "" : type, category.Equals("ALL") ? "" : category);
-
-            // Class abbreviation is used solely for file filtering, not path construction
-            string classAbbreviation = normalizedClassSelection != "all" && classConversions.ContainsKey(normalizedClassSelection) ? classConversions[normalizedClassSelection] : "";
-
-            PopulatePresetDropdown(presetDropdown, searchPath, classAbbreviation);
-        }
-
-        public void PopulatePresetDropdown(TMPro.TMP_Dropdown dropdown, string path, string classAbbreviation)
-        {
-            // Ensure the directory exists
-            if (!Directory.Exists(path))
-            {
-                Debug.LogError($"Directory does not exist: {path}");
-                dropdown.ClearOptions();
-                return;
-            }
-
-            var jsonFiles = Directory.GetFiles(path, "*.json").Select(Path.GetFileNameWithoutExtension);
-
-            // Filter files by class abbreviation if not empty
-            var filteredFiles = string.IsNullOrEmpty(classAbbreviation)
-                ? jsonFiles
-                : jsonFiles.Where(file => file.ToLower().Contains(classAbbreviation)).ToList();
-
-            // Further exclude specific files based on naming conventions
-            filteredFiles = filteredFiles.Where(file => !file.StartsWith("db_") && !file.EndsWith("_fpp")).ToList();
-
-            List<TMPro.TMP_Dropdown.OptionData> options = new List<TMPro.TMP_Dropdown.OptionData>();
-            Dictionary<string, string> fileDisplayNames = new Dictionary<string, string>();
-
-            foreach (var file in filteredFiles)
-            {
-                string displayName = ConvertToReadableName(file); // Convert file names to a readable format
-                options.Add(new TMPro.TMP_Dropdown.OptionData(displayName));
-                fileDisplayNames[displayName] = file; // Map the display name to the original file name
-            }
-
-            dropdown.ClearOptions();
-            dropdown.AddOptions(options);
-
-            // Update existing DropdownValueMapper or add a new one if it doesn't exist
-            DropdownValueMapper mapper = dropdown.gameObject.GetComponent<DropdownValueMapper>();
-            if (mapper == null)
-            {
-                mapper = dropdown.gameObject.AddComponent<DropdownValueMapper>();
-            }
-            mapper.UpdateValueMap(fileDisplayNames);
-
-            dropdown.RefreshShownValue();
-        }
-
-        public List<TMP_Dropdown.OptionData> GetCurrentPresetOptions()
-        {
-            List<TMP_Dropdown.OptionData> options = new List<TMP_Dropdown.OptionData>();
-            return options;
-        }
 
         public string ConvertToReadableName(string fileName)
         {
@@ -485,7 +409,6 @@ namespace doppelganger
             // Presumed existing functionality
             UpdateInterfaceBasedOnType();
             UpdateSlidersBasedOnSelection();
-            UpdatePresetDropdown();
             sliderKeyboardControl.RefreshSliders();
             characterBuilder.LoadSkeletonBasedOnSelection();
         }
@@ -885,21 +808,21 @@ namespace doppelganger
             //ResetCameraToDefaultView();
         }
 
-        public void OnPresetLoadButtonPressed()
+        public void OnPresetLoadButtonPressed(string selectedPreset, string jsonName)
         {
-            string selectedPreset = GetActualValueFromDropdown(presetDropdown);
-            saveName.text = selectedPreset;
             if (!string.IsNullOrEmpty(selectedPreset))
             {
-                // Assuming GetTypeFromSelector and categoryDropdown provide correct values
+                Debug.Log($"selectedPreset {selectedPreset}");
                 string type = GetTypeFromSelector();
                 string category = categoryDropdown.options[categoryDropdown.value].text;
 
                 // Build the correct path without appending the class as a directory
-                string presetsPath = Path.Combine(Application.streamingAssetsPath, "Jsons", type.Equals("ALL") ? "" : type, category.Equals("ALL") ? "" : category, $"{selectedPreset}.json");
-
+                string presetsPath = Path.Combine(Application.streamingAssetsPath, "Jsons", type.Equals("ALL") ? "" : type, category.Equals("ALL") ? "" : category, $"{selectedPreset}");
                 Debug.Log("Loading JSON from path: " + presetsPath);
                 characterBuilder.LoadJsonAndSetSliders(presetsPath);
+                saveName.text = jsonName;
+                currentPreset = jsonName;
+                currentPresetPath = presetsPath;
             }
             else
             {

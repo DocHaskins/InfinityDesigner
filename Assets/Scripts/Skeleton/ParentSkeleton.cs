@@ -101,7 +101,7 @@ namespace doppelganger
         {
             { "All", new HashSet<string> { "pelvis", "spine", "spine1", "spine2", "spine3", "neck", "neck1", "neck2", "head", "r_eye", "l_eye","l_clavicle", "l_upperarm", "l_forearm", "l_hand","r_clavicle", "r_upperarm", "r_forearm", "r_hand","l_thigh", "r_thigh", "l_calf", "r_calf", "l_foot", "r_foot", "l_sole_helper", "r_sole_helper" } },
             { "Face", new HashSet<string> { "spine2", "spine3", "neck", "neck1", "neck2", "head", "r_eye", "l_eye" } },
-            { "UpperBody", new HashSet<string> { "spine1", "spine2", "spine3", "neck", "l_clavicle", "l_upperarm", "l_forearm", "l_hand", "r_clavicle", "r_upperarm", "r_forearm", "r_hand" } },
+            { "UpperBody", new HashSet<string> { "pelvis", "l_thigh", "r_thigh", "spine1", "spine2", "spine3", "neck", "l_clavicle", "l_upperarm", "l_forearm", "l_hand", "r_clavicle", "r_upperarm", "r_forearm", "r_hand" } },
             { "Hands", new HashSet<string> { "l_forearm", "l_hand", "r_forearm", "r_hand" } },
             { "LowerBody", new HashSet<string> { "l_thigh", "r_thigh", "l_calf", "r_calf", "l_foot", "r_foot", "l_sole_helper", "r_sole_helper" } },
             { "Feet", new HashSet<string> { "l_foot", "r_foot", "l_sole_helper", "r_sole_helper" } },

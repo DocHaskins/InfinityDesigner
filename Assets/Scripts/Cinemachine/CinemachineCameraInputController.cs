@@ -1,4 +1,5 @@
 using Cinemachine;
+using RootMotion.FinalIK;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,10 +9,13 @@ namespace doppelganger
     {
         public CinemachineFollowZoom cameraZoomTool;
         private CinemachineVirtualCamera virtualCamera;
-        
+        private CinemachineRecomposer recomposer;
+
+
         private float initialY;
         public float orbitSpeed = 10f;
         public float verticalSpeed = 5f;
+        public float tiltSpeed = 0.1f;
         public float minY = -5f;
         public float maxY = 5f;
         private Vector3 dragOrigin;
@@ -24,11 +28,17 @@ namespace doppelganger
         void Start()
         {
             virtualCamera = GetComponent<CinemachineVirtualCamera>();
+            recomposer = virtualCamera.GetComponent<CinemachineRecomposer>();
             if (virtualCamera == null)
             {
                 Debug.LogError("CinemachineVirtualCamera component not found on the GameObject.");
             }
             initialY = virtualCamera.transform.position.y;
+
+            if (recomposer == null)
+            {
+                Debug.LogError("CinemachineComposer component not found on the Virtual Camera.");
+            }
         }
 
         void Update()
@@ -72,6 +82,26 @@ namespace doppelganger
 
                 // Update the camera's position with the new clamped Y position, while keeping X and Z the same
                 virtualCamera.transform.position = new Vector3(virtualCamera.transform.position.x, newYPosition, virtualCamera.transform.position.z);
+            }
+
+            if (Input.GetMouseButtonDown(2)) // Middle mouse button pressed
+            {
+                dragOrigin = Input.mousePosition;
+            }
+
+            if (Input.GetMouseButton(2) && recomposer != null) // Middle mouse button held down
+            {
+                Vector3 mouseDelta = Input.mousePosition - dragOrigin;
+                dragOrigin = Input.mousePosition;
+
+                // Calculate the tilt adjustment based on the vertical mouse movement
+                float tiltAdjustment = -mouseDelta.y * tiltSpeed;
+
+                // Update the recomposer's tilt
+                recomposer.m_Tilt += tiltAdjustment;
+
+                // Optionally, clamp the tilt value to prevent over-tilting
+                recomposer.m_Tilt = Mathf.Clamp(recomposer.m_Tilt, -20f, 20f); // Adjust these values as necessary
             }
         }
     }

@@ -162,7 +162,7 @@ namespace doppelganger
                 characterBuilder = FindObjectOfType<CharacterBuilder>();
                 Debug.Log("CharacterBuilder found: " + (characterBuilder != null));
             }
-            string jsonOutputPath = Path.Combine(Application.dataPath, "StreamingAssets/Output", dateSubfolder, saveName.text + ".json");
+            string jsonOutputPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons/Custom", dateSubfolder, saveName.text + ".json");
             LoadSlotUidLookup();
         }
 
@@ -246,8 +246,8 @@ namespace doppelganger
             }
 
             // Constructing the JSON and .model file paths dynamically based on the fileName
-            string jsonOutputPath = Path.Combine(Application.dataPath, "StreamingAssets/Output", DateTime.Now.ToString("yyyy_MM_dd"), saveName.text + ".json");
-            string screenshotPath = Path.Combine(Application.dataPath, "StreamingAssets/Output", DateTime.Now.ToString("yyyy_MM_dd"), screenshotFileName);
+            string jsonOutputPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons/Custom", saveCategory, DateTime.Now.ToString("yyyy_MM_dd"), saveName.text + ".json");
+            string screenshotPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons/Custom", saveCategory, DateTime.Now.ToString("yyyy_MM_dd"), screenshotFileName);
             string modelOutputPath = Path.Combine(customBasePath, "ph/source", fileName + ".model");
             
             Debug.Log($"jsonOutputDirectory {jsonOutputDirectory}, screenshotPath {screenshotPath}, modelOutputPath {modelOutputPath}");
