@@ -40,12 +40,11 @@ namespace doppelganger
 
                 if (isDimmed)
                 {
-                    // Dim the excluded lights to 0.25 lumens
                     foreach (HDAdditionalLightData excludedLight in excludedLights)
                     {
                         if (excludedLight != null)
                         {
-                            excludedLight.intensity = 3.5f;
+                            excludedLight.intensity = 14.0f;
                         }
                     }
                 }

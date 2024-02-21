@@ -17,7 +17,7 @@ namespace doppelganger
         private void Update()
         {
             // Check if debug mode is enabled and F12 is pressed
-            if (debug && Input.GetKeyDown(KeyCode.F10))
+            if (debug && Input.GetKeyDown(KeyCode.F5))
             {
                 string currentPresetPath = interfaceManager.currentPresetPath;
                 if (!string.IsNullOrEmpty(currentPresetPath))
@@ -28,6 +28,19 @@ namespace doppelganger
                 {
                     Debug.LogError("No preset is currently loaded.");
                 }
+            }
+        }
+
+        public void DocumentPreset()
+        {
+            string currentPresetPath = interfaceManager.currentPresetPath;
+            if (!string.IsNullOrEmpty(currentPresetPath))
+            {
+                CaptureAndSaveScreenshot(currentPresetPath, interfaceManager.currentPreset);
+            }
+            else
+            {
+                Debug.LogError("No preset is currently loaded.");
             }
         }
 

@@ -165,8 +165,6 @@ namespace doppelganger
         {
             foreach (Transform sliderContainer in interfaceManager.slidersPanel.transform)
             {
-                Debug.Log("Checking child: " + sliderContainer.name);
-
                 // Find the child object named "primarySlider" in the sliderContainer
                 Transform primarySliderTransform = sliderContainer.Find("primarySlider");
                 if (primarySliderTransform != null)
