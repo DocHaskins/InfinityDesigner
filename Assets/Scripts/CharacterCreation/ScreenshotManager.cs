@@ -146,32 +146,48 @@ namespace doppelganger
 
         private IEnumerator WaitAndMoveScreenshot(string tempPath, string finalPath)
         {
-            // Wait for a very short time to ensure the file is written
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.2f); // Ensure the file is written
+
+            // Check if the paths are identical
+            if (tempPath.Equals(finalPath, StringComparison.OrdinalIgnoreCase))
+            {
+                //Debug.LogError("Temporary path and final path are identical, which means the file cannot be moved to the same location.");
+                yield break; // Stop the coroutine
+            }
 
             // Ensure the directory exists for the final path
             string directoryPath = Path.GetDirectoryName(finalPath);
             if (!Directory.Exists(directoryPath))
             {
                 Directory.CreateDirectory(directoryPath);
+                Debug.Log($"Created directory at {directoryPath} for the screenshot.");
             }
 
-            // Check if a file already exists at the final path
+            // Attempt to delete if the file already exists at the final path
             if (File.Exists(finalPath))
             {
                 Debug.LogWarning($"File already exists at {finalPath}. Attempting to overwrite.");
-                File.Delete(finalPath); // Delete the existing file
+                try
+                {
+                    File.Delete(finalPath);
+                    Debug.Log($"Existing file at {finalPath} was successfully deleted.");
+                }
+                catch (IOException e)
+                {
+                    Debug.LogError($"Failed to delete the existing file at {finalPath}. Exception: {e.Message}");
+                    yield break; // Stop execution to prevent data loss
+                }
             }
 
+            // Attempt to move the file
             try
             {
-                // Move the screenshot to the final path
                 File.Move(tempPath, finalPath);
-                Debug.Log($"Screenshot moved to: {finalPath}");
+                Debug.Log($"Screenshot successfully moved to: {finalPath}");
             }
-            catch (IOException e)
+            catch (Exception e)
             {
-                Debug.LogError($"Failed to move the screenshot. Exception: {e.Message}");
+                Debug.LogError($"Failed to move the screenshot from {tempPath} to {finalPath}. Exception: {e.ToString()}");
             }
         }
     }

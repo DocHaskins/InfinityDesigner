@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -5,6 +6,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnlimitedScrollUI.Example;
 
 namespace doppelganger
 {
@@ -21,10 +23,17 @@ namespace doppelganger
         private void Start()
         {
             unlimitedScroller = GetComponent<UnlimitedScrollUI.IUnlimitedScroller>();
-            LoadPresets(); // Initial load
+            if (unlimitedScroller == null)
+            {
+                Debug.LogError("UnlimitedScroller component not found on the GameObject. Make sure it is attached.");
+            }
+            else
+            {
+                LoadPresets();
 
-            filterInputField.onValueChanged.AddListener(delegate { RefreshPresets(); });
-            presetTypeDropdown.onValueChanged.AddListener(delegate { RefreshPresets(); });
+                filterInputField.onValueChanged.AddListener(delegate { RefreshPresets(); });
+                presetTypeDropdown.onValueChanged.AddListener(delegate { RefreshPresets(); });
+            }
         }
 
         private string GetSelectedFolderPath(string selectedOption)
@@ -57,16 +66,21 @@ namespace doppelganger
             string fullPath = Path.Combine(Application.streamingAssetsPath, "Jsons", selectedFolder);
             Debug.Log($"Full path: {fullPath}");
 
-            // Update query to exclude files containing "skeleton", "db_", and ending with "_fpp"
-            var jsonFiles = Directory.GetFiles(fullPath, "*.json", SearchOption.AllDirectories)
-                                      .Where(file => !(Path.GetFileName(file).ToLower().EndsWith("_fpp") ||
-                                                       Path.GetFileName(file).ToLower().Contains("skeleton") ||
-                                                       Path.GetFileName(file).ToLower().Contains("db_")))
-                                      .Where(file => string.IsNullOrEmpty(searchFilter) || Path.GetFileName(file).ToLower().Contains(searchFilter))
-                                      .ToList();
+            // Retrieve all json files from the directory
+            var jsonFiles = Directory.GetFiles(fullPath, "*.json", SearchOption.AllDirectories);
 
-            Debug.Log($"Found {jsonFiles.Count} JSON files, excluding '_fpp', 'skeleton', and 'db_'.");
-            GenerateButtons(jsonFiles);
+            // Use a more concise and clear LINQ query to exclude files
+            var filteredFiles = jsonFiles.Where(file =>
+            {
+                string fileNameLower = Path.GetFileName(file).ToLower();
+                bool exclude = fileNameLower.Contains("fpp") ||
+                               fileNameLower.Contains("skeleton") ||
+                               fileNameLower.Contains("db_");
+
+                return !exclude && (string.IsNullOrEmpty(searchFilter) || fileNameLower.Contains(searchFilter));
+            }).ToList();
+
+            GenerateButtons(filteredFiles);
         }
 
 

@@ -24,7 +24,6 @@ namespace doppelganger
             presetButton.onClick.AddListener(SetPreset);
             saveButton.onClick.AddListener(SetSave);
             variationButton.onClick.AddListener(SetVariation);
-            SetPreset();
         }
 
         public void SetPreset()
