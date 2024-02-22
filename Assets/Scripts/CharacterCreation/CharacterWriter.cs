@@ -738,8 +738,7 @@ namespace doppelganger
 
             if (!variationBuilder.modelSpecificChanges.TryGetValue(modelName, out ModelChange modelChanges))
             {
-                Debug.LogWarning($"No specific changes found for model '{modelName}'. Using default materials.");
-                // Optionally handle the case where no changes are recorded for this model
+                //Debug.LogWarning($"No specific changes found for model '{modelName}'. Using default materials.");
             }
 
             for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)

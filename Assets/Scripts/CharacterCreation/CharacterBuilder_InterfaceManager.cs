@@ -81,7 +81,7 @@ namespace doppelganger
         void Start()
         {
             string initialType = "Human";
-            string initialCategory = "Player";
+            string initialCategory = "ALL";
             PopulateDropdown(categoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", "Human"), "ALL", true);
             PopulateDropdown(saveTypeDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData"), "Human", false);
             PopulateDropdown(saveCategoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", "Human"), "Player", false);
@@ -663,6 +663,7 @@ namespace doppelganger
             if (value == 0 && characterBuilder.originalMaterials.TryGetValue(slotName, out List<Material> mats))
             {
                 characterBuilder.ApplyOriginalMaterials(currentModel, mats);
+                variationBuilder.UpdateModelInfoPanel(slotName);
                 return;
             }
 
@@ -690,9 +691,9 @@ namespace doppelganger
             {
                 Debug.LogError("Material JSON file not found: " + materialJsonFilePath);
             }
-            string currentSlider = slotName;
+
             Debug.Log($"OnVariationSliderValueChanged: currentSlider {currentSlider}");
-            variationBuilder.currentSlot = currentSlider;
+            variationBuilder.currentSlot = slotName;
             selectedVariationIndexes[slotName] = Mathf.Clamp((int)value - 1, 0, int.MaxValue);
             variationBuilder.UpdateModelInfoPanel(currentSlider);
             // Debug log to show the actual stored index for each slot

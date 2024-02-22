@@ -56,18 +56,19 @@ namespace doppelganger
         public void DropdownIndexChanged(TMP_Dropdown dropdown)
         {
             searchTerm = dropdown.options[dropdown.value].text.Trim().ToLower();
-            additionalFilterTerm = filterInputField.text.Trim().ToLower();
-            RefreshTextures(searchTerm + additionalFilterTerm);
+            RefreshTextures(); // Refresh using the updated searchTerm and existing additionalFilterTerm.
         }
 
         public void LoadTextures(string filter)
         {
-            // Use both searchTerm and additionalFilterTerm for filtering
-            string combinedFilter = searchTerm + additionalFilterTerm; // This assumes your logic for combining terms is correct
+            string combinedFilter = searchTerm + additionalFilterTerm; // Combine both filters for actual use
+            Debug.Log($"Loading textures with filter: {combinedFilter}");
 
-            // Update filtering logic to use combinedFilter
-            allTextures = Resources.LoadAll<Texture2D>("Textures").Where(t => t.name.Contains(searchTerm) && t.name.Contains(additionalFilterTerm)).ToList();
-            Debug.Log($"Total Textures: {allTextures.Count}");
+            // Update the logic to use 'combinedFilter' instead of 'baseFilter'
+            allTextures = Resources.LoadAll<Texture2D>("Textures")
+                .Where(t => t.name.Contains(searchTerm) && t.name.Contains(additionalFilterTerm))
+                .ToList();
+            Debug.Log($"Total Textures after filter: {allTextures.Count}");
             GenerateTextures();
         }
 
@@ -147,12 +148,11 @@ namespace doppelganger
 
         public void RefreshTexturesWithAdditionalFilter()
         {
-            // Update the additionalFilterTerm from the input field
+            // Update the additionalFilterTerm from the input field directly.
             additionalFilterTerm = filterInputField.text.Trim().ToLower();
 
-            // Now clear existing cells and load textures again with the new filter
-            ClearExistingCells();
-            LoadTextures(searchTerm); // This method now inherently uses both searchTerm and additionalFilterTerm
+            // Refresh textures using the updated filter terms.
+            RefreshTextures(); // It uses the updated 'additionalFilterTerm' with the current 'searchTerm'.
         }
 
         private void ClearExistingCells()
@@ -173,19 +173,15 @@ namespace doppelganger
         {
             searchTerm = newSearchTerm.Trim().ToLower();
             UpdateDropdownSelection(searchTerm);
-            RefreshTextures(searchTerm);
+            RefreshTextures(); // Use updated searchTerm with existing additionalFilterTerm.
         }
 
-        public void RefreshTextures(string newSearchTerm)
+        public void RefreshTextures()
         {
-            // Update the searchTerm
-            searchTerm = newSearchTerm.Trim().ToLower();
-
-            // Clear existing textures and UI cells
             ClearExistingCells();
 
             // Load and display new textures using both the searchTerm and additionalFilterTerm
-            LoadTextures(searchTerm);
+            LoadTextures(searchTerm); // It's understood that LoadTextures uses both 'searchTerm' and 'additionalFilterTerm'.
         }
     }
 }

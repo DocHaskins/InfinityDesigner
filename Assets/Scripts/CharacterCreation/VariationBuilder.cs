@@ -297,7 +297,7 @@ namespace doppelganger
             return -1;
         }
 
-        void ApplyMaterialDirectly(SkinnedMeshRenderer renderer, string newMaterialName)
+        public void ApplyMaterialDirectly(SkinnedMeshRenderer renderer, string newMaterialName)
         {
             if (renderer.sharedMaterials.Length == 0)
             {
@@ -332,8 +332,9 @@ namespace doppelganger
 
             // Adjusted to pass renderer index to the recording method
             string modelName = currentModelName.Replace("(Clone)", "");
+            string currentSlider = interfaceManager.currentSlider;
+            UpdateModelInfoPanel(currentSlider);
             RecordMaterialChange(modelName, originalName, newMaterialName, rendererIndex);
-
             if (rendererPanelMap.TryGetValue(renderer, out VariationTextureSlotsPanel panelScript))
             {
                 panelScript.RefreshMaterial(newMaterial);
