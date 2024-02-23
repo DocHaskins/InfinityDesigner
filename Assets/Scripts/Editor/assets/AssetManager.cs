@@ -23,6 +23,7 @@ namespace doppelganger
         private static string materialsDirectory = "Assets/Resources/Materials";
         private static string prefabsDirectory = "Assets/Resources/Prefabs";
         private static string meshReferencesDirectory = "Assets/StreamingAssets/Mesh references";
+        private static string newShaderName = "Shader Graphs/Clothing";
         private int maxPrefabCount = 100;
         private int materialCreationLimit = 100;
         private int materialProcessingLimit = 100;
@@ -67,7 +68,11 @@ namespace doppelganger
             GUILayout.Space(20);
             GUILayout.Label("Custom Material Tools", EditorStyles.boldLabel);
             GUILayout.Space(4);
-
+            if (GUILayout.Button("Convert HDRP Materials"))
+            {
+                ConvertMaterials();
+            }
+            GUILayout.Space(4);
             if (GUILayout.Button("Create Materials Index"))
             {
                 CreateMaterialsIndex();
@@ -177,6 +182,39 @@ namespace doppelganger
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Debug.Log("Saved all asset changes.");
+        }
+
+        public static void ConvertMaterials()
+        {
+            // Load all materials in the specified folder
+            string[] materialFiles = Directory.GetFiles(Path.Combine(Application.dataPath, "Resources/Materials"), "*.mat", SearchOption.AllDirectories);
+
+            Shader newShader = Shader.Find(newShaderName);
+            if (newShader == null)
+            {
+                Debug.LogError("Custom shader not found. Please ensure the shader name and path are correct.");
+                return;
+            }
+
+            foreach (string materialFile in materialFiles)
+            {
+                string assetPath = "Assets" + materialFile.Replace(Application.dataPath, "").Replace('\\', '/');
+                Material mat = AssetDatabase.LoadAssetAtPath<Material>(assetPath);
+                if (mat != null)
+                {
+                    // Check if the material uses an HDRP/Lit or HDRP/Hair shader
+                    if (mat.shader.name == "HDRP/Lit" || mat.shader.name == "HDRP/Hair")
+                    {
+                        // Change the shader to the custom one
+                        mat.shader = newShader;
+                        Debug.Log($"Converted {mat.name} to use {newShaderName}");
+                    }
+                }
+            }
+
+            // Save changes
+            AssetDatabase.SaveAssets();
+            Debug.Log("All suitable materials have been converted.");
         }
 
         private static void UpdateMaterials(GameObject prefab, List<MaterialData> materialsList)
