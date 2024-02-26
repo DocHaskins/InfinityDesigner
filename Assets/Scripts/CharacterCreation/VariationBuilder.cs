@@ -22,7 +22,7 @@ namespace doppelganger
         public TextMeshProUGUI meshNameText;
         public Transform materialSpawn;
         public GameObject modelInfoPanelPrefab;
-        public GameObject variationMaterialDropdownPrefab;
+        public GameObject variationMaterialLabelPrefab;
         public GameObject currentModelInfoPanel;
         public GameObject variationTextureSlotPanelPrefab;
 
@@ -33,104 +33,13 @@ namespace doppelganger
         public bool isPanelOpen = false;
         public string openPanelSlotName = "";
         public Material CurrentlySelectedMaterial { get; private set; }
-        public static List<GameObject> allDropdowns = new List<GameObject>();
+        public static List<GameObject> allLabels = new List<GameObject>();
         private Dictionary<int, Material> originalMaterials = new Dictionary<int, Material>();
         public List<RttiValue> currentMaterialResources = new List<RttiValue>();
         public Dictionary<string, List<RttiValue>> materialChanges = new Dictionary<string, List<RttiValue>>();
         public Dictionary<string, ModelChange> modelSpecificChanges = new Dictionary<string, ModelChange>();
         private Dictionary<SkinnedMeshRenderer, VariationTextureSlotsPanel> rendererPanelMap = new Dictionary<SkinnedMeshRenderer, VariationTextureSlotsPanel>();
 
-
-        public List<string> GetAvailableMaterialNamesForRenderer(SkinnedMeshRenderer renderer, string slotName)
-        {
-            // Initial list with "null.mat" to represent a transparent material intentionally.
-            List<string> availableMaterials = new List<string>() { "null.mat" };
-
-            HashSet<string> uniqueMaterials = new HashSet<string>();
-            string slotDataDirectory = Path.Combine(Application.streamingAssetsPath, "SlotData");
-            string slotDataFileName = $"{slotName}.json";
-            string slotDataPath = FindFileInDirectory(slotDataDirectory, slotDataFileName);
-
-            if (!string.IsNullOrEmpty(slotDataPath))
-            {
-                string slotDataJson = File.ReadAllText(slotDataPath);
-                SlotModelData slotModelData = JsonUtility.FromJson<SlotModelData>(slotDataJson);
-
-                foreach (string modelNameWithPath in slotModelData.meshes)
-                {
-                    string modelName = Path.GetFileNameWithoutExtension(modelNameWithPath);
-
-                    string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");
-                    if (File.Exists(materialJsonFilePath))
-                    {
-                        string materialJsonData = File.ReadAllText(materialJsonFilePath);
-                        ModelInfo modelInfo = JsonUtility.FromJson<ModelInfo>(materialJsonData);
-
-                        if (modelInfo.variations != null)
-                        {
-                            foreach (Variation variation in modelInfo.variations)
-                            {
-                                foreach (MaterialResource materialResource in variation.materialsResources)
-                                {
-                                    foreach (Resource resource in materialResource.resources)
-                                    {
-                                        string materialName = Path.GetFileNameWithoutExtension(resource.name);
-                                        if (!string.IsNullOrEmpty(materialName) && materialName != "null")
-                                        {
-                                            uniqueMaterials.Add(materialName);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Debug.LogWarning("Material JSON file not found: " + materialJsonFilePath);
-                    }
-                }
-            }
-            else
-            {
-                Debug.LogWarning("Slot data file not found: " + slotDataPath);
-            }
-
-            // Ensure the original material (if any) is placed at index 0, followed by "null.mat"
-            // Assuming the original material's name is stored in renderer's sharedMaterial at index 0.
-            if (renderer.sharedMaterials.Length > 0 && renderer.sharedMaterials[0] != null)
-            {
-                string originalMaterialName = renderer.sharedMaterials[0].name.Replace(" (Instance)", "");
-                if (!availableMaterials.Contains(originalMaterialName))
-                {
-                    availableMaterials.Insert(0, originalMaterialName);
-                }
-            }
-
-            // Add unique materials while preserving the order: original, null.mat, and then others.
-            foreach (string materialName in uniqueMaterials)
-            {
-                if (!availableMaterials.Contains(materialName))
-                {
-                    availableMaterials.Add(materialName);
-                }
-            }
-
-            return availableMaterials;
-        }
-
-        string FindFileInDirectory(string directory, string fileName)
-        {
-            foreach (string filePath in Directory.GetFiles(directory, "*", SearchOption.AllDirectories))
-            {
-                if (Path.GetFileName(filePath).Equals(fileName, StringComparison.OrdinalIgnoreCase))
-                {
-                    //Debug.Log("Slot data path: " + filePath);
-                    return filePath;
-                }
-            }
-
-            return null; // File not found
-        }
 
         public void UpdateModelInfoPanel(string slotName)
         {
@@ -163,11 +72,11 @@ namespace doppelganger
                 this.currentModelName = loadedModel.name;
 
                 meshNameText.text = currentModel.name.Replace("(Clone)", " ");
-                PopulateMaterialDropdowns(materialSpawn, loadedModel, slotName);
+                PopulateMaterialProperties(materialSpawn, loadedModel, slotName);
             }
         }
 
-        void PopulateMaterialDropdowns(Transform materialSpawn, GameObject currentModel, string slotName)
+        void PopulateMaterialProperties(Transform materialSpawn, GameObject currentModel, string slotName)
         {
             SkinnedMeshRenderer[] renderers = currentModel.GetComponentsInChildren<SkinnedMeshRenderer>(true);
             int rendererCounter = 1; // Start counter at 1 for the first renderer
@@ -180,17 +89,17 @@ namespace doppelganger
                     originalMaterials[rendererIndex] = renderer.sharedMaterial != null ? new Material(renderer.sharedMaterial) : null;
                 }
 
-                Material currentMaterial = renderer.sharedMaterials[0]; // Assuming each renderer has only one material slot (index 0)
-                GameObject dropdownGameObject = Instantiate(variationMaterialDropdownPrefab, materialSpawn);
-                allDropdowns.Add(dropdownGameObject);
-                TMP_Dropdown tmpDropdown = dropdownGameObject.GetComponentInChildren<TMP_Dropdown>();
-                SetupDropdownWithMaterials(tmpDropdown, renderer, currentMaterial.name, 0, slotName); // Using 0 for materialIndex
+                Material currentMaterial = renderer.sharedMaterials[0];
+                GameObject labelGameObject = Instantiate(variationMaterialLabelPrefab, materialSpawn);
+                allLabels.Add(labelGameObject);
+                TextMeshProUGUI materialLabel = labelGameObject.transform.Find("materialLabel").GetComponent<TextMeshProUGUI>(); // Ensure there is a child named "materialLabel"
+                materialLabel.text = currentMaterial.name; // Set the label to the current material name
 
-                Button optionsButton = dropdownGameObject.transform.Find("Button_Options").GetComponent<Button>();
+                Button optionsButton = labelGameObject.transform.Find("Button_Options").GetComponent<Button>();
                 TogglePanelVisibility toggleScript = optionsButton.GetComponent<TogglePanelVisibility>() ?? optionsButton.gameObject.AddComponent<TogglePanelVisibility>();
                 toggleScript.variationBuilder = this;
                 toggleScript.spawnPoint = materialSpawn;
-                toggleScript.dropdownGameObject = dropdownGameObject;
+                toggleScript.dropdownGameObject = labelGameObject;
                 toggleScript.variationTextureSlotPanelPrefab = variationTextureSlotPanelPrefab;
 
                 GameObject panelGameObject = Instantiate(variationTextureSlotPanelPrefab, toggleScript.texturePrefabSpawnPoint.transform, false);
@@ -205,25 +114,20 @@ namespace doppelganger
                 panelGameObject.SetActive(false);
                 toggleScript.panelGameObject = panelGameObject;
 
-                // Listener for material change through the dropdown
-                tmpDropdown.onValueChanged.AddListener((int selectedIndex) => {
-                    string selectedMaterialName = tmpDropdown.options[selectedIndex].text;
-                    ApplyMaterialDirectly(renderer, selectedMaterialName); // Assumes this method can directly use renderer.sharedMaterial
-                });
-
-                // Toggling panel visibility and ensuring it's updated with the current material
+                // When options button is clicked, show the panel to allow material changes
                 optionsButton.onClick.AddListener(() => {
-                        // The TogglePanel method now handles initializing or updating the panel as needed
-                        toggleScript.TogglePanel();
-                        toggleScript.ToggleOtherDropdowns(!panelGameObject.activeSelf);
-                    
+                    toggleScript.TogglePanel();
+                    panelScript.SetMaterialModelAndRenderer(currentMaterial, currentModel, renderer, slotName);
+                    toggleScript.ToggleOtherDropdowns(!panelGameObject.activeSelf);
                 });
 
-                TextMeshProUGUI nameText = dropdownGameObject.transform.Find("Button_Options/Name").GetComponent<TextMeshProUGUI>();
+                // Update label name to reflect the renderer and material
+                TextMeshProUGUI nameText = labelGameObject.transform.Find("Button_Options/Name").GetComponent<TextMeshProUGUI>(); // Make sure the Button_Options object has a child named "Name"
                 nameText.text = $"{rendererCounter}";
                 rendererCounter++; // Increment for the next renderer
             }
         }
+
         public void RegisterPanelScript(SkinnedMeshRenderer renderer, VariationTextureSlotsPanel panelScript)
         {
             if (!rendererPanelMap.ContainsKey(renderer))
@@ -234,52 +138,6 @@ namespace doppelganger
             {
                 rendererPanelMap[renderer] = panelScript; // Update existing entry
             }
-        }
-
-        void SetupDropdownWithMaterials(TMP_Dropdown tmpDropdown, SkinnedMeshRenderer renderer, string currentMaterialName, int materialSlot, string slotName)
-        {
-            List<string> availableMaterialNames = GetAvailableMaterialNamesForRenderer(renderer, slotName);
-
-            // Clear existing options to repopulate the dropdown.
-            tmpDropdown.ClearOptions();
-
-            // Clone the original material to ensure it's not modified.
-            Material originalMaterial = renderer.sharedMaterials[materialSlot];
-            Material clonedMaterial = new Material(originalMaterial);
-            string clonedMaterialName = clonedMaterial.name;
-
-            // Apply the cloned material immediately to the renderer.
-            Material[] materials = renderer.sharedMaterials;
-            materials[materialSlot] = clonedMaterial;
-            renderer.sharedMaterials = materials;
-
-            // Add the cloned material name to the available options.
-            availableMaterialNames.Insert(0, clonedMaterialName);
-
-            // Ensure "null.mat" is at index 1.
-            if (!availableMaterialNames.Contains("null.mat"))
-            {
-                availableMaterialNames.Insert(1, "null.mat");
-            }
-            else if (availableMaterialNames.IndexOf("null.mat") != 1)
-            {
-                availableMaterialNames.Remove("null.mat");
-                availableMaterialNames.Insert(1, "null.mat");
-            }
-
-            // Add options to the dropdown.
-            tmpDropdown.AddOptions(availableMaterialNames);
-
-            // Select the cloned material by default in the dropdown.
-            tmpDropdown.value = 0; // Cloned material is at index 0
-            tmpDropdown.RefreshShownValue();
-
-            // Listen for selection changes to apply materials directly.
-            tmpDropdown.onValueChanged.RemoveAllListeners();
-            tmpDropdown.onValueChanged.AddListener(index => {
-                string selectedMaterialName = availableMaterialNames[index];
-                ApplyMaterialDirectly(renderer, selectedMaterialName);
-            });
         }
 
         public int GetRendererIndexByName(string rendererName)
@@ -297,18 +155,30 @@ namespace doppelganger
             return -1;
         }
 
-        public void ApplyMaterialDirectly(SkinnedMeshRenderer renderer, string newMaterialName)
+        public void ApplyMaterialDirectly(SkinnedMeshRenderer targetRenderer, string newMaterialName)
         {
-            if (renderer.sharedMaterials.Length == 0)
+            Debug.Log("ApplyMaterialDirectly called"); // Log when the method is called
+
+            if (targetRenderer == null)
             {
-                Debug.LogError("Renderer does not have any materials.");
+                Debug.LogError("No renderer provided.");
                 return;
             }
 
-            string originalName = renderer.sharedMaterials[0].name;
+            string originalName = targetRenderer.sharedMaterials[0].name;
+            Debug.Log($"Original material name: {originalName}"); // Log the original material name
+
+            // Check if the renderer has materials to avoid null reference exception
+            if (targetRenderer.sharedMaterials.Length == 0)
+            {
+                Debug.LogError($"Renderer {targetRenderer.gameObject.name} does not have any materials.");
+                return;
+            }
+
+            // Load the new material
             Material newMaterial = newMaterialName.Equals("null.mat")
                 ? Resources.Load<Material>("Materials/null")
-                : LoadMaterialByName(newMaterialName);
+                : Resources.Load<Material>($"Materials/{newMaterialName}");
 
             if (newMaterial == null)
             {
@@ -316,28 +186,40 @@ namespace doppelganger
                 return;
             }
 
-            // Get the index of the renderer within the current model
-            int rendererIndex = GetRendererIndexByName(renderer.name);
-            if (rendererIndex == -1)
-            {
-                Debug.LogError($"Renderer '{renderer.name}' not found in the current model.");
-                return;
-            }
+            Debug.Log($"New material loaded: {newMaterial.name}"); // Log that the new material was successfully loaded
 
-            // Apply the new material
-            Material[] materials = renderer.sharedMaterials;
+            Material[] materials = targetRenderer.sharedMaterials;
+            Debug.Log($"Number of materials before change: {materials.Length}"); // Log the number of materials before the change
+
             materials[0] = newMaterial;
-            renderer.sharedMaterials = materials;
-            Debug.Log($"Applied '{newMaterialName}' to slot '0' of '{renderer.gameObject.name}'.");
+            targetRenderer.sharedMaterials = materials;
 
-            // Adjusted to pass renderer index to the recording method
+            Debug.Log($"Applied '{newMaterialName}' to {targetRenderer.gameObject.name}. Number of materials after change: {targetRenderer.sharedMaterials.Length}"); // Log the change
+
+            // Additional application logic
             string modelName = currentModelName.Replace("(Clone)", "");
             string currentSlider = interfaceManager.currentSlider;
             UpdateModelInfoPanel(currentSlider);
+
+            // Log the current model name and slider being used
+            Debug.Log($"Model Name: {modelName}, Current Slider: {currentSlider}");
+
+            int rendererIndex = GetRendererIndexByName(targetRenderer.name);
+            if (rendererIndex == -1)
+            {
+                Debug.LogError($"Renderer '{targetRenderer.name}' not found in the current model.");
+                return;
+            }
+
+            // Log the index of the renderer
+            Debug.Log($"Renderer index in the current model: {rendererIndex}");
+
             RecordMaterialChange(modelName, originalName, newMaterialName, rendererIndex);
-            if (rendererPanelMap.TryGetValue(renderer, out VariationTextureSlotsPanel panelScript))
+
+            if (rendererPanelMap.TryGetValue(targetRenderer, out VariationTextureSlotsPanel panelScript))
             {
                 panelScript.RefreshMaterial(newMaterial);
+                Debug.Log($"Material refreshed in panel for {targetRenderer.gameObject.name}"); // Log material refresh in panel
             }
         }
 

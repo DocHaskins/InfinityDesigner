@@ -46,11 +46,22 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "sh_biter_deg_b.mat",
+                    "name": "sh_man_biter_a_b_degenerated.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
-                    "rttiValues": []
+                    "rttiValues": [
+                      {
+                        "name": "msk_1_tex",
+                        "type": 7,
+                        "val_str": "sh_biter_blisters_blend_c_msk.png"
+                      },
+                      {
+                        "name": "msk_1_add_tex",
+                        "type": 7,
+                        "val_str": "sh_biter_blisters_blend_g_msk.png"
+                      }
+                    ]
                   }
                 ]
               },
@@ -58,7 +69,7 @@
                 "number": 2,
                 "resources": [
                   {
-                    "name": "sh_eye_degenerated.mat",
+                    "name": "sh_eye_biter_degenerated.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -127,11 +138,11 @@
         "filterText": "head",
         "models": [
           {
-            "name": "sh_wmn_zmb_hair_a.msh",
+            "name": "sh_zmb_viral_hairs_a.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "npc_hair_a.mat"
+                "name": "sh_zmb_hairs_a.mat"
               }
             ],
             "materialsResources": [
@@ -139,7 +150,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "npc_hair_a_grey.mat",
+                    "name": "sh_zmb_hairs_a_grey.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -158,7 +169,31 @@
         "slotUid": 102,
         "name": "HEAD_PART_2",
         "filterText": "head",
-        "models": []
+        "models": [
+          {
+            "name": "sh_biter_blisters_c.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "sh_biter_blisters_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "sh_biter_blisters_a_degenerated.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     },
     {
@@ -169,11 +204,11 @@
         "filterText": "arms",
         "models": [
           {
-            "name": "man_zmb_arm_b.msh",
+            "name": "man_zmb_body_hands_a_full.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "man_zmb_arm_leg.mat"
+                "name": "man_zmb_body_hands_a.mat"
               }
             ],
             "materialsResources": [
@@ -181,7 +216,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "man_deg_arm_leg.mat",
+                    "name": "man_zmb_body_hands_a_degenerated.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -264,7 +299,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "man_zmb_torso_d_pattern.mat",
+                    "name": "man_zmb_torso_d_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -276,7 +311,7 @@
                 "number": 2,
                 "resources": [
                   {
-                    "name": "man_zmb_torso_d_bottom_a_pattern.mat",
+                    "name": "man_zmb_torso_d_bottom_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -363,7 +398,7 @@
               },
               {
                 "number": 3,
-                "name": "man_zmb_arm_leg.mat"
+                "name": "man_zmb_body_legs_a.mat"
               }
             ],
             "materialsResources": [
@@ -395,7 +430,7 @@
                 "number": 3,
                 "resources": [
                   {
-                    "name": "man_deg_arm_leg.mat",
+                    "name": "man_zmb_body_legs_a_degenerated.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -473,7 +508,7 @@
               },
               {
                 "number": 3,
-                "name": "man_zmb_arm_leg.mat"
+                "name": "man_zmb_body_legs_a.mat"
               }
             ],
             "materialsResources": [
@@ -505,7 +540,40 @@
                 "number": 3,
                 "resources": [
                   {
-                    "name": "man_deg_arm_leg.mat",
+                    "name": "man_zmb_body_legs_a_degenerated.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "HEAD_PART_3",
+      "slotData": {
+        "slotUid": 116,
+        "name": "HEAD_PART_3",
+        "filterText": "head",
+        "models": [
+          {
+            "name": "sh_biter_blisters_g.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "sh_biter_blisters_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "sh_biter_blisters_a_degenerated.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",

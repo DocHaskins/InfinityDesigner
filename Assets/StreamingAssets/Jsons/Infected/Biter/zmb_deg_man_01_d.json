@@ -2,7 +2,7 @@
   "skeletonName": "man_zmb_medium_skeleton.msh",
   "modelProperties": {
     "class": "biter",
-    "race": "caucasian",
+    "race": "african",
     "sex": "male"
   },
   "slotPairs": [
@@ -14,11 +14,11 @@
         "filterText": "head",
         "models": [
           {
-            "name": "sh_man_bdt_b.msh",
+            "name": "sh_scan_man_053.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "sh_man_bdt_b.mat"
+                "name": "sh_scan_man_053.mat"
               },
               {
                 "number": 2,
@@ -46,11 +46,17 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "sh_biter_deg_a.mat",
+                    "name": "sh_man_biter_a_c_degenerated_african.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
-                    "rttiValues": []
+                    "rttiValues": [
+                      {
+                        "name": "msk_1_tex",
+                        "type": 7,
+                        "val_str": "sh_biter_blisters_blend_a_msk.png"
+                      }
+                    ]
                   }
                 ]
               },
@@ -58,7 +64,7 @@
                 "number": 2,
                 "resources": [
                   {
-                    "name": "sh_eye_degenerated.mat",
+                    "name": "sh_eye_biter_degenerated.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -70,7 +76,7 @@
                 "number": 3,
                 "resources": [
                   {
-                    "name": "sh_mouth_interior_zmb.mat",
+                    "name": "sh_mouth_interior.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -127,11 +133,11 @@
         "filterText": "head",
         "models": [
           {
-            "name": "sh_man_zmb_hair_c.msh",
+            "name": "sh_biter_blisters_a.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "npc_hair_a.mat"
+                "name": "sh_biter_blisters_a.mat"
               }
             ],
             "materialsResources": [
@@ -139,7 +145,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "npc_hair_a_grey.mat",
+                    "name": "sh_biter_blisters_a_degenerated.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -169,11 +175,11 @@
         "filterText": "arms",
         "models": [
           {
-            "name": "man_zmb_arm_b.msh",
+            "name": "man_zmb_body_hands_a_full.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "man_zmb_arm_leg.mat"
+                "name": "man_zmb_body_hands_a.mat"
               }
             ],
             "materialsResources": [
@@ -181,7 +187,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "man_deg_arm_leg.mat",
+                    "name": "man_zmb_body_hands_a_degenerated_african.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -247,7 +253,7 @@
               },
               {
                 "number": 3,
-                "name": "man_zmb_torso_skin.mat"
+                "name": "man_zmb_body_torso_a.mat"
               }
             ],
             "materialsResources": [
@@ -279,7 +285,7 @@
                 "number": 3,
                 "resources": [
                   {
-                    "name": "zmb_deg_torso.mat",
+                    "name": "man_zmb_body_torso_a_degenerated_african.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -339,7 +345,7 @@
               },
               {
                 "number": 3,
-                "name": "man_zmb_arm_leg.mat"
+                "name": "man_zmb_body_legs_a.mat"
               }
             ],
             "materialsResources": [
@@ -371,7 +377,7 @@
                 "number": 3,
                 "resources": [
                   {
-                    "name": "man_zmb_arm_leg.mat",
+                    "name": "man_zmb_body_legs_a_degenerated.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -453,7 +459,7 @@
               },
               {
                 "number": 4,
-                "name": "man_zmb_arm_leg.mat"
+                "name": "man_zmb_body_legs_a.mat"
               }
             ],
             "materialsResources": [
@@ -497,7 +503,7 @@
                 "number": 4,
                 "resources": [
                   {
-                    "name": "man_zmb_arm_leg.mat",
+                    "name": "man_zmb_body_legs_a_degenerated_african.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",

@@ -46,7 +46,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "sh_biter_deg_a.mat",
+                    "name": "sh_man_biter_a_b_degenerated.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -58,7 +58,7 @@
                 "number": 2,
                 "resources": [
                   {
-                    "name": "sh_eye.mat",
+                    "name": "sh_eye_biter_degenerated.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -70,7 +70,7 @@
                 "number": 3,
                 "resources": [
                   {
-                    "name": "sh_mouth_interior.mat",
+                    "name": "sh_mouth_interior_zmb.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -242,7 +242,31 @@
         "slotUid": 106,
         "name": "TORSO_PART_1",
         "filterText": "torso",
-        "models": []
+        "models": [
+          {
+            "name": "man_zmb_skinny_biter_shalw_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "man_zmb_torso_a_center_c.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "man_zmb_torso_a_center_c.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     },
     {

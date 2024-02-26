@@ -29,11 +29,11 @@ namespace doppelganger
 
         public void ToggleOtherDropdowns(bool enable)
         {
-            if (variationBuilder != null && VariationBuilder.allDropdowns != null)
+            if (variationBuilder != null && VariationBuilder.allLabels != null)
             {
-                for (int i = VariationBuilder.allDropdowns.Count - 1; i >= 0; i--)
+                for (int i = VariationBuilder.allLabels.Count - 1; i >= 0; i--)
                 {
-                    var dropdown = VariationBuilder.allDropdowns[i];
+                    var dropdown = VariationBuilder.allLabels[i];
                     // Check if the GameObject reference is still valid
                     if (dropdown != null && dropdown != this.dropdownGameObject)
                     {

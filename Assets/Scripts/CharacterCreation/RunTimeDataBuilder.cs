@@ -35,10 +35,10 @@ public class RunTimeDataBuilder : MonoBehaviour
         filters = new Dictionary<string, List<string>>()
         {
             {"head", new List<string> {"sh_scan_", "sh_npc_", "sh_wmn_", "aiden_young", "sh_", "sh_man_", "sh_biter_", "sh_man_viral_a", "head", "sh_biter_deg_b", "zmb_volatile_a"}},
-            {"hat", new List<string> {"hat", "cap", "headwear", "bandana", "beret", "bracken_bandage", "beanie", "hood", "sh_man_pk_headcover_c", "headband", "man_bdt_headcover_i", "coverlet"}},
-            {"hat_access", new List<string> {"hat", "cap", "headwear", "bandana", "horns", "beret", "bracken_bandage", "beanie", "hood", "sh_man_pk_headcover_c", "headband", "man_bdt_headcover_i", "coverlet"}},
-            {"mask", new List<string> {"mask", "balaclava", "scarf_a_part_d"}},
-            {"mask_access", new List<string> {"mask", "balaclava", "scarf_a_part_d"}},
+            {"hat", new List<string> {"hat", "cap", "headwear", "blisters", "bandana", "beret", "bracken_bandage", "beanie", "hood", "sh_man_pk_headcover_c", "headband", "man_bdt_headcover_i", "coverlet"}},
+            {"hat_access", new List<string> {"hat", "cap", "headwear", "blisters", "bandana", "horns", "beret", "bracken_bandage", "beanie", "hood", "sh_man_pk_headcover_c", "headband", "man_bdt_headcover_i", "coverlet"}},
+            {"mask", new List<string> {"mask", "balaclava", "blisters", "scarf_a_part_d" }},
+            {"mask_access", new List<string> {"mask", "balaclava", "blisters", "scarf_a_part_d" }},
             {"glasses", new List<string> {"glasses", "man_ren_scarf_a_part_c", "player_tank_headwear_a_tpp"}},
             {"necklace", new List<string> {"jewelry", "necklace", "man_bdt_chain_i", "man_bdt_chain_g", "man_bdt_chain_h", "man_bdt_chain_f"}},
             {"earrings", new List<string> {"earing", "earring"}},
@@ -50,9 +50,9 @@ public class RunTimeDataBuilder : MonoBehaviour
             {"facial_hair", new List<string> {"facial_hair", "beard", "jaw_"}},
             {"cape", new List<string> {"cape", "scarf", "chainmail", "sweater", "shawl", "shalw", "choker", "cloak", "npc_man_torso_g_hood_b"}},
             {"torso", new List<string> {"torso", "npc_anderson", "player_reload_outfit", "singer_top", "npc_frank", "bolter", "goon", "charger_body", "corruptor", "screamer", "spitter", "viral", "volatile", "zmb_suicider_corpse"}},
-            {"torso_2", new List<string> { "torso", "centre", "vest", "wmn_torso_e", "wmn_torso_i", "center", "top", "fronttop", "front", "dress", "coat", "jacket", "bubbles", "horns", "guts", "gastank"}},
-            {"torso_extra", new List<string> {"torso", "addon", "sixshooter", "wpntmp", "bumbag", "centre", "detail", "vest", "wmn_torso_e", "wmn_torso_i", "stethoscope", "center", "top", "fronttop", "front", "dress", "machete_tpp", "coat", "plates", "vest", "jacket", "bubbles", "horns", "guts", "gastank"}},
-            {"torso_access", new List<string> {"belt", "bumbag", "wpntmp", "bumbag", "centre", "fitz_pin_a", "detail", "vest", "wmn_torso_e", "wmn_torso_i", "stethoscope", "center", "top", "fronttop", "front", "torso_b_cape_spikes", "spikes", "knife", "add_", "wrap", "npc_colonel_feathers_a", "axe", "npc_wmn_pants_b_torso_g_tank_top_bumbag_a", "zipper", "rag", "pouch", "collar", "neck", "pocket", "waist_shirt", "chain_armour", "skull_", "plates", "sport_bag", "gastank", "walkietalkie", "man_bdt_belt_c_addon_a", "chain", "battery", "torso_a_pk_top", "man_bdt_torso_d_shirt_c", "wrench", "suspenders", "turtleneck", "npc_waltz_torso_a_glasses_addon", "apron"}},
+            {"torso_2", new List<string> { "torso", "centre", "vest", "wmn_torso_e", "blisters", "wmn_torso_i", "center", "top", "fronttop", "front", "dress", "coat", "jacket", "bubbles", "horns", "guts", "gastank"}},
+            {"torso_extra", new List<string> {"torso", "addon", "sixshooter", "blisters", "wpntmp", "bumbag", "centre", "detail", "vest", "wmn_torso_e", "wmn_torso_i", "stethoscope", "center", "top", "fronttop", "front", "dress", "machete_tpp", "coat", "plates", "vest", "jacket", "bubbles", "horns", "guts", "gastank"}},
+            {"torso_access", new List<string> {"belt", "bumbag", "wpntmp", "blisters", "bumbag", "centre", "fitz_pin_a", "detail", "vest", "wmn_torso_e", "wmn_torso_i", "stethoscope", "center", "top", "fronttop", "front", "torso_b_cape_spikes", "spikes", "knife", "add_", "wrap", "npc_colonel_feathers_a", "axe", "npc_wmn_pants_b_torso_g_tank_top_bumbag_a", "zipper", "rag", "pouch", "collar", "neck", "pocket", "waist_shirt", "chain_armour", "skull_", "plates", "sport_bag", "gastank", "walkietalkie", "man_bdt_belt_c_addon_a", "chain", "battery", "torso_a_pk_top", "man_bdt_torso_d_shirt_c", "wrench", "suspenders", "turtleneck", "npc_waltz_torso_a_glasses_addon", "apron"}},
             {"tattoo", new List<string> {"tatoo", "tattoo"}},
             {"hands", new List<string> {"hands", "arms"}},
             {"lhand", new List<string> {"arm", "_left", "hand"}},
@@ -68,8 +68,8 @@ public class RunTimeDataBuilder : MonoBehaviour
             {"legs_extra", new List<string> {"pocket", "socks", "pants_a_add", "bottom", "sc_ov_legs", "legs_a_part", "child_torso_a_bottom", "skirt", "man_srv_legs_b_bottom_a", "belt", "legs_c_add_", "legs_a_addon", "pants_b_rag"}},
             {"legs_access", new List<string> {"pocket", "socks", "bottom", "sc_ov_legs", "legs_a_part", "pouch", "child_torso_a_bottom", "holster", "skirt", "chain", "equipment", "npc_jack_legs_adds", "man_srv_legs_b_bottom_a", "belt", "pad_", "legs_c_add_", "legs_a_addon", "pants_b_rag", "bumbag", "bag", "patch_", "bandage", "element", "tapes"}},
             {"shoes", new List<string> {"shoes", "shoe", "feet", "boots", "child_pants_b"}},
-            {"armor_helmet", new List<string> {"helmet", "tank_headwear", "armor_b_head", "skullface_helmet", "headcover", "head_armor", "headgear"}},
-            {"armor_helmet_access", new List<string> {"helmet", "skullface_helmet", "headcover", "head_armor", "headgear"}},
+            {"armor_helmet", new List<string> {"helmet", "tank_headwear", "blisters", "armor_b_head", "skullface_helmet", "headcover", "head_armor", "headgear"}},
+            {"armor_helmet_access", new List<string> {"helmet", "skullface_helmet", "blisters", "headcover", "head_armor", "headgear"}},
             {"armor_torso", new List<string> {"armor", "nuwa_torso_a"}},
             {"armor_torso_access", new List<string> {"armor", "addon"}},
             {"armor_torso_upperright", new List<string> {"upperright"}},
@@ -85,7 +85,7 @@ public class RunTimeDataBuilder : MonoBehaviour
 
         exclude_filters = new Dictionary<string, List<string>>()
         {
-            {"head", new List<string> {"hat", "cap", "headwear", "headgear", "armor", "mask", "bdt_balaclava", "horns", "sh_benchmark_npc_hakon_cc", "beret", "glasses", "hair", "bandana", "facial_hair", "beard", "headcover", "emblem", "hat", "cap", "headwear", "bandana", "beanie", "hood"}},
+            {"head", new List<string> {"hat", "cap", "headwear", "blisters", "headgear", "armor", "mask", "bdt_balaclava", "horns", "sh_benchmark_npc_hakon_cc", "beret", "glasses", "hair", "bandana", "facial_hair", "beard", "headcover", "emblem", "hat", "cap", "headwear", "bandana", "beanie", "hood"}},
             {"hat", new List<string> {"part", "player_camo_headwear_a_tpp", "fringe", "base", "braids", "player_headwear_crane_b_tpp", "player_tank_headwear_a_tpp", "player_camo_hood_a_tpp", "npc_man_torso_g_hood_b", "glasses", "hair", "decal_logo", "cape", "mask", "_addon", "decal", "facial_hair"}},
             {"hat_access", new List<string> {"player_camo_headwear_a_tpp", "player_headwear_crane_b_tpp", "player_tank_headwear_a_tpp", "player_camo_hood_a_tpp", "npc_man_torso_g_hood_b", "glasses", "hair", "cape", "mask", "facial_hair"}},
             {"mask", new List<string> {"glasses", "hair", "decal_logo", "cape", "_addon", "chr_player_healer_mask", "facial_hair"}},

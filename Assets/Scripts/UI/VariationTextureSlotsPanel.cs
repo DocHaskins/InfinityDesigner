@@ -37,6 +37,7 @@ namespace doppelganger
             if (textureScroller != null)
             {
                 textureScroller.TextureSelected += (texture, renderer, material, slotName) => GetTextureChange(texture, slotName);
+                textureScroller.MaterialSelected += (material) => GetMaterialChange(material);
             }
         }
 
@@ -52,6 +53,7 @@ namespace doppelganger
 
         public void SetMaterialModelAndRenderer(Material material, GameObject model, SkinnedMeshRenderer renderer, string slotName)
         {
+            Debug.Log($"SetMaterialModelAndRenderer: material: {material} Current model: {model.name}, renderer: {renderer.name}, slotName: {slotName}");
             this.currentMaterial = new Material(renderer.sharedMaterials.FirstOrDefault(m => m.name == material.name) ?? material);
             this.currentModel = model;
             this.TargetRenderer = renderer;
@@ -136,6 +138,30 @@ namespace doppelganger
             if (textureScroller != null)
             {
                 textureScroller.PrepareForSelection(this, slotName);
+            }
+        }
+
+        public void GetMaterialChange(Material material)
+        {
+            Debug.Log($"GetMaterialChange {material}, TargetRenderer {TargetRenderer}");
+            if (TargetRenderer != null && material != null)
+            {
+                if (TargetRenderer != null && material != null)
+                {
+                    // Use the ApplyMaterialDirectly method to apply the material to the target renderer
+                    variationBuilder.ApplyMaterialDirectly(TargetRenderer, material.name);
+
+                    // Update the currentMaterial reference to the new material
+                    currentMaterial = material;
+
+                    // Optionally, refresh the UI or do additional updates as needed
+                    RefreshMaterial(currentMaterial);
+                }
+                else
+                {
+                    Debug.LogError("Incomplete context for applying material change.");
+                }
+                //UpdatePanel();
             }
         }
 

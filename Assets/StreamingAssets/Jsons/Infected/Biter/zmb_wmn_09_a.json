@@ -2,7 +2,7 @@
   "skeletonName": "woman_zmb_skeleton.msh",
   "modelProperties": {
     "class": "biter",
-    "race": "caucasian",
+    "race": "african",
     "sex": "female"
   },
   "slotPairs": [
@@ -14,60 +14,36 @@
         "filterText": "head",
         "models": [
           {
-            "name": "sh_scan_wmn_016.msh",
+            "name": "sh_scan_wmn_013.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "sh_scan_wmn_016.mat"
-              },
-              {
-                "number": 2,
-                "name": "sh_eye.mat"
-              },
-              {
-                "number": 3,
                 "name": "sh_mouth_interior.mat"
               },
               {
-                "number": 4,
+                "number": 2,
                 "name": "sh_eyelashes.mat"
               },
               {
+                "number": 3,
+                "name": "sh_scan_wmn_013.mat"
+              },
+              {
+                "number": 4,
+                "name": "sh_eye.mat"
+              },
+              {
                 "number": 5,
-                "name": "sh_eye_shadow.mat"
+                "name": "sh_wet_eye.mat"
               },
               {
                 "number": 6,
-                "name": "sh_wet_eye.mat"
+                "name": "sh_eye_shadow.mat"
               }
             ],
             "materialsResources": [
               {
                 "number": 1,
-                "resources": [
-                  {
-                    "name": "sh_biter_a.mat",
-                    "selected": true,
-                    "layoutId": 4,
-                    "loadFlags": "S",
-                    "rttiValues": []
-                  }
-                ]
-              },
-              {
-                "number": 2,
-                "resources": [
-                  {
-                    "name": "sh_eye_zombie.mat",
-                    "selected": true,
-                    "layoutId": 4,
-                    "loadFlags": "S",
-                    "rttiValues": []
-                  }
-                ]
-              },
-              {
-                "number": 3,
                 "resources": [
                   {
                     "name": "sh_mouth_interior_zmb.mat",
@@ -79,7 +55,7 @@
                 ]
               },
               {
-                "number": 4,
+                "number": 2,
                 "resources": [
                   {
                     "name": "sh_eyelashes.mat",
@@ -91,10 +67,45 @@
                 ]
               },
               {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "sh_man_biter_a_b_african.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": [
+                      {
+                        "name": "msk_1_tex",
+                        "type": 7,
+                        "val_str": "sh_biter_blisters_blend_c_msk.png"
+                      },
+                      {
+                        "name": "msk_1_add_tex",
+                        "type": 7,
+                        "val_str": "sh_biter_blisters_blend_b_msk.png"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "number": 4,
+                "resources": [
+                  {
+                    "name": "sh_eye_biter_african.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
                 "number": 5,
                 "resources": [
                   {
-                    "name": "sh_eye_shadow.mat",
+                    "name": "sh_wet_eye.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -106,7 +117,7 @@
                 "number": 6,
                 "resources": [
                   {
-                    "name": "sh_wet_eye.mat",
+                    "name": "sh_eye_shadow.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -127,11 +138,11 @@
         "filterText": "head",
         "models": [
           {
-            "name": "sh_wmn_zmb_hair_a.msh",
+            "name": "sh_zmb_hairs_b.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "npc_hair_a.mat"
+                "name": "sh_zmb_hairs_a.mat"
               }
             ],
             "materialsResources": [
@@ -139,7 +150,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "npc_hair_a.mat",
+                    "name": "sh_zmb_hairs_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -158,7 +169,31 @@
         "slotUid": 102,
         "name": "HEAD_PART_2",
         "filterText": "head",
-        "models": []
+        "models": [
+          {
+            "name": "sh_biter_blisters_c.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "sh_biter_blisters_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "sh_biter_blisters_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     },
     {
@@ -169,11 +204,11 @@
         "filterText": "arms",
         "models": [
           {
-            "name": "wmn_zmb_arms_a.msh",
+            "name": "wmn_zmb_arms_b.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "man_zmb_arm_leg.mat"
+                "name": "man_zmb_body_hands_a.mat"
               }
             ],
             "materialsResources": [
@@ -181,7 +216,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "man_zmb_arm_leg.mat",
+                    "name": "man_zmb_body_hands_a_african.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -199,7 +234,7 @@
       "slotData": {
         "slotUid": 104,
         "name": "HANDS",
-        "filterText": "hands",
+        "filterText": "",
         "models": []
       }
     },
@@ -209,31 +244,7 @@
         "slotUid": 105,
         "name": "TORSO",
         "filterText": "torso",
-        "models": [
-          {
-            "name": "wmn_zmb_legs_c_bottom_b.msh",
-            "materialsData": [
-              {
-                "number": 1,
-                "name": "man_zmb_legs_a_bottom_a.mat"
-              }
-            ],
-            "materialsResources": [
-              {
-                "number": 1,
-                "resources": [
-                  {
-                    "name": "man_zmb_legs_a_bottom_a.mat",
-                    "selected": true,
-                    "layoutId": 4,
-                    "loadFlags": "S",
-                    "rttiValues": []
-                  }
-                ]
-              }
-            ]
-          }
-        ]
+        "models": []
       }
     },
     {
@@ -241,22 +252,14 @@
       "slotData": {
         "slotUid": 106,
         "name": "TORSO_PART_1",
-        "filterText": "torso",
+        "filterText": "hands",
         "models": [
           {
-            "name": "wmn_zmb_torso_e.msh",
+            "name": "npc_wmn_torso_g_unbuttoned.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "wmn_zmb_torso_e.mat"
-              },
-              {
-                "number": 2,
-                "name": "man_zmb_torso_skin.mat"
-              },
-              {
-                "number": 3,
-                "name": "wmn_zmb_torso_e_threads.mat"
+                "name": "npc_wmn_torso_g_unbuttoned.mat"
               }
             ],
             "materialsResources": [
@@ -264,31 +267,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "wmn_zmb_torso_e.mat",
-                    "selected": true,
-                    "layoutId": 4,
-                    "loadFlags": "S",
-                    "rttiValues": []
-                  }
-                ]
-              },
-              {
-                "number": 2,
-                "resources": [
-                  {
-                    "name": "man_zmb_torso_skin.mat",
-                    "selected": true,
-                    "layoutId": 4,
-                    "loadFlags": "S",
-                    "rttiValues": []
-                  }
-                ]
-              },
-              {
-                "number": 3,
-                "resources": [
-                  {
-                    "name": "wmn_zmb_torso_e_threads.mat",
+                    "name": "npc_wmn_torso_g_jeans_unbuttoned.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -307,7 +286,31 @@
         "slotUid": 107,
         "name": "TORSO_PART_2",
         "filterText": "torso",
-        "models": []
+        "models": [
+          {
+            "name": "npc_wmn_torso_g_sleeves_long.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "npc_wmn_torso_g_sleeves_long.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "npc_wmn_torso_g_jeans_sleeves_long.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     },
     {
@@ -316,7 +319,31 @@
         "slotUid": 108,
         "name": "TORSO_PART_3",
         "filterText": "torso",
-        "models": []
+        "models": [
+          {
+            "name": "npc_wmn_torso_g_unbuttoned_decal_blood_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "chr_decal_cloth_blood_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "chr_decal_cloth_blood_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     },
     {
@@ -325,7 +352,31 @@
         "slotUid": 109,
         "name": "LEGS",
         "filterText": "legs",
-        "models": []
+        "models": [
+          {
+            "name": "npc_wmn_pants_b_b.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "npc_wmn_pants_b.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "npc_wmn_pants_b.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     },
     {
@@ -336,19 +387,15 @@
         "filterText": "",
         "models": [
           {
-            "name": "wmn_zmb_legs_c.msh",
+            "name": "wmn_zmb_legs_b.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "man_zmb_legs_a_base_a.mat"
+                "name": "wmn_zmb_shoes_a.mat"
               },
               {
                 "number": 2,
-                "name": "man_zmb_legs_a_alpha_a.mat"
-              },
-              {
-                "number": 3,
-                "name": "man_zmb_arm_leg.mat"
+                "name": "man_zmb_body_legs_a.mat"
               }
             ],
             "materialsResources": [
@@ -356,7 +403,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "man_zmb_legs_a_base_a.mat",
+                    "name": "wmn_zmb_shoes_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -368,19 +415,7 @@
                 "number": 2,
                 "resources": [
                   {
-                    "name": "man_zmb_legs_a_alpha_a.mat",
-                    "selected": true,
-                    "layoutId": 4,
-                    "loadFlags": "S",
-                    "rttiValues": []
-                  }
-                ]
-              },
-              {
-                "number": 3,
-                "resources": [
-                  {
-                    "name": "man_zmb_arm_leg.mat",
+                    "name": "man_zmb_body_legs_a_african.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -426,17 +461,22 @@
         "slotUid": 114,
         "name": "OTHER_PART_5",
         "filterText": "",
+        "models": []
+      }
+    },
+    {
+      "key": "HANDS_PART_1",
+      "slotData": {
+        "slotUid": 115,
+        "name": "HANDS_PART_1",
+        "filterText": "hands",
         "models": [
           {
-            "name": "wmn_zmb_legs_b.msh",
+            "name": "wmn_tpp_biomarker_a.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "man_zmb_arm_leg.mat"
-              },
-              {
-                "number": 2,
-                "name": "wmn_zmb_shoes_a.mat"
+                "name": "tpp_biomarker.mat"
               }
             ],
             "materialsResources": [
@@ -444,29 +484,44 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "man_zmb_arm_leg.mat",
+                    "name": "tpp_biomarker_red.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
                     "rttiValues": []
                   }
                 ]
-              },
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "HEAD_PART_3",
+      "slotData": {
+        "slotUid": 116,
+        "name": "HEAD_PART_3",
+        "filterText": "head",
+        "models": [
+          {
+            "name": "sh_biter_blisters_b.msh",
+            "materialsData": [
               {
-                "number": 2,
+                "number": 1,
+                "name": "sh_biter_blisters_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
                 "resources": [
                   {
-                    "name": "wmn_zmb_shoes_a.mat",
+                    "name": "sh_biter_blisters_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
-                    "rttiValues": [
-                      {
-                        "name": "dif_0_val",
-                        "type": 4,
-                        "val_str": null
-                      }
-                    ]
+                    "rttiValues": []
                   }
                 ]
               }

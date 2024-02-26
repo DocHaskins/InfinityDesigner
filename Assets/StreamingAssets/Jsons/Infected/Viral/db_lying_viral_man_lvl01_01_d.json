@@ -14,11 +14,11 @@
         "filterText": "head",
         "models": [
           {
-            "name": "sh_man_viral_a.msh",
+            "name": "sh_scan_man_054.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "sh_man_viral_a.mat"
+                "name": "sh_scan_man_054.mat"
               },
               {
                 "number": 2,
@@ -46,7 +46,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "sh_man_viral_a.mat",
+                    "name": "sh_man_viral_basic_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -58,7 +58,7 @@
                 "number": 2,
                 "resources": [
                   {
-                    "name": "sh_eye_man_viral_a.mat",
+                    "name": "sh_eye.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -167,28 +167,12 @@
             "materialsData": [
               {
                 "number": 1,
-                "name": "viral_torso_a.mat"
-              },
-              {
-                "number": 2,
                 "name": "viral_tshirt_a.mat"
               }
             ],
             "materialsResources": [
               {
                 "number": 1,
-                "resources": [
-                  {
-                    "name": "viral_torso_a.mat",
-                    "selected": true,
-                    "layoutId": 4,
-                    "loadFlags": "S",
-                    "rttiValues": []
-                  }
-                ]
-              },
-              {
-                "number": 2,
                 "resources": [
                   {
                     "name": "viral_tshirt_a.mat",
@@ -212,11 +196,11 @@
         "filterText": "torso",
         "models": [
           {
-            "name": "viral_torso_b.msh",
+            "name": "man_viral_body_torso_a.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "viral_torso_b.mat"
+                "name": "man_viral_body_torso_a.mat"
               }
             ],
             "materialsResources": [
@@ -224,7 +208,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "viral_torso_a.mat",
+                    "name": "man_viral_body_torso_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -245,11 +229,11 @@
         "filterText": "torso",
         "models": [
           {
-            "name": "viral_torso_b_hands_a.msh",
+            "name": "man_viral_body_hands_a.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "viral_torso_b.mat"
+                "name": "man_viral_body_hands_a.mat"
               }
             ],
             "materialsResources": [
@@ -257,7 +241,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "viral_torso_a.mat",
+                    "name": "man_viral_body_hands_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -292,10 +276,6 @@
               {
                 "number": 1,
                 "name": "viral_pants_b.mat"
-              },
-              {
-                "number": 2,
-                "name": "viral_legs_c.mat"
               }
             ],
             "materialsResources": [
@@ -304,18 +284,6 @@
                 "resources": [
                   {
                     "name": "viral_pants_b.mat",
-                    "selected": true,
-                    "layoutId": 4,
-                    "loadFlags": "S",
-                    "rttiValues": []
-                  }
-                ]
-              },
-              {
-                "number": 2,
-                "resources": [
-                  {
-                    "name": "viral_legs_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -334,7 +302,31 @@
         "slotUid": 110,
         "name": "OTHER_PART_1",
         "filterText": "",
-        "models": []
+        "models": [
+          {
+            "name": "man_viral_body_legs_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "man_viral_body_legs_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "man_viral_body_legs_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     },
     {

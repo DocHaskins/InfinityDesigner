@@ -1,5 +1,5 @@
 {
-  "skeletonName": "man_basic_skeleton.msh",
+  "skeletonName": "man_pk_light_skeleton.msh",
   "modelProperties": {
     "class": "viral",
     "race": "caucasian",
@@ -14,11 +14,11 @@
         "filterText": "head",
         "models": [
           {
-            "name": "sh_man_viral_a.msh",
+            "name": "sh_man_pk_f.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "sh_man_viral_a.mat"
+                "name": "sh_man_pk_f.mat"
               },
               {
                 "number": 2,
@@ -46,11 +46,17 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "sh_man_viral_a.mat",
+                    "name": "sh_man_viral_tier1_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
-                    "rttiValues": []
+                    "rttiValues": [
+                      {
+                        "name": "msk_1_tex",
+                        "type": 7,
+                        "val_str": "sh_man_hair_buzz_a_msk.png"
+                      }
+                    ]
                   }
                 ]
               },
@@ -58,7 +64,7 @@
                 "number": 2,
                 "resources": [
                   {
-                    "name": "sh_eye_viral_c.mat",
+                    "name": "sh_eye_viral_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -125,7 +131,31 @@
         "slotUid": 101,
         "name": "HEAD_PART_1",
         "filterText": "head",
-        "models": []
+        "models": [
+          {
+            "name": "man_tpp_biomarker_c.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "tpp_biomarker.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "tpp_biomarker_red.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     },
     {
@@ -143,13 +173,22 @@
         "slotUid": 103,
         "name": "ARMS",
         "filterText": "arms",
+        "models": []
+      }
+    },
+    {
+      "key": "HANDS",
+      "slotData": {
+        "slotUid": 104,
+        "name": "HANDS",
+        "filterText": "hands",
         "models": [
           {
-            "name": "viral_torso_b_hands_a.msh",
+            "name": "man_hands_b.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "viral_torso_b.mat"
+                "name": "man_hands_white_a.mat"
               }
             ],
             "materialsResources": [
@@ -157,7 +196,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "viral_torso_a.mat",
+                    "name": "man_hands_muscular_viral_white_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -171,15 +210,6 @@
       }
     },
     {
-      "key": "HANDS",
-      "slotData": {
-        "slotUid": 104,
-        "name": "HANDS",
-        "filterText": "hands",
-        "models": []
-      }
-    },
-    {
       "key": "TORSO",
       "slotData": {
         "slotUid": 105,
@@ -187,19 +217,23 @@
         "filterText": "torso",
         "models": [
           {
-            "name": "viral_torso_k.msh",
+            "name": "man_pk_torso_c.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "zipper_a.mat"
+                "name": "man_pk_torso_c.mat"
               },
               {
                 "number": 2,
-                "name": "viral_torso_k_threads.mat"
+                "name": "man_pk_torso_c_zipper.mat"
               },
               {
                 "number": 3,
-                "name": "viral_torso_k.mat"
+                "name": "chr_decal_pk_77_a.mat"
+              },
+              {
+                "number": 4,
+                "name": "chr_decal_pk_logo_a.mat"
               }
             ],
             "materialsResources": [
@@ -207,7 +241,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "zipper_a.mat",
+                    "name": "man_pk_torso_c.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -219,7 +253,7 @@
                 "number": 2,
                 "resources": [
                   {
-                    "name": "viral_torso_k_threads.mat",
+                    "name": "man_pk_torso_c_zipper.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -231,7 +265,19 @@
                 "number": 3,
                 "resources": [
                   {
-                    "name": "viral_torso_k.mat",
+                    "name": "chr_decal_pk_04_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 4,
+                "resources": [
+                  {
+                    "name": "chr_decal_pk_logo_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -252,15 +298,11 @@
         "filterText": "torso",
         "models": [
           {
-            "name": "viral_torso_k_shirt_a.msh",
+            "name": "man_pk_torso_c_sleeves_b.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "viral_torso_l.mat"
-              },
-              {
-                "number": 2,
-                "name": "viral_torso_l_threads.mat"
+                "name": "man_pk_torso_c_sleeve_b.mat"
               }
             ],
             "materialsResources": [
@@ -268,19 +310,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "viral_torso_l.mat",
-                    "selected": true,
-                    "layoutId": 4,
-                    "loadFlags": "S",
-                    "rttiValues": []
-                  }
-                ]
-              },
-              {
-                "number": 2,
-                "resources": [
-                  {
-                    "name": "viral_torso_l_threads.mat",
+                    "name": "man_pk_torso_c_sleeve_b.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -301,11 +331,15 @@
         "filterText": "torso",
         "models": [
           {
-            "name": "viral_torso_b.msh",
+            "name": "man_pk_torso_c_armor_a.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "viral_torso_b.mat"
+                "name": "man_pk_torso_c_armor_a.mat"
+              },
+              {
+                "number": 2,
+                "name": "chr_decal_pk_armor_04_n.mat"
               }
             ],
             "materialsResources": [
@@ -313,7 +347,19 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "viral_torso_a.mat",
+                    "name": "man_pk_torso_c_armor_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 2,
+                "resources": [
+                  {
+                    "name": "chr_decal_pk_armor_04_n.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -355,7 +401,7 @@
               },
               {
                 "number": 3,
-                "name": "viral_legs_c.mat"
+                "name": "man_viral_body_legs_a.mat"
               }
             ],
             "materialsResources": [
@@ -387,7 +433,7 @@
                 "number": 3,
                 "resources": [
                   {
-                    "name": "viral_legs_c.mat",
+                    "name": "man_viral_body_legs_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",

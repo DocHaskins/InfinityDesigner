@@ -46,11 +46,17 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "sh_biter_a.mat",
+                    "name": "sh_man_biter_a_b.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
-                    "rttiValues": []
+                    "rttiValues": [
+                      {
+                        "name": "msk_1_add_tex",
+                        "type": 7,
+                        "val_str": "sh_biter_blisters_blend_b_msk.png"
+                      }
+                    ]
                   }
                 ]
               },
@@ -58,7 +64,7 @@
                 "number": 2,
                 "resources": [
                   {
-                    "name": "sh_eye_zombie.mat",
+                    "name": "sh_eye_biter.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -125,7 +131,31 @@
         "slotUid": 101,
         "name": "HEAD_PART_1",
         "filterText": "head",
-        "models": []
+        "models": [
+          {
+            "name": "sh_man_facial_hair_l_0.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "man_facial_hair_black.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "man_facial_hair_black.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     },
     {
@@ -136,11 +166,11 @@
         "filterText": "head",
         "models": [
           {
-            "name": "sh_man_zmb_hair_a.msh",
+            "name": "sh_biter_blisters_b.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "npc_hair_a.mat"
+                "name": "sh_biter_blisters_a.mat"
               }
             ],
             "materialsResources": [
@@ -148,7 +178,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "sh_man_hair_system_b_dark.mat",
+                    "name": "sh_biter_blisters_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -202,11 +232,11 @@
         "filterText": "hands",
         "models": [
           {
-            "name": "man_zmb_arm_b.msh",
+            "name": "man_zmb_body_hands_a_full.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "man_zmb_arm_leg.mat"
+                "name": "man_zmb_body_hands_a.mat"
               }
             ],
             "materialsResources": [
@@ -214,7 +244,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "man_zmb_arm_leg.mat",
+                    "name": "man_zmb_body_hands_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -243,11 +273,11 @@
               },
               {
                 "number": 2,
-                "name": "man_zmb_torso_skin.mat"
+                "name": "zipper.mat"
               },
               {
                 "number": 3,
-                "name": "zipper.mat"
+                "name": "man_zmb_body_torso_a.mat"
               },
               {
                 "number": 4,
@@ -271,7 +301,7 @@
                 "number": 2,
                 "resources": [
                   {
-                    "name": "man_zmb_torso_skin.mat",
+                    "name": "zipper.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -283,7 +313,7 @@
                 "number": 3,
                 "resources": [
                   {
-                    "name": "zipper.mat",
+                    "name": "man_zmb_body_torso_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -355,7 +385,7 @@
               },
               {
                 "number": 3,
-                "name": "man_zmb_arm_leg.mat"
+                "name": "man_zmb_body_legs_a.mat"
               }
             ],
             "materialsResources": [
@@ -387,7 +417,7 @@
                 "number": 3,
                 "resources": [
                   {
-                    "name": "man_zmb_arm_leg.mat",
+                    "name": "man_zmb_body_legs_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -461,7 +491,7 @@
               },
               {
                 "number": 2,
-                "name": "man_zmb_arm_leg.mat"
+                "name": "man_zmb_body_legs_a.mat"
               }
             ],
             "materialsResources": [
@@ -481,7 +511,7 @@
                 "number": 2,
                 "resources": [
                   {
-                    "name": "man_zmb_arm_leg.mat",
+                    "name": "man_zmb_body_legs_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -515,6 +545,39 @@
                 "resources": [
                   {
                     "name": "tpp_biomarker_red.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "key": "HEAD_PART_3",
+      "slotData": {
+        "slotUid": 117,
+        "name": "HEAD_PART_3",
+        "filterText": "head",
+        "models": [
+          {
+            "name": "sh_zmb_hairs_b.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "sh_zmb_hairs_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "sh_zmb_hairs_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",

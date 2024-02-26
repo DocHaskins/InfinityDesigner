@@ -2,7 +2,7 @@
   "skeletonName": "man_pk_light_skeleton.msh",
   "modelProperties": {
     "class": "biter",
-    "race": "caucasian",
+    "race": "african",
     "sex": "male"
   },
   "slotPairs": [
@@ -14,11 +14,11 @@
         "filterText": "head",
         "models": [
           {
-            "name": "sh_biter_b.msh",
+            "name": "sh_man_pk_g.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "sh_biter_b.mat"
+                "name": "sh_man_pk_g.mat"
               },
               {
                 "number": 2,
@@ -46,11 +46,22 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "sh_biter_b.mat",
+                    "name": "sh_man_biter_a_b_african.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
-                    "rttiValues": []
+                    "rttiValues": [
+                      {
+                        "name": "msk_1_tex",
+                        "type": 7,
+                        "val_str": "sh_biter_blisters_blend_b_msk.png"
+                      },
+                      {
+                        "name": "msk_1_add_tex",
+                        "type": 7,
+                        "val_str": "sh_biter_blisters_blend_d_msk.png"
+                      }
+                    ]
                   }
                 ]
               },
@@ -58,7 +69,7 @@
                 "number": 2,
                 "resources": [
                   {
-                    "name": "sh_eye_zombie.mat",
+                    "name": "sh_eye_biter_african.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -125,7 +136,31 @@
         "slotUid": 101,
         "name": "HEAD_PART_1",
         "filterText": "head",
-        "models": []
+        "models": [
+          {
+            "name": "sh_biter_blisters_b.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "sh_biter_blisters_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "sh_biter_blisters_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     },
     {
@@ -134,7 +169,31 @@
         "slotUid": 102,
         "name": "HEAD_PART_2",
         "filterText": "head",
-        "models": []
+        "models": [
+          {
+            "name": "sh_biter_blisters_d.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "sh_biter_blisters_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "sh_biter_blisters_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     },
     {
@@ -145,7 +204,7 @@
         "filterText": "hands",
         "models": [
           {
-            "name": "man_zmb_arm_a.msh",
+            "name": "man_zmb_body_hands_a.msh",
             "materialsData": [
               {
                 "number": 1,
@@ -157,7 +216,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "man_zmb_arm_leg.mat",
+                    "name": "man_zmb_arm_leg_african.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",

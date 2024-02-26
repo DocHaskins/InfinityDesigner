@@ -12,31 +12,35 @@ namespace doppelganger
 {
     public class TextureScroller : MonoBehaviour
     {
-        public GridUnlimitedScroller gridUnlimitedScroller;
-
-        public Transform contentPanel;
-        public GameObject cellPrefab;
-        public GameObject materialCellPrefab;
+        [Header("Public Fields")]
         public bool autoGenerate;
-        private List<Texture2D> allTextures;
-        private List<Material> allMaterials;
         public bool isTextures = true;
         public bool isMaterials = false;
-        public string searchTerm = "_msk";
+        public string searchTerm = "";
         public string additionalFilterTerm = "";
+        public GameObject currentModel;
+
+        [Header("Managers")]
+        public GridUnlimitedScroller gridUnlimitedScroller;
+        public VariationTextureSlotsPanel currentSelectionPanel;
+        private UnlimitedScrollUI.IUnlimitedScroller unlimitedScroller;
+
+        [Header("Interface")]
+        public GameObject cellPrefab;
+        public GameObject materialCellPrefab;
+        public Transform contentPanel;
         public TMP_Dropdown imageTypeDropdown;
         public TMP_InputField filterInputField;
-        private UnlimitedScrollUI.IUnlimitedScroller unlimitedScroller;
-        public VariationTextureSlotsPanel currentSelectionPanel;
+               
         private string currentSlotForSelection;
-        public GameObject currentModel;
         private SkinnedMeshRenderer currentRenderer;
-        private Material currentMaterialForSelection;
+        private Material currentMaterial;
+        private List<Texture2D> allTextures;
+        private List<Material> allMaterials;
         public event Action<Texture2D> onTextureSelected;
-        public event MaterialSelectedHandler MaterialSelected;
+        public event Action<Material> MaterialSelected;
         public event Action<Texture2D, SkinnedMeshRenderer, Material, string> TextureSelected;
 
-        public delegate void MaterialSelectedHandler(Material material, SkinnedMeshRenderer renderer, string slotName);
         private void Start()
         {
             unlimitedScroller = GetComponent<UnlimitedScrollUI.IUnlimitedScroller>();
@@ -82,7 +86,6 @@ namespace doppelganger
 
         public void ReloadMaterials()
         {
-            searchTerm = "";
             isMaterials = true;
             isTextures = false;
             UpdateDropdownForTextureOrMaterial();
@@ -214,7 +217,7 @@ namespace doppelganger
                         }
                         TMP_Text label = cell.transform.Find("label").GetComponent<TMP_Text>();
                         label.text = material.name; // Set the name of the material as the label text
-                        cell.GetComponent<Button>().onClick.AddListener(() => SelectMaterial(material, currentRenderer, currentSlotForSelection));
+                        cell.GetComponent<Button>().onClick.AddListener(() => SelectMaterial(material));
                         cell.transform.localScale = Vector3.one;
                         cell.onGenerated?.Invoke(index);
                     }
@@ -268,12 +271,19 @@ namespace doppelganger
             return thumbnail;
         }
 
-        public void SelectMaterial(Material material, SkinnedMeshRenderer renderer, string slotName)
+        public void SelectMaterial(Material material)
         {
-            if (MaterialSelected != null)
+            // Add null checks and log messages to identify the null object
+            if (material == null)
             {
-                MaterialSelected(material, renderer, slotName);
+                Debug.LogError("SelectMaterial error: 'material' is null");
             }
+
+            // Assuming MaterialSelected is a delegate, invoke it only if it's not null
+            MaterialSelected?.Invoke(material);
+
+            // Invoke method on currentSelectionPanel if it's not null
+            currentSelectionPanel?.GetMaterialChange(material);
         }
 
         private void SelectTexture(Texture2D texture)

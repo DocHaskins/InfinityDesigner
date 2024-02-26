@@ -1,7 +1,7 @@
 {
   "skeletonName": "man_sc_medium_skeleton.msh",
   "modelProperties": {
-    "class": "scavenger",
+    "class": "viral",
     "race": "caucasian",
     "sex": "male"
   },
@@ -46,27 +46,11 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "sh_man_pk_f.mat",
+                    "name": "sh_man_viral_tier1_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
-                    "rttiValues": [
-                      {
-                        "name": "dif_0_tex",
-                        "type": 7,
-                        "val_str": "sh_man_pk_d_viral_dif.png"
-                      },
-                      {
-                        "name": "msk_1_add_tex",
-                        "type": 7,
-                        "val_str": "sh_man_facial_hair_d_msk.png"
-                      },
-                      {
-                        "name": "msk_1_tex",
-                        "type": 7,
-                        "val_str": "sh_man_hair_system_d_msk.png"
-                      }
-                    ]
+                    "rttiValues": []
                   }
                 ]
               },
@@ -74,7 +58,7 @@
                 "number": 2,
                 "resources": [
                   {
-                    "name": "sh_eye_viral_c.mat",
+                    "name": "sh_eye_viral_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -86,7 +70,7 @@
                 "number": 3,
                 "resources": [
                   {
-                    "name": "sh_mouth_interior.mat",
+                    "name": "sh_mouth_interior_zmb.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -143,11 +127,11 @@
         "filterText": "head",
         "models": [
           {
-            "name": "sh_man_facial_hair_d_0.msh",
+            "name": "sh_zmb_hairs_b.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "man_facial_hair_black.mat"
+                "name": "sh_zmb_hairs_a.mat"
               }
             ],
             "materialsResources": [
@@ -155,7 +139,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "man_facial_hair_black.mat",
+                    "name": "sh_zmb_hairs_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -174,47 +158,7 @@
         "slotUid": 102,
         "name": "HEAD_PART_2",
         "filterText": "head",
-        "models": [
-          {
-            "name": "sh_man_hair_system_d_base_a.msh",
-            "materialsData": [
-              {
-                "number": 1,
-                "name": "sh_man_hair_system_b_dark.mat"
-              },
-              {
-                "number": 2,
-                "name": "npc_hairband_a.mat"
-              }
-            ],
-            "materialsResources": [
-              {
-                "number": 1,
-                "resources": [
-                  {
-                    "name": "sh_man_hair_system_b_dark.mat",
-                    "selected": true,
-                    "layoutId": 4,
-                    "loadFlags": "S",
-                    "rttiValues": []
-                  }
-                ]
-              },
-              {
-                "number": 2,
-                "resources": [
-                  {
-                    "name": "npc_hairband_a.mat",
-                    "selected": true,
-                    "layoutId": 4,
-                    "loadFlags": "S",
-                    "rttiValues": []
-                  }
-                ]
-              }
-            ]
-          }
-        ]
+        "models": []
       }
     },
     {
@@ -592,7 +536,7 @@
               },
               {
                 "number": 3,
-                "name": "viral_legs_c.mat"
+                "name": "man_viral_body_legs_a.mat"
               }
             ],
             "materialsResources": [
@@ -624,7 +568,7 @@
                 "number": 3,
                 "resources": [
                   {
-                    "name": "viral_legs_a.mat",
+                    "name": "man_viral_body_legs_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",

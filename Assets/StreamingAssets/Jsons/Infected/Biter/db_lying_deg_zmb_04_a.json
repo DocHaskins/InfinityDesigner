@@ -46,11 +46,17 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "sh_biter_deg_a.mat",
+                    "name": "sh_man_biter_a_degenerated.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
-                    "rttiValues": []
+                    "rttiValues": [
+                      {
+                        "name": "msk_1_tex",
+                        "type": 7,
+                        "val_str": "sh_biter_blisters_blend_g_msk.png"
+                      }
+                    ]
                   }
                 ]
               },
@@ -58,7 +64,7 @@
                 "number": 2,
                 "resources": [
                   {
-                    "name": "sh_eye_degenerated.mat",
+                    "name": "sh_eye_biter_degenerated.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -125,7 +131,31 @@
         "slotUid": 101,
         "name": "HEAD_PART_1",
         "filterText": "head",
-        "models": []
+        "models": [
+          {
+            "name": "sh_biter_blisters_g.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "sh_biter_blisters_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "sh_biter_blisters_a_degenerated.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     },
     {
@@ -145,11 +175,11 @@
         "filterText": "arms",
         "models": [
           {
-            "name": "man_zmb_arm_b.msh",
+            "name": "man_zmb_body_hands_a_full.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "man_zmb_arm_leg.mat"
+                "name": "man_zmb_body_hands_a.mat"
               }
             ],
             "materialsResources": [
@@ -157,7 +187,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "man_deg_arm_leg.mat",
+                    "name": "man_zmb_body_hands_a_degenerated.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -215,11 +245,11 @@
             "materialsData": [
               {
                 "number": 1,
-                "name": "man_zmb_torso_skin.mat"
+                "name": "man_zmb_torso_a_center_c.mat"
               },
               {
                 "number": 2,
-                "name": "man_zmb_torso_a_center_c.mat"
+                "name": "man_zmb_body_torso_a.mat"
               },
               {
                 "number": 3,
@@ -235,7 +265,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "zmb_deg_torso.mat",
+                    "name": "man_zmb_torso_a_center_c.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -247,7 +277,7 @@
                 "number": 2,
                 "resources": [
                   {
-                    "name": "man_zmb_torso_a_center_c.mat",
+                    "name": "man_zmb_body_torso_a_degenerated.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -331,7 +361,7 @@
               },
               {
                 "number": 3,
-                "name": "man_zmb_arm_leg.mat"
+                "name": "man_zmb_body_legs_a.mat"
               }
             ],
             "materialsResources": [
@@ -363,7 +393,7 @@
                 "number": 3,
                 "resources": [
                   {
-                    "name": "man_zmb_arm_leg.mat",
+                    "name": "man_zmb_body_legs_a_degenerated.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -437,7 +467,7 @@
               },
               {
                 "number": 2,
-                "name": "man_zmb_arm_leg.mat"
+                "name": "man_zmb_body_legs_a.mat"
               }
             ],
             "materialsResources": [
@@ -457,7 +487,7 @@
                 "number": 2,
                 "resources": [
                   {
-                    "name": "man_deg_arm_leg.mat",
+                    "name": "man_zmb_body_legs_a_degenerated.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
