@@ -2,11 +2,11 @@
   "materialsData": [
     {
       "number": 1,
-      "name": "man_zmb_torso_skin.mat"
+      "name": "man_zmb_torso_a_center_c.mat"
     },
     {
       "number": 2,
-      "name": "man_zmb_torso_a_center_c.mat"
+      "name": "man_zmb_body_torso_a.mat"
     },
     {
       "number": 3,
@@ -23,11 +23,11 @@
       "materialsData": [
         {
           "number": 1,
-          "name": "man_zmb_torso_skin.mat"
+          "name": "man_zmb_torso_a_center_c.mat"
         },
         {
           "number": 2,
-          "name": "man_zmb_torso_a_center_c.mat"
+          "name": "man_zmb_body_torso_a.mat"
         },
         {
           "number": 3,
@@ -43,7 +43,7 @@
           "number": 1,
           "resources": [
             {
-              "name": "zmb_deg_torso.mat",
+              "name": "man_zmb_torso_a_center_c.mat",
               "selected": true,
               "layoutId": 4,
               "loadFlags": "S",
@@ -55,7 +55,7 @@
           "number": 2,
           "resources": [
             {
-              "name": "man_zmb_torso_a_center_c.mat",
+              "name": "man_zmb_body_torso_a_degenerated.mat",
               "selected": true,
               "layoutId": 4,
               "loadFlags": "S",
@@ -94,11 +94,11 @@
       "materialsData": [
         {
           "number": 1,
-          "name": "man_zmb_torso_skin.mat"
+          "name": "man_zmb_torso_a_center_c.mat"
         },
         {
           "number": 2,
-          "name": "man_zmb_torso_a_center_c.mat"
+          "name": "man_zmb_body_torso_a.mat"
         },
         {
           "number": 3,
@@ -114,7 +114,7 @@
           "number": 1,
           "resources": [
             {
-              "name": "zmb_deg_torso.mat",
+              "name": "man_zmb_torso_a_center_c.mat",
               "selected": true,
               "layoutId": 4,
               "loadFlags": "S",
@@ -126,17 +126,11 @@
           "number": 2,
           "resources": [
             {
-              "name": "man_zmb_torso_a_center_c.mat",
+              "name": "man_zmb_body_torso_a.mat",
               "selected": true,
               "layoutId": 4,
               "loadFlags": "S",
-              "rttiValues": [
-                {
-                  "name": "dif_0_val",
-                  "type": 4,
-                  "val_str": null
-                }
-              ]
+              "rttiValues": []
             }
           ]
         },
@@ -171,11 +165,11 @@
       "materialsData": [
         {
           "number": 1,
-          "name": "man_zmb_torso_skin.mat"
+          "name": "man_zmb_torso_a_center_c.mat"
         },
         {
           "number": 2,
-          "name": "man_zmb_torso_a_center_c.mat"
+          "name": "man_zmb_body_torso_a.mat"
         },
         {
           "number": 3,
@@ -191,7 +185,25 @@
           "number": 1,
           "resources": [
             {
-              "name": "man_zmb_torso_skin.mat",
+              "name": "man_zmb_torso_a_center_c.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_0_val",
+                  "type": 4,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_zmb_body_torso_a_degenerated.mat",
               "selected": true,
               "layoutId": 4,
               "loadFlags": "S",
@@ -200,7 +212,54 @@
           ]
         },
         {
+          "number": 3,
+          "resources": [
+            {
+              "name": "man_zmb_deg_torso_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "resources": [
+            {
+              "name": "man_zmb_torso_a_bottom_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_zmb_torso_a_center_c.mat"
+        },
+        {
           "number": 2,
+          "name": "man_zmb_body_torso_a.mat"
+        },
+        {
+          "number": 3,
+          "name": "man_zmb_torso_a.mat"
+        },
+        {
+          "number": 4,
+          "name": "man_zmb_torso_a_bottom_b.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
           "resources": [
             {
               "name": "man_zmb_torso_a_center_c.mat",
@@ -214,6 +273,95 @@
                   "val_str": null
                 }
               ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_zmb_body_torso_a_degenerated_african.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "resources": [
+            {
+              "name": "man_zmb_deg_torso_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "resources": [
+            {
+              "name": "man_zmb_torso_a_bottom_b.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "man_zmb_torso_a_center_c.mat"
+        },
+        {
+          "number": 2,
+          "name": "man_zmb_body_torso_a.mat"
+        },
+        {
+          "number": 3,
+          "name": "man_zmb_torso_a.mat"
+        },
+        {
+          "number": 4,
+          "name": "man_zmb_torso_a_bottom_b.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "man_zmb_torso_a_center_c.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_0_val",
+                  "type": 4,
+                  "val_str": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "man_zmb_body_torso_a_african.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": []
             }
           ]
         },
@@ -244,7 +392,7 @@
       ]
     },
     {
-      "id": "4",
+      "id": "6",
       "materialsData": [
         {
           "number": 1,

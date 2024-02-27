@@ -179,7 +179,6 @@ namespace doppelganger
             // Attempt to delete if the file already exists at the final path
             if (File.Exists(finalPath))
             {
-                Debug.LogWarning($"File already exists at {finalPath}. Attempting to overwrite.");
                 try
                 {
                     File.Delete(finalPath);

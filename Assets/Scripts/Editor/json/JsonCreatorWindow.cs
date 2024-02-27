@@ -934,14 +934,18 @@ public class JsonCreatorWindow : EditorWindow
 
     public static void CreateVariationJsons()
     {
+        Debug.Log("Starting to create variation JSONs...");
+
         string jsonsDir = Path.Combine(Application.dataPath, "StreamingAssets/Jsons");
         string outputDir = Path.Combine(Application.dataPath, "StreamingAssets/Mesh References");
 
-        Dictionary<string, VariationOutput> existingVariations = new Dictionary<string, VariationOutput>();
+        Debug.Log($"Reading JSON files from: {jsonsDir}");
+        Debug.Log($"Outputting variation JSONs to: {outputDir}");
 
         var jsonFiles = Directory.GetFiles(jsonsDir, "*.json", SearchOption.AllDirectories);
         foreach (var file in jsonFiles)
         {
+            Debug.Log($"Processing file: {file}");
             string jsonContent = File.ReadAllText(file);
             ModelData modelData = JsonConvert.DeserializeObject<ModelData>(jsonContent);
 
@@ -954,15 +958,18 @@ public class JsonCreatorWindow : EditorWindow
                     string sanitizedMeshName = SanitizeFilename(baseMeshName);
                     string outputFilePath = Path.Combine(outputDir, $"{sanitizedMeshName}.json");
 
+                    Debug.Log($"Processing model: {model.name} for variation creation");
+
                     VariationOutput variationOutput;
                     if (File.Exists(outputFilePath))
                     {
-                        // Read existing file and parse into VariationOutput
+                        Debug.Log($"Reading existing variation for: {sanitizedMeshName}");
                         string existingJson = File.ReadAllText(outputFilePath);
                         variationOutput = JsonConvert.DeserializeObject<VariationOutput>(existingJson);
                     }
                     else
                     {
+                        Debug.Log($"Creating new variation for: {sanitizedMeshName}");
                         variationOutput = new VariationOutput();
                     }
 
@@ -970,11 +977,13 @@ public class JsonCreatorWindow : EditorWindow
                     UpdateVariations(variationOutput, model);
 
                     // Write updated or new JSON file
+                    Debug.Log($"Writing variation data for: {sanitizedMeshName}");
                     string outputJson = JsonConvert.SerializeObject(variationOutput, Formatting.Indented);
                     File.WriteAllText(outputFilePath, outputJson);
                 }
             }
         }
+        Debug.Log("Finished creating variation JSONs.");
     }
 
     private static string SanitizeFilename(string filename)
@@ -988,15 +997,15 @@ public class JsonCreatorWindow : EditorWindow
 
     private static void UpdateVariations(VariationOutput variationOutput, ModelInfo model)
     {
+        Debug.Log($"Updating variations for model: {model.name}");
+
         if (variationOutput.materialsData == null || variationOutput.materialsData.Count == 0)
         {
             variationOutput.materialsData = model.materialsData;
         }
 
-        // HashSet to keep track of unique variation signatures to prevent adding duplicates
         HashSet<string> existingVariationSignatures = new HashSet<string>();
 
-        // Populate existingVariationSignatures with signatures of already processed variations
         foreach (var existingVariation in variationOutput.variations)
         {
             string existingSignature = GenerateVariationSignature(existingVariation);
@@ -1007,7 +1016,12 @@ public class JsonCreatorWindow : EditorWindow
 
         if (DoesVariationIntroduceChanges(newVariation, model, existingVariationSignatures))
         {
+            Debug.Log($"Adding new variation for model: {model.name}");
             variationOutput.variations.Add(newVariation);
+        }
+        else
+        {
+            Debug.Log($"No new variations added for model: {model.name} as no unique changes found");
         }
     }
 

@@ -56,6 +56,9 @@ namespace doppelganger
         private Dictionary<string, float> slotWeights;
         private Dictionary<string, List<string>> slotData = new Dictionary<string, List<string>>();
         public Dictionary<string, int> selectedVariationIndexes = new Dictionary<string, int>();
+        public Dictionary<string, string> usedSliders = new Dictionary<string, string>();
+        private Dictionary<string, List<string>> modelToPotentialSlots = new Dictionary<string, List<string>>();
+        private Dictionary<string, string> modelToAssignedSlot = new Dictionary<string, string>();
 
         Dictionary<string, string> classConversions = new Dictionary<string, string>
 
@@ -283,51 +286,145 @@ namespace doppelganger
 
         public string FindSlotForModel(string modelName)
         {
-            //Debug.Log($"FindSlotForModel for {modelName}");
+            if (!modelToPotentialSlots.ContainsKey(modelName))
+            {
+                modelToPotentialSlots[modelName] = new List<string>();
+            }
+
+            string assignedSlot = null;
+            modelToPotentialSlots[modelName].Clear();
+
+            Debug.Log($"FindSlotForModel for {modelName}");
             string type = GetTypeFromSelector();
             string category = categoryDropdown.options[categoryDropdown.value].text;
             string classSelection = classDropdown.options[classDropdown.value].text;
 
-            string slotDataPath = Path.Combine(Application.streamingAssetsPath, "SlotData", type);
-            if (category != "ALL")
-            {
-                slotDataPath = Path.Combine(slotDataPath, category);
-            }
-            if (classSelection != "ALL")
-            {
-                slotDataPath = Path.Combine(slotDataPath, classSelection);
-            }
+            Debug.Log($"Searching in type: {type}, category: {category}, class: {classSelection}");
 
-            if (!Directory.Exists(slotDataPath))
-            {
-                Debug.LogError($"Slot data folder not found: {slotDataPath}");
-                return null;
-            }
+            // Define the base path for slot data
+            string basePath = Path.Combine(Application.streamingAssetsPath, "SlotData", type);
 
-            foreach (var slotFile in Directory.GetFiles(slotDataPath, "*.json"))
+            // Define a list to hold all the relevant directories to search
+            List<string> searchPaths = new List<string>();
+            if (category == "ALL" && classSelection == "ALL")
             {
-                string slotJsonData = File.ReadAllText(slotFile);
-                try
+                // If both category and classSelection are "ALL", search in the base path and all its subdirectories
+                searchPaths.Add(basePath); // Add the base path itself
+                foreach (var categoryDir in Directory.GetDirectories(basePath))
                 {
-                    SlotModelData slotModelData = JsonUtility.FromJson<SlotModelData>(slotJsonData);
-                    foreach (string meshName in slotModelData.meshes)
+                    foreach (var classDir in Directory.GetDirectories(categoryDir))
                     {
-                        if (string.Equals(meshName.Trim(), modelName, StringComparison.OrdinalIgnoreCase))
-                        {
-                            string slotName = Path.GetFileNameWithoutExtension(slotFile);
-                            //Debug.Log($"Found slot {slotName} for model {modelName}");
-                            return slotName;
-                        }
+                        searchPaths.Add(classDir); // Add paths for each class under each category
                     }
                 }
-                catch (Exception e)
+            }
+            else if (category != "ALL" && classSelection == "ALL")
+            {
+                // If only category is specified, search in all class directories under this category
+                string categoryPath = Path.Combine(basePath, category);
+                searchPaths.Add(categoryPath); // Add the category path itself
+                foreach (var classDir in Directory.GetDirectories(categoryPath))
                 {
-                    Debug.LogError($"Error parsing JSON file: {slotFile}. Error: {e.Message}");
+                    searchPaths.Add(classDir); // Add paths for each class under the specified category
+                }
+            }
+            else
+            {
+                // If both category and classSelection are specified, search only in the specified directory
+                string specificPath = Path.Combine(basePath, category, classSelection);
+                searchPaths.Add(specificPath); // Add this specific path
+            }
+
+            // Iterate through all collected paths to search for the model
+            foreach (var searchPath in searchPaths)
+            {
+                //Debug.Log($"Searching for {modelName} in slot data path: {searchPath}");
+                if (!Directory.Exists(searchPath))
+                {
+                    Debug.LogWarning($"Slot data folder not found: {searchPath}");
+                    continue; // Skip this path if it does not exist
+                }
+
+                foreach (var slotFile in Directory.GetFiles(searchPath, "*.json"))
+                {
+                    //Debug.Log($"Checking file: {slotFile}");
+                    string slotJsonData = File.ReadAllText(slotFile);
+                    try
+                    {
+                        SlotModelData slotModelData = JsonUtility.FromJson<SlotModelData>(slotJsonData);
+                        foreach (string meshName in slotModelData.meshes)
+                        {
+                            if (string.Equals(meshName.Trim(), modelName, StringComparison.OrdinalIgnoreCase))
+                            {
+                                string slotName = Path.GetFileNameWithoutExtension(slotFile);
+                                modelToPotentialSlots[modelName].Add(slotName);
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError($"Error parsing JSON file: {slotFile}. Error: {e.Message}");
+                    }
                 }
             }
 
-            Debug.LogError($"Model {modelName} not found in any slot");
-            return null;
+            foreach (string potentialSlot in modelToPotentialSlots[modelName])
+            {
+                if (!usedSliders.ContainsKey(potentialSlot))
+                {
+                    usedSliders[potentialSlot] = modelName; // Assign this slot to the model
+                    modelToAssignedSlot[modelName] = potentialSlot; // Keep track of which slot is assigned to which model
+                    assignedSlot = potentialSlot;
+                    break; // Exit the loop once a slot has been assigned
+                }
+            }
+
+            if (assignedSlot == null && modelToPotentialSlots[modelName].Count > 0)
+            {
+                foreach (string fallbackSlot in modelToPotentialSlots[modelName])
+                {
+                    if (AttemptReassignSlot(fallbackSlot, modelName))
+                    {
+                        assignedSlot = fallbackSlot;
+                        break; // Exit the loop once a slot has been successfully reassigned
+                    }
+                }
+            }
+
+            if (assignedSlot != null)
+            {
+                Debug.Log($"Model {modelName} assigned to slot {assignedSlot}");
+                return assignedSlot;
+            }
+            else
+            {
+                Debug.LogError($"Model {modelName} could not be assigned to any slot.");
+                return null;
+            }
+        }
+
+        private bool AttemptReassignSlot(string slot, string modelName)
+        {
+            // Check if there's a model that can be moved from the current slot to another
+            string currentModelInSlot = usedSliders[slot];
+            foreach (var potentialSlot in modelToPotentialSlots[currentModelInSlot])
+            {
+                if (!usedSliders.ContainsKey(potentialSlot) && !potentialSlot.Equals(slot))
+                {
+                    // Reassign the current model to the new slot
+                    usedSliders.Remove(slot);
+                    usedSliders[potentialSlot] = currentModelInSlot;
+                    modelToAssignedSlot[currentModelInSlot] = potentialSlot;
+
+                    // Assign the new model to the freed slot
+                    usedSliders[slot] = modelName;
+                    modelToAssignedSlot[modelName] = slot;
+
+                    Debug.Log($"Reassigned model {currentModelInSlot} to slot {potentialSlot} to free up slot {slot} for model {modelName}");
+                    return true; // Return true if reassignment was successful
+                }
+            }
+            return false; // Return false if no reassignment was possible
         }
 
         public int GetModelIndex(string slotName, string modelName)

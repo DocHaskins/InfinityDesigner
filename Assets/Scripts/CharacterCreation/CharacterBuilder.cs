@@ -305,6 +305,7 @@ namespace doppelganger
                 {
                     Debug.LogWarning("Failed to deserialize JSON data");
                 }
+                interfaceManager.usedSliders.Clear();
             }
             else
             {
@@ -320,7 +321,7 @@ namespace doppelganger
                 return;
             }
 
-            Debug.Log($"Starting to apply materials directly based on JSON for model instance '{modelInstance.name}'. Total materials resources: {modelInfo.materialsResources.Count}");
+            //Debug.Log($"Starting to apply materials directly based on JSON for model instance '{modelInstance.name}'. Total materials resources: {modelInfo.materialsResources.Count}");
 
             var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
 
@@ -719,7 +720,7 @@ namespace doppelganger
                 }
                 else
                 {
-                    Debug.Log($"No RTTI values found for material '{materialName}'.");
+                    //Debug.Log($"No RTTI values found for material '{materialName}'.");
                 }
             }
             else

@@ -24,6 +24,7 @@ namespace doppelganger
         private static string prefabsDirectory = "Assets/Resources/Prefabs";
         private static string meshReferencesDirectory = "Assets/StreamingAssets/Mesh references";
         private static string newShaderName = "Shader Graphs/Clothing";
+        private const string MaterialSlot = "_gra";
         private int maxPrefabCount = 100;
         private int materialCreationLimit = 100;
         private int materialProcessingLimit = 100;
@@ -107,6 +108,11 @@ namespace doppelganger
             if (GUILayout.Button("Check Missing Textures"))
             {
                 CheckAllTextures();
+            }
+
+            if (GUILayout.Button("Remove Specific Texture"))
+            {
+                RemoveTexture();
             }
 
         }
@@ -1088,6 +1094,35 @@ namespace doppelganger
             // Reconstruct the path with the correct extension
             string directory = Path.GetDirectoryName(path);
             return Path.Combine(directory, filenameWithoutExtension + extension);
+        }
+
+        public static void RemoveTexture()
+        {
+            string[] guids = AssetDatabase.FindAssets("t:Material", new[] { materialsDirectory });
+            foreach (string guid in guids)
+            {
+                string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+                Material material = AssetDatabase.LoadAssetAtPath<Material>(assetPath);
+
+                if (material != null && material.HasProperty(MaterialSlot))
+                {
+                    // Check if there is a texture applied to the slot
+                    Texture texture = material.GetTexture(MaterialSlot);
+
+                    if (texture != null)  // This line ensures we only clear slots that have a texture
+                    {
+                        // Clear the texture from the slot
+                        material.SetTexture(MaterialSlot, null);
+                        Debug.Log($"Cleared texture from {MaterialSlot} in material {material.name}");
+
+                        // Save changes
+                        EditorUtility.SetDirty(material);
+                        AssetDatabase.SaveAssets();
+                    }
+                }
+            }
+
+            Debug.Log("Finished searching and clearing textures in specified materials.");
         }
     }
 }
