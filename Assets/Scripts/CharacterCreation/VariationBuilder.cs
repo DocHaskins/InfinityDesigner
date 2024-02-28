@@ -20,6 +20,7 @@ namespace doppelganger
         [Header("Interface")]
         public GameObject modelInfoPanel;
         public TextMeshProUGUI meshNameText;
+        public TextMeshProUGUI selectedMaterialName;
         public Transform materialSpawn;
         public GameObject modelInfoPanelPrefab;
         public GameObject variationMaterialLabelPrefab;
@@ -28,6 +29,7 @@ namespace doppelganger
 
         public GameObject currentModel;
         public Transform currentSpawn;
+        public SkinnedMeshRenderer currentRenderer;
         public string currentModelName;
         public string currentSlot;
         public bool isPanelOpen = false;
@@ -84,16 +86,16 @@ namespace doppelganger
 
             foreach (var renderer in renderers)
             {
-                Material currentMaterial = renderer.sharedMaterials[0];
+                Material currentMaterial = renderer.sharedMaterials[0]; // Assuming each renderer has at least one material.
                 GameObject labelGameObject = Instantiate(variationMaterialLabelPrefab, materialSpawn);
-                TextMeshProUGUI materialLabel = labelGameObject.transform.Find("materialLabel").GetComponent<TextMeshProUGUI>();
-                materialLabel.text = currentMaterial.name;
+                selectedMaterialName = labelGameObject.transform.Find("materialLabel").GetComponent<TextMeshProUGUI>();
+                selectedMaterialName.text = currentMaterial.name;
                 allLabels.Add(labelGameObject);
 
-                Toggle optionsToggle = labelGameObject.transform.Find("Button_Options").GetComponent<Toggle>(); // Changed from Button to Toggle
+                Toggle optionsToggle = labelGameObject.transform.Find("Button_Options").GetComponent<Toggle>(); // Assuming you have a Toggle component
                 TogglePanelVisibility toggleScript = optionsToggle.GetComponent<TogglePanelVisibility>() ?? optionsToggle.gameObject.AddComponent<TogglePanelVisibility>();
                 toggleScript.Setup(this, currentModel, renderer, currentMaterial, slotName);
-                toggleScript.spawnPoint = materialSpawn;
+                toggleScript.textureScroller = textureScroller; // Assuming this is a reference to your TextureScroller instance.
 
                 TextMeshProUGUI nameText = labelGameObject.transform.Find("Button_Options/Name").GetComponent<TextMeshProUGUI>();
                 nameText.text = $"{rendererCounter}";
@@ -103,14 +105,15 @@ namespace doppelganger
                     Debug.Log($"Toggle_Options changed for material: {currentMaterial.name}, Renderer: {renderer.name}: {isOn}");
                     if (isOn)
                     {
-                        // Activate the selected panel and deactivate all others
-                        bool isPanelActive = toggleScript.TogglePanel(); // This will activate the panel for the current material
+                        currentRenderer = renderer;
+                        bool isPanelActive = toggleScript.TogglePanel();
+                        selectedMaterialName = labelGameObject.transform.Find("materialLabel").GetComponent<TextMeshProUGUI>();
                         Debug.Log($"Panel active state for material: {currentMaterial.name}, Renderer: {renderer.name}: {isPanelActive}");
 
                         // Deactivate other labels
                         foreach (GameObject otherLabel in allLabels)
                         {
-                            if (otherLabel != labelGameObject) // Check if it's not the current label
+                            if (otherLabel != labelGameObject) // Check if it's not the current label.
                             {
                                 otherLabel.SetActive(false);
                             }
@@ -118,13 +121,14 @@ namespace doppelganger
                     }
                     else
                     {
-                        // Deactivate the current panel
+                        currentRenderer = null;
+                        selectedMaterialName = null;
                         toggleScript.DeactivatePanel();
-
-                        // Reactivate other labels
+                        textureScroller.ClearCurrentSelectionPanel(); // Clear the current selection when toggled off.
+                                                                      // Reactivate other labels
                         foreach (GameObject otherLabel in allLabels)
                         {
-                            otherLabel.SetActive(true); // Reactivate other labels since the current one is turned off
+                            otherLabel.SetActive(true); // Reactivate other labels since the current one is turned off.
                         }
                     }
                 });
@@ -161,53 +165,42 @@ namespace doppelganger
             return -1;
         }
 
-        public void ApplyMaterialDirectly(string targetRendererName, string newMaterialName)
+        public void ApplyMaterialDirectly(Material newMaterial)
         {
-            // Assuming 'currentModel' is your model's GameObject and has been defined elsewhere in your class.
-            SkinnedMeshRenderer targetRenderer = currentModel.transform.Find(targetRendererName)?.GetComponent<SkinnedMeshRenderer>();
+            string originalName = currentRenderer.sharedMaterials[0].name;
+            Debug.Log($"Original material name: {originalName}, targetRenderer {currentRenderer}, newMaterial {newMaterial}");
 
-            string originalName = targetRenderer.sharedMaterials[0].name;
-            Debug.Log($"Original material name: {originalName}"); // Log the original material name
-            // Load the new material, assuming you have a way to do this by name
-            Material newMaterial = LoadMaterialByName(newMaterialName);
-
-            if (newMaterial != null && targetRenderer != null)
+            if (newMaterial != null && currentRenderer != null)
             {
                 // Debug logs to ensure correct operation
-                Debug.Log($"Original material name: {targetRenderer.material.name}");
+                Debug.Log($"Original material name: {currentRenderer.material.name}");
                 Debug.Log($"New material loaded: {newMaterial.name}");
 
                 // Replace the target renderer's material
-                targetRenderer.material = newMaterial; // Directly set the new material
+                currentRenderer.material = newMaterial; // Directly set the new material
 
                 // Additional debug logs if needed
-                Debug.Log($"Applied '{newMaterial.name}' to {targetRenderer.gameObject.name}.");
+                Debug.Log($"Applied '{newMaterial.name}' to {currentRenderer.gameObject.name}.");
 
                 // Additional application logic
                 string modelName = currentModelName.Replace("(Clone)", "");
                 string currentSlider = interfaceManager.currentSlider;
-                UpdateModelInfoPanel(currentSlider);
+                //UpdateModelInfoPanel(currentSlider);
 
                 // Log the current model name and slider being used
                 Debug.Log($"Model Name: {modelName}, Current Slider: {currentSlider}");
 
-                int rendererIndex = GetRendererIndexByName(targetRenderer.name);
+                int rendererIndex = GetRendererIndexByName(currentRenderer.name);
                 if (rendererIndex == -1)
                 {
-                    Debug.LogError($"Renderer '{targetRenderer.name}' not found in the current model.");
+                    Debug.LogError($"Renderer '{currentRenderer.name}' not found in the current model.");
                     return;
                 }
-
+                selectedMaterialName.text = newMaterial.name;
                 // Log the index of the renderer
                 Debug.Log($"Renderer index in the current model: {rendererIndex}");
 
-                RecordMaterialChange(modelName, originalName, newMaterialName, rendererIndex);
-
-                if (rendererPanelMap.TryGetValue(targetRenderer, out VariationTextureSlotsPanel panelScript))
-                {
-                    panelScript.RefreshMaterial(newMaterial);
-                    Debug.Log($"Material refreshed in panel for {targetRenderer.gameObject.name}"); // Log material refresh in panel
-                }
+                RecordMaterialChange(modelName, originalName, newMaterial.name, rendererIndex);
             }
         }
 

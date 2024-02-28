@@ -8,6 +8,7 @@ using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.UI;
 using UnlimitedScrollUI.Example;
 using static ModelData;
+using UnityEngine.Rendering;
 
 namespace doppelganger
 {
@@ -16,7 +17,7 @@ namespace doppelganger
         public TextureScroller textureScroller;
         public VariationBuilder variationBuilder;
 
-        public SkinnedMeshRenderer TargetRenderer { get; private set; }
+        public SkinnedMeshRenderer TargetRenderer;
         public GameObject slotPrefab;
         [SerializeField] private GameObject textureScrollerPanelPrefab;
         private GameObject currentPanel;
@@ -36,7 +37,7 @@ namespace doppelganger
             textureScroller = FindObjectOfType<TextureScroller>();
             if (textureScroller != null)
             {
-                textureScroller.TextureSelected += (texture, renderer, material, slotName) => GetTextureChange(texture, slotName);
+                textureScroller.TextureSelected += (texture, slotName) => GetTextureChange(texture, slotName);
                 textureScroller.MaterialSelected += (material) => GetMaterialChange(material);
             }
         }
@@ -53,22 +54,32 @@ namespace doppelganger
 
         public void SetMaterialModelAndRenderer(Material material, GameObject model, SkinnedMeshRenderer renderer, string slotName)
         {
-            // Add debug logs to check which objects are null
-            Debug.Log($"Material: {material}, Model: {model}, Renderer: {renderer}, SlotName: {slotName}");
-
-            // Check for null and handle appropriately
-            if (material == null || model == null || renderer == null || slotName == null)
+            this.currentMaterial = material;
+            if (this.currentMaterial == null)
             {
-                Debug.LogError("One or more parameters are null.");
-                return; // Exit the method to avoid null reference exception
+                Debug.LogError("Failed to set CurrentMaterial in SetMaterialModelAndRenderer.");
+                return;
             }
-
-            this.currentMaterial = new Material(renderer.sharedMaterials.FirstOrDefault(m => m.name == material.name) ?? material);
             this.currentModel = model;
             this.TargetRenderer = renderer;
             this.currentSlotName = slotName;
-            variationBuilder.RegisterPanelScript(renderer, this); // Register this panel script
+
+            SubscribeToTextureScrollerEvents();
+
+            Debug.Log($"Setting context: Material: {material.name}, Model: {model.name}, Renderer: {renderer.name}, SlotName: {slotName}");
             UpdatePanel();
+        }
+
+        private void SubscribeToTextureScrollerEvents()
+        {
+            if (textureScroller != null)
+            {
+                textureScroller.TextureSelected -= GetTextureChange;
+                textureScroller.MaterialSelected -= GetMaterialChange;
+
+                textureScroller.TextureSelected += GetTextureChange;
+                textureScroller.MaterialSelected += GetMaterialChange;
+            }
         }
 
         public void UpdatePanel()
@@ -79,7 +90,7 @@ namespace doppelganger
             }
 
             ClearExistingSlots();
-
+            
             if (currentMaterial != null)
             {
                 Debug.Log($"VariationTextureSlotsPanel: UpdatePanel: Current material: {currentMaterial.name}");
@@ -110,8 +121,6 @@ namespace doppelganger
         private void CreateSlot(string slotName, Texture texture)
         {
             GameObject slotInstance = Instantiate(slotPrefab, transform);
-
-            // Setup UI elements
             TextMeshProUGUI slotText = slotInstance.transform.Find("SlotNameText").GetComponent<TextMeshProUGUI>();
             TextMeshProUGUI buttonText = slotInstance.transform.Find("TextureButton/Text").GetComponent<TextMeshProUGUI>();
             slotText.text = slotName;
@@ -120,27 +129,22 @@ namespace doppelganger
             Button textureButton = slotInstance.transform.Find("TextureButton").GetComponent<Button>();
             textureButton.onClick.RemoveAllListeners();
             textureButton.onClick.AddListener(() => {
-                OpenTextureSelection(slotName, buttonText); // Pass buttonText to OpenTextureSelection
+                OpenTextureSelection(slotName, buttonText);
             });
 
-            // Add an EventTrigger component for detecting right-clicks
             EventTrigger eventTrigger = textureButton.gameObject.AddComponent<EventTrigger>();
             EventTrigger.Entry rightClickEntry = new EventTrigger.Entry
             {
                 eventID = EventTriggerType.PointerClick
             };
 
-            // Define what happens on a right-click
             rightClickEntry.callback.AddListener((data) => {
                 if (((PointerEventData)data).button == PointerEventData.InputButton.Right)
                 {
-                    // Directly use GetTextureChange with null to clear the texture
                     GetTextureChange(null, slotName);
-                    buttonText.text = "None"; // Update the button text to indicate no texture
+                    buttonText.text = "None";
                 }
             });
-
-            // Add the entry to the event trigger
             eventTrigger.triggers.Add(rightClickEntry);
         }
 
@@ -157,21 +161,18 @@ namespace doppelganger
 
         public void GetMaterialChange(Material material)
         {
-            Debug.Log($"GetMaterialChange {material}, TargetRenderer {TargetRenderer}");
-            if (TargetRenderer != null && material != null)
+            if (material != null)
             {
-                // Use the ApplyMaterialDirectly method to apply the material to the target renderer
-                variationBuilder.ApplyMaterialDirectly(TargetRenderer.name, material.name);
+                Debug.Log($"Applying material change: {material.name}");
 
-                // Update the currentMaterial reference to the new material
-                currentMaterial = material;
-
-                // Optionally, refresh the UI or do additional updates as needed
-                RefreshMaterial(currentMaterial);
+                variationBuilder.ApplyMaterialDirectly(material);
+                RefreshMaterial(material);
+                UpdatePanel();
             }
             else
             {
-                //Debug.LogError("Incomplete context for applying material change.");
+                if (material == null)
+                    Debug.LogError("Failed to apply material change: Material is null.");
             }
         }
 
@@ -205,23 +206,8 @@ namespace doppelganger
             }
             else
             {
-                Debug.LogError("Incomplete context for applying texture change.");
+                Debug.LogError("Context is incomplete for applying texture change. Ensure correct slot and material.");
             }
         }
-
-
-#if UNITY_EDITOR
-        private void LogShaderProperties(Material material)
-        {
-            Debug.Log($"Logging properties for shader: {material.shader.name}");
-            int propertyCount = UnityEditor.ShaderUtil.GetPropertyCount(material.shader);
-            for (int i = 0; i < propertyCount; i++)
-            {
-                var propName = UnityEditor.ShaderUtil.GetPropertyName(material.shader, i);
-                var propType = UnityEditor.ShaderUtil.GetPropertyType(material.shader, i);
-                Debug.Log($"Property {i}: Name = {propName}, Type = {propType}");
-            }
-        }
-#endif
     }
 }

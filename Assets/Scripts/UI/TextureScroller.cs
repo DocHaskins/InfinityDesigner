@@ -22,6 +22,7 @@ namespace doppelganger
 
         [Header("Managers")]
         public GridUnlimitedScroller gridUnlimitedScroller;
+        public VariationBuilder variationBuilder;
         public VariationTextureSlotsPanel currentSelectionPanel;
         private UnlimitedScrollUI.IUnlimitedScroller unlimitedScroller;
 
@@ -31,7 +32,11 @@ namespace doppelganger
         public Transform contentPanel;
         public TMP_Dropdown imageTypeDropdown;
         public TMP_InputField filterInputField;
-               
+        public Button materialsButton;
+        public Button texturesButton;
+        public Color selectedButtonColor;
+        public Color defaultButtonColor;
+
         private string currentSlotForSelection;
         private SkinnedMeshRenderer currentRenderer;
         private Material currentMaterial;
@@ -39,7 +44,7 @@ namespace doppelganger
         private List<Material> allMaterials;
         public event Action<Texture2D> onTextureSelected;
         public event Action<Material> MaterialSelected;
-        public event Action<Texture2D, SkinnedMeshRenderer, Material, string> TextureSelected;
+        public event Action<Texture2D, string> TextureSelected;
 
         private void Start()
         {
@@ -51,6 +56,8 @@ namespace doppelganger
 
             filterInputField.onEndEdit.AddListener(delegate { RefreshTexturesWithAdditionalFilter(); });
             imageTypeDropdown.onValueChanged.AddListener(delegate { DropdownIndexChanged(imageTypeDropdown); });
+            materialsButton.onClick.AddListener(() => ReloadMaterials());
+            texturesButton.onClick.AddListener(() => ReloadTextures());
 
             UpdateDropdownForTextureOrMaterial();
         }
@@ -88,6 +95,7 @@ namespace doppelganger
         {
             isMaterials = true;
             isTextures = false;
+            UpdateButtonColors(materialsButton);
             UpdateDropdownForTextureOrMaterial();
             RefreshResources();
         }
@@ -96,8 +104,36 @@ namespace doppelganger
         {
             isTextures = true;
             isMaterials = false;
+            UpdateButtonColors(texturesButton);
             UpdateDropdownForTextureOrMaterial();
             RefreshResources();
+        }
+
+        private void UpdateButtonColors(Button activeButton)
+        {
+            // Reset both buttons to the default color
+            materialsButton.image.color = defaultButtonColor;
+            texturesButton.image.color = defaultButtonColor;
+
+            // Set the active button to the selected color
+            activeButton.image.color = selectedButtonColor;
+        }
+
+        public void SetCurrentSelectionPanel(VariationTextureSlotsPanel panel)
+        {
+            currentSelectionPanel = panel;
+            Debug.Log($"SetCurrentSelectionPanel: currentSelectionPanel: {currentSelectionPanel}");
+        }
+
+        public void ClearCurrentSelectionPanel()
+        {
+            currentSelectionPanel = null;
+            Debug.Log($"ClearCurrentSelectionPanel: currentSelectionPanel: {currentSelectionPanel}");
+        }
+
+        public VariationTextureSlotsPanel GetCurrentSelectionPanel()
+        {
+            return currentSelectionPanel;
         }
 
         public void PrepareForSelection(VariationTextureSlotsPanel selectionPanel, string slotName)
@@ -105,6 +141,7 @@ namespace doppelganger
             currentSelectionPanel = selectionPanel;
             currentSlotForSelection = slotName;
             Debug.Log($"Preparing for texture selection for selectionPanel {selectionPanel} on slotName {slotName}");
+            ReloadTextures();
             SetSearchTermFromOtherUI(slotName);
         }
 
@@ -273,17 +310,6 @@ namespace doppelganger
 
         public void SelectMaterial(Material material)
         {
-            // Check if the current selection panel is not null
-            if (currentSelectionPanel != null)
-            {
-                // Invoke the method on currentSelectionPanel to change the material
-                currentSelectionPanel.GetMaterialChange(material);
-            }
-            else
-            {
-                Debug.LogError("No panel is currently selected to apply the material");
-            }
-
             // Assuming MaterialSelected is a delegate, invoke it only if it's not null
             MaterialSelected?.Invoke(material);
         }

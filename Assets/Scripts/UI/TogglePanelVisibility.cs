@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.UI;
@@ -8,8 +9,9 @@ namespace doppelganger
     public class TogglePanelVisibility : MonoBehaviour
     {
         public VariationBuilder variationBuilder;
+        public TextureScroller textureScroller;
+
         public Transform spawnPoint;
-        public Transform texturePrefabSpawnPoint;
         public GameObject variationTextureSlotPanelPrefab;
         public GameObject panelGameObject;
 
@@ -32,29 +34,50 @@ namespace doppelganger
             if (panelGameObject == null)
             {
                 Debug.Log("Instantiating new panelGameObject.");
-
-                // Use the found TexturePrefabSpawnPoint as the parent for the instantiated prefab
                 panelGameObject = Instantiate(variationTextureSlotPanelPrefab, spawnPoint, false);
+
+                // Give the panel a unique name for identification
+                string uniquePanelName = "Panel_" + currentSlotName + "_" + currentRenderer.name; // Customize this based on your needs
+                panelGameObject.name = uniquePanelName;
+
                 VariationTextureSlotsPanel panelScript = panelGameObject.GetComponent<VariationTextureSlotsPanel>();
                 if (panelScript != null)
                 {
                     panelScript.SetMaterialModelAndRenderer(currentMaterial, currentModel, currentRenderer, currentSlotName);
                     variationBuilder.RegisterPanelScript(currentRenderer, panelScript);
+                    if (textureScroller != null)
+                    {
+                        textureScroller.SetCurrentSelectionPanel(panelScript);
+                    }
                 }
                 else
                 {
                     Debug.LogError("Failed to get VariationTextureSlotsPanel component on instantiated panelGameObject.");
                 }
-                // Set to active since we just instantiated it.
-                panelGameObject.SetActive(true);
+
+                panelGameObject.SetActive(true); // Set to active since we just instantiated it.
                 return true; // Panel is now active.
             }
             else
             {
-                // Toggle current active state.
                 bool newState = !panelGameObject.activeSelf;
                 panelGameObject.SetActive(newState);
-                return newState; // Return the new state.
+
+                if (newState)
+                {
+                    if (textureScroller != null)
+                    {
+                        textureScroller.SetCurrentSelectionPanel(panelGameObject.GetComponent<VariationTextureSlotsPanel>());
+                    }
+                }
+                else
+                {
+                    if (textureScroller != null && textureScroller.GetCurrentSelectionPanel() == panelGameObject.GetComponent<VariationTextureSlotsPanel>())
+                    {
+                        textureScroller.ClearCurrentSelectionPanel();
+                    }
+                }
+                return newState;
             }
         }
 

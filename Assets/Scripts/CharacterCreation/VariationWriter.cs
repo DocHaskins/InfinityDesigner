@@ -61,7 +61,8 @@ namespace doppelganger
                         materialChanges.MaterialsByRenderer.TryGetValue(materialData.number - 1, out MaterialChange materialChange)) // Adjusting for zero-based indexing
                     {
                         // Ensure .mat extension is added if missing
-                        string materialNameWithExtension = materialChange.NewName.EndsWith(".mat") ? materialChange.NewName : $"{materialChange.NewName}.mat";
+
+                        string materialNameWithExtension = materialChange.NewName.EndsWith(".mat") ? materialChange.NewName.Replace(" (Instance)", "") : $"{materialChange.NewName.Replace(" (Instance)", "")}.mat";
 
                         Resource resource = new Resource
                         {
