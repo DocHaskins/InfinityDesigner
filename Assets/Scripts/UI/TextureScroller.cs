@@ -68,11 +68,11 @@ namespace doppelganger
             yield return new WaitForEndOfFrame();
             if (isTextures)
             {
-                ReloadTextures(); // This will now handle the initialization of textures
+                ReloadTextures();
             }
             else if (isMaterials)
             {
-                ReloadMaterials(); // This will handle the initialization of materials
+                ReloadMaterials();
             }
         }
 

@@ -1,14 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine.EventSystems;
 using UnityEngine;
-using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.UI;
 using UnlimitedScrollUI.Example;
 using static ModelData;
-using UnityEngine.Rendering;
 
 namespace doppelganger
 {
@@ -19,7 +16,9 @@ namespace doppelganger
 
         public SkinnedMeshRenderer TargetRenderer;
         public GameObject slotPrefab;
+        private bool emsSliderCreated;
         [SerializeField] private GameObject textureScrollerPanelPrefab;
+        public GameObject variationEMSTextureSliderPrefab;
         private GameObject currentPanel;
         public GameObject currentModel;
         public Material currentMaterial;
@@ -84,13 +83,8 @@ namespace doppelganger
 
         public void UpdatePanel()
         {
-            if (!gameObject.activeInHierarchy)
-            {
-                return;
-            }
-
-            ClearExistingSlots();
-            
+            ClearExistingSlots(); // Ensure all previous slots are cleared
+            emsSliderCreated = false;
             if (currentMaterial != null)
             {
                 Debug.Log($"VariationTextureSlotsPanel: UpdatePanel: Current material: {currentMaterial.name}");
@@ -129,7 +123,7 @@ namespace doppelganger
             Button textureButton = slotInstance.transform.Find("TextureButton").GetComponent<Button>();
             textureButton.onClick.RemoveAllListeners();
             textureButton.onClick.AddListener(() => {
-                OpenTextureSelection(slotName, buttonText);
+                OpenTextureSelection(slotName, buttonText); // Existing functionality remains unchanged
             });
 
             EventTrigger eventTrigger = textureButton.gameObject.AddComponent<EventTrigger>();
@@ -141,11 +135,58 @@ namespace doppelganger
             rightClickEntry.callback.AddListener((data) => {
                 if (((PointerEventData)data).button == PointerEventData.InputButton.Right)
                 {
-                    GetTextureChange(null, slotName);
-                    buttonText.text = "None";
+                    GetTextureChange(null, slotName); // Remove texture on right-click
+                    buttonText.text = "None"; // Reset button text
                 }
             });
             eventTrigger.triggers.Add(rightClickEntry);
+
+            //if (currentMaterial.HasProperty("_ems") && slotName.Equals("_ems", StringComparison.OrdinalIgnoreCase) && !emsSliderCreated)
+            //{
+            //    GameObject emsSliderInstance = Instantiate(variationEMSTextureSliderPrefab, transform);
+            //    Slider emsSlider = emsSliderInstance.transform.Find("emsSlider").GetComponent<Slider>();
+            //    if (emsSlider != null)
+            //    {
+            //        // Set up the slider
+            //        emsSlider.minValue = 0.0f;
+            //        emsSlider.maxValue = 1.0f;
+            //        emsSlider.value = 0.7f;
+            //        emsSlider.onValueChanged.AddListener((value) => {
+            //            SetEmissiveIntensity(value, slotName);
+            //        });
+            //        emsSliderCreated = true;
+
+            //        // Move the slider instance to directly follow the slot instance in the UI hierarchy
+            //        emsSliderInstance.transform.SetSiblingIndex(slotInstance.transform.GetSiblingIndex() + 1);
+            //    }
+            //    else
+            //    {
+            //        Debug.LogError("Failed to find Slider component on 'emsSlider' child within VariationEMSTextureSlider instance.");
+            //    }
+            //}
+        }
+
+        public void SetEmissiveIntensity(float intensity, string slotName)
+        {
+            // Check if the current material and the slot name are valid
+            if (currentMaterial != null && slotName.Equals("_ems", StringComparison.OrdinalIgnoreCase))
+            {
+                // Set the intensity of the emissive property
+                currentMaterial.SetFloat("_ems_intensity", intensity);
+                variationBuilder.RecordScaleChange(currentModel.name, currentMaterial, intensity);
+                Debug.Log($"Set Emissive Intensity to {intensity} for material: {currentMaterial.name}");
+            }
+            else
+            {
+                if (currentMaterial == null)
+                {
+                    Debug.LogError("Failed to set emissive intensity: Current material is null.");
+                }
+                if (!slotName.Equals("_ems", StringComparison.OrdinalIgnoreCase))
+                {
+                    Debug.LogError($"Failed to set emissive intensity: Incorrect slot name {slotName}.");
+                }
+            }
         }
 
         private void OpenTextureSelection(string slotName, TextMeshProUGUI buttonText)
@@ -166,6 +207,7 @@ namespace doppelganger
                 Debug.Log($"Applying material change: {material.name}");
 
                 variationBuilder.ApplyMaterialDirectly(material);
+                currentMaterial = material;
                 RefreshMaterial(material);
                 UpdatePanel();
             }

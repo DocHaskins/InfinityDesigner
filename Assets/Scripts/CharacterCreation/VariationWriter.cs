@@ -56,11 +56,38 @@ namespace doppelganger
                         resources = new List<Resource>()
                     };
 
-                    // Check if there's a change for the current material slot
                     if (variationBuilder.modelSpecificChanges.TryGetValue(currentlyLoadedModelName, out ModelChange materialChanges) &&
                         materialChanges.MaterialsByRenderer.TryGetValue(materialData.number - 1, out MaterialChange materialChange)) // Adjusting for zero-based indexing
                     {
-                        // Ensure .mat extension is added if missing
+                        List<RttiValue> validRttiValues = new List<RttiValue>();
+
+                        foreach (var textureChange in materialChange.TextureChanges)
+                        {
+                            // Initialize a new RttiValue instance with only the name and type
+                            RttiValue newRttiValue = new RttiValue { name = textureChange.name, type = textureChange.type };
+
+                            // Depending on the type, add only the relevant field
+                            if (textureChange.type == 7) // Type 7 for textures
+                            {
+                                // Only add the value if it's a meaningful string
+                                if (!string.IsNullOrEmpty(textureChange.val_str))
+                                {
+                                    newRttiValue.val_str = textureChange.val_str;
+                                    validRttiValues.Add(newRttiValue); // Add to the list
+                                }
+                            }
+                            else if (textureChange.type == 2) // Type 2 for scales
+                            {
+                                // Directly parse the string into float and assign to val_float
+                                if (float.TryParse(textureChange.val_str, out float scaleValue))
+                                {
+                                    // Create a new instance with just the float value
+                                    RttiValue scaleValueEntry = new RttiValue { name = textureChange.name, type = textureChange.type, val_str = scaleValue.ToString() };
+                                    validRttiValues.Add(scaleValueEntry); // Add to the list
+                                }
+                            }
+                            // You can extend with more else-if blocks for other types if needed
+                        }
 
                         string materialNameWithExtension = materialChange.NewName.EndsWith(".mat") ? materialChange.NewName.Replace(" (Instance)", "") : $"{materialChange.NewName.Replace(" (Instance)", "")}.mat";
 
@@ -70,7 +97,7 @@ namespace doppelganger
                             selected = true,
                             layoutId = 4,
                             loadFlags = "S",
-                            rttiValues = materialChange.TextureChanges
+                            rttiValues = validRttiValues // Only add validated changes
                         };
 
                         materialResource.resources.Add(resource);
@@ -84,7 +111,7 @@ namespace doppelganger
                             selected = true,
                             layoutId = 4,
                             loadFlags = "S",
-                            rttiValues = new List<RttiValue>() // No changes
+                            rttiValues = new List<RttiValue>() // No changes, so empty list is fine
                         };
 
                         materialResource.resources.Add(fallbackResource);

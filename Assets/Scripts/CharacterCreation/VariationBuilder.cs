@@ -59,6 +59,11 @@ namespace doppelganger
             // Clear existing materials to repopulate
             foreach (Transform child in materialSpawn)
             {
+                var toggle = child.GetComponentInChildren<Toggle>();
+                if (toggle != null)
+                {
+                    toggle.onValueChanged.RemoveAllListeners();
+                }
                 GameObject.Destroy(child.gameObject);
             }
 
@@ -81,6 +86,10 @@ namespace doppelganger
         void PopulateMaterialProperties(Transform materialSpawn, GameObject currentModel, string slotName)
         {
             Debug.Log("PopulateMaterialProperties started.");
+
+            // Clear existing labels before repopulating to ensure all references are current
+            allLabels.Clear();  // Clear the list to remove old references
+
             SkinnedMeshRenderer[] renderers = currentModel.GetComponentsInChildren<SkinnedMeshRenderer>(true);
             int rendererCounter = 1;
 
@@ -92,10 +101,10 @@ namespace doppelganger
                 selectedMaterialName.text = currentMaterial.name;
                 allLabels.Add(labelGameObject);
 
-                Toggle optionsToggle = labelGameObject.transform.Find("Button_Options").GetComponent<Toggle>(); // Assuming you have a Toggle component
+                Toggle optionsToggle = labelGameObject.transform.Find("Button_Options").GetComponent<Toggle>();
                 TogglePanelVisibility toggleScript = optionsToggle.GetComponent<TogglePanelVisibility>() ?? optionsToggle.gameObject.AddComponent<TogglePanelVisibility>();
                 toggleScript.Setup(this, currentModel, renderer, currentMaterial, slotName);
-                toggleScript.textureScroller = textureScroller; // Assuming this is a reference to your TextureScroller instance.
+                toggleScript.textureScroller = textureScroller;
 
                 TextMeshProUGUI nameText = labelGameObject.transform.Find("Button_Options/Name").GetComponent<TextMeshProUGUI>();
                 nameText.text = $"{rendererCounter}";
@@ -113,9 +122,9 @@ namespace doppelganger
                         // Deactivate other labels
                         foreach (GameObject otherLabel in allLabels)
                         {
-                            if (otherLabel != labelGameObject) // Check if it's not the current label.
+                            if (otherLabel != labelGameObject)  // Check if it's not the current label
                             {
-                                otherLabel.SetActive(false);
+                                otherLabel.SetActive(!isOn);  // Deactivate other labels
                             }
                         }
                     }
@@ -128,7 +137,7 @@ namespace doppelganger
                                                                       // Reactivate other labels
                         foreach (GameObject otherLabel in allLabels)
                         {
-                            otherLabel.SetActive(true); // Reactivate other labels since the current one is turned off.
+                            otherLabel.SetActive(true);
                         }
                     }
                 });
@@ -264,6 +273,50 @@ namespace doppelganger
             }
 
             Debug.Log($"Material change recorded for model: {modelName}, renderer index: {rendererIndex}, from: {originalMaterialName} to: {newMaterialName}");
+        }
+
+        public void RecordScaleChange(string modelName, Material currentMaterial, float scaleValue)
+        {
+            string newModelName = modelName.Replace("(Clone)", "");
+            int rendererIndex = GetRendererIndexByName(currentRenderer.name);
+            if (rendererIndex == -1)
+            {
+                Debug.LogError($"Renderer '{currentRenderer.name}' not found in the current model.");
+                return;
+            }
+
+            if (!modelSpecificChanges.TryGetValue(newModelName, out var modelChange))
+            {
+                modelChange = new ModelChange();
+                modelSpecificChanges[newModelName] = modelChange;
+            }
+
+            if (!modelChange.MaterialsByRenderer.TryGetValue(rendererIndex, out var materialChange))
+            {
+                materialChange = new MaterialChange
+                {
+                    OriginalName = currentMaterial.name,
+                    NewName = currentMaterial.name,
+                    TextureChanges = new List<RttiValue>()
+                };
+                modelChange.MaterialsByRenderer[rendererIndex] = materialChange;
+            }
+
+            string scaleChangeName = "ems_0_scale"; // The name format for scale changes
+
+            var existingChange = materialChange.TextureChanges.FirstOrDefault(tc => tc.name == scaleChangeName);
+            if (existingChange != null)
+            {
+                existingChange.val_str = scaleValue.ToString();
+                existingChange.type = 2;
+                Debug.Log($"Updated scale change for model: {newModelName}, renderer index: {rendererIndex}, scale: {scaleValue}");
+            }
+            else
+            {
+                // If no change is recorded for this scale, add a new one
+                materialChange.TextureChanges.Add(new RttiValue { name = scaleChangeName, val_str = scaleValue.ToString(), type = 2 });
+                Debug.Log($"Recorded new scale change for model: {newModelName}, renderer index: {rendererIndex}, scale: {scaleValue}");
+            }
         }
 
         void RecordTextureChange(string modelName, string materialName, string slotName, string textureName, int rendererIndex)
