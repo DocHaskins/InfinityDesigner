@@ -41,34 +41,6 @@ namespace doppelganger
             }
         }
 
-        void OnEnable()
-        {
-            variationBuilder = FindObjectOfType<VariationBuilder>();
-            textureScroller = FindObjectOfType<TextureScroller>();
-            if (textureScroller != null)
-            {
-                // Subscribe to events when the panel is enabled
-                textureScroller.TextureSelected += OnTextureSelected;
-                textureScroller.MaterialSelected += GetMaterialChange;
-            }
-        }
-
-        void OnDisable()
-        {
-            if (textureScroller != null)
-            {
-                // Unsubscribe from events when the panel is disabled
-                textureScroller.TextureSelected -= OnTextureSelected;
-                textureScroller.MaterialSelected -= GetMaterialChange;
-            }
-        }
-
-        private void OnTextureSelected(Texture2D texture, SkinnedMeshRenderer renderer, Material material, string slotName)
-        {
-            // This is a new method that handles texture selection.
-            GetTextureChange(texture, slotName);
-        }
-
         public void SetVariationBuilder(VariationBuilder builder)
         {
             this.variationBuilder = builder;
@@ -81,7 +53,16 @@ namespace doppelganger
 
         public void SetMaterialModelAndRenderer(Material material, GameObject model, SkinnedMeshRenderer renderer, string slotName)
         {
-            Debug.Log($"SetMaterialModelAndRenderer: material: {material} Current model: {model.name}, renderer: {renderer.name}, slotName: {slotName}");
+            // Add debug logs to check which objects are null
+            Debug.Log($"Material: {material}, Model: {model}, Renderer: {renderer}, SlotName: {slotName}");
+
+            // Check for null and handle appropriately
+            if (material == null || model == null || renderer == null || slotName == null)
+            {
+                Debug.LogError("One or more parameters are null.");
+                return; // Exit the method to avoid null reference exception
+            }
+
             this.currentMaterial = new Material(renderer.sharedMaterials.FirstOrDefault(m => m.name == material.name) ?? material);
             this.currentModel = model;
             this.TargetRenderer = renderer;

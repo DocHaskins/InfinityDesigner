@@ -145,7 +145,7 @@ GameObject:
   - component: {fileID: 1408815708711420213}
   - component: {fileID: 2452965656505429117}
   - component: {fileID: 5852490559969705875}
-  - component: {fileID: 8779135884571722769}
+  - component: {fileID: 6378774244978874817}
   - component: {fileID: 1084613879270658000}
   m_Layer: 5
   m_Name: Button_Options
@@ -212,7 +212,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8779135884571722769
+--- !u!114 &6378774244978874817
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -221,7 +221,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4628471183362828496}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -253,9 +253,13 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 5852490559969705875}
-  m_OnClick:
+  toggleTransition: 1
+  graphic: {fileID: 0}
+  m_Group: {fileID: 0}
+  onValueChanged:
     m_PersistentCalls:
       m_Calls: []
+  m_IsOn: 0
 --- !u!114 &1084613879270658000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -269,11 +273,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   variationBuilder: {fileID: 0}
-  spawnPoint: {fileID: 0}
-  texturePrefabSpawnPoint: {fileID: 5050041362171289910}
-  panelGameObject: {fileID: 7551916595500437525, guid: 4554c93d06c213d498603e872f4b72a5, type: 3}
-  dropdownGameObject: {fileID: 0}
+  spawnPoint: {fileID: 5050041362171289910}
+  texturePrefabSpawnPoint: {fileID: 0}
   variationTextureSlotPanelPrefab: {fileID: 7551916595500437525, guid: 4554c93d06c213d498603e872f4b72a5, type: 3}
+  panelGameObject: {fileID: 0}
 --- !u!1 &7548538473020287004
 GameObject:
   m_ObjectHideFlags: 0

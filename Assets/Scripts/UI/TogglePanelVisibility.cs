@@ -10,38 +10,59 @@ namespace doppelganger
         public VariationBuilder variationBuilder;
         public Transform spawnPoint;
         public Transform texturePrefabSpawnPoint;
-        public GameObject panelGameObject;
-        public GameObject dropdownGameObject;
         public GameObject variationTextureSlotPanelPrefab;
+        public GameObject panelGameObject;
 
-        public void TogglePanel()
+        private GameObject currentModel;
+        private SkinnedMeshRenderer currentRenderer;
+        private Material currentMaterial;
+        private string currentSlotName;
+
+        public void Setup(VariationBuilder builder, GameObject model, SkinnedMeshRenderer renderer, Material material, string slotName)
         {
-            if (dropdownGameObject.activeSelf) // Only toggle the panel if the dropdownGameObject is active
-            {
-                bool isPanelActiveBeforeToggle = panelGameObject.activeSelf;
-                panelGameObject.SetActive(!isPanelActiveBeforeToggle);
-            }
+            variationBuilder = builder;
+            currentModel = model;
+            currentRenderer = renderer;
+            currentMaterial = material;
+            currentSlotName = slotName;
         }
 
-        public void ToggleOtherDropdowns(bool enable)
+        public bool TogglePanel()
         {
-            if (variationBuilder != null && VariationBuilder.allLabels != null)
+            if (panelGameObject == null)
             {
-                for (int i = VariationBuilder.allLabels.Count - 1; i >= 0; i--)
+                Debug.Log("Instantiating new panelGameObject.");
+
+                // Use the found TexturePrefabSpawnPoint as the parent for the instantiated prefab
+                panelGameObject = Instantiate(variationTextureSlotPanelPrefab, spawnPoint, false);
+                VariationTextureSlotsPanel panelScript = panelGameObject.GetComponent<VariationTextureSlotsPanel>();
+                if (panelScript != null)
                 {
-                    var dropdown = VariationBuilder.allLabels[i];
-                    if (dropdown != null && dropdown != this.dropdownGameObject)
-                    {
-                        if (dropdown.activeSelf != enable)
-                        {
-                            dropdown.SetActive(enable);
-                        }
-                    }
+                    panelScript.SetMaterialModelAndRenderer(currentMaterial, currentModel, currentRenderer, currentSlotName);
+                    variationBuilder.RegisterPanelScript(currentRenderer, panelScript);
                 }
+                else
+                {
+                    Debug.LogError("Failed to get VariationTextureSlotsPanel component on instantiated panelGameObject.");
+                }
+                // Set to active since we just instantiated it.
+                panelGameObject.SetActive(true);
+                return true; // Panel is now active.
             }
             else
             {
-                Debug.LogError("VariationBuilder reference or its dropdowns list is not set.");
+                // Toggle current active state.
+                bool newState = !panelGameObject.activeSelf;
+                panelGameObject.SetActive(newState);
+                return newState; // Return the new state.
+            }
+        }
+
+        public void DeactivatePanel()
+        {
+            if (panelGameObject != null)
+            {
+                panelGameObject.SetActive(false);
             }
         }
     }

@@ -78,59 +78,60 @@ namespace doppelganger
 
         void PopulateMaterialProperties(Transform materialSpawn, GameObject currentModel, string slotName)
         {
+            Debug.Log("PopulateMaterialProperties started.");
             SkinnedMeshRenderer[] renderers = currentModel.GetComponentsInChildren<SkinnedMeshRenderer>(true);
-            int rendererCounter = 1; // Start counter at 1 for the first renderer
+            int rendererCounter = 1;
 
             foreach (var renderer in renderers)
             {
-                int rendererIndex = GetRendererIndexByName(renderer.name);
-                if (!originalMaterials.ContainsKey(rendererIndex))
-                {
-                    originalMaterials[rendererIndex] = renderer.sharedMaterial != null ? new Material(renderer.sharedMaterial) : null;
-                }
-
                 Material currentMaterial = renderer.sharedMaterials[0];
                 GameObject labelGameObject = Instantiate(variationMaterialLabelPrefab, materialSpawn);
-                allLabels.Add(labelGameObject);
                 TextMeshProUGUI materialLabel = labelGameObject.transform.Find("materialLabel").GetComponent<TextMeshProUGUI>();
                 materialLabel.text = currentMaterial.name;
+                allLabels.Add(labelGameObject);
 
-                Button optionsButton = labelGameObject.transform.Find("Button_Options").GetComponent<Button>();
-                TogglePanelVisibility toggleScript = optionsButton.GetComponent<TogglePanelVisibility>() ?? optionsButton.gameObject.AddComponent<TogglePanelVisibility>();
-                toggleScript.variationBuilder = this;
+                Toggle optionsToggle = labelGameObject.transform.Find("Button_Options").GetComponent<Toggle>(); // Changed from Button to Toggle
+                TogglePanelVisibility toggleScript = optionsToggle.GetComponent<TogglePanelVisibility>() ?? optionsToggle.gameObject.AddComponent<TogglePanelVisibility>();
+                toggleScript.Setup(this, currentModel, renderer, currentMaterial, slotName);
                 toggleScript.spawnPoint = materialSpawn;
-                toggleScript.dropdownGameObject = labelGameObject;
-                toggleScript.variationTextureSlotPanelPrefab = variationTextureSlotPanelPrefab;
-
-                GameObject panelGameObject = Instantiate(variationTextureSlotPanelPrefab, toggleScript.texturePrefabSpawnPoint.transform, false);
-                panelGameObject.name = $"Panel_Renderer{rendererCounter}_Material0";
-
-                VariationTextureSlotsPanel panelScript = panelGameObject.GetComponent<VariationTextureSlotsPanel>();
-                if (panelScript != null && labelGameObject.activeSelf) // Only update panelScript if labelGameObject is active
-                {
-                    panelScript.SetMaterialModelAndRenderer(currentMaterial, currentModel, renderer, slotName);
-                    panelScript.SetVariationBuilder(this);
-                }
-                panelGameObject.SetActive(false);
-                toggleScript.panelGameObject = panelGameObject;
-
-                // When options button is clicked, update and show the panel only if the labelGameObject is active
-                optionsButton.onClick.AddListener(() => {
-                    if (labelGameObject.activeSelf) // Check if the parent object is active
-                    {
-                        toggleScript.TogglePanel();
-                        if (panelGameObject.activeSelf) // Update only if the panel is being shown
-                        {
-                            panelScript.SetMaterialModelAndRenderer(currentMaterial, currentModel, renderer, slotName);
-                        }
-                        toggleScript.ToggleOtherDropdowns(!panelGameObject.activeSelf);
-                    }
-                });
 
                 TextMeshProUGUI nameText = labelGameObject.transform.Find("Button_Options/Name").GetComponent<TextMeshProUGUI>();
                 nameText.text = $"{rendererCounter}";
+
+                optionsToggle.onValueChanged.RemoveAllListeners();
+                optionsToggle.onValueChanged.AddListener((isOn) => {
+                    Debug.Log($"Toggle_Options changed for material: {currentMaterial.name}, Renderer: {renderer.name}: {isOn}");
+                    if (isOn)
+                    {
+                        // Activate the selected panel and deactivate all others
+                        bool isPanelActive = toggleScript.TogglePanel(); // This will activate the panel for the current material
+                        Debug.Log($"Panel active state for material: {currentMaterial.name}, Renderer: {renderer.name}: {isPanelActive}");
+
+                        // Deactivate other labels
+                        foreach (GameObject otherLabel in allLabels)
+                        {
+                            if (otherLabel != labelGameObject) // Check if it's not the current label
+                            {
+                                otherLabel.SetActive(false);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Deactivate the current panel
+                        toggleScript.DeactivatePanel();
+
+                        // Reactivate other labels
+                        foreach (GameObject otherLabel in allLabels)
+                        {
+                            otherLabel.SetActive(true); // Reactivate other labels since the current one is turned off
+                        }
+                    }
+                });
+
                 rendererCounter++;
             }
+            Debug.Log("PopulateMaterialProperties completed.");
         }
 
         public void RegisterPanelScript(SkinnedMeshRenderer renderer, VariationTextureSlotsPanel panelScript)
