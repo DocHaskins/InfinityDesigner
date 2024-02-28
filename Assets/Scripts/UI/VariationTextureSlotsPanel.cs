@@ -41,6 +41,34 @@ namespace doppelganger
             }
         }
 
+        void OnEnable()
+        {
+            variationBuilder = FindObjectOfType<VariationBuilder>();
+            textureScroller = FindObjectOfType<TextureScroller>();
+            if (textureScroller != null)
+            {
+                // Subscribe to events when the panel is enabled
+                textureScroller.TextureSelected += OnTextureSelected;
+                textureScroller.MaterialSelected += GetMaterialChange;
+            }
+        }
+
+        void OnDisable()
+        {
+            if (textureScroller != null)
+            {
+                // Unsubscribe from events when the panel is disabled
+                textureScroller.TextureSelected -= OnTextureSelected;
+                textureScroller.MaterialSelected -= GetMaterialChange;
+            }
+        }
+
+        private void OnTextureSelected(Texture2D texture, SkinnedMeshRenderer renderer, Material material, string slotName)
+        {
+            // This is a new method that handles texture selection.
+            GetTextureChange(texture, slotName);
+        }
+
         public void SetVariationBuilder(VariationBuilder builder)
         {
             this.variationBuilder = builder;
@@ -64,6 +92,11 @@ namespace doppelganger
 
         public void UpdatePanel()
         {
+            if (!gameObject.activeInHierarchy)
+            {
+                return;
+            }
+
             ClearExistingSlots();
 
             if (currentMaterial != null)
@@ -146,22 +179,18 @@ namespace doppelganger
             Debug.Log($"GetMaterialChange {material}, TargetRenderer {TargetRenderer}");
             if (TargetRenderer != null && material != null)
             {
-                if (TargetRenderer != null && material != null)
-                {
-                    // Use the ApplyMaterialDirectly method to apply the material to the target renderer
-                    variationBuilder.ApplyMaterialDirectly(TargetRenderer, material.name);
+                // Use the ApplyMaterialDirectly method to apply the material to the target renderer
+                variationBuilder.ApplyMaterialDirectly(TargetRenderer.name, material.name);
 
-                    // Update the currentMaterial reference to the new material
-                    currentMaterial = material;
+                // Update the currentMaterial reference to the new material
+                currentMaterial = material;
 
-                    // Optionally, refresh the UI or do additional updates as needed
-                    RefreshMaterial(currentMaterial);
-                }
-                else
-                {
-                    Debug.LogError("Incomplete context for applying material change.");
-                }
-                //UpdatePanel();
+                // Optionally, refresh the UI or do additional updates as needed
+                RefreshMaterial(currentMaterial);
+            }
+            else
+            {
+                //Debug.LogError("Incomplete context for applying material change.");
             }
         }
 

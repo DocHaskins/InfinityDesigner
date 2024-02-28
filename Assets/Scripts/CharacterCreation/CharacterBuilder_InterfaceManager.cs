@@ -405,13 +405,22 @@ namespace doppelganger
 
         private bool AttemptReassignSlot(string slot, string modelName)
         {
-            // Check if there's a model that can be moved from the current slot to another
+            Debug.Log($"Attempting to reassign slot: {slot} for model: {modelName}");
+            if (!usedSliders.ContainsKey(slot))
+            {
+                Debug.LogError($"AttemptReassignSlot: Slot {slot} is not currently used.");
+                return false;
+            }
+
             string currentModelInSlot = usedSliders[slot];
+            Debug.Log($"Current model in slot: {currentModelInSlot}");
+
             foreach (var potentialSlot in modelToPotentialSlots[currentModelInSlot])
             {
+                Debug.Log($"Checking potential slot: {potentialSlot} for reassignment");
                 if (!usedSliders.ContainsKey(potentialSlot) && !potentialSlot.Equals(slot))
                 {
-                    // Reassign the current model to the new slot
+                    Debug.Log($"Reassigning model {currentModelInSlot} from slot {slot} to {potentialSlot}");
                     usedSliders.Remove(slot);
                     usedSliders[potentialSlot] = currentModelInSlot;
                     modelToAssignedSlot[currentModelInSlot] = potentialSlot;
@@ -420,11 +429,13 @@ namespace doppelganger
                     usedSliders[slot] = modelName;
                     modelToAssignedSlot[modelName] = slot;
 
-                    Debug.Log($"Reassigned model {currentModelInSlot} to slot {potentialSlot} to free up slot {slot} for model {modelName}");
-                    return true; // Return true if reassignment was successful
+                    Debug.Log($"Model {modelName} assigned to freed slot {slot}");
+                    return true;
                 }
             }
-            return false; // Return false if no reassignment was possible
+
+            Debug.Log($"No reassignment possible for model {modelName} in slot {slot}");
+            return false;
         }
 
         public int GetModelIndex(string slotName, string modelName)

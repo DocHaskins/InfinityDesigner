@@ -16,15 +16,11 @@ namespace doppelganger
 
         public void TogglePanel()
         {
-            bool isPanelActiveBeforeToggle = panelGameObject.activeSelf;
-
-            if (!isPanelActiveBeforeToggle)
+            if (dropdownGameObject.activeSelf) // Only toggle the panel if the dropdownGameObject is active
             {
-
+                bool isPanelActiveBeforeToggle = panelGameObject.activeSelf;
+                panelGameObject.SetActive(!isPanelActiveBeforeToggle);
             }
-
-            // Toggle the panel's visibility after ensuring the material is set
-            panelGameObject.SetActive(!isPanelActiveBeforeToggle);
         }
 
         public void ToggleOtherDropdowns(bool enable)
@@ -34,11 +30,9 @@ namespace doppelganger
                 for (int i = VariationBuilder.allLabels.Count - 1; i >= 0; i--)
                 {
                     var dropdown = VariationBuilder.allLabels[i];
-                    // Check if the GameObject reference is still valid
                     if (dropdown != null && dropdown != this.dropdownGameObject)
                     {
-                        // Check if the GameObject has not been destroyed
-                        if (dropdown.activeSelf != enable) // This also acts as an indirect check for existence
+                        if (dropdown.activeSelf != enable)
                         {
                             dropdown.SetActive(enable);
                         }

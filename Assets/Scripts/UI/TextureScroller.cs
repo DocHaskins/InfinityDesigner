@@ -273,29 +273,35 @@ namespace doppelganger
 
         public void SelectMaterial(Material material)
         {
-            // Add null checks and log messages to identify the null object
-            if (material == null)
+            // Check if the current selection panel is not null
+            if (currentSelectionPanel != null)
             {
-                Debug.LogError("SelectMaterial error: 'material' is null");
+                // Invoke the method on currentSelectionPanel to change the material
+                currentSelectionPanel.GetMaterialChange(material);
+            }
+            else
+            {
+                Debug.LogError("No panel is currently selected to apply the material");
             }
 
             // Assuming MaterialSelected is a delegate, invoke it only if it's not null
             MaterialSelected?.Invoke(material);
-
-            // Invoke method on currentSelectionPanel if it's not null
-            currentSelectionPanel?.GetMaterialChange(material);
         }
+
 
         private void SelectTexture(Texture2D texture)
         {
+            // Check if there is a current selection panel and a slot selected
             if (currentSelectionPanel != null && !string.IsNullOrWhiteSpace(currentSlotForSelection))
             {
+                // Apply the texture change to the current selection panel and slot
                 currentSelectionPanel.GetTextureChange(texture, currentSlotForSelection);
+                // Update the UI element (e.g., button text) to reflect the change
                 currentSelectionPanel.currentButtonClickedText.text = texture.name;
             }
             else
             {
-                Debug.LogError("Select a material slot to change and try again");
+                Debug.LogError("Select a material slot in the active panel and try again");
             }
         }
 
