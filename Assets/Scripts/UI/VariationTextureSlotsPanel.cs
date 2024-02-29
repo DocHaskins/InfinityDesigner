@@ -83,24 +83,31 @@ namespace doppelganger
 
         public void UpdatePanel()
         {
-            ClearExistingSlots(); // Ensure all previous slots are cleared
-            emsSliderCreated = false;
-            if (currentMaterial != null)
+            if (textureScroller.currentSelectionPanel == this)
             {
-                Debug.Log($"VariationTextureSlotsPanel: UpdatePanel: Current material: {currentMaterial.name}");
-
-                foreach (string slotName in textureSlots)
+                ClearExistingSlots();
+                emsSliderCreated = false;
+                if (currentMaterial != null)
                 {
-                    if (currentMaterial.HasProperty(slotName))
+                    Debug.Log($"VariationTextureSlotsPanel: UpdatePanel: Current material: {currentMaterial.name}");
+
+                    foreach (string slotName in textureSlots)
                     {
-                        Texture texture = currentMaterial.GetTexture(slotName);
-                        CreateSlot(slotName, texture);
+                        if (currentMaterial.HasProperty(slotName))
+                        {
+                            Texture texture = currentMaterial.GetTexture(slotName);
+                            CreateSlot(slotName, texture);
+                        }
                     }
+                }
+                else
+                {
+                    Debug.LogWarning("No current material set.");
                 }
             }
             else
             {
-                Debug.LogWarning("No current material set.");
+                Debug.Log("This panel is not the current selection panel, so it will not be updated.");
             }
         }
 

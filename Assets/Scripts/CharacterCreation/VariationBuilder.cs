@@ -85,17 +85,18 @@ namespace doppelganger
 
         void PopulateMaterialProperties(Transform materialSpawn, GameObject currentModel, string slotName)
         {
-
-            // Clear existing labels before repopulating to ensure all references are current
-            allLabels.Clear();  // Clear the list to remove old references
+            allLabels.Clear();
 
             SkinnedMeshRenderer[] renderers = currentModel.GetComponentsInChildren<SkinnedMeshRenderer>(true);
             int rendererCounter = 1;
 
             foreach (var renderer in renderers)
             {
-                Material currentMaterial = renderer.sharedMaterials[0]; // Assuming each renderer has at least one material.
+                Material currentMaterial = renderer.sharedMaterials[0];
                 GameObject labelGameObject = Instantiate(variationMaterialLabelPrefab, materialSpawn);
+
+                string uniquePanelName = "Panel_" + slotName + "_" + currentModel.name;
+                labelGameObject.name = uniquePanelName;
                 selectedMaterialName = labelGameObject.transform.Find("materialLabel").GetComponent<TextMeshProUGUI>();
                 selectedMaterialName.text = currentMaterial.name;
                 allLabels.Add(labelGameObject);

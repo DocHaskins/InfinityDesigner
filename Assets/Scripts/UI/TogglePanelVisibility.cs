@@ -49,6 +49,7 @@ namespace doppelganger
                     {
                         textureScroller.SetCurrentSelectionPanel(panelScript);
                     }
+                    panelScript.UpdatePanel();
                 }
                 else
                 {

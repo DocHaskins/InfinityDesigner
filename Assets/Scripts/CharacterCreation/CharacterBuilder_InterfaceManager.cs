@@ -25,6 +25,7 @@ namespace doppelganger
         public VariationBuilder variationBuilder;
         public SliderKeyboardControl sliderKeyboardControl;
         public FilterMapping filterMapping;
+        public TextureScroller textureScroller;
 
         [Header("Interface")]
         [SerializeField]
@@ -713,6 +714,7 @@ namespace doppelganger
                     variationBuilder.UpdateModelInfoPanel(currentSlider);
                 }
             }
+            textureScroller.ClearCurrentSelectionPanel();
         }
 
         public void CreateOrUpdateVariationSlider(string slotName, string modelName)
