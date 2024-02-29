@@ -48,6 +48,7 @@ namespace doppelganger
         public string outputDirectoryName = "Output";
         public string skeletonJsonPath = "Assets/StreamingAssets/Jsons/Human/Player/player_tpp_skeleton.json";
         public string slotUIDLookupRelativePath = "SlotData/SlotUIDLookup.json";
+        private bool skeletonUpdated;
         private Dictionary<string, int> slotNameToUidMap = new Dictionary<string, int>();
         private Dictionary<string, string> sliderToSlotMapping = new Dictionary<string, string>()
     {
@@ -232,8 +233,6 @@ namespace doppelganger
                 skeletonName = skeletonLookup.LookupSkeleton(saveCategory, saveClass);
                 Debug.Log($"Fallback skeleton name {skeletonName} obtained using the LookupSkeleton method for {saveCategory}, {saveClass}.");
             }
-
-            bool skeletonUpdated;
 
             // Overwrite fileName if saveCategory is "Player"
             string fileName = saveCategory.Equals("Player", StringComparison.OrdinalIgnoreCase) ? (string.IsNullOrWhiteSpace(saveName.text) || saveName.text.Equals("Aiden", StringComparison.OrdinalIgnoreCase) ? "player_tpp_skeleton" : saveName.text) : saveName.text;

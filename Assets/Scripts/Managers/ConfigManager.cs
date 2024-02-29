@@ -29,11 +29,10 @@ namespace doppelganger
             var config = LoadConfig();
             if (config.TryGetValue(section, out var sectionData))
             {
-                Debug.Log($"LoadSetting trying to get a value");
+                //Debug.Log($"LoadSetting trying to get a value");
                 if (sectionData.TryGetValue(key, out var value))
                 {
                     return value;
-                    Debug.Log($"LoadSetting returned with {value}");
                 }
             }
 

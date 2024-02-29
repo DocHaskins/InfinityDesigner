@@ -90,7 +90,7 @@ namespace doppelganger
             string selectedFolder = GetSelectedFolderPath(selectedOption);
             string searchFilter = filterInputField.text.Trim().ToLower();
             string fullPath = Path.Combine(Application.streamingAssetsPath, "Jsons", selectedFolder);
-            Debug.Log($"Full path: {fullPath}");
+            //Debug.Log($"Full path: {fullPath}");
 
             // Retrieve all json files from the directory
             var jsonFiles = Directory.GetFiles(fullPath, "*.json", SearchOption.AllDirectories);
@@ -113,7 +113,7 @@ namespace doppelganger
         private void GenerateButtons(List<string> files)
         {
             ClearExistingCells();
-            Debug.Log($"Generating buttons for {files.Count} files.");
+            //Debug.Log($"Generating buttons for {files.Count} files.");
             buttonPressActions.Clear(); // Clear previous actions
             unlimitedScroller.Generate(cellPrefab, files.Count, (index, iCell) =>
             {

@@ -12,7 +12,7 @@ using static ModelData;
 
 public class RunTimeDataBuilder : MonoBehaviour
 {
-    string selectedFolder = "";
+    private string selectedFolder;
     private bool storeClassData = true;
     private Dictionary<string, List<string>> filters;
     private Dictionary<string, string[]> categoryPrefixes;

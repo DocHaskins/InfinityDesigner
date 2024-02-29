@@ -60,11 +60,6 @@ public class CinemachineCameraZoomTool : MonoBehaviour
         [Tooltip("Default Height for the Middle Rig")]
         public float defaultMiddleRigHeight = 0.75f;
 
-        [SerializeField] private float transitionDuration = 1.0f;
-        private bool isTransitioning = false;
-        private float transitionStartTime;
-        private Vector3 initialTargetPosition;
-
         [Tooltip("The vertical Axis. Value is 0...1. How much to scale the orbits")]
         [AxisStateProperty]
         public AxisState zAxis = new AxisState(minValue: 0, maxValue: 1, wrap: false, rangeLocked: true, maxSpeed: 50f, accelTime: 0.1f, decelTime: 0.1f, name: "Mouse ScrollWheel", invert: true);

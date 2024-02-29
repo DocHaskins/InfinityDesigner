@@ -85,7 +85,6 @@ namespace doppelganger
 
         void PopulateMaterialProperties(Transform materialSpawn, GameObject currentModel, string slotName)
         {
-            Debug.Log("PopulateMaterialProperties started.");
 
             // Clear existing labels before repopulating to ensure all references are current
             allLabels.Clear();  // Clear the list to remove old references
@@ -144,7 +143,6 @@ namespace doppelganger
 
                 rendererCounter++;
             }
-            Debug.Log("PopulateMaterialProperties completed.");
         }
 
         public void RegisterPanelScript(SkinnedMeshRenderer renderer, VariationTextureSlotsPanel panelScript)
@@ -205,7 +203,7 @@ namespace doppelganger
                     Debug.LogError($"Renderer '{currentRenderer.name}' not found in the current model.");
                     return;
                 }
-                selectedMaterialName.text = newMaterial.name;
+                selectedMaterialName.text = newMaterial.name.Replace(" (Instance)","");
                 // Log the index of the renderer
                 Debug.Log($"Renderer index in the current model: {rendererIndex}");
 

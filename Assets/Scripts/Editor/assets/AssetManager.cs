@@ -2,12 +2,14 @@
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System;
 using static PrefabUtilityScript;
 using static doppelganger.AssetManager;
+using static ModelData;
 
 /// <summary>
 /// Automates the management of models, materials, and prefabs within the project. 
@@ -271,45 +273,102 @@ namespace doppelganger
 
         private void CreateMaterialsIndex()
         {
-            string materialsFolderPath = "Assets/Resources/Materials";
-            string meshReferencesFolderPath = "Assets/StreamingAssets/Mesh References";
+            string jsonsFolderPath = Application.streamingAssetsPath + "/Jsons";
+            string materialsFolderPath = Application.dataPath + "/Resources/Materials";
+            string meshReferencesFolderPath = Application.streamingAssetsPath + "/Mesh References";
             string materialsIndexPath = Path.Combine(meshReferencesFolderPath, "materials_index.json");
 
-            // Check if the Materials folder exists
-            if (!Directory.Exists(materialsFolderPath))
+            HashSet<string> materialNamesFromJson = new HashSet<string>(); // Store names from JSON
+
+            Debug.Log("Loading materials from JSON files...");
+            if (Directory.Exists(jsonsFolderPath))
             {
-                Debug.LogError("Materials folder not found at: " + materialsFolderPath);
-                return;
+                Debug.Log($"Searching JSON files in {jsonsFolderPath}");
+                foreach (var jsonFile in Directory.GetFiles(jsonsFolderPath, "*.json", SearchOption.AllDirectories))
+                {
+                    Debug.Log($"Reading {jsonFile}");
+                    string jsonData = File.ReadAllText(jsonFile);
+                    try
+                    {
+                        ModelData modelData = JsonConvert.DeserializeObject<ModelData>(jsonData);
+                        if (modelData != null && modelData.slotPairs != null)
+                        {
+                            foreach (var slotPair in modelData.slotPairs)
+                            {
+                                foreach (var modelInfo in slotPair.slotData.models)
+                                {
+                                    foreach (var materialData in modelInfo.materialsData)
+                                    {
+                                        if (materialData.name.EndsWith(".mat"))
+                                        {
+                                            Debug.Log($"Found material in JSON: {materialData.name}");
+                                            materialNamesFromJson.Add(materialData.name);
+                                        }
+                                    }
+
+                                    foreach (var materialResource in modelInfo.materialsResources)
+                                    {
+                                        foreach (var resource in materialResource.resources)
+                                        {
+                                            if (resource.name.EndsWith(".mat"))
+                                            {
+                                                Debug.Log($"Found material resource in JSON: {resource.name}");
+                                                materialNamesFromJson.Add(resource.name);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError($"Error processing file {jsonFile}: {ex.Message}");
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogError($"Jsons folder not found at {jsonsFolderPath}");
             }
 
-            // Create a list to store material names
-            List<string> materialNames = new List<string>();
-
-            // Get all the materials in the Materials folder
-            string[] materialFiles = Directory.GetFiles(materialsFolderPath, "*.mat", SearchOption.AllDirectories);
-            foreach (string materialFile in materialFiles)
+            // Additional logic to verify materials exist in the folder before finalizing the list
+            HashSet<string> validatedMaterialNames = new HashSet<string>();
+            Debug.Log("Verifying materials exist in the Materials folder...");
+            if (Directory.Exists(materialsFolderPath))
             {
-                // Get the material name without the extension
-                string materialName = Path.GetFileNameWithoutExtension(materialFile);
-                materialNames.Add(materialName);
+                foreach (string materialName in materialNamesFromJson)
+                {
+                    string materialPath = Path.Combine(materialsFolderPath, materialName);
+                    if (File.Exists(materialPath))
+                    {
+                        validatedMaterialNames.Add(materialName);
+                        Debug.Log($"Validated material exists: {materialName}");
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Material listed in JSON not found in Materials folder: {materialName}");
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogError($"Materials folder not found at {materialsFolderPath}");
             }
 
-            // Wrap the list in an object
-            MaterialsIndex materialsIndex = new MaterialsIndex { materials = materialNames };
+            // Convert the HashSet to a list, sort it alphabetically, and wrap it in an object
+            List<string> sortedValidatedMaterialNames = validatedMaterialNames.ToList();
+            sortedValidatedMaterialNames.Sort(); // This will sort the list alphabetically
+            MaterialsIndex materialsIndex = new MaterialsIndex { materials = sortedValidatedMaterialNames };
 
-            // Convert the object to JSON
-            string materialsIndexJson = JsonUtility.ToJson(materialsIndex, true);
-
-            // Create the Mesh References folder if it doesn't exist
+            // Convert the object to JSON and save it
+            string materialsIndexJson = JsonConvert.SerializeObject(materialsIndex, Formatting.Indented);
             if (!Directory.Exists(meshReferencesFolderPath))
             {
                 Directory.CreateDirectory(meshReferencesFolderPath);
             }
-
-            // Write the JSON to the materials index file
             File.WriteAllText(materialsIndexPath, materialsIndexJson);
-
-            Debug.Log("Materials index created successfully at: " + materialsIndexPath);
+            Debug.Log($"Materials index created successfully at: {materialsIndexPath}. Total materials indexed: {sortedValidatedMaterialNames.Count}");
         }
 
         private void CheckAllMaterials()

@@ -7,6 +7,8 @@ using UnityEngine.UI;
 using TMPro;
 using UnlimitedScrollUI.Example;
 using UnlimitedScrollUI;
+using static ModelData;
+using System.IO;
 
 namespace doppelganger
 {
@@ -38,57 +40,126 @@ namespace doppelganger
         public Color defaultButtonColor;
 
         private string currentSlotForSelection;
+        private bool materialsInitialized = false;
+        private bool texturesInitialized = false;
         private SkinnedMeshRenderer currentRenderer;
         private Material currentMaterial;
         private List<Texture2D> allTextures;
         private List<Material> allMaterials;
+        private List<Texture2D> filteredTextures;
+        private List<Material> filteredMaterials;
         public event Action<Texture2D> onTextureSelected;
         public event Action<Material> MaterialSelected;
         public event Action<Texture2D, string> TextureSelected;
+        private List<string> materialNamesFromJson = new List<string>();
+
+        public List<string> options = new List<string> { "_dif", "_ems", "_gra", "_nrm", "_spc", "_rgh", "_msk", "_idx", "_clp", "_ocl" };
 
         private void Start()
         {
+            allTextures = new List<Texture2D>();
+            allMaterials = new List<Material>();
             unlimitedScroller = GetComponent<UnlimitedScrollUI.IUnlimitedScroller>();
+            LoadMaterialNamesFromJson();
+            imageTypeDropdown.AddOptions(options);
+            if (options.Count > 0)
+            {
+                searchTerm = options[0].ToLower();
+                imageTypeDropdown.value = 0;
+            }
+
             if (autoGenerate)
             {
                 StartCoroutine(DelayedResourceInitialization());
             }
 
-            filterInputField.onEndEdit.AddListener(delegate { RefreshTexturesWithAdditionalFilter(); });
+            filterInputField.onValueChanged.AddListener(delegate { RefreshResources(); });
             imageTypeDropdown.onValueChanged.AddListener(delegate { DropdownIndexChanged(imageTypeDropdown); });
             materialsButton.onClick.AddListener(() => ReloadMaterials());
             texturesButton.onClick.AddListener(() => ReloadTextures());
+        }
 
-            UpdateDropdownForTextureOrMaterial();
+        private void LoadMaterialNamesFromJson()
+        {
+            string materialsIndexPath = Path.Combine(Application.dataPath, "StreamingAssets", "Mesh references", "materials_index.json");
+            if (File.Exists(materialsIndexPath))
+            {
+                string jsonContent = File.ReadAllText(materialsIndexPath);
+                MaterialsIndex materialsIndex = JsonUtility.FromJson<MaterialsIndex>(jsonContent);
+                if (materialsIndex != null && materialsIndex.materials != null)
+                {
+                    // If materialsIndex and materialsIndex.materials are not null, update materialNamesFromJson
+                    materialNamesFromJson = new List<string>(materialsIndex.materials);
+                    Debug.Log("Loaded material names from JSON");
+                }
+                else
+                {
+                    // Log error if materialsIndex is null or materialsIndex.materials is null
+                    Debug.LogError("Failed to load material names from JSON: JSON is not properly formatted or is null");
+                }
+            }
+            else
+            {
+                Debug.LogError($"Materials index file not found: {materialsIndexPath}");
+            }
         }
 
         private IEnumerator DelayedResourceInitialization()
         {
-            // Wait for the end of the frame to ensure all setups are done
             yield return new WaitForEndOfFrame();
-            if (isTextures)
+            if (isTextures && !texturesInitialized)
             {
                 ReloadTextures();
+                texturesInitialized = true; // Ensure this initialization only happens once
             }
-            else if (isMaterials)
+            else if (isMaterials && !materialsInitialized)
             {
                 ReloadMaterials();
+                materialsInitialized = true; // Ensure this initialization only happens once
             }
         }
 
-        private void UpdateDropdownForTextureOrMaterial()
+        public void LoadTextures(string filter)
         {
-            imageTypeDropdown.ClearOptions(); // Clear existing options
-            if (isTextures)
+            allTextures = Resources.LoadAll<Texture2D>("Textures")
+                .Where(t => t.name.Contains(searchTerm) && t.name.Contains(additionalFilterTerm))
+                .ToList();
+            Debug.Log($"Total Textures after filter: {allTextures.Count}");
+            GenerateResources();
+        }
+
+        public void LoadMaterials(string filter)
+        {
+            if (materialNamesFromJson == null || materialNamesFromJson.Count == 0)
             {
-                List<string> options = new List<string> { "_msk", "_idx", "_gra", "_spc", "_clp", "_rgh", "_ocl", "_ems", "_dif", "_nrm" };
-                imageTypeDropdown.AddOptions(options);
+                return;
             }
-            else if (isMaterials)
+
+            allMaterials.Clear();
+            foreach (string matName in materialNamesFromJson)
             {
-                List<string> matoptions = new List<string> { "_msk", "_idx", "_gra", "_spc", "_clp", "_rgh", "_ocl", "_ems", "_dif", "_nrm" };
-                imageTypeDropdown.AddOptions(matoptions);
+                string formattedMatName = matName.Replace(".mat", "");
+                Material mat = Resources.Load<Material>($"Materials/{formattedMatName}");
+
+                if (mat != null)
+                {
+                    allMaterials.Add(mat);
+                }
             }
+            Debug.Log($"Total Materials after filter: {allMaterials.Count}");
+            GenerateResources();
+        }
+
+        public void FilterTextures(string filter)
+        {
+            filteredTextures = allTextures.Where(t => t.name.Contains(filter)).ToList();
+            GenerateResources();
+        }
+
+        public void FilterMaterials(string filter)
+        {
+            filteredMaterials = allMaterials.Where(m => m.HasProperty(filter)).ToList();
+            GenerateResources();
         }
 
         public void ReloadMaterials()
@@ -96,7 +167,7 @@ namespace doppelganger
             isMaterials = true;
             isTextures = false;
             UpdateButtonColors(materialsButton);
-            UpdateDropdownForTextureOrMaterial();
+            //UpdateFilterFromDropdown();
             RefreshResources();
         }
 
@@ -105,8 +176,16 @@ namespace doppelganger
             isTextures = true;
             isMaterials = false;
             UpdateButtonColors(texturesButton);
-            UpdateDropdownForTextureOrMaterial();
+            //UpdateFilterFromDropdown();
             RefreshResources();
+        }
+
+        private void UpdateFilterFromDropdown()
+        {
+            if (imageTypeDropdown.options.Count > imageTypeDropdown.value)
+            {
+                searchTerm = imageTypeDropdown.options[imageTypeDropdown.value].text.Trim().ToLower();
+            }
         }
 
         private void UpdateButtonColors(Button activeButton)
@@ -206,7 +285,7 @@ namespace doppelganger
             {
                 allMaterials = allMaterials.Where(m =>
                 {
-                    string[] textureProperties = new string[] { "_msk", "_idx", "_gra", "_spc", "_clp", "_rgh", "_ocl", "_ems", "_dif", "_nrm" };
+                    string[] textureProperties = new string[] { "_dif", "_ems", "_gra", "_nrm", "_spc", "_rgh", "_msk", "_idx", "_clp", "_ocl" };
                     foreach (string property in textureProperties)
                     {
                         if (m.HasProperty(property))
@@ -260,24 +339,6 @@ namespace doppelganger
                     }
                 });
             }
-        }
-
-        public void LoadTextures(string filter)
-        {
-            allTextures = Resources.LoadAll<Texture2D>("Textures")
-                .Where(t => t.name.Contains(searchTerm) && t.name.Contains(additionalFilterTerm))
-                .ToList();
-            Debug.Log($"Total Textures after filter: {allTextures.Count}");
-            GenerateResources();
-        }
-
-        public void LoadMaterials(string filter)
-        {
-            allMaterials = Resources.LoadAll<Material>("Materials")
-                .Where(m => m.HasProperty(filter) && m.GetTexture(filter) != null)
-                .ToList();
-            Debug.Log($"Total Materials after filter: {allMaterials.Count}");
-            GenerateResources(); // Refresh the UI with the filtered materials
         }
 
         public void UpdateDropdownSelection(string searchTerm)
@@ -372,5 +433,6 @@ namespace doppelganger
             ClearExistingCells();
             LoadTextures(searchTerm);
         }
+
     }
 }

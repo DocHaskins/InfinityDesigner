@@ -258,17 +258,17 @@ namespace doppelganger
                                 // Remove the '.msh' extension from the model name
                                 string modelNameWithClone = Path.GetFileNameWithoutExtension(modelInfo.name) + "(Clone)";
 
-                                Debug.Log($"Processing model: {modelInfo.name}, looking for slot.");
+                                //Debug.Log($"Processing model: {modelInfo.name}, looking for slot.");
 
                                 string slotName = interfaceManager.FindSlotForModel(modelInfo.name);
                                 if (!string.IsNullOrEmpty(slotName))
                                 {
-                                    Debug.Log($"Found slot '{slotName}' for model '{modelInfo.name}'.");
+                                    //Debug.Log($"Found slot '{slotName}' for model '{modelInfo.name}'.");
 
                                     int modelIndex = interfaceManager.GetModelIndex(slotName, modelInfo.name);
                                     if (modelIndex != -1)
                                     {
-                                        Debug.Log($"Setting slider value for '{slotName}' at index {modelIndex}.");
+                                        //Debug.Log($"Setting slider value for '{slotName}' at index {modelIndex}.");
                                         interfaceManager.SetSliderValue(slotName, modelIndex);
 
                                         // Attempt to find and load the model instance
@@ -276,7 +276,7 @@ namespace doppelganger
                                         GameObject modelInstance = GameObject.Find(modelNameWithClone); // Adjusted to use modelNameWithClone
                                         if (modelInstance != null) // Assuming modelInstance is found
                                         {
-                                            Debug.Log($"Applying materials directly from JSON data for '{modelInfo.name}'.");
+                                            //Debug.Log($"Applying materials directly from JSON data for '{modelInfo.name}'.");
                                             ApplyPresetMaterialsDirectly(modelInstance, modelInfo);
                                         }
                                         else
@@ -415,14 +415,14 @@ namespace doppelganger
             // Load and instantiate the new skeleton if needed
             if (shouldLoadSkeleton)
             {
-                Debug.Log("Loading skeleton prefab from resource path: " + resourcePath);
+                //Debug.Log("Loading skeleton prefab from resource path: " + resourcePath);
                 GameObject skeletonPrefab = Resources.Load<GameObject>(resourcePath);
                 if (skeletonPrefab != null)
                 {
                     GameObject loadedSkeleton = Instantiate(skeletonPrefab, Vector3.zero, Quaternion.Euler(-90, 0, 0), platform.transform.transform);
                     loadedSkeleton.tag = "Skeleton";
                     loadedSkeleton.name = selectedSkeleton; // Optionally set the name to manage future checks
-                    Debug.Log("LoadSkeleton: Setting Camera to focus on:" + loadedSkeleton);
+                    //Debug.Log("LoadSkeleton: Setting Camera to focus on:" + loadedSkeleton);
                     autoTargetCinemachineCamera.FocusOnSkeleton(loadedSkeleton);
                     // Find the 'pelvis' child in the loaded skeleton and handle 'legs' creation
                     Transform pelvis = loadedSkeleton.transform.Find("pelvis");
@@ -444,7 +444,7 @@ namespace doppelganger
             }
             else
             {
-                Debug.Log("Skeleton with the name " + selectedSkeleton + " is already loaded. Skipping.");
+                //Debug.Log("Skeleton with the name " + selectedSkeleton + " is already loaded. Skipping.");
             }
         }
 
@@ -696,7 +696,7 @@ namespace doppelganger
         {
             if (materialName.Equals("null.mat", StringComparison.OrdinalIgnoreCase))
             {
-                Debug.Log($"Renderer '{renderer.gameObject.name}' disabled due to null material.");
+                //Debug.Log($"Renderer '{renderer.gameObject.name}' disabled due to null material.");
                 renderer.enabled = false;
                 AddToDisabledRenderers(modelInstance, renderer);
                 return;
@@ -706,7 +706,7 @@ namespace doppelganger
             Material loadedMaterial = LoadMaterial(materialName);
             if (loadedMaterial != null)
             {
-                Debug.Log($"Loaded material '{materialName}' for renderer '{renderer.gameObject.name}'. Preparing to apply RTTI values.");
+                //Debug.Log($"Loaded material '{materialName}' for renderer '{renderer.gameObject.name}'. Preparing to apply RTTI values.");
                 Material clonedMaterial = new Material(loadedMaterial);
                 renderer.sharedMaterials = new Material[] { clonedMaterial };
 
@@ -714,7 +714,7 @@ namespace doppelganger
                 {
                     foreach (var rttiValue in rttiValues)
                     {
-                        Debug.Log($"Detected RTTI value for '{materialName}': '{rttiValue.name}' with value '{rttiValue.val_str}'.");
+                        //Debug.Log($"Detected RTTI value for '{materialName}': '{rttiValue.name}' with value '{rttiValue.val_str}'.");
                         ApplyTextureToMaterial(modelInstance, clonedMaterial, rttiValue.name, rttiValue.val_str);
                     }
                 }

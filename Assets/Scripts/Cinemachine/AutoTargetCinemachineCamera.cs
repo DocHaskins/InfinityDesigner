@@ -86,7 +86,7 @@ namespace doppelganger
                 return;
             }
 
-            Debug.Log($"FocusSkeleton called with {skeleton.name}");
+            //Debug.Log($"FocusSkeleton called with {skeleton.name}");
 
             ParentSkeleton parentSkeleton = skeleton.GetComponent<ParentSkeleton>();
             if (parentSkeleton == null)

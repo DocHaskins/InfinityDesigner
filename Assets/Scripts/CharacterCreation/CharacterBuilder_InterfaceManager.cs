@@ -294,12 +294,12 @@ namespace doppelganger
             string assignedSlot = null;
             modelToPotentialSlots[modelName].Clear();
 
-            Debug.Log($"FindSlotForModel for {modelName}");
+            //Debug.Log($"FindSlotForModel for {modelName}");
             string type = GetTypeFromSelector();
             string category = categoryDropdown.options[categoryDropdown.value].text;
             string classSelection = classDropdown.options[classDropdown.value].text;
 
-            Debug.Log($"Searching in type: {type}, category: {category}, class: {classSelection}");
+            //Debug.Log($"Searching in type: {type}, category: {category}, class: {classSelection}");
 
             // Define the base path for slot data
             string basePath = Path.Combine(Application.streamingAssetsPath, "SlotData", type);
@@ -393,7 +393,7 @@ namespace doppelganger
 
             if (assignedSlot != null)
             {
-                Debug.Log($"Model {modelName} assigned to slot {assignedSlot}");
+                //Debug.Log($"Model {modelName} assigned to slot {assignedSlot}");
                 return assignedSlot;
             }
             else

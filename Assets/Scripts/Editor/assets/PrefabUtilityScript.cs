@@ -14,18 +14,7 @@ public class PrefabUtilityScript : EditorWindow
     private static string meshReferencesDirectory = "Assets/StreamingAssets/Mesh references";
     private int maxPrefabCount = 100;
 
-    [Serializable]
-    public class MeshReferenceData
-    {
-        public List<MaterialData> materialsData;
-    }
-
-    [Serializable]
-    public class MaterialData
-    {
-        public int number;
-        public string name;
-    }
+    
 
     [MenuItem("Tools/Prefab Creator")]
     public static void ShowWindow()
@@ -93,11 +82,11 @@ public class PrefabUtilityScript : EditorWindow
         }
 
         string jsonContent = File.ReadAllText(jsonPath);
-        var meshReferenceData = JsonUtility.FromJson<MeshReferenceData>(jsonContent);
+        var meshReferenceData = JsonUtility.FromJson<ModelData.MeshReferenceData>(jsonContent);
         UpdateMaterials(prefab, meshReferenceData.materialsData);
     }
 
-    private static void UpdateMaterials(GameObject prefab, List<MaterialData> materialsList)
+    private static void UpdateMaterials(GameObject prefab, List<ModelData.MaterialData> materialsList)
     {
         var skinnedMeshRenderers = prefab.GetComponentsInChildren<SkinnedMeshRenderer>();
 

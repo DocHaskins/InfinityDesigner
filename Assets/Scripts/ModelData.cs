@@ -102,6 +102,12 @@ public class ModelData
     }
 
     [Serializable]
+    public class MaterialsIndex
+    {
+        public List<string> materials;
+    }
+
+    [Serializable]
     public class VariationInfo
     {
         public string id;
@@ -138,11 +144,19 @@ public class ModelData
     }
 
     [Serializable]
+    public class MeshReferenceData
+    {
+        public List<MaterialData> materialsData;
+    }
+
+    [Serializable]
     public class MaterialData
     {
         public int number;
         public string name;
     }
+
+
 
     [Serializable]
     public class MaterialResource
