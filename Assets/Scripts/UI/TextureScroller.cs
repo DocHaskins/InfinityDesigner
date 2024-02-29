@@ -15,6 +15,7 @@ namespace doppelganger
     public class TextureScroller : MonoBehaviour
     {
         [Header("Public Fields")]
+        // General settings
         public bool autoGenerate;
         public bool isTextures = true;
         public bool isMaterials = false;
@@ -23,12 +24,15 @@ namespace doppelganger
         public GameObject currentModel;
 
         [Header("Managers")]
+        // Managers and controllers
+        public ConfigManager configManager;
         public GridUnlimitedScroller gridUnlimitedScroller;
         public VariationBuilder variationBuilder;
         public VariationTextureSlotsPanel currentSelectionPanel;
         private UnlimitedScrollUI.IUnlimitedScroller unlimitedScroller;
 
         [Header("Interface")]
+        // UI elements and controls
         public GameObject cellPrefab;
         public GameObject materialCellPrefab;
         public Transform contentPanel;
@@ -39,6 +43,7 @@ namespace doppelganger
         public Color selectedButtonColor;
         public Color defaultButtonColor;
 
+        // Internal variables
         private string currentSlotForSelection;
         private bool materialsInitialized = false;
         private bool texturesInitialized = false;
@@ -53,7 +58,9 @@ namespace doppelganger
         public event Action<Texture2D, string> TextureSelected;
         private List<string> materialNamesFromJson = new List<string>();
 
+        // Additional options
         public List<string> options = new List<string> { "_dif", "_ems", "_gra", "_nrm", "_spc", "_rgh", "_msk", "_idx", "_clp", "_ocl" };
+
 
         private void Start()
         {
@@ -73,7 +80,7 @@ namespace doppelganger
                 StartCoroutine(DelayedResourceInitialization());
             }
 
-            filterInputField.onValueChanged.AddListener(delegate { RefreshResources(); });
+            filterInputField.onEndEdit.AddListener(delegate { RefreshResources(); });
             imageTypeDropdown.onValueChanged.AddListener(delegate { DropdownIndexChanged(imageTypeDropdown); });
             materialsButton.onClick.AddListener(() => ReloadMaterials());
             texturesButton.onClick.AddListener(() => ReloadTextures());
@@ -121,11 +128,58 @@ namespace doppelganger
 
         public void LoadTextures(string filter)
         {
-            allTextures = Resources.LoadAll<Texture2D>("Textures")
-                .Where(t => t.name.Contains(searchTerm) && t.name.Contains(additionalFilterTerm))
-                .ToList();
-            Debug.Log($"Total Textures after filter: {allTextures.Count}");
-            GenerateResources();
+            List<Texture2D> loadedTextures = new List<Texture2D>();
+
+            // Load textures from content_path if it exists
+            string content_path = ConfigManager.LoadSetting("SavePath", "Content_Path");
+            if (!string.IsNullOrEmpty(content_path))
+            {
+                Debug.Log($"Attempting to load textures from content path: {content_path}");
+                try
+                {
+                    // Assuming this is a directory path where texture files are stored
+                    var textureFiles = Directory.GetFiles(content_path, "*.*")
+                        .Where(file => file.EndsWith(".png") || file.EndsWith(".jpg") || file.EndsWith(".jpeg")).ToList();
+
+                    Debug.Log($"Found {textureFiles.Count} texture files in content path.");
+
+                    foreach (var file in textureFiles)
+                    {
+                        byte[] fileData = File.ReadAllBytes(file);
+                        Texture2D tex = new Texture2D(2, 2);
+                        if (tex.LoadImage(fileData))
+                        {
+                            // Extract the file name without extension and assign it as the texture name
+                            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file);
+                            tex.name = fileNameWithoutExtension;
+                            loadedTextures.Add(tex);
+                            Debug.Log($"Successfully loaded texture: {tex.name} from file: {file}");
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"Failed to load texture from file: {file}");
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Failed to load textures from content_path: {e.Message}");
+                }
+            }
+            else
+            {
+                Debug.Log("Custom content path is not set in the configuration.");
+            }
+
+            // Filter and add textures from Unity Resources
+            var resourcesTextures = Resources.LoadAll<Texture2D>("Textures")
+                .Where(t => t.name.Contains(filter)).ToList();
+            loadedTextures.AddRange(resourcesTextures);
+
+            allTextures = loadedTextures;
+
+            Debug.Log($"Total textures after applying filter '{filter}': {allTextures.Count}");
+            GenerateResources(); // Assuming this is a method that does something with allTextures
         }
 
         public void LoadMaterials(string filter)
@@ -207,7 +261,7 @@ namespace doppelganger
         public void ClearCurrentSelectionPanel()
         {
             currentSelectionPanel = null;
-            Debug.Log($"ClearCurrentSelectionPanel: currentSelectionPanel: {currentSelectionPanel}");
+            //Debug.Log($"ClearCurrentSelectionPanel: currentSelectionPanel: {currentSelectionPanel}");
         }
 
         public VariationTextureSlotsPanel GetCurrentSelectionPanel()
@@ -256,9 +310,6 @@ namespace doppelganger
         {
             if (isTextures)
             {
-                allTextures = Resources.LoadAll<Texture2D>("Textures")
-                .Where(t => t.name.Contains(searchTerm) && t.name.Contains(additionalFilterTerm))
-                .ToList();
                 Debug.Log($"Total Textures after filter: {allTextures.Count}");
                 if (gridUnlimitedScroller != null)
                 {

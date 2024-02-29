@@ -11,24 +11,36 @@ namespace doppelganger
 {
     public class VariationTextureSlotsPanel : MonoBehaviour
     {
+        [Header("Managers")]
         public TextureScroller textureScroller;
         public VariationBuilder variationBuilder;
 
+        [Header("Rendering")]
         public SkinnedMeshRenderer TargetRenderer;
+
+        [Header("UI Prefabs")]
         public GameObject slotPrefab;
-        private bool emsSliderCreated;
         [SerializeField] private GameObject textureScrollerPanelPrefab;
         public GameObject variationEMSTextureSliderPrefab;
+
+        [Header("Current State")]
+        private bool emsSliderCreated;
         private GameObject currentPanel;
         public GameObject currentModel;
         public Material currentMaterial;
         public string currentSlotName;
+
+        [Header("UI Elements")]
         public TextMeshProUGUI currentButtonClickedText;
 
         private readonly string[] textureSlots = {
         "_msk", "_idx", "_gra", "_spc", "_clp", "_rgh", "_ocl", "_ems", "_dif_1", "_dif", "_nrm",
         "_BaseColorMap", "_NormalMap", "_MaskMap", "_EmissiveColorMap"
     };
+
+        private readonly string[] orderedSlotNames = {
+    "_dif", "_nrm", "_spc", "_rgh", "_msk", "_gra", "_idx", "_clp", "_ocl", "_ems"
+};
 
         void Awake()
         {
@@ -91,9 +103,20 @@ namespace doppelganger
                 {
                     Debug.Log($"VariationTextureSlotsPanel: UpdatePanel: Current material: {currentMaterial.name}");
 
-                    foreach (string slotName in textureSlots)
+                    // Create slots based on the preferred order
+                    foreach (string slotName in orderedSlotNames)
                     {
                         if (currentMaterial.HasProperty(slotName))
+                        {
+                            Texture texture = currentMaterial.GetTexture(slotName);
+                            CreateSlot(slotName, texture);
+                        }
+                    }
+
+                    // Optionally, create slots for any remaining material properties not covered by preferredOrder
+                    foreach (string slotName in textureSlots)
+                    {
+                        if (!orderedSlotNames.Contains(slotName) && currentMaterial.HasProperty(slotName))
                         {
                             Texture texture = currentMaterial.GetTexture(slotName);
                             CreateSlot(slotName, texture);
@@ -148,29 +171,30 @@ namespace doppelganger
             });
             eventTrigger.triggers.Add(rightClickEntry);
 
-            //if (currentMaterial.HasProperty("_ems") && slotName.Equals("_ems", StringComparison.OrdinalIgnoreCase) && !emsSliderCreated)
-            //{
-            //    GameObject emsSliderInstance = Instantiate(variationEMSTextureSliderPrefab, transform);
-            //    Slider emsSlider = emsSliderInstance.transform.Find("emsSlider").GetComponent<Slider>();
-            //    if (emsSlider != null)
-            //    {
-            //        // Set up the slider
-            //        emsSlider.minValue = 0.0f;
-            //        emsSlider.maxValue = 1.0f;
-            //        emsSlider.value = 0.7f;
-            //        emsSlider.onValueChanged.AddListener((value) => {
-            //            SetEmissiveIntensity(value, slotName);
-            //        });
-            //        emsSliderCreated = true;
+            if (currentMaterial.HasProperty("_ems") && slotName.Equals("_ems", StringComparison.OrdinalIgnoreCase) && !emsSliderCreated)
+            {
+                GameObject emsSliderInstance = Instantiate(variationEMSTextureSliderPrefab, transform);
+                Slider emsSlider = emsSliderInstance.transform.Find("emsSlider").GetComponent<Slider>();
+                if (emsSlider != null)
+                {
+                    // Set up the slider
+                    emsSlider.minValue = 0.0f;
+                    emsSlider.maxValue = 1.0f;
+                    emsSlider.value = 0.7f;
+                    emsSlider.onValueChanged.AddListener((value) =>
+                    {
+                        SetEmissiveIntensity(value, slotName);
+                    });
+                    emsSliderCreated = true;
 
-            //        // Move the slider instance to directly follow the slot instance in the UI hierarchy
-            //        emsSliderInstance.transform.SetSiblingIndex(slotInstance.transform.GetSiblingIndex() + 1);
-            //    }
-            //    else
-            //    {
-            //        Debug.LogError("Failed to find Slider component on 'emsSlider' child within VariationEMSTextureSlider instance.");
-            //    }
-            //}
+                    // Move the slider instance to directly follow the slot instance in the UI hierarchy
+                    emsSliderInstance.transform.SetSiblingIndex(slotInstance.transform.GetSiblingIndex() + 1);
+                }
+                else
+                {
+                    Debug.LogError("Failed to find Slider component on 'emsSlider' child within VariationEMSTextureSlider instance.");
+                }
+            }
         }
 
         public void SetEmissiveIntensity(float intensity, string slotName)

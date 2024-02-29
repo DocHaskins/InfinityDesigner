@@ -18,6 +18,7 @@ namespace doppelganger
         public TextureScroller textureScroller;
 
         [Header("Interface")]
+        // Panels and UI elements
         public GameObject modelInfoPanel;
         public TextMeshProUGUI meshNameText;
         public TextMeshProUGUI selectedMaterialName;
@@ -27,6 +28,7 @@ namespace doppelganger
         public GameObject currentModelInfoPanel;
         public GameObject variationTextureSlotPanelPrefab;
 
+        // Current model and its properties
         public GameObject currentModel;
         public Transform currentSpawn;
         public SkinnedMeshRenderer currentRenderer;
@@ -35,6 +37,8 @@ namespace doppelganger
         public bool isPanelOpen = false;
         public string openPanelSlotName = "";
         public Material CurrentlySelectedMaterial { get; private set; }
+
+        // Lists and dictionaries
         public static List<GameObject> allLabels = new List<GameObject>();
         private Dictionary<int, Material> originalMaterials = new Dictionary<int, Material>();
         public List<RttiValue> currentMaterialResources = new List<RttiValue>();
@@ -175,40 +179,53 @@ namespace doppelganger
 
         public void ApplyMaterialDirectly(Material newMaterial)
         {
-            string originalName = currentRenderer.sharedMaterials[0].name;
-            Debug.Log($"Original material name: {originalName}, targetRenderer {currentRenderer}, newMaterial {newMaterial}");
-
-            if (newMaterial != null && currentRenderer != null)
+            if (currentRenderer)
             {
-                // Debug logs to ensure correct operation
-                Debug.Log($"Original material name: {currentRenderer.material.name}");
-                Debug.Log($"New material loaded: {newMaterial.name}");
+                string originalName = currentRenderer.sharedMaterials[0].name;
+                Debug.Log($"Original material name: {originalName}, targetRenderer {currentRenderer}, newMaterial {newMaterial}");
 
-                // Replace the target renderer's material
-                currentRenderer.material = newMaterial; // Directly set the new material
-
-                // Additional debug logs if needed
-                Debug.Log($"Applied '{newMaterial.name}' to {currentRenderer.gameObject.name}.");
-
-                // Additional application logic
-                string modelName = currentModelName.Replace("(Clone)", "");
-                string currentSlider = interfaceManager.currentSlider;
-                //UpdateModelInfoPanel(currentSlider);
-
-                // Log the current model name and slider being used
-                Debug.Log($"Model Name: {modelName}, Current Slider: {currentSlider}");
-
-                int rendererIndex = GetRendererIndexByName(currentRenderer.name);
-                if (rendererIndex == -1)
+                if (newMaterial != null && currentRenderer != null)
                 {
-                    Debug.LogError($"Renderer '{currentRenderer.name}' not found in the current model.");
-                    return;
-                }
-                selectedMaterialName.text = newMaterial.name.Replace(" (Instance)","");
-                // Log the index of the renderer
-                Debug.Log($"Renderer index in the current model: {rendererIndex}");
+                    
+                    // Debug logs to ensure correct operation
+                    Debug.Log($"Original material name: {currentRenderer.material.name}");
+                    Debug.Log($"New material loaded: {newMaterial.name}");
 
-                RecordMaterialChange(modelName, originalName, newMaterial.name, rendererIndex);
+                    // Replace the target renderer's material
+                    currentRenderer.material = newMaterial; // Directly set the new material
+
+                    // Additional debug logs if needed
+                    Debug.Log($"Applied '{newMaterial.name}' to {currentRenderer.gameObject.name}.");
+
+                    // Additional application logic
+                    string modelName = currentModelName.Replace("(Clone)", "");
+                    string currentSlider = interfaceManager.currentSlider;
+                    //UpdateModelInfoPanel(currentSlider);
+                    if (modelSpecificChanges.ContainsKey(modelName))
+                    {
+                        // Remove all changes for this model
+                        modelSpecificChanges.Remove(modelName);
+                        Debug.Log($"All changes cleared for model: {modelName}.");
+                    }
+                    // Log the current model name and slider being used
+                    Debug.Log($"Model Name: {modelName}, Current Slider: {currentSlider}");
+
+                    int rendererIndex = GetRendererIndexByName(currentRenderer.name);
+                    if (rendererIndex == -1)
+                    {
+                        Debug.LogError($"Renderer '{currentRenderer.name}' not found in the current model.");
+                        return;
+                    }
+                    selectedMaterialName.text = newMaterial.name.Replace(" (Instance)", "");
+                    // Log the index of the renderer
+                    Debug.Log($"Renderer index in the current model: {rendererIndex}");
+
+                    RecordMaterialChange(modelName, originalName, newMaterial.name, rendererIndex);
+                }
+            }
+            else 
+            {
+                Debug.LogError($"Select a material slot (#'s) to apply this material");
             }
         }
 
@@ -306,15 +323,14 @@ namespace doppelganger
             var existingChange = materialChange.TextureChanges.FirstOrDefault(tc => tc.name == scaleChangeName);
             if (existingChange != null)
             {
-                existingChange.val_str = scaleValue.ToString();
+                existingChange.val_str = scaleValue.ToString("F1");
                 existingChange.type = 2;
-                Debug.Log($"Updated scale change for model: {newModelName}, renderer index: {rendererIndex}, scale: {scaleValue}");
+                Debug.Log($"Updated scale change for model: {newModelName}, renderer index: {rendererIndex}, scale: {scaleValue.ToString("F1")}");
             }
             else
             {
-                // If no change is recorded for this scale, add a new one
-                materialChange.TextureChanges.Add(new RttiValue { name = scaleChangeName, val_str = scaleValue.ToString(), type = 2 });
-                Debug.Log($"Recorded new scale change for model: {newModelName}, renderer index: {rendererIndex}, scale: {scaleValue}");
+                materialChange.TextureChanges.Add(new RttiValue { name = scaleChangeName, val_str = scaleValue.ToString("F1"), type = 2 });
+                Debug.Log($"Recorded new scale change for model: {newModelName}, renderer index: {rendererIndex}, scale: {scaleValue.ToString("F1")}");
             }
         }
 

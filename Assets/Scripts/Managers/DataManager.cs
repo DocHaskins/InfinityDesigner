@@ -15,6 +15,8 @@ namespace doppelganger
         public UpdateManager updateManager;
 
         public TMP_InputField pathInputField;
+        public TMP_InputField customOutputPathInputField;
+        public TMP_InputField customContentPathInputField;
         public TMP_Text gameVersionLabel;
         public TMP_Text engineVersion;
         public GameObject popupPrefab;
@@ -37,11 +39,15 @@ namespace doppelganger
         {
             Debug.Log("IsGameVersionAndPathSet check");
             string savePath = ConfigManager.LoadSetting("SavePath", "Path");
+            string outputPath = ConfigManager.LoadSetting("SavePath", "Output_Path");
+            string contentPath = ConfigManager.LoadSetting("SavePath", "Content_Path");
             string gameVersion = ConfigManager.LoadSetting("Version", "DL2_Game");
 
             Debug.Log($"gameVersion {gameVersion}, savePath {savePath}.");
             // Check if both settings are found and not empty
             bool savePathFound = !string.IsNullOrEmpty(savePath);
+            bool outputPathFound = !string.IsNullOrEmpty(savePath);
+            bool contentPathFound = !string.IsNullOrEmpty(savePath);
             bool versionFound = !string.IsNullOrEmpty(gameVersion);
 
             if (!savePathFound || !versionFound)
@@ -59,6 +65,18 @@ namespace doppelganger
                 Debug.Log($"savePathFound {savePath}");
                 updateManager.GetExeVersion(exePath);
                 
+            }
+
+            if (outputPathFound)
+            {
+                customOutputPathInputField.text = outputPath;
+                Debug.Log($"outputPathFound {outputPath}");
+            }
+
+            if (contentPathFound)
+            {
+                customContentPathInputField.text = contentPath;
+                Debug.Log($"contentPathFound {contentPath}");
             }
 
             if (versionFound)
@@ -120,6 +138,38 @@ namespace doppelganger
                     pathInputField.text = "Set Path";
                     Debug.LogError($"Dying Light 2 executable not found, make sure this is the Dying Light 2 Root folder");
                 }
+            }
+            else
+            {
+                Debug.LogError("No path selected.");
+            }
+        }
+
+        public void OpenSetOutputPathDialog()
+        {
+            // Open folder browser and then save the selected path
+            var paths = StandaloneFileBrowser.OpenFolderPanel("Select Custom Output Folder", "", false);
+            if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
+            {
+                string Outputpath = paths[0];
+                customOutputPathInputField.text = Outputpath;
+                ConfigManager.SaveSetting("SavePath", "Output_Path", Outputpath);
+            }
+            else
+            {
+                Debug.LogError("No path selected.");
+            }
+        }
+
+        public void OpenSetContentPathDialog()
+        {
+            // Open folder browser and then save the selected path
+            var paths = StandaloneFileBrowser.OpenFolderPanel("Select Custom Content Folder", "", false);
+            if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
+            {
+                string Contentpath = paths[0];
+                customContentPathInputField.text = Contentpath;
+                ConfigManager.SaveSetting("SavePath", "Content_Path", Contentpath);
             }
             else
             {

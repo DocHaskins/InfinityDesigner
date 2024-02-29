@@ -8,13 +8,18 @@ namespace doppelganger
 {
     public class TogglePanelVisibility : MonoBehaviour
     {
+        [Header("Managers")]
         public VariationBuilder variationBuilder;
         public TextureScroller textureScroller;
 
+        [Header("Hierarchy References")]
         public Transform spawnPoint;
+
+        [Header("UI Elements")]
         public GameObject variationTextureSlotPanelPrefab;
         public GameObject panelGameObject;
 
+        [Header("Current Model")]
         private GameObject currentModel;
         private SkinnedMeshRenderer currentRenderer;
         private Material currentMaterial;

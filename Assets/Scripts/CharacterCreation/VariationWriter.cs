@@ -63,30 +63,23 @@ namespace doppelganger
 
                         foreach (var textureChange in materialChange.TextureChanges)
                         {
-                            // Initialize a new RttiValue instance with only the name and type
                             RttiValue newRttiValue = new RttiValue { name = textureChange.name, type = textureChange.type };
-
-                            // Depending on the type, add only the relevant field
-                            if (textureChange.type == 7) // Type 7 for textures
+                            if (textureChange.type == 7)
                             {
-                                // Only add the value if it's a meaningful string
                                 if (!string.IsNullOrEmpty(textureChange.val_str))
                                 {
                                     newRttiValue.val_str = textureChange.val_str;
-                                    validRttiValues.Add(newRttiValue); // Add to the list
+                                    validRttiValues.Add(newRttiValue);
                                 }
                             }
-                            else if (textureChange.type == 2) // Type 2 for scales
+                            else if (textureChange.type == 2)
                             {
-                                // Directly parse the string into float and assign to val_float
                                 if (float.TryParse(textureChange.val_str, out float scaleValue))
                                 {
-                                    // Create a new instance with just the float value
-                                    RttiValue scaleValueEntry = new RttiValue { name = textureChange.name, type = textureChange.type, val_str = scaleValue.ToString() };
-                                    validRttiValues.Add(scaleValueEntry); // Add to the list
+                                    RttiValue scaleValueEntry = new RttiValue { name = textureChange.name, type = textureChange.type, val_str = scaleValue.ToString("F1") };
+                                    validRttiValues.Add(scaleValueEntry);
                                 }
                             }
-                            // You can extend with more else-if blocks for other types if needed
                         }
 
                         string materialNameWithExtension = materialChange.NewName.EndsWith(".mat") ? materialChange.NewName.Replace(" (Instance)", "") : $"{materialChange.NewName.Replace(" (Instance)", "")}.mat";
