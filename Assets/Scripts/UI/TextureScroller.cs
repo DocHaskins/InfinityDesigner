@@ -68,6 +68,7 @@ namespace doppelganger
             allMaterials = new List<Material>();
             unlimitedScroller = GetComponent<UnlimitedScrollUI.IUnlimitedScroller>();
             LoadMaterialNamesFromJson();
+            imageTypeDropdown.ClearOptions();
             imageTypeDropdown.AddOptions(options);
             if (options.Count > 0)
             {
@@ -79,7 +80,7 @@ namespace doppelganger
             {
                 StartCoroutine(DelayedResourceInitialization());
             }
-
+            LoadTextures(searchTerm, additionalFilterTerm);
             filterInputField.onEndEdit.AddListener(delegate { RefreshResources(); });
             imageTypeDropdown.onValueChanged.AddListener(delegate { DropdownIndexChanged(imageTypeDropdown); });
             materialsButton.onClick.AddListener(() => ReloadMaterials());
@@ -126,7 +127,7 @@ namespace doppelganger
             }
         }
 
-        public void LoadTextures(string filter)
+        public void LoadTextures(string endingFilter, string containsFilter)
         {
             List<Texture2D> loadedTextures = new List<Texture2D>();
 
@@ -137,7 +138,6 @@ namespace doppelganger
                 Debug.Log($"Attempting to load textures from content path: {content_path}");
                 try
                 {
-                    // Assuming this is a directory path where texture files are stored
                     var textureFiles = Directory.GetFiles(content_path, "*.*")
                         .Where(file => file.EndsWith(".png") || file.EndsWith(".jpg") || file.EndsWith(".jpeg")).ToList();
 
@@ -149,11 +149,14 @@ namespace doppelganger
                         Texture2D tex = new Texture2D(2, 2);
                         if (tex.LoadImage(fileData))
                         {
-                            // Extract the file name without extension and assign it as the texture name
                             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file);
                             tex.name = fileNameWithoutExtension;
-                            loadedTextures.Add(tex);
-                            Debug.Log($"Successfully loaded texture: {tex.name} from file: {file}");
+                            // Apply filters here as well
+                            if (tex.name.EndsWith(endingFilter) && tex.name.Contains(containsFilter))
+                            {
+                                loadedTextures.Add(tex);
+                                Debug.Log($"Successfully loaded and filtered texture: {tex.name} from file: {file}");
+                            }
                         }
                         else
                         {
@@ -171,49 +174,72 @@ namespace doppelganger
                 Debug.Log("Custom content path is not set in the configuration.");
             }
 
-            // Filter and add textures from Unity Resources
-            var resourcesTextures = Resources.LoadAll<Texture2D>("Textures")
-                .Where(t => t.name.Contains(filter)).ToList();
-            loadedTextures.AddRange(resourcesTextures);
+            try
+            {
+                var resourcesTextures = Resources.LoadAll<Texture2D>("Textures");
+                if (resourcesTextures != null)
+                {
+                    var filteredTextures = resourcesTextures
+                        .Where(t => t != null
+                                    && !t.name.EndsWith("_tmb")
+                                    && t.name.EndsWith(endingFilter)
+                                    && t.name.Contains(containsFilter))
+                        .ToList();
+                    loadedTextures.AddRange(filteredTextures);
+                }
+                else
+                {
+                    Debug.LogError("Failed to load any resources from the specified path.");
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"An error occurred while loading textures from Resources: {e.Message}");
+                Debug.LogError($"Stack Trace: {e.StackTrace}");
+            }
 
             allTextures = loadedTextures;
 
-            Debug.Log($"Total textures after applying filter '{filter}': {allTextures.Count}");
-            GenerateResources(); // Assuming this is a method that does something with allTextures
+            Debug.Log($"Total textures after applying filters: {allTextures.Count}");
+            HandleTextureGeneration();
         }
 
-        public void LoadMaterials(string filter)
+        public void LoadMaterials(string containsFilter)
         {
             if (materialNamesFromJson == null || materialNamesFromJson.Count == 0)
             {
+                Debug.LogError("Material names list is empty.");
                 return;
             }
 
             allMaterials.Clear();
             foreach (string matName in materialNamesFromJson)
             {
-                string formattedMatName = matName.Replace(".mat", "");
+                // Format the material name as per your requirement
+                string formattedMatName = matName.Replace(".mat", "").Trim().ToLower();
+                // Load the material from Resources
                 Material mat = Resources.Load<Material>($"Materials/{formattedMatName}");
 
-                if (mat != null)
+                // Apply containsFilter to check if the formatted material name contains the filter term
+                if (mat != null && formattedMatName.Contains(containsFilter))
                 {
                     allMaterials.Add(mat);
                 }
             }
             Debug.Log($"Total Materials after filter: {allMaterials.Count}");
-            GenerateResources();
+            HandleMaterialGeneration();
         }
 
         public void FilterTextures(string filter)
         {
             filteredTextures = allTextures.Where(t => t.name.Contains(filter)).ToList();
-            GenerateResources();
+            HandleTextureGeneration();
         }
 
         public void FilterMaterials(string filter)
         {
             filteredMaterials = allMaterials.Where(m => m.HasProperty(filter)).ToList();
-            GenerateResources();
+            HandleMaterialGeneration();
         }
 
         public void ReloadMaterials()
@@ -221,7 +247,7 @@ namespace doppelganger
             isMaterials = true;
             isTextures = false;
             UpdateButtonColors(materialsButton);
-            //UpdateFilterFromDropdown();
+            UpdateFilterFromDropdown();
             RefreshResources();
         }
 
@@ -230,7 +256,7 @@ namespace doppelganger
             isTextures = true;
             isMaterials = false;
             UpdateButtonColors(texturesButton);
-            //UpdateFilterFromDropdown();
+            UpdateFilterFromDropdown();
             RefreshResources();
         }
 
@@ -274,7 +300,7 @@ namespace doppelganger
             currentSelectionPanel = selectionPanel;
             currentSlotForSelection = slotName;
             Debug.Log($"Preparing for texture selection for selectionPanel {selectionPanel} on slotName {slotName}");
-            ReloadTextures();
+            //ReloadTextures();
             SetSearchTermFromOtherUI(slotName);
         }
 
@@ -283,113 +309,111 @@ namespace doppelganger
             searchTerm = dropdown.options[dropdown.value].text.Trim().ToLower();
             if (isMaterials)
             {
-                RefreshMaterials();
+                ReloadMaterials();
             }
             else
             {
-                RefreshTextures();
+                ReloadTextures();
             }
         }
 
         private void RefreshResources()
         {
-            ClearExistingCells(); // Clear all existing cells
-            additionalFilterTerm = filterInputField.text.Trim().ToLower(); // Update the filter from UI
+            ClearExistingCells();
+            string endingFilter = searchTerm;
+            string containsFilter = filterInputField.text.Trim().ToLower(); 
 
             if (isTextures)
             {
-                LoadTextures(searchTerm + additionalFilterTerm);
+                LoadTextures(endingFilter, containsFilter);
             }
             else if (isMaterials)
             {
-                LoadMaterials(searchTerm + additionalFilterTerm);
+                LoadMaterials(containsFilter);
             }
         }
 
-        private void GenerateResources()
+        private void HandleTextureGeneration()
         {
-            if (isTextures)
+            Debug.Log($"Total Textures after filter: {allTextures.Count}");
+            if (gridUnlimitedScroller != null)
             {
-                Debug.Log($"Total Textures after filter: {allTextures.Count}");
-                if (gridUnlimitedScroller != null)
-                {
-                    gridUnlimitedScroller.cellPerRow = 5;
-                    gridUnlimitedScroller.cellX = 64;
-                    gridUnlimitedScroller.cellY = 64;
-                }
+                gridUnlimitedScroller.cellPerRow = 5;
+                gridUnlimitedScroller.cellX = 64;
+                gridUnlimitedScroller.cellY = 64;
+            }
 
-                unlimitedScroller.Generate(cellPrefab, allTextures.Count, (index, iCell) =>
-                {
-                    var cell = iCell as UnlimitedScrollUI.RegularCell;
-                    if (cell != null)
-                    {
-                        Texture2D texture = allTextures[index];
-                        Texture2D thumbnail = GenerateThumbnail(texture);
-                        cell.GetComponent<Image>().sprite = Sprite.Create(thumbnail, new Rect(0.0f, 0.0f, thumbnail.width, thumbnail.height), new Vector2(0.5f, 0.5f), 100.0f);
-                        cell.GetComponent<Button>().onClick.AddListener(() => SelectTexture(texture));
-                        cell.transform.localScale = Vector3.one;
-                        cell.onGenerated?.Invoke(index);
-                    }
-                });
-            }
-            else if (isMaterials)
+            unlimitedScroller.Generate(cellPrefab, allTextures.Count, (index, iCell) =>
             {
-                allMaterials = allMaterials.Where(m =>
+                var cell = iCell as UnlimitedScrollUI.RegularCell;
+                if (cell != null)
                 {
-                    string[] textureProperties = new string[] { "_dif", "_ems", "_gra", "_nrm", "_spc", "_rgh", "_msk", "_idx", "_clp", "_ocl" };
-                    foreach (string property in textureProperties)
+                    Texture2D texture = allTextures[index];
+                    // Try to load existing thumbnail for texture
+                    Texture2D thumbnail = LoadThumbnail(texture.name, true); // true for isTexture
+                                                                             // If no thumbnail exists, generate a new one
+                    if (thumbnail == null)
                     {
-                        if (m.HasProperty(property))
-                        {
-                            Texture2D tex = m.GetTexture(property) as Texture2D;
-                            if (tex != null && tex.name.Contains(searchTerm))
-                            {
-                                return true;
-                            }
-                        }
+                        Debug.Log($"Thumbnail is null for {thumbnail}, generating the thumbnail");
+                        thumbnail = GenerateThumbnail(texture);
                     }
-                    return false;
-                })
-                .Where(m => m.name.Contains(additionalFilterTerm)) // Further filter by additionalFilterTerm in the material name
-                .ToList();
-                Debug.Log($"Total Materials after filter: {allMaterials.Count}");
-                if (gridUnlimitedScroller != null)
-                {
-                    gridUnlimitedScroller.cellPerRow = 5;
+                    cell.GetComponent<Image>().sprite = Sprite.Create(thumbnail, new Rect(0.0f, 0.0f, thumbnail.width, thumbnail.height), new Vector2(0.5f, 0.5f), 100.0f);
+                    cell.GetComponent<Button>().onClick.AddListener(() => SelectTexture(texture));
+                    cell.transform.localScale = Vector3.one;
+                    cell.onGenerated?.Invoke(index);
                 }
-                unlimitedScroller.Generate(materialCellPrefab, allMaterials.Count, (index, iCell) =>
-                {
-                    var cell = iCell as UnlimitedScrollUI.RegularCell;
-                    if (cell != null)
-                    {
-                        Material material = allMaterials[index];
-                        Texture2D thumbnail = null;
-                        // Check for specific texture properties and generate thumbnail
-                        if (material.HasProperty("_MainTex"))
-                        {
-                            thumbnail = material.GetTexture("_MainTex") as Texture2D;
-                        }
-                        else if (material.HasProperty("_BaseColorMap"))
-                        {
-                            thumbnail = material.GetTexture("_BaseColorMap") as Texture2D;
-                        }
-                        else if (material.HasProperty("_dif"))
-                        {
-                            thumbnail = material.GetTexture("_dif") as Texture2D;
-                        }
-                        // Apply the thumbnail if available
-                        if (thumbnail != null)
-                        {
-                            cell.GetComponent<Image>().sprite = Sprite.Create(thumbnail, new Rect(0, 0, thumbnail.width, thumbnail.height), new Vector2(0.5f, 0.5f), 100f);
-                        }
-                        TMP_Text label = cell.transform.Find("label").GetComponent<TMP_Text>();
-                        label.text = material.name; // Set the name of the material as the label text
-                        cell.GetComponent<Button>().onClick.AddListener(() => SelectMaterial(material));
-                        cell.transform.localScale = Vector3.one;
-                        cell.onGenerated?.Invoke(index);
-                    }
-                });
+            });
+        }
+
+        private void HandleMaterialGeneration()
+        {
+            Debug.Log($"Total Materials after filter: {allMaterials.Count}");
+            if (gridUnlimitedScroller != null)
+            {
+                gridUnlimitedScroller.cellPerRow = 5;
             }
+
+            unlimitedScroller.Generate(materialCellPrefab, allMaterials.Count, (index, iCell) =>
+            {
+                var cell = iCell as UnlimitedScrollUI.RegularCell;
+                if (cell != null)
+                {
+                    Material material = allMaterials[index];
+                    string mainTextureName = DetermineMainTextureName(material);
+                    Texture2D thumbnail = LoadThumbnail(material.name, false); // Load using material name instead
+
+                    if (thumbnail == null)
+                    {
+                        Texture2D mainTexture = null;
+                        if (!string.IsNullOrEmpty(mainTextureName))
+                        {
+                            mainTexture = material.GetTexture(mainTextureName) as Texture2D;
+                        }
+
+                        if (mainTexture != null)
+                        {
+                            thumbnail = GenerateThumbnail(mainTexture);
+                        }
+                    }
+
+                    if (thumbnail != null)
+                    {
+                        cell.GetComponent<Image>().sprite = Sprite.Create(thumbnail, new Rect(0, 0, thumbnail.width, thumbnail.height), new Vector2(0.5f, 0.5f), 100f);
+                    }
+                    TMP_Text label = cell.transform.Find("label").GetComponent<TMP_Text>();
+                    label.text = material.name; // Set the name of the material as the label text
+                    cell.GetComponent<Button>().onClick.AddListener(() => SelectMaterial(material));
+                    cell.transform.localScale = Vector3.one;
+                    cell.onGenerated?.Invoke(index);
+                }
+            });
+        }
+
+        private Texture2D LoadThumbnail(string resourceName, bool isTexture)
+        {
+            string pathPrefix = "Thumbnails/";
+            string thumbnailPath = pathPrefix + resourceName + "_tmb";
+            return Resources.Load<Texture2D>(thumbnailPath);
         }
 
         public void UpdateDropdownSelection(string searchTerm)
@@ -402,6 +426,25 @@ namespace doppelganger
                     break;
                 }
             }
+        }
+
+        private string DetermineMainTextureName(Material material)
+        {
+            // List of common texture property names used in different shaders
+            string[] textureProperties = new string[] { "_dif", "_MainTex", "_BaseColorMap" };
+
+            foreach (string propertyName in textureProperties)
+            {
+                if (material.HasProperty(propertyName))
+                {
+                    Texture tex = material.GetTexture(propertyName);
+                    if (tex != null)
+                    {
+                        return tex.name;
+                    }
+                }
+            }
+            return null; // Return null if no suitable texture is found
         }
 
         private Texture2D GenerateThumbnail(Texture2D sourceTexture)
@@ -471,18 +514,6 @@ namespace doppelganger
                 UpdateDropdownSelection(searchTerm);
                 RefreshResources();
             }
-        }
-
-        public void RefreshMaterials()
-        {
-            ClearExistingCells();
-            LoadMaterials(searchTerm);
-        }
-
-        public void RefreshTextures()
-        {
-            ClearExistingCells();
-            LoadTextures(searchTerm);
         }
 
     }

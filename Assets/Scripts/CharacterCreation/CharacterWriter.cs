@@ -212,7 +212,7 @@ namespace doppelganger
             string saveClass = saveClassDropdown.options[saveClassDropdown.value].text;
             string saveNameText = saveName.text;
             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(saveNameText);
-            string screenshotFileName = fileNameWithoutExtension + ".png";
+            string screenshotFileName = fileNameWithoutExtension;
             string slotUIDLookupFullPath = Path.Combine(Application.streamingAssetsPath, slotUIDLookupRelativePath);
             SlotUIDLookup slotUIDLookup = SlotUIDLookup.LoadFromJson(slotUIDLookupFullPath);
             Debug.Log($"saveNameText {saveNameText} found in lookup for {fileNameWithoutExtension}.");
@@ -244,12 +244,17 @@ namespace doppelganger
                 return;
             }
 
-            // Constructing the JSON and .model file paths dynamically based on the fileName
-            string jsonOutputPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons/Custom", saveCategory, DateTime.Now.ToString("yyyy_MM_dd"), saveName.text + ".json");
-            string screenshotPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons/Custom", saveCategory, DateTime.Now.ToString("yyyy_MM_dd"), screenshotFileName);
+            string jsonOutputPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons/Custom", saveCategory, DateTime.Now.ToString("yyyy_MM_dd"), saveName.text + DateTime.Now.ToString("HH_mm_ss") + ".json");
+            string screenshotPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons/Custom", saveCategory, DateTime.Now.ToString("yyyy_MM_dd"), screenshotFileName + DateTime.Now.ToString("HH_mm_ss") + ".png");
             string modelOutputPath = Path.Combine(customBasePath, "ph/source", fileName + ".model");
-            
-            Debug.Log($"jsonOutputDirectory {jsonOutputDirectory}, screenshotPath {screenshotPath}, modelOutputPath {modelOutputPath}");
+            Debug.Log($"jsonOutputDirectory {jsonOutputDirectory}, screenshotPath {screenshotPath}");
+
+            string output_path = ConfigManager.LoadSetting("SavePath", "Output_Path");
+            if (!string.IsNullOrEmpty(output_path))
+            {
+                jsonOutputPath = Path.Combine(output_path, saveName.text + DateTime.Now.ToString("HH_mm_ss") + ".json");
+                screenshotPath = Path.Combine(output_path, screenshotFileName + DateTime.Now.ToString("HH_mm_ss") + ".png");
+            }
 
             var sliderValues = interfaceManager.GetSliderValues();
             var currentlyLoadedModels = characterBuilder.GetCurrentlyLoadedModels();

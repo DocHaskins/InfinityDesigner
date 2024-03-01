@@ -216,7 +216,7 @@ namespace doppelganger
                         Debug.LogError($"Renderer '{currentRenderer.name}' not found in the current model.");
                         return;
                     }
-                    selectedMaterialName.text = newMaterial.name.Replace(" (Instance)", "");
+                    selectedMaterialName.text = newMaterial.name.Replace("(Instance)", "");
                     // Log the index of the renderer
                     Debug.Log($"Renderer index in the current model: {rendererIndex}");
 
@@ -229,6 +229,31 @@ namespace doppelganger
             }
         }
 
+        public void SetEmissiveIntensity(float intensity, string slotName)
+        {
+            if (currentRenderer)
+            {
+                if (currentRenderer.material != null && slotName.Equals("_ems", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Set the intensity of the emissive property
+                    currentRenderer.material.SetFloat("_ems_intensity", intensity);
+                    RecordScaleChange(currentModel.name, currentRenderer.material, intensity);
+                    Debug.Log($"Set Emissive Intensity to {intensity} for material: {currentRenderer.material.name}");
+                }
+                else
+                {
+                    if (currentRenderer.material == null)
+                    {
+                        Debug.LogError("Failed to set emissive intensity: Current material is null.");
+                    }
+                    if (!slotName.Equals("_ems", StringComparison.OrdinalIgnoreCase))
+                    {
+                        Debug.LogError($"Failed to set emissive intensity: Incorrect slot name {slotName}.");
+                    }
+                }
+            }
+        }
+
         public void ApplyTextureChange(SkinnedMeshRenderer renderer, string slotName, Texture2D texture)
         {
             int rendererIndex = GetRendererIndexByName(renderer.name);
@@ -238,10 +263,17 @@ namespace doppelganger
                 return;
             }
 
-            // Create a new material instance from the renderer's first material
-            Material materialToModify = new Material(renderer.materials[0]);
+            // Check if the renderer has any materials
+            if (renderer.materials.Length == 0)
+            {
+                Debug.LogError($"Renderer '{renderer.name}' does not have any materials.");
+                return;
+            }
 
-            // Apply texture change directly to this new material instance
+            // Instead of creating a new material, modify the renderer's current material directly
+            Material materialToModify = renderer.materials[0]; // Get the first material to modify
+
+            // Apply texture change directly to this material
             if (texture == null)
             {
                 materialToModify.SetTexture(slotName, null);
@@ -251,15 +283,10 @@ namespace doppelganger
                 materialToModify.SetTexture(slotName, texture);
             }
 
-            // Reflect changes by reassigning the modified material instance back to the renderer
-            Material[] materials = renderer.materials; // Use materials, not sharedMaterials
-            materials[0] = materialToModify;
-            renderer.materials = materials; // Assign the instance material array back to the renderer
-
             Debug.Log($"Applied texture '{texture?.name ?? "null"}' to slot '{slotName}' on '{renderer.gameObject.name}'.");
 
-            // Record the change
-            string modelName = currentModelName.Replace("(Clone)", "");
+            // Record the change for auditing or tracking purposes
+            string modelName = currentModel.name.Replace("(Clone)", ""); // Assuming 'currentModel' is a field for the current model
             string materialName = materialToModify.name;
             string textureName = texture == null ? "null" : texture.name;
             RecordTextureChange(modelName, materialName, slotName, textureName, rendererIndex);
@@ -290,6 +317,7 @@ namespace doppelganger
 
             Debug.Log($"Material change recorded for model: {modelName}, renderer index: {rendererIndex}, from: {originalMaterialName} to: {newMaterialName}");
         }
+
 
         public void RecordScaleChange(string modelName, Material currentMaterial, float scaleValue)
         {
@@ -323,14 +351,14 @@ namespace doppelganger
             var existingChange = materialChange.TextureChanges.FirstOrDefault(tc => tc.name == scaleChangeName);
             if (existingChange != null)
             {
-                existingChange.val_str = scaleValue.ToString("F1");
+                existingChange.val_str = scaleValue.ToString("F8");
                 existingChange.type = 2;
-                Debug.Log($"Updated scale change for model: {newModelName}, renderer index: {rendererIndex}, scale: {scaleValue.ToString("F1")}");
+                Debug.Log($"Updated scale change for model: {newModelName}, renderer index: {rendererIndex}, scale: {scaleValue.ToString("F8")}");
             }
             else
             {
-                materialChange.TextureChanges.Add(new RttiValue { name = scaleChangeName, val_str = scaleValue.ToString("F1"), type = 2 });
-                Debug.Log($"Recorded new scale change for model: {newModelName}, renderer index: {rendererIndex}, scale: {scaleValue.ToString("F1")}");
+                materialChange.TextureChanges.Add(new RttiValue { name = scaleChangeName, val_str = scaleValue.ToString("F8"), type = 2 });
+                Debug.Log($"Recorded new scale change for model: {newModelName}, renderer index: {rendererIndex}, scale: {scaleValue.ToString("F8")}");
             }
         }
 

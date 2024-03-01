@@ -183,7 +183,7 @@ namespace doppelganger
                     emsSlider.value = 0.7f;
                     emsSlider.onValueChanged.AddListener((value) =>
                     {
-                        SetEmissiveIntensity(value, slotName);
+                        variationBuilder.SetEmissiveIntensity(value, slotName);
                     });
                     emsSliderCreated = true;
 
@@ -193,29 +193,6 @@ namespace doppelganger
                 else
                 {
                     Debug.LogError("Failed to find Slider component on 'emsSlider' child within VariationEMSTextureSlider instance.");
-                }
-            }
-        }
-
-        public void SetEmissiveIntensity(float intensity, string slotName)
-        {
-            // Check if the current material and the slot name are valid
-            if (currentMaterial != null && slotName.Equals("_ems", StringComparison.OrdinalIgnoreCase))
-            {
-                // Set the intensity of the emissive property
-                currentMaterial.SetFloat("_ems_intensity", intensity);
-                variationBuilder.RecordScaleChange(currentModel.name, currentMaterial, intensity);
-                Debug.Log($"Set Emissive Intensity to {intensity} for material: {currentMaterial.name}");
-            }
-            else
-            {
-                if (currentMaterial == null)
-                {
-                    Debug.LogError("Failed to set emissive intensity: Current material is null.");
-                }
-                if (!slotName.Equals("_ems", StringComparison.OrdinalIgnoreCase))
-                {
-                    Debug.LogError($"Failed to set emissive intensity: Incorrect slot name {slotName}.");
                 }
             }
         }
