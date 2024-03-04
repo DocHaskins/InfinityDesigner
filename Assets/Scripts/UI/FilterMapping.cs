@@ -58,6 +58,7 @@ namespace doppelganger
                 "ALL_rhand",
                 "ALL_gloves",
                 "ALL_arm_access",
+                "ALL_arm_access_2",
                 "ALL_sleeve",
                 "ALL_backpack",
                 "ALL_decals",
@@ -110,9 +111,7 @@ namespace doppelganger
                 "ALL_torso_2",
                 "ALL_torso_access",
                 "ALL_torso_extra",
-                "ALL_sleeve",
-                "ALL_arm_access",
-                "ALL_tattoo"
+                "ALL_sleeve"
             }
         },
         { "Button_UpperBody_armor", new List<string>
@@ -134,6 +133,9 @@ namespace doppelganger
                 "ALL_decals",
                 "ALL_decals_extra",
                 "ALL_decals_logo",
+                "ALL_arm_access",
+                "ALL_arm_access_2",
+                "ALL_tattoo"
             }
         },
         { "Button_Hands", new List<string>

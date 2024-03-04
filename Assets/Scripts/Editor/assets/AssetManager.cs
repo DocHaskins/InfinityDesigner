@@ -58,6 +58,8 @@ namespace doppelganger
             GUILayout.Space(20);
             GUILayout.Label("Material Creation", EditorStyles.boldLabel);
             GUILayout.Space(4);
+            GUILayout.Space(20);
+            GUILayout.Label("Custom Material Tools", EditorStyles.boldLabel);
             GUILayout.BeginHorizontal();
             GUILayout.Label("Max .Mat to Create:", GUILayout.Width(150));
             materialCreationLimit = EditorGUILayout.IntField(materialCreationLimit);
@@ -68,8 +70,7 @@ namespace doppelganger
             {
                 CreateAndBindMaterials(materialCreationLimit);
             }
-            GUILayout.Space(20);
-            GUILayout.Label("Custom Material Tools", EditorStyles.boldLabel);
+            
             GUILayout.Space(4);
             if (GUILayout.Button("Convert HDRP Materials"))
             {
@@ -211,7 +212,7 @@ namespace doppelganger
                 if (mat != null)
                 {
                     // Check if the material uses an HDRP/Lit or HDRP/Hair shader
-                    if (mat.shader.name == "HDRP/Lit" || mat.shader.name == "HDRP/Hair")
+                    if (mat.shader.name == "HDRP/Lit" || mat.shader.name == "HDRP/Hair" || mat.shader.name == "Standard")
                     {
                         // Change the shader to the custom one
                         mat.shader = newShader;
@@ -374,78 +375,104 @@ namespace doppelganger
         private void CheckAllMaterials()
         {
             string jsonsFolderPath = Application.streamingAssetsPath + "/Jsons";
-            string resourcesMaterialsPath = "Materials";
-            string failedMaterialsFilePath = Application.streamingAssetsPath + "/materials_failed.txt";
-            Dictionary<string, int> missingMaterials = new Dictionary<string, int>();
+            HashSet<string> materialNamesFromJson = new HashSet<string>(); // Store names from JSON
+            Dictionary<string, int> missingMaterials = new Dictionary<string, int>(); // Track missing materials
 
-            if (!Directory.Exists(jsonsFolderPath))
+            if (Directory.Exists(jsonsFolderPath))
             {
-                UnityEngine.Debug.LogError("Jsons folder not found: " + jsonsFolderPath);
-                return;
-            }
-
-            foreach (var file in Directory.GetFiles(jsonsFolderPath, "*.json"))
-            {
-                string jsonPath = Path.Combine(jsonsFolderPath, file);
-                string jsonData = File.ReadAllText(jsonPath);
-                ModelData modelData = JsonUtility.FromJson<ModelData>(jsonData);
-
-                if (modelData != null && modelData.GetSlots() != null)
+                Debug.Log($"Searching JSON files in {jsonsFolderPath}");
+                foreach (var jsonFile in Directory.GetFiles(jsonsFolderPath, "*.json", SearchOption.AllDirectories))
                 {
-                    foreach (var slot in modelData.GetSlots())
+                    Debug.Log($"Reading {jsonFile}");
+                    string jsonData = File.ReadAllText(jsonFile);
+                    try
                     {
-                        foreach (var modelInfo in slot.Value.models)
+                        ModelData modelData = JsonConvert.DeserializeObject<ModelData>(jsonData);
+                        if (modelData != null && modelData.slotPairs != null)
                         {
-                            foreach (var materialResource in modelInfo.materialsResources)
+                            foreach (var slotPair in modelData.slotPairs)
                             {
-                                foreach (var resource in materialResource.resources)
+                                foreach (var modelInfo in slotPair.slotData.models)
                                 {
-                                    if (!resource.name.StartsWith("sm_") && !resource.name.Equals("null.mat", StringComparison.OrdinalIgnoreCase))
+                                    foreach (var materialData in modelInfo.materialsData)
                                     {
-                                        string matPath = resourcesMaterialsPath + "/" + Path.GetFileNameWithoutExtension(resource.name);
-                                        Material material = Resources.Load<Material>(matPath);
-
-                                        if (material == null)
+                                        if (materialData.name.EndsWith(".mat"))
                                         {
-                                            if (!missingMaterials.ContainsKey(matPath))
+                                            //Debug.Log($"Found material in JSON: {materialData.name}");
+                                            materialNamesFromJson.Add(materialData.name);
+                                        }
+                                    }
+
+                                    foreach (var materialResource in modelInfo.materialsResources)
+                                    {
+                                        foreach (var resource in materialResource.resources)
+                                        {
+                                            if (resource.name.EndsWith(".mat"))
                                             {
-                                                missingMaterials[matPath] = 0;
+                                                //Debug.Log($"Found material resource in JSON: {resource.name}");
+                                                materialNamesFromJson.Add(resource.name);
                                             }
-                                            missingMaterials[matPath]++;
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                }
-            }
-
-            // Write missing materials to file
-            if (missingMaterials.Count > 0)
-            {
-                try
-                {
-                    using (StreamWriter writer = new StreamWriter(failedMaterialsFilePath, false))
+                    catch (Exception ex)
                     {
-                        foreach (var material in missingMaterials.OrderByDescending(x => x.Value))
-                        {
-                            writer.WriteLine($"{material.Key} - Missing {material.Value} times");
-                            UnityEngine.Debug.LogError($"Material not found: '{material.Key}' - Missing {material.Value} times");
-                        }
+                        Debug.LogError($"Error processing file {jsonFile}: {ex.Message}");
                     }
-                    UnityEngine.Debug.Log($"Missing materials list written to {failedMaterialsFilePath}");
-                }
-                catch (Exception ex)
-                {
-                    UnityEngine.Debug.LogError($"Error writing to file: {ex.Message}");
                 }
             }
             else
             {
-                UnityEngine.Debug.Log("All materials found.");
+                Debug.LogError($"Jsons folder not found at {jsonsFolderPath}");
+            }
+
+            Debug.Log("[CheckAllMaterials] Verifying materials exist in the Unity Resources folder...");
+            foreach (string materialName in materialNamesFromJson)
+            {
+                string materialPath = $"Materials/{Path.GetFileNameWithoutExtension(materialName)}";
+                Material material = Resources.Load<Material>(materialPath);
+                if (material == null)
+                {
+                    if (!missingMaterials.ContainsKey(materialName))
+                    {
+                        missingMaterials[materialName] = 1;
+                    }
+                    else
+                    {
+                        missingMaterials[materialName]++;
+                    }
+
+                    // Create the missing material
+                    Debug.LogWarning($"[CheckAllMaterials] Creating missing material: {materialName}");
+                    Material newMaterial = new Material(Shader.Find("HDRP/Lit"));
+                    if (!Directory.Exists(Path.Combine(Application.dataPath, "Resources/Materials")))
+                    {
+                        Directory.CreateDirectory(Path.Combine(Application.dataPath, "Resources/Materials"));
+                    }
+                    string assetPath = $"Assets/Resources/{materialPath}.mat";
+                    UnityEditor.AssetDatabase.CreateAsset(newMaterial, assetPath);
+                    UnityEditor.AssetDatabase.SaveAssets();
+                    UnityEditor.AssetDatabase.Refresh();
+                }
+            }
+
+            if (missingMaterials.Count > 0)
+            {
+                Debug.LogWarning("[CheckAllMaterials] Some materials listed in JSON were missing and have been created:");
+                foreach (var missingMaterial in missingMaterials)
+                {
+                    Debug.LogWarning($"[CheckAllMaterials] Created missing material: {missingMaterial.Key} - Referenced {missingMaterial.Value} times");
+                }
+            }
+            else
+            {
+                Debug.Log("[CheckAllMaterials] All materials referenced in JSON files are found in Resources folder.");
             }
         }
+    
 
         private Dictionary<string, Material> LoadMaterialsFromFolder(string folderPath)
         {
@@ -598,54 +625,71 @@ namespace doppelganger
             var existingMaterials = LoadMaterialsFromFolder(materialsPath);
             var textureFiles = LoadTexturesFromFolder("Assets/Resources/Textures");
 
+            // List of custom texture slots to check
+            string[] textureSlots = new string[] { "_dif", "_ems", "_gra", "_nrm", "_spc", "_rgh", "_msk", "_idx", "_clp", "_ocl" };
+
             int processedMaterialsCount = 0;
 
             foreach (var materialEntry in existingMaterials)
             {
-                if (processedMaterialsCount >= materialProcessingLimit)
-                {
-                    Debug.Log($"Processing limit of {materialProcessingLimit} materials reached. Stopping.");
-                    break;
-                }
-
                 Material material = materialEntry.Value;
 
-                if (MaterialHasMultipleTextures(material, minTexturesRequired))
+                // Check if any of the custom texture slots are not empty
+                bool materialIsEmpty = true;
+                foreach (string slot in textureSlots)
                 {
-                    string baseName = materialEntry.Key;
-                    List<string> matchingTextures = FindTexturesForMaterial(textureFiles, baseName);
-
-                    // If no textures found, try modifying the base name
-                    if (matchingTextures.Count == 0)
+                    if (material.HasProperty(slot) && material.GetTexture(slot) != null)
                     {
-                        // Try removing the start of the base name up to the first '_'
-                        string modifiedBaseName = RemoveStartOfBaseName(baseName);
-                        matchingTextures = FindTexturesForMaterial(textureFiles, modifiedBaseName);
+                        materialIsEmpty = false;
+                        break; // A texture is found, no need to check further
+                    }
+                }
 
-                        // If still no textures found, try removing the end of the base name back to the last '_'
+                // Skip processing this material if it is not empty
+                if (!materialIsEmpty)
+                {
+                    continue;
+                }
+
+                // Process the material
+                string baseName = RemoveSuffix(materialEntry.Key); // Remove '_tpp' or '_fpp'
+                List<string> matchingTextures = FindTexturesForMaterial(textureFiles, baseName);
+
+                if (matchingTextures.Count == 0)
+                {
+                    string modifiedBaseName = SequentiallyShortenName(baseName);
+                    while (modifiedBaseName != baseName && matchingTextures.Count == 0)
+                    {
+                        matchingTextures = FindTexturesForMaterial(textureFiles, modifiedBaseName);
                         if (matchingTextures.Count == 0)
                         {
-                            modifiedBaseName = RemoveEndOfBaseName(baseName);
-                            matchingTextures = FindTexturesForMaterial(textureFiles, modifiedBaseName);
-                        }
-
-                        // If textures are found with the modified base name, use them
-                        if (matchingTextures.Count > 0)
-                        {
-                            baseName = modifiedBaseName;
+                            modifiedBaseName = SequentiallyShortenName(modifiedBaseName);
                         }
                     }
-
+                    // Update baseName if textures are found
                     if (matchingTextures.Count > 0)
                     {
-                        AssignTexturesToMaterial(material, matchingTextures, baseName);
-                        EditorUtility.SetDirty(material);
-                        processedMaterialsCount++;
+                        baseName = modifiedBaseName;
                     }
-                    else
+                }
+
+                // Only increment the processedMaterialsCount if the material was actually fixed
+                if (matchingTextures.Count > 0)
+                {
+                    AssignTexturesToMaterial(material, matchingTextures, baseName);
+                    EditorUtility.SetDirty(material);
+                    processedMaterialsCount++; // Increment only if textures were successfully found and assigned
+
+                    // Check if we've reached the processing limit after successfully fixing a material
+                    if (processedMaterialsCount >= materialProcessingLimit)
                     {
-                        Debug.LogError($"No matching textures found for material: {baseName}");
+                        Debug.Log($"Processing limit of {materialProcessingLimit} materials reached after successfully fixing materials. Stopping.");
+                        break;
                     }
+                }
+                else
+                {
+                    Debug.LogError($"No matching textures found for material: {baseName}");
                 }
             }
 
@@ -654,16 +698,19 @@ namespace doppelganger
             Debug.Log($"Processed {processedMaterialsCount} materials.");
         }
 
-        private string RemoveStartOfBaseName(string baseName)
+        private string RemoveSuffix(string name)
         {
-            int index = baseName.IndexOf('_');
-            return index >= 0 ? baseName.Substring(index + 1) : baseName;
+            return name.Replace("_tpp", "").Replace("_fpp", "");
         }
 
-        private string RemoveEndOfBaseName(string baseName)
+        private string SequentiallyShortenName(string name)
         {
-            int lastIndex = baseName.LastIndexOf('_');
-            return lastIndex >= 0 ? baseName.Substring(0, lastIndex) : baseName;
+            int lastIndex = name.LastIndexOf('_');
+            if (lastIndex > -1)
+            {
+                return name.Substring(0, lastIndex);
+            }
+            return name; // No more modifications possible
         }
 
         private bool MaterialHasMultipleTextures(Material material, int minTextures)
@@ -799,7 +846,7 @@ namespace doppelganger
 
         private List<string> FindTexturesForMaterial(Dictionary<string, List<string>> textureFiles, string baseName)
         {
-            Debug.Log($"FindTexturesForMaterial");
+            //Debug.Log($"FindTexturesForMaterial");
             return textureFiles.ContainsKey(baseName) ? textureFiles[baseName] : new List<string>();
         }
 

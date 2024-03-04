@@ -69,6 +69,7 @@ namespace doppelganger
         {"ALL_lhand", "HANDS_PART_1"},
         {"ALL_gloves", "PLAYER_GLOVES"},
         {"ALL_arm_access", "HANDS_PART_1"},
+        {"ALL_arm_access_2", "HANDS_PART_1"},
         {"ALL_rings", "HANDS_PART_1"},
         {"ALL_backpack", "TORSO_PART_1"},
         {"ALL_torso", "TORSO"},
@@ -124,7 +125,7 @@ namespace doppelganger
     {
         "sh_npc_mia_young.msh","sh_scan_girl_001.msh","sh_scan_girl_002.msh","sh_scan_girl_003.msh","sh_scan_girl_004.msh","sh_chld_girl_srv_a.msh","sh_dlc_opera_npc_astrid.msh", "sh_dlc_opera_wmn_fighter_a.msh", "sh_mother_3.msh", "sh_npc_anderson.msh", "sh_npc_dr_veronika.msh", "sh_npc_hilda.msh", "sh_npc_lawan.msh", "sh_npc_meredith.msh", "sh_npc_mia_old.msh", "sh_npc_nuwa.msh", "sh_npc_plaguewitch.msh", "sh_npc_sophie.msh", "sh_npc_sophie_b.msh", "sh_npc_thalia.msh", "sh_scan_wmn_001.msh", "sh_scan_wmn_002.msh", "sh_scan_wmn_003.msh", "sh_scan_wmn_004.msh", "sh_scan_wmn_005.msh", "sh_scan_wmn_006.msh", "sh_scan_wmn_007.msh", "sh_scan_wmn_008.msh", "sh_scan_wmn_009.msh", "sh_scan_wmn_010.msh", "sh_scan_wmn_011.msh", "sh_scan_wmn_012.msh", "sh_scan_wmn_013.msh", "sh_scan_wmn_014.msh", "sh_scan_wmn_015.msh", "sh_scan_wmn_016.msh", "sh_scan_wmn_017.msh", "sh_scan_wmn_019.msh", "sh_scan_wmn_020.msh", "sh_scan_wmn_021.msh", "sh_scan_wmn_022.msh", "sh_scan_wmn_026.msh", "sh_scan_wmn_027.msh", "sh_scan_wmn_18.msh", "sh_scan_wmn_infl_001.msh", "sh_wmn_a.msh", "sh_wmn_b.msh", "sh_wmn_c.msh", "sh_wmn_d.msh", "sh_wmn_e.msh", "sh_wmn_pk_a.msh", "sh_wmn_pk_b.msh", "sh_wmn_pk_c.msh", "sh_wmn_sc_a.msh", "sh_wmn_sc_b.msh", "sh_wmn_srv_a.msh", "sh_wmn_srv_b.msh"
     };
-        
+
         private readonly List<string> ExcludedSliders = new List<string>
 {
     "ALL_head", "ALL_armor_helmet", "ALL_earrings", "ALL_facial_hair",
@@ -197,7 +198,7 @@ namespace doppelganger
                 Debug.LogError("Dependencies are null. Cannot write configuration.");
                 return;
             }
-            
+
             string customBasePath = ConfigManager.LoadSetting("SavePath", "Path");
             string targetPath = Path.Combine(customBasePath, "ph/source");
 
@@ -220,7 +221,7 @@ namespace doppelganger
             Dictionary<string, string> skeletonDictLookup = ReadSkeletonLookup();
             string skeletonName;
 
-            
+
             // First, attempt to find the skeleton name directly in the skeletonDictLookup.
             if (skeletonDictLookup.ContainsKey(fileNameWithoutExtension))
             {
@@ -309,7 +310,7 @@ namespace doppelganger
                                         Debug.Log($"Fallback options for {initialFallbackSlotName}: {string.Join(", ", fallbackOptions)}");
 
                                         if (!slotAssigned)
-                                        { 
+                                        {
                                             foreach (var fallbackOption in fallbackOptions)
                                             {
                                                 Debug.Log($"Considering fallback option: {fallbackOption}");
@@ -327,7 +328,7 @@ namespace doppelganger
                                                         usedSlots.Add(fallbackOption);
                                                         Debug.Log($"Assigned fallback {fallbackOption} slot for {slider.Key} with Slot UID: {nextAvailableSlotUid}");
                                                         slotAssigned = true;
-                                                        
+
                                                     }
                                                     else
                                                     {
@@ -633,48 +634,81 @@ namespace doppelganger
         private ModelData.SlotDataPair CreateSlotDataPair(GameObject model, string slotKey, int slotUid)
         {
             VariationBuilder variationBuilder = FindObjectOfType<VariationBuilder>();
-
-            // Store the original slotKey for exporting purposes
             string originalSlotKey = slotKey;
-
-            // Transform the slotKey for internal lookup
             string lookupSlotKey = "ALL_" + slotKey.ToLower();
             Debug.Log($"Creating SlotDataPair for {model.name} with original slot {originalSlotKey} and lookup slot {lookupSlotKey}");
 
-            // Format the model name: remove "(Clone)" and add ".msh"
             string formattedModelName = FormatModelName(model.name);
             Debug.Log($"Formatted model name: {formattedModelName}");
 
-            // Initialize slotData with the formatted model name and the transformed slot key for internal purposes
             var slotData = new ModelData.SlotData
             {
-                name = slotKey, // Use the slotKey as provided; assumes it's already the "original" key or you handle naming elsewhere
-                slotUid = slotUid, // Directly use the provided slotUid
-                models = new List<ModelData.ModelInfo>() // Initialization remains the same
+                name = slotKey,
+                slotUid = slotUid,
+                models = new List<ModelData.ModelInfo>()
             };
 
             string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", $"{formattedModelName.Replace(".msh", "")}.json");
             Debug.Log($"Looking for material JSON at: {materialJsonFilePath}");
 
-            if (File.Exists(materialJsonFilePath))
+            // Initialize a new model info
+            var modelInfo = new ModelData.ModelInfo
             {
-                Debug.Log($"Found material JSON for {formattedModelName}");
-                string materialJsonData = File.ReadAllText(materialJsonFilePath);
-                Debug.Log($"No variation index found for slot {lookupSlotKey}. Using original materials data and resources.");
-                // Fallback to using original materials data and resources
-                slotData.models.Add(new ModelData.ModelInfo
-                {
-                    name = formattedModelName,
-                    materialsData = GetMaterialsDataFromStreamingAssets(formattedModelName.Replace(".msh", "")), // Get original materials data
-                    materialsResources = GetMaterialsResourcesFromModel(model)
-                });
+                name = formattedModelName,
+                materialsData = GetMaterialsDataFromStreamingAssets(formattedModelName.Replace(".msh", "")), // Default materials data
+            };
+
+            // Check if there are specific model changes
+            if (variationBuilder.modelSpecificChanges.TryGetValue(formattedModelName.Replace(".msh", ""), out ModelChange modelChanges))
+            {
+                modelInfo.materialsResources = GetMaterialsResourcesFromModelChanges(model, modelChanges); // Adjusted to a new method to handle changes
+                Debug.Log($"Using specific materials data and resources for model {formattedModelName}.");
             }
             else
             {
-                Debug.LogError($"Material JSON file does not exist for model: {formattedModelName}. Cannot load variation or original materials.");
+                Debug.Log($"No specific model changes found for {formattedModelName}. Copying materials data to materials resources.");
+                // Convert materialsData to materialsResources format
+                modelInfo.materialsResources = modelInfo.materialsData.Select(md => new ModelData.MaterialResource
+                {
+                    number = md.number,
+                    resources = new List<ModelData.Resource> { new ModelData.Resource { name = md.name, rttiValues = new List<RttiValue>() } } // Assuming no RTTI values for default materials
+                }).ToList();
             }
 
-            return new ModelData.SlotDataPair { key = slotKey, slotData = slotData };
+            slotData.models.Add(modelInfo);
+
+            return new ModelData.SlotDataPair { key = originalSlotKey, slotData = slotData };
+        }
+
+        private List<ModelData.MaterialResource> GetMaterialsResourcesFromModelChanges(GameObject model, ModelChange modelChanges)
+        {
+            List<ModelData.MaterialResource> materialsResources = new List<ModelData.MaterialResource>();
+            var renderers = model.GetComponentsInChildren<SkinnedMeshRenderer>();
+
+            for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+            {
+                var renderer = renderers[rendererIndex];
+                var resource = new ModelData.Resource
+                {
+                    name = renderer.sharedMaterial.name + (renderer.sharedMaterial.name.EndsWith(".mat") ? "" : ".mat"),
+                    rttiValues = new List<RttiValue>() // Initialize with an empty list to avoid null references
+                };
+
+                if (modelChanges.MaterialsByRenderer.TryGetValue(rendererIndex, out MaterialChange materialChange))
+                {
+                    resource.name = materialChange.NewName.EndsWith(".mat") ? materialChange.NewName : $"{materialChange.NewName}.mat";
+                    resource.rttiValues = materialChange.TextureChanges;
+                    Debug.Log($"Applying specific material changes to renderer {rendererIndex} for model {model.name}.");
+                }
+
+                materialsResources.Add(new ModelData.MaterialResource
+                {
+                    number = rendererIndex + 1, // Assuming numbering starts from 1
+                    resources = new List<ModelData.Resource> { resource }
+                });
+            }
+
+            return materialsResources;
         }
 
         private List<ModelData.MaterialData> GetMaterialsDataFromStreamingAssets(string modelName)
@@ -730,7 +764,6 @@ namespace doppelganger
 
             return cleanName;
         }
-
 
         private List<ModelData.MaterialResource> GetMaterialsResourcesFromModel(GameObject model)
         {

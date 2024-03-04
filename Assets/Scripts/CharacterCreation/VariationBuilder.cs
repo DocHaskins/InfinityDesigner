@@ -216,7 +216,7 @@ namespace doppelganger
                         Debug.LogError($"Renderer '{currentRenderer.name}' not found in the current model.");
                         return;
                     }
-                    selectedMaterialName.text = newMaterial.name.Replace("(Instance)", "");
+                    selectedMaterialName.text = newMaterial.name.Replace(" (Instance)", "");
                     // Log the index of the renderer
                     Debug.Log($"Renderer index in the current model: {rendererIndex}");
 

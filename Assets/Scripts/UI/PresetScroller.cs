@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using SFB;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -89,14 +90,32 @@ namespace doppelganger
             string selectedOption = presetTypeDropdown.options[presetTypeDropdown.value].text;
             string selectedFolder = GetSelectedFolderPath(selectedOption);
             string searchFilter = filterInputField.text.Trim().ToLower();
+
+            // List to hold all valid json file paths
+            List<string> allJsonFiles = new List<string>();
+
+            // First, load JSONs from the predefined path
             string fullPath = Path.Combine(Application.streamingAssetsPath, "Jsons", selectedFolder);
-            //Debug.Log($"Full path: {fullPath}");
-
-            // Retrieve all json files from the directory
             var jsonFiles = Directory.GetFiles(fullPath, "*.json", SearchOption.AllDirectories);
+            allJsonFiles.AddRange(jsonFiles);
 
-            // Use a more concise and clear LINQ query to exclude files
-            var filteredFiles = jsonFiles.Where(file =>
+            // Now, load JSONs from the output_path if it is set
+            string output_path = ConfigManager.LoadSetting("SavePath", "Output_Path");
+            if (!string.IsNullOrEmpty(output_path))
+            {
+                if (Directory.Exists(output_path)) // Check if the directory actually exists
+                {
+                    var outputJsonFiles = Directory.GetFiles(output_path, "*.json", SearchOption.AllDirectories);
+                    allJsonFiles.AddRange(outputJsonFiles);
+                }
+                else
+                {
+                    Debug.LogWarning($"Output path does not exist: {output_path}");
+                }
+            }
+
+            // Filter out unwanted files and apply search filter if necessary
+            var filteredFiles = allJsonFiles.Where(file =>
             {
                 string fileNameLower = Path.GetFileName(file).ToLower();
                 bool exclude = fileNameLower.Contains("fpp") ||
@@ -107,6 +126,78 @@ namespace doppelganger
             }).ToList();
 
             GenerateButtons(filteredFiles);
+        }
+
+        public void BrowseAndLoadJsons()
+        {
+            // Define the custom folder path
+            string customFolderPath = Path.Combine(Application.streamingAssetsPath, "Jsons", "Custom");
+
+            // Ensure the custom folder exists
+            if (!Directory.Exists(customFolderPath))
+            {
+                Directory.CreateDirectory(customFolderPath);
+            }
+
+            // Call the Standalone File Browser to select a folder
+            string[] paths = StandaloneFileBrowser.OpenFolderPanel("Select Folder", "", false);
+
+            if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
+            {
+                Debug.Log($"Selected folder: {paths[0]}");
+
+                // Load all JSON files from the selected folder
+                List<string> jsonFiles = new List<string>();
+                try
+                {
+                    jsonFiles.AddRange(Directory.GetFiles(paths[0], "*.json", SearchOption.AllDirectories));
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Error while loading JSON files: {e.Message}");
+                }
+
+                // Copy JSONs and their matching PNGs to the Custom folder
+                foreach (string jsonFile in jsonFiles)
+                {
+                    string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(jsonFile);
+                    string pngFile = Path.ChangeExtension(jsonFile, ".png");
+
+                    if (File.Exists(pngFile)) // Check if the matching PNG exists
+                    {
+                        string destJson = Path.Combine(customFolderPath, Path.GetFileName(jsonFile));
+                        string destPng = Path.Combine(customFolderPath, Path.GetFileName(pngFile));
+
+                        File.Copy(jsonFile, destJson, true); // Copy JSON to the Custom folder
+                        File.Copy(pngFile, destPng, true); // Copy PNG to the Custom folder
+                    }
+                }
+
+                // Now reload presets from the Custom folder
+                RefreshCustomPresets(customFolderPath); // Implement this based on your existing logic
+            }
+        }
+
+        private void RefreshCustomPresets(string folderPath)
+        {
+            var customJsonFiles = Directory.GetFiles(folderPath, "*.json", SearchOption.TopDirectoryOnly);
+            var filteredFiles = FilterJsonFiles(customJsonFiles.ToList());
+            GenerateButtons(filteredFiles);
+        }
+
+        private List<string> FilterJsonFiles(List<string> files)
+        {
+            string searchFilter = filterInputField.text.Trim().ToLower();
+            var filteredFiles = files.Where(file =>
+            {
+                string fileNameLower = Path.GetFileName(file).ToLower();
+                return !fileNameLower.Contains("fpp") &&
+                       !fileNameLower.Contains("skeleton") &&
+                       !fileNameLower.Contains("db_") &&
+                       (string.IsNullOrEmpty(searchFilter) || fileNameLower.Contains(searchFilter));
+            }).ToList();
+
+            return filteredFiles;
         }
 
 

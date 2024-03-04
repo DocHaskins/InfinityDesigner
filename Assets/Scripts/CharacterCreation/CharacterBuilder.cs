@@ -258,12 +258,12 @@ namespace doppelganger
                                 // Remove the '.msh' extension from the model name
                                 string modelNameWithClone = Path.GetFileNameWithoutExtension(modelInfo.name) + "(Clone)";
 
-                                //Debug.Log($"Processing model: {modelInfo.name}, looking for slot.");
+                                Debug.Log($"Processing model: {modelInfo.name}, looking for slot.");
 
                                 string slotName = interfaceManager.FindSlotForModel(modelInfo.name);
                                 if (!string.IsNullOrEmpty(slotName))
                                 {
-                                    //Debug.Log($"Found slot '{slotName}' for model '{modelInfo.name}'.");
+                                    Debug.Log($"Found slot '{slotName}' for model '{modelInfo.name}'.");
 
                                     int modelIndex = interfaceManager.GetModelIndex(slotName, modelInfo.name);
                                     if (modelIndex != -1)
@@ -276,7 +276,7 @@ namespace doppelganger
                                         GameObject modelInstance = GameObject.Find(modelNameWithClone); // Adjusted to use modelNameWithClone
                                         if (modelInstance != null) // Assuming modelInstance is found
                                         {
-                                            //Debug.Log($"Applying materials directly from JSON data for '{modelInfo.name}'.");
+                                            Debug.Log($"Applying materials directly from JSON data for '{modelInfo.name}'.");
                                             ApplyPresetMaterialsDirectly(modelInstance, modelInfo);
                                         }
                                         else
@@ -321,14 +321,14 @@ namespace doppelganger
                 return;
             }
 
-            //Debug.Log($"Starting to apply materials directly based on JSON for model instance '{modelInstance.name}'. Total materials resources: {modelInfo.materialsResources.Count}");
+            Debug.Log($"Starting to apply materials directly based on JSON for model instance '{modelInstance.name}'. Total materials resources: {modelInfo.materialsResources.Count}");
 
             var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
 
             foreach (var materialResource in modelInfo.materialsResources)
             {
                 int rendererIndex = materialResource.number - 1;
-                //Debug.Log($"Processing material resource with index {rendererIndex} having {materialResource.resources.Count} resources.");
+                Debug.Log($"Processing material resource with index {rendererIndex} having {materialResource.resources.Count} resources.");
 
                 if (rendererIndex >= 0 && rendererIndex < skinnedMeshRenderers.Length)
                 {
@@ -337,7 +337,7 @@ namespace doppelganger
                     foreach (var resource in materialResource.resources)
                     {
                         // Ignore the 'selected' flag and apply all materials
-                        //Debug.Log($"Forcibly applying material '{resource.name}' with RTTI values to renderer at index {rendererIndex}, regardless of 'selected' status.");
+                        Debug.Log($"Forcibly applying material '{resource.name}' with RTTI values to renderer at index {rendererIndex}, regardless of 'selected' status.");
                         ApplyMaterialToRenderer(renderer, resource.name, modelInstance, resource.rttiValues);
                     }
                 }
@@ -546,7 +546,7 @@ namespace doppelganger
         public void LoadAndApplyMaterials(string modelName, GameObject modelInstance, string slotName)
         {
             string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");
-            //Debug.Log($"Attempting to load material JSON from path: {materialJsonFilePath}");
+            Debug.Log($"[LoadAndApplyMaterials] Attempting to load material JSON from path: {materialJsonFilePath}");
 
             if (File.Exists(materialJsonFilePath))
             {
@@ -555,9 +555,31 @@ namespace doppelganger
 
                 if (modelInfo != null)
                 {
+                    Debug.Log($"[LoadAndApplyMaterials] Successfully deserialized material data for {modelName}. Beginning to apply materials to model.");
+                    
+                    // DEBUG Log the loaded data
+                    Debug.Log($"[LoadAndApplyMaterials] Model Name: {modelInfo.name}");
+                    Debug.Log($"[LoadAndApplyMaterials] Materials Data Count: {modelInfo.materialsData.Count}");
+                    foreach (var matData in modelInfo.materialsData)
+                    {
+                        Debug.Log($"[LoadAndApplyMaterials] Material Data - Number: {matData.number}, Name: {matData.name}");
+                    }
+                    Debug.Log($"[LoadAndApplyMaterials] Materials Resources Count: {modelInfo.materialsResources.Count}");
+                    foreach (var matRes in modelInfo.materialsResources)
+                    {
+                        Debug.Log($"[LoadAndApplyMaterials] Material Resource - Number: {matRes.number}, Resources Count: {matRes.resources.Count}");
+                        foreach (var res in matRes.resources)
+                        {
+                            Debug.Log($"[LoadAndApplyMaterials] Resource - Name: {res.name}, Selected: {res.selected}, LayoutId: {res.layoutId}, LoadFlags: {res.loadFlags}");
+                            foreach (var rtti in res.rttiValues)
+                            {
+                                Debug.Log($"[LoadAndApplyMaterials] RTTI Value - Name: {rtti.name}, Type: {rtti.type}, Value: {rtti.val_str}");
+                            }
+                        }
+                    }
+
                     ApplyMaterials(modelInstance, modelInfo);
 
-                    // Store original materials
                     var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
                     List<Material> mats = new List<Material>();
                     foreach (var renderer in skinnedMeshRenderers)
@@ -565,18 +587,19 @@ namespace doppelganger
                         mats.AddRange(renderer.sharedMaterials);
                     }
                     originalMaterials[slotName] = mats;
-                    //Debug.Log($"Stored original materials for {modelName} in slot {slotName}.");
+                    Debug.Log($"[LoadAndApplyMaterials] Stored original materials for {modelName} in slot {slotName}.");
                 }
                 else
                 {
-                    Debug.LogWarning($"Failed to deserialize material data for {modelName}.");
+                    Debug.LogWarning($"[LoadAndApplyMaterials] Failed to deserialize material data for {modelName}.");
                 }
             }
             else
             {
-                Debug.LogWarning($"Material JSON file not found for {modelName} at path: {materialJsonFilePath}");
+                Debug.LogWarning($"[LoadAndApplyMaterials] Material JSON file not found for {modelName} at path: {materialJsonFilePath}");
             }
         }
+
 
 
         public void ApplyVariationMaterials(GameObject modelInstance, List<ModelData.MaterialResource> materialsResources)
@@ -654,49 +677,61 @@ namespace doppelganger
         {
             if (modelInstance == null || modelInfo == null || modelInfo.materialsResources == null)
             {
-                Debug.LogWarning("ApplyMaterials: modelInstance or modelInfo is null.");
+                Debug.LogWarning("[ApplyMaterials] modelInstance, modelInfo, or modelInfo.materialsResources is null.");
                 return;
             }
 
             var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+            Debug.Log($"[ApplyMaterials] Found {skinnedMeshRenderers.Length} SkinnedMeshRenderer components in {modelInstance.name}.");
 
             if (!initialRendererStates.ContainsKey(modelInstance))
             {
                 initialRendererStates[modelInstance] = skinnedMeshRenderers.Select(r => r.enabled).ToArray();
+                Debug.Log("[ApplyMaterials] Initial renderer states stored.");
             }
 
-            foreach (var materialResource in modelInfo.materialsResources)
+            Debug.Log($"[ApplyMaterials] Processing {modelInfo.materialsResources.Count} materialsResources for model '{modelInfo.name}'.");
+            foreach (var materialData in modelInfo.materialsData)
             {
-                if (materialResource == null || materialResource.resources == null || materialResource.resources.Count == 0)
+                if (materialData == null)
                 {
-                    Debug.LogWarning("Material resource data is null or empty.");
+                    Debug.LogWarning("[ApplyMaterials] Material resource data is null or empty.");
                     continue;
                 }
 
-                int rendererIndex = materialResource.number - 1;
+                int rendererIndex = materialData.number - 1; // Adjusting index for 0-based array
+
                 if (rendererIndex >= 0 && rendererIndex < skinnedMeshRenderers.Length)
                 {
                     var renderer = skinnedMeshRenderers[rendererIndex];
+                    Debug.Log($"[ApplyMaterials] Found renderer '{renderer.name}' for material '{materialData.name}'.");
 
-                    // Example logic to select the first resource or based on some condition
-                    var resource = materialResource.resources.First();
-                    string materialName = resource.name;
-                    List<RttiValue> rttiValues = resource.rttiValues;
-                    Debug.Log($"Applying material '{resource.name}' to renderer at index {rendererIndex} for {modelInfo.name}.");
-                    ApplyMaterialToRenderer(renderer, materialName, modelInstance, rttiValues);
+                    // Load the material by its name
+                    string resourcePath = $"Materials/{materialData.name.Replace(".mat", "")}";
+                    Material material = Resources.Load<Material>(resourcePath);
+                    if (material != null)
+                    {
+                        renderer.material = material;
+                        Debug.Log($"[ApplyMaterials] Applied material '{materialData.name}' successfully to '{renderer.name}' from path '{resourcePath}'.");
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[ApplyMaterials] Failed to load material '{materialData.name}' from path '{resourcePath}'. Ensure the material exists in the Resources/Materials folder without the .mat extension and that the name is correct.");
+                    }
                 }
                 else
                 {
-                    Debug.LogWarning($"Renderer index out of bounds: {rendererIndex} for material number {materialResource.number} in model '{modelInfo.name}'");
+                    Debug.LogWarning($"[ApplyMaterials] Renderer index {rendererIndex} out of bounds for material number {materialData.number} in model '{modelInfo.name}'. Total renderers: {skinnedMeshRenderers.Length}.");
                 }
             }
         }
 
         private void ApplyMaterialToRenderer(SkinnedMeshRenderer renderer, string materialName, GameObject modelInstance, List<RttiValue> rttiValues)
         {
+            Debug.Log($"ApplyMaterialToRenderer");
             if (materialName.Equals("null.mat", StringComparison.OrdinalIgnoreCase))
             {
-                //Debug.Log($"Renderer '{renderer.gameObject.name}' disabled due to null material.");
+                Debug.Log($"Renderer '{renderer.gameObject.name}' disabled due to null material.");
                 renderer.enabled = false;
                 AddToDisabledRenderers(modelInstance, renderer);
                 return;
@@ -706,7 +741,7 @@ namespace doppelganger
             Material loadedMaterial = LoadMaterial(materialName);
             if (loadedMaterial != null)
             {
-                //Debug.Log($"Loaded material '{materialName}' for renderer '{renderer.gameObject.name}'. Preparing to apply RTTI values.");
+                Debug.Log($"Loaded material '{materialName}' for renderer '{renderer.gameObject.name}'. Preparing to apply RTTI values.");
                 Material clonedMaterial = new Material(loadedMaterial);
                 renderer.sharedMaterials = new Material[] { clonedMaterial };
 
@@ -714,13 +749,13 @@ namespace doppelganger
                 {
                     foreach (var rttiValue in rttiValues)
                     {
-                        //Debug.Log($"Detected RTTI value for '{materialName}': '{rttiValue.name}' with value '{rttiValue.val_str}'.");
+                        Debug.Log($"Detected RTTI value for '{materialName}': '{rttiValue.name}' with value '{rttiValue.val_str}'.");
                         ApplyTextureToMaterial(modelInstance, clonedMaterial, rttiValue.name, rttiValue.val_str);
                     }
                 }
                 else
                 {
-                    //Debug.Log($"No RTTI values found for material '{materialName}'.");
+                    Debug.Log($"No RTTI values found for material '{materialName}'.");
                 }
             }
             else

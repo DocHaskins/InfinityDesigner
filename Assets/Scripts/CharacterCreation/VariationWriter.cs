@@ -86,7 +86,7 @@ namespace doppelganger
 
                         Resource resource = new Resource
                         {
-                            name = materialNameWithExtension,
+                            name = materialNameWithExtension.Replace(" (Instance)", ""),
                             selected = true,
                             layoutId = 4,
                             loadFlags = "S",
@@ -100,7 +100,7 @@ namespace doppelganger
                         // Fallback to using the original material name from materialsData
                         Resource fallbackResource = new Resource
                         {
-                            name = materialData.name,
+                            name = materialData.name.Replace(" (Instance)", ""),
                             selected = true,
                             layoutId = 4,
                             loadFlags = "S",
