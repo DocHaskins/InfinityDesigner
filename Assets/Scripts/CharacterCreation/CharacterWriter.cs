@@ -245,8 +245,8 @@ namespace doppelganger
                 return;
             }
 
-            string jsonOutputPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons/Custom", saveCategory, DateTime.Now.ToString("yyyy_MM_dd"), saveName.text + DateTime.Now.ToString("HH_mm_ss") + ".json");
-            string screenshotPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons/Custom", saveCategory, DateTime.Now.ToString("yyyy_MM_dd"), screenshotFileName + DateTime.Now.ToString("HH_mm_ss") + ".png");
+            string jsonOutputPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons/Custom", saveCategory, DateTime.Now.ToString("yyyy_MM_dd"), saveName.text + "_" + DateTime.Now.ToString("HH_mm_ss") + ".json");
+            string screenshotPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons/Custom", saveCategory, DateTime.Now.ToString("yyyy_MM_dd"), screenshotFileName + "_" + DateTime.Now.ToString("HH_mm_ss") + ".png");
             string modelOutputPath = Path.Combine(customBasePath, "ph/source", fileName + ".model");
             Debug.Log($"jsonOutputDirectory {jsonOutputDirectory}, screenshotPath {screenshotPath}");
 
@@ -272,8 +272,10 @@ namespace doppelganger
                 {
                     if (currentlyLoadedModels.TryGetValue(slider.Key, out GameObject model))
                     {
+                        Debug.Log($"Processing model for slider key: {slider.Key}");
                         if (sliderToSlotMapping.TryGetValue(slider.Key, out string slotKey))
                         {
+                            Debug.Log($"Mapping found: {slider.Key} maps to {slotKey}");
                             bool slotAssigned = false;
                             string modelName = model.name.Replace("(Clone)", ".msh").ToLower();
                             string potentialSkeletonName = skeletonLookup.FindMatchingSkeleton(modelName);
@@ -287,73 +289,59 @@ namespace doppelganger
                             if (slotUIDLookup.ModelSlots.TryGetValue(modelName, out List<ModelData.SlotInfo> possibleSlots))
                             {
                                 Debug.Log($"Found possible slots for model {modelName}: {possibleSlots.Count}");
-                                ModelData.SlotDataPair slotPair; // Declaration moved outside of the loop
+                                ModelData.SlotDataPair slotPair = null; // Declaration moved outside of the loop
 
                                 foreach (var possibleSlot in possibleSlots)
                                 {
-                                    if (!usedSlotUids.Contains(possibleSlot.slotUid))
+                                    Debug.Log($"Checking possible slot: {possibleSlot.name} with Slot UID: {possibleSlot.slotUid} against used slots and UIDs.");
+                                    if (!usedSlotUids.Contains(possibleSlot.slotUid) && !usedSlots.Contains(possibleSlot.name))
                                     {
+                                        Debug.Log($"Creating SlotDataPair for model {modelName} with intended slot {slotKey} and assigning to actual slot {possibleSlot.name}.");
                                         slotPair = CreateSlotDataPair(model, possibleSlot.name, possibleSlot.slotUid);
                                         slotPairs.Add(slotPair);
                                         usedSlotUids.Add(possibleSlot.slotUid);
                                         usedSlots.Add(possibleSlot.name); // Also mark the slot name as used
                                         Debug.Log($"Assigned {possibleSlot.name} slot for {slider.Key} with Slot UID: {possibleSlot.slotUid}");
-                                        slotAssigned = true;
-                                        break; // Exit the loop since a slot has been successfully assigned
+                                        break; // Break since a slot has been successfully assigned
                                     }
-                                    else
+                                }
+
+                                if (slotPair == null) // No slot was assigned in the initial attempt
+                                {
+                                    string initialFallbackSlotName = sliderToSlotMapping[slider.Key];
+                                    List<string> fallbackOptions = fallbackSlots.TryGetValue(initialFallbackSlotName, out var initialFallbacks) ? initialFallbacks : new List<string>();
+
+                                    Debug.Log($"Fallback options for {initialFallbackSlotName}: {string.Join(", ", fallbackOptions)}");
+
+                                    foreach (var fallbackOption in fallbackOptions)
                                     {
-                                        Debug.Log($"Slot UID {possibleSlot.slotUid} for slot {possibleSlot.name} is already in use.");
-                                        string initialFallbackSlotName = sliderToSlotMapping[slider.Key];
-                                        List<string> fallbackOptions = fallbackSlots.TryGetValue(initialFallbackSlotName, out var initialFallbacks) ? initialFallbacks : new List<string>();
-
-                                        Debug.Log($"Fallback options for {initialFallbackSlotName}: {string.Join(", ", fallbackOptions)}");
-
-                                        if (!slotAssigned)
+                                        Debug.Log($"Considering fallback option: {fallbackOption}");
+                                        if (!usedSlots.Contains(fallbackOption))
                                         {
-                                            foreach (var fallbackOption in fallbackOptions)
+                                            var nextAvailableSlotUid = DetermineNextAvailableSlotUid(fallbackOption, usedSlotUids);
+                                            if (nextAvailableSlotUid != -1) // Assuming -1 indicates failure to find an available UID
                                             {
-                                                Debug.Log($"Considering fallback option: {fallbackOption}");
-                                                // Directly check if the fallback slot name is available and not yet used
-                                                if (!usedSlots.Contains(fallbackOption))
-                                                {
-                                                    // Attempt to find a matching slot UID that hasn't been used yet
-                                                    var nextAvailableSlotUid = DetermineNextAvailableSlotUid(fallbackOption, usedSlotUids);
-                                                    if (nextAvailableSlotUid != -1) // Assuming -1 indicates failure to find an available UID
-                                                    {
-                                                        Debug.Log($"Using next available Slot UID '{nextAvailableSlotUid}' for fallback slot '{fallbackOption}'.");
-                                                        slotPair = CreateSlotDataPair(model, fallbackOption, nextAvailableSlotUid);
-                                                        slotPairs.Add(slotPair);
-                                                        usedSlotUids.Add(nextAvailableSlotUid);
-                                                        usedSlots.Add(fallbackOption);
-                                                        Debug.Log($"Assigned fallback {fallbackOption} slot for {slider.Key} with Slot UID: {nextAvailableSlotUid}");
-                                                        slotAssigned = true;
-
-                                                    }
-                                                    else
-                                                    {
-                                                        Debug.Log($"Fallback option '{fallbackOption}' available but no unused Slot UID found within the allowed range.");
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    Debug.Log($"Fallback option '{fallbackOption}' already used.");
-                                                }
-                                                if (slotAssigned)
-                                                {
-                                                    break;
-                                                }
+                                                Debug.Log($"Using next available Slot UID '{nextAvailableSlotUid}' for fallback slot '{fallbackOption}'.");
+                                                slotPair = CreateSlotDataPair(model, fallbackOption, nextAvailableSlotUid);
+                                                slotPairs.Add(slotPair);
+                                                usedSlotUids.Add(nextAvailableSlotUid);
+                                                usedSlots.Add(fallbackOption); // Mark the slot name as used
+                                                Debug.Log($"Assigned fallback {fallbackOption} slot for {slider.Key} with Slot UID: {nextAvailableSlotUid}");
+                                                break; // Break since a slot has been successfully assigned
                                             }
-                                        }
-
-                                        if (!slotAssigned)
-                                        {
-                                            // Fallback logic exhausted and still no slot assigned
-                                            Debug.LogWarning($"No available slots found for model {modelName}. Consider handling this scenario.");
                                         }
                                     }
                                 }
+
+                                if (slotPair == null) // Fallback logic exhausted and still no slot assigned
+                                {
+                                    Debug.LogWarning($"No available slots or names found for model {modelName}. Consider handling this scenario.");
+                                }
                             }
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"No mapping found for {slider.Key}");
                         }
                     }
                     else
@@ -671,7 +659,7 @@ namespace doppelganger
                 modelInfo.materialsResources = modelInfo.materialsData.Select(md => new ModelData.MaterialResource
                 {
                     number = md.number,
-                    resources = new List<ModelData.Resource> { new ModelData.Resource { name = md.name, rttiValues = new List<RttiValue>() } } // Assuming no RTTI values for default materials
+                    resources = new List<ModelData.Resource> { new ModelData.Resource { name = md.name.Replace("(Instance)", "").Replace(" ", ""), rttiValues = new List<RttiValue>() } } // Assuming no RTTI values for default materials
                 }).ToList();
             }
 
@@ -690,13 +678,13 @@ namespace doppelganger
                 var renderer = renderers[rendererIndex];
                 var resource = new ModelData.Resource
                 {
-                    name = renderer.sharedMaterial.name + (renderer.sharedMaterial.name.EndsWith(".mat") ? "" : ".mat"),
+                    name = renderer.sharedMaterial.name.Replace("(Instance)", "").Replace(" ", "") + (renderer.sharedMaterial.name.Replace("(Instance)", "").Replace(" ", "").EndsWith(".mat") ? "" : ".mat"),
                     rttiValues = new List<RttiValue>() // Initialize with an empty list to avoid null references
                 };
 
                 if (modelChanges.MaterialsByRenderer.TryGetValue(rendererIndex, out MaterialChange materialChange))
                 {
-                    resource.name = materialChange.NewName.EndsWith(".mat") ? materialChange.NewName : $"{materialChange.NewName}.mat";
+                    resource.name = materialChange.NewName.Replace("(Instance)", "").EndsWith(".mat") ? materialChange.NewName.Replace("(Instance)", "").Replace(" ", "") : $"{materialChange.NewName.Replace("(Instance)", "").Replace(" ", "")}.mat";
                     resource.rttiValues = materialChange.TextureChanges;
                     Debug.Log($"Applying specific material changes to renderer {rendererIndex} for model {model.name}.");
                 }
@@ -730,7 +718,7 @@ namespace doppelganger
                     foreach (var materialData in modelInfo.materialsData)
                     {
                         // Ensure each material name ends with ".mat"
-                        string materialName = materialData.name;
+                        string materialName = materialData.name.Replace("(Instance)", "").Replace(" ", "");
                         if (!materialName.EndsWith(".mat"))
                         {
                             materialName += ".mat";
@@ -739,7 +727,7 @@ namespace doppelganger
                         materialsData.Add(new ModelData.MaterialData
                         {
                             number = materialData.number, // Use the correct material number
-                            name = materialName
+                            name = materialName.Replace("(Instance)", "").Replace(" ", "")
                         });
                     }
                 }

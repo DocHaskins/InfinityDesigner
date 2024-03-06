@@ -304,7 +304,7 @@ namespace doppelganger
                 foreach (var resource in materialResource.resources)
                 {
                     sb.AppendLine("                  {");
-                    sb.AppendLine($"                    \"name\": \"{resource.name}\",");
+                    sb.AppendLine($"                    \"name\": \"{resource.name.Replace("(Instance)", "").Replace(" ", "")}\",");
                     sb.AppendLine($"                    \"selected\": true,");
                     sb.AppendLine($"                    \"layoutId\": 4,");
                     sb.AppendLine($"                    \"loadFlags\": \"S\",");

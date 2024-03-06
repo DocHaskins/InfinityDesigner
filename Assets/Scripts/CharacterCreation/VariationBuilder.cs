@@ -305,14 +305,13 @@ namespace doppelganger
                 modelChange.MaterialsByRenderer[rendererIndex] = new MaterialChange
                 {
                     OriginalName = originalMaterialName,
-                    NewName = newMaterialName,
+                    NewName = newMaterialName.Replace("(Instance)", ""),
                     TextureChanges = new List<RttiValue>()
                 };
             }
             else
             {
-                // If there's already a material change recorded, update the NewName and keep texture changes
-                modelChange.MaterialsByRenderer[rendererIndex].NewName = newMaterialName;
+                modelChange.MaterialsByRenderer[rendererIndex].NewName = newMaterialName.Replace("(Instance)", "");
             }
 
             Debug.Log($"Material change recorded for model: {modelName}, renderer index: {rendererIndex}, from: {originalMaterialName} to: {newMaterialName}");
@@ -362,7 +361,7 @@ namespace doppelganger
             }
         }
 
-        void RecordTextureChange(string modelName, string materialName, string slotName, string textureName, int rendererIndex)
+        public void RecordTextureChange(string modelName, string materialName, string slotName, string textureName, int rendererIndex)
         {
             if (!modelSpecificChanges.TryGetValue(modelName, out var modelChange))
             {

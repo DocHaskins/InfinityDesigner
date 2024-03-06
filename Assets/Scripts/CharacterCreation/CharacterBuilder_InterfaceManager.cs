@@ -793,7 +793,7 @@ namespace doppelganger
 
                     if (variationResources != null)
                     {
-                        characterBuilder.ApplyVariationMaterials(currentModel, variationResources);
+                        characterBuilder.ApplyVariationMaterials(currentModel, variationResources, slotName, modelIndex);
                     }
                 }
             }

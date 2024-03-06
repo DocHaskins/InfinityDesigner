@@ -277,7 +277,7 @@ namespace doppelganger
                                         if (modelInstance != null) // Assuming modelInstance is found
                                         {
                                             Debug.Log($"Applying materials directly from JSON data for '{modelInfo.name}'.");
-                                            ApplyPresetMaterialsDirectly(modelInstance, modelInfo);
+                                            ApplyPresetMaterialsDirectly(modelInstance, modelInfo, slotName, modelIndex);
                                         }
                                         else
                                         {
@@ -313,7 +313,7 @@ namespace doppelganger
             }
         }
 
-        private void ApplyPresetMaterialsDirectly(GameObject modelInstance, ModelData.ModelInfo modelInfo)
+        private void ApplyPresetMaterialsDirectly(GameObject modelInstance, ModelData.ModelInfo modelInfo, string slotName, int modelIndex)
         {
             if (modelInstance == null || modelInfo == null || modelInfo.materialsResources == null)
             {
@@ -338,7 +338,7 @@ namespace doppelganger
                     {
                         // Ignore the 'selected' flag and apply all materials
                         Debug.Log($"Forcibly applying material '{resource.name}' with RTTI values to renderer at index {rendererIndex}, regardless of 'selected' status.");
-                        ApplyMaterialToRenderer(renderer, resource.name, modelInstance, resource.rttiValues);
+                        ApplyMaterialToRenderer(renderer, resource.name, modelInstance, resource.rttiValues, slotName, modelIndex);
                     }
                 }
                 else
@@ -546,7 +546,7 @@ namespace doppelganger
         public void LoadAndApplyMaterials(string modelName, GameObject modelInstance, string slotName)
         {
             string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");
-            Debug.Log($"[LoadAndApplyMaterials] Attempting to load material JSON from path: {materialJsonFilePath}");
+            //Debug.Log($"[LoadAndApplyMaterials] Attempting to load material JSON from path: {materialJsonFilePath}");
 
             if (File.Exists(materialJsonFilePath))
             {
@@ -555,28 +555,24 @@ namespace doppelganger
 
                 if (modelInfo != null)
                 {
-                    Debug.Log($"[LoadAndApplyMaterials] Successfully deserialized material data for {modelName}. Beginning to apply materials to model.");
-                    
-                    // DEBUG Log the loaded data
-                    Debug.Log($"[LoadAndApplyMaterials] Model Name: {modelInfo.name}");
-                    Debug.Log($"[LoadAndApplyMaterials] Materials Data Count: {modelInfo.materialsData.Count}");
-                    foreach (var matData in modelInfo.materialsData)
-                    {
-                        Debug.Log($"[LoadAndApplyMaterials] Material Data - Number: {matData.number}, Name: {matData.name}");
-                    }
-                    Debug.Log($"[LoadAndApplyMaterials] Materials Resources Count: {modelInfo.materialsResources.Count}");
-                    foreach (var matRes in modelInfo.materialsResources)
-                    {
-                        Debug.Log($"[LoadAndApplyMaterials] Material Resource - Number: {matRes.number}, Resources Count: {matRes.resources.Count}");
-                        foreach (var res in matRes.resources)
-                        {
-                            Debug.Log($"[LoadAndApplyMaterials] Resource - Name: {res.name}, Selected: {res.selected}, LayoutId: {res.layoutId}, LoadFlags: {res.loadFlags}");
-                            foreach (var rtti in res.rttiValues)
-                            {
-                                Debug.Log($"[LoadAndApplyMaterials] RTTI Value - Name: {rtti.name}, Type: {rtti.type}, Value: {rtti.val_str}");
-                            }
-                        }
-                    }
+                    //Debug.Log($"[LoadAndApplyMaterials] Model Name: {modelInfo.name}");
+                    //Debug.Log($"[LoadAndApplyMaterials] Materials Data Count: {modelInfo.materialsData.Count}");
+                    //foreach (var matData in modelInfo.materialsData)
+                    //{
+                    //    Debug.Log($"[LoadAndApplyMaterials] Material Data - Number: {matData.number}, Name: {matData.name}");
+                    //}
+                    //foreach (var matRes in modelInfo.materialsResources)
+                    //{
+                    //    Debug.Log($"[LoadAndApplyMaterials] Material Resource - Number: {matRes.number}, Resources Count: {matRes.resources.Count}");
+                    //    foreach (var res in matRes.resources)
+                    //    {
+                    //        Debug.Log($"[LoadAndApplyMaterials] Resource - Name: {res.name}, Selected: {res.selected}, LayoutId: {res.layoutId}, LoadFlags: {res.loadFlags}");
+                    //        foreach (var rtti in res.rttiValues)
+                    //        {
+                    //            Debug.Log($"[LoadAndApplyMaterials] RTTI Value - Name: {rtti.name}, Type: {rtti.type}, Value: {rtti.val_str}");
+                    //        }
+                    //    }
+                    //}
 
                     ApplyMaterials(modelInstance, modelInfo);
 
@@ -587,7 +583,7 @@ namespace doppelganger
                         mats.AddRange(renderer.sharedMaterials);
                     }
                     originalMaterials[slotName] = mats;
-                    Debug.Log($"[LoadAndApplyMaterials] Stored original materials for {modelName} in slot {slotName}.");
+                    //Debug.Log($"[LoadAndApplyMaterials] Stored original materials for {modelName} in slot {slotName}.");
                 }
                 else
                 {
@@ -600,9 +596,7 @@ namespace doppelganger
             }
         }
 
-
-
-        public void ApplyVariationMaterials(GameObject modelInstance, List<ModelData.MaterialResource> materialsResources)
+        public void ApplyVariationMaterials(GameObject modelInstance, List<ModelData.MaterialResource> materialsResources, string slotName, int modelIndex)
         {
             var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
             string modelName = modelInstance.name.Replace("(Clone)", "");
@@ -621,7 +615,7 @@ namespace doppelganger
                         var renderer = skinnedMeshRenderers[rendererIndex];
                         string originalMaterialName = renderer.sharedMaterials.Length > 0 ? renderer.sharedMaterials[0].name : "UnknownOriginal"; // Placeholder for actual original material name logic
 
-                        ApplyMaterialToRenderer(renderer, resource.name, modelInstance, resource.rttiValues);
+                        ApplyMaterialToRenderer(renderer, resource.name, modelInstance, resource.rttiValues, slotName, modelIndex);
 
                         // Record the material change
                         variationBuilder.RecordMaterialChange(modelName, originalMaterialName, resource.name, rendererIndex);
@@ -687,7 +681,7 @@ namespace doppelganger
             if (!initialRendererStates.ContainsKey(modelInstance))
             {
                 initialRendererStates[modelInstance] = skinnedMeshRenderers.Select(r => r.enabled).ToArray();
-                Debug.Log("[ApplyMaterials] Initial renderer states stored.");
+                //Debug.Log("[ApplyMaterials] Initial renderer states stored.");
             }
 
             Debug.Log($"[ApplyMaterials] Processing {modelInfo.materialsResources.Count} materialsResources for model '{modelInfo.name}'.");
@@ -704,15 +698,16 @@ namespace doppelganger
                 if (rendererIndex >= 0 && rendererIndex < skinnedMeshRenderers.Length)
                 {
                     var renderer = skinnedMeshRenderers[rendererIndex];
-                    Debug.Log($"[ApplyMaterials] Found renderer '{renderer.name}' for material '{materialData.name}'.");
+                    string originalMaterialName = renderer.material.name.Replace(" (Instance)", "");
+                    //Debug.Log($"[ApplyMaterials] Found renderer '{renderer.name}' for material '{materialData.name}'.");
 
-                    // Load the material by its name
                     string resourcePath = $"Materials/{materialData.name.Replace(".mat", "")}";
                     Material material = Resources.Load<Material>(resourcePath);
                     if (material != null)
                     {
                         renderer.material = material;
-                        Debug.Log($"[ApplyMaterials] Applied material '{materialData.name}' successfully to '{renderer.name}' from path '{resourcePath}'.");
+                        variationBuilder.RecordMaterialChange(modelInstance.name, originalMaterialName, material.name, rendererIndex);
+                        //Debug.Log($"[ApplyMaterials] Applied material '{materialData.name}' successfully to '{renderer.name}' from path '{resourcePath}'.");
                     }
                     else
                     {
@@ -726,7 +721,7 @@ namespace doppelganger
             }
         }
 
-        private void ApplyMaterialToRenderer(SkinnedMeshRenderer renderer, string materialName, GameObject modelInstance, List<RttiValue> rttiValues)
+        private void ApplyMaterialToRenderer(SkinnedMeshRenderer renderer, string materialName, GameObject modelInstance, List<RttiValue> rttiValues, string slotName, int materialIndex)
         {
             Debug.Log($"ApplyMaterialToRenderer");
             if (materialName.Equals("null.mat", StringComparison.OrdinalIgnoreCase))
@@ -750,7 +745,7 @@ namespace doppelganger
                     foreach (var rttiValue in rttiValues)
                     {
                         Debug.Log($"Detected RTTI value for '{materialName}': '{rttiValue.name}' with value '{rttiValue.val_str}'.");
-                        ApplyTextureToMaterial(modelInstance, clonedMaterial, rttiValue.name, rttiValue.val_str);
+                        ApplyTextureToMaterial(modelInstance, clonedMaterial, rttiValue.name, rttiValue.val_str, slotName, materialIndex);
                     }
                 }
                 else
@@ -793,7 +788,7 @@ namespace doppelganger
             disabledRenderers[modelInstance].Add(Array.IndexOf(modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true), renderer));
         }
 
-        private void ApplyTextureToMaterial(GameObject modelInstance, Material material, string rttiValueName, string textureName)
+        private void ApplyTextureToMaterial(GameObject modelInstance, Material material, string rttiValueName, string textureName, string slotName, int modelIndex)
         {
             Debug.Log($"Processing RTTI Value Name: {rttiValueName}, Texture Name: '{textureName}'.");
 
@@ -820,6 +815,8 @@ namespace doppelganger
                 {
                     Debug.Log($"Applying texture to shader property: {shaderProperty}. RTTI Value Name: {rttiValueName}, Texture Name: {textureName}.");
                     material.SetTexture(shaderProperty, texture);
+                    variationBuilder.RecordTextureChange(modelInstance.name, material.name, slotName, textureName, modelIndex);
+                    //void RecordTextureChange(string modelName, string materialName, string slotName, string textureName, int rendererIndex)
                     ApplyAdditionalSettings(material, rttiValueName, texture);
                 }
                 else
