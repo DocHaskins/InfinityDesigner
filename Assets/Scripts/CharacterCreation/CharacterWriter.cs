@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
@@ -9,9 +10,8 @@ using SFB;
 using System.Text;
 using System.Linq;
 using static ModelData;
-using static doppelganger.CharacterWriter;
-using UnityEngine.Rendering.HighDefinition;
-
+using Michsky.UI.Dark;
+using System.Text.RegularExpressions;
 
 /// <summary>
 /// CharacterWriter facilitates character customization saving to JSON/model formats. 
@@ -38,6 +38,7 @@ namespace doppelganger
         public TMP_Dropdown saveTypeDropdown;
         public TMP_Dropdown saveCategoryDropdown;
         public TMP_Dropdown saveClassDropdown;
+        public SwitchManager fppToggleSwitchManager;
 
         [Header("Options")]
         public bool createAdditionalModel = false;
@@ -168,6 +169,7 @@ namespace doppelganger
             LoadSlotUidLookup();
         }
 
+
         public void OpenSetPathDialog()
         {
             // Open folder browser and then save the selected path
@@ -276,7 +278,6 @@ namespace doppelganger
                         if (sliderToSlotMapping.TryGetValue(slider.Key, out string slotKey))
                         {
                             Debug.Log($"Mapping found: {slider.Key} maps to {slotKey}");
-                            bool slotAssigned = false;
                             string modelName = model.name.Replace("(Clone)", ".msh").ToLower();
                             string potentialSkeletonName = skeletonLookup.FindMatchingSkeleton(modelName);
                             Debug.Log($"{potentialSkeletonName} Skeleton updated to {skeletonName} based on loaded models.");
@@ -352,9 +353,22 @@ namespace doppelganger
             }
 
             // Ensure slotPairs are sorted after appending empty slots
+            void FinalizeAndWrite(ModelData modelData, string jsonPath, string modelPath, string skeletonOverride = null)
+            {
+                if (!string.IsNullOrWhiteSpace(skeletonOverride))
+                {
+                    modelData.skeletonName = skeletonOverride;
+                }
+
+                Debug.Log($"outputData {modelData.skeletonName}");
+                WriteConfigurationOutput(modelData, jsonPath, modelPath);
+            }
+
+            // Ensure slotPairs are sorted after appending empty slots
             slotPairs = slotPairs.OrderBy(pair => pair.slotData.slotUid).ToList();
             screenshotManager.CaptureAndMoveScreenshot(screenshotPath);
-            // Write the configuration to JSON
+
+            // First output configuration
             var outputData = new ModelData
             {
                 skeletonName = skeletonName,
@@ -366,8 +380,106 @@ namespace doppelganger
                     sex = DetermineCharacterSex(slotPairs) // Implement this method based on your logic
                 }
             };
-            Debug.Log($"outputData {outputData.skeletonName}");
-            WriteConfigurationOutput(outputData, jsonOutputPath, modelOutputPath);
+
+            // Write the first configuration to JSON
+            FinalizeAndWrite(outputData, jsonOutputPath, modelOutputPath);
+
+            if(fppToggleSwitchManager.isOn)
+            { 
+                bool shouldCreateDualOutputs = saveCategory.Equals("Player", StringComparison.OrdinalIgnoreCase) || saveNameText.Equals("Aiden", StringComparison.OrdinalIgnoreCase);
+
+                if (shouldCreateDualOutputs)
+                {
+                    var excludedSlots = new HashSet<string> {
+        "HEAD", "HEADCOVER", "HEADCOVER_PART_1", "HEAD_PART_1", "HEAD_PART_2", "HEAD_PART_3", "HEAD_PART_4", "HEAD_PART_5", "HEAD_PART_6"
+    };
+
+                    var filteredSlotPairs = slotPairs.Where(pair => !excludedSlots.Contains(pair.key)).ToList();
+
+                    FinalizeAndWrite(outputData, jsonOutputPath, Path.Combine(customBasePath, "ph/source", "player_tpp_skeleton.model"), skeletonName);
+
+                    var outputDataSecond = new ModelData
+                    {
+                        skeletonName = "player_fpp_skeleton.msh",
+                        slotPairs = filteredSlotPairs,
+                        modelProperties = outputData.modelProperties // Reuse the model properties from the first output
+                    };
+
+                    foreach (var slotPair in outputDataSecond.slotPairs)
+                    {
+                        foreach (var modelInfo in slotPair.slotData.models)
+                        {
+                            modelInfo.name = UpdateModelAndMaterialNames(modelInfo.name, isMaterial: false);  // false because it's a model
+
+                            foreach (var materialData in modelInfo.materialsData)
+                            {
+                                materialData.name = UpdateModelAndMaterialNames(materialData.name, isMaterial: true); // true because it's a material
+                            }
+
+                            foreach (var materialResource in modelInfo.materialsResources)
+                            {
+                                foreach (var resource in materialResource.resources)
+                                {
+                                    resource.name = UpdateModelAndMaterialNames(resource.name, isMaterial: true);
+                                }
+                            }
+                        }
+                    }
+
+                    // Define the second JSON and model output paths
+                    string jsonOutputPathSecond = Path.Combine(Application.dataPath, "StreamingAssets/Jsons/Custom", saveCategory, DateTime.Now.ToString("yyyy_MM_dd"), saveName.text + "_fpp_" + DateTime.Now.ToString("HH_mm_ss") + ".json");
+                    string modelOutputPathSecond = Path.Combine(customBasePath, "ph/source", "player_fpp_skeleton.model");
+
+                    // Write the second configuration to model
+                    FinalizeAndWrite(outputDataSecond, jsonOutputPathSecond, modelOutputPathSecond, "player_fpp_skeleton.msh");
+                }
+            }
+        }
+
+        private string UpdateModelAndMaterialNames(string originalName, bool isMaterial = false, string suffix = "_fpp")
+        {
+            string basePath = isMaterial ? "Assets/Resources/Materials/" : "Assets/Resources/Prefabs/";
+            string originalExtension = isMaterial ? ".mat" : ".msh";
+            string newExtension = isMaterial ? "" : ".prefab";
+            string originalNameWithoutExt = originalName.EndsWith(".msh") ? originalName.Substring(0, originalName.Length - 4) : originalName;
+            string newName = originalNameWithoutExt.Contains("_tpp") ? originalNameWithoutExt.Replace("_tpp", suffix) : originalNameWithoutExt;
+            string fullPath = basePath + newName + newExtension;
+
+            //Debug.Log($"[UpdateModelAndMaterialNames] Checking for: {fullPath}");
+
+            // Check if the FPP version exists
+            if (File.Exists(fullPath))
+            {
+                //Debug.Log($"[UpdateModelAndMaterialNames] Found FPP version for {originalName}: {newName}");
+                return newName.Replace(".mat","") + originalExtension;
+            }
+            else
+            {
+                //Debug.Log($"[UpdateModelAndMaterialNames] FPP version does not exist for {originalName}. Keeping original.");
+                return originalName;
+            }
+        }
+
+        private string ReplaceDateInName(string originalName)
+        {
+            // Define the date format in the file name
+            string dateFormat = "yyyy_MM_dd_HH_mm_ss";
+            // Create a regular expression to find the date format in the file name
+            Regex dateRegex = new Regex(@"\d{4}_\d{2}_\d{2}_\d{2}_\d{2}_\d{2}");
+
+            // Check if the original name contains a date
+            Match match = dateRegex.Match(originalName);
+            if (match.Success)
+            {
+                // If a date is found, replace it with the current date and time
+                string currentDateString = DateTime.Now.ToString(dateFormat);
+                return dateRegex.Replace(originalName, currentDateString);
+            }
+            else
+            {
+                // If no date is found, append the current date and time to the original name
+                return $"{originalName}_{DateTime.Now.ToString(dateFormat)}";
+            }
         }
 
         private void WriteConfigurationOutput(ModelData outputData, string jsonOutputPath, string modelOutputPath)

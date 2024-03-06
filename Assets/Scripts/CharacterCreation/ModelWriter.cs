@@ -102,7 +102,7 @@ namespace doppelganger
                 {
                     if (!usedSlotNames.Contains(requiredSlot))
                     {
-                        int nextAvailableSlotUid = DetermineNextAvailableSlotUid(requiredSlot, new HashSet<int>(existingSlotUids));
+                        int nextAvailableSlotUid = DetermineNextAvailableSlotUid(category, requiredSlot, new HashSet<int>(existingSlotUids));
                         bool isLast = slotsToCreate.IndexOf(requiredSlot) == slotsToCreate.Count - 1; // Check if this is the last slot to create
 
                         // Note: The following log might need adjustment since createdCount isn't updated in this snippet
@@ -125,7 +125,7 @@ namespace doppelganger
                 {
                     if (!usedSlotNames.Contains(requiredSlot))
                     {
-                        int nextAvailableSlotUid = DetermineNextAvailableSlotUid(requiredSlot, new HashSet<int>(existingSlotUids));
+                        int nextAvailableSlotUid = DetermineNextAvailableSlotUid(category, requiredSlot, new HashSet<int>(existingSlotUids));
                         bool isLast = slotsToCreate.IndexOf(requiredSlot) == slotsToCreate.Count - 1; // Check if this is the last slot to create
 
                         // Note: The following log might need adjustment since createdCount isn't updated in this snippet
@@ -145,23 +145,6 @@ namespace doppelganger
 
             // Write to .model file
             File.WriteAllText(modelOutputPath, sb.ToString());
-        }
-
-        private List<int> FindGapSlotUids(List<int> existingSlotUids)
-        {
-            var gapSlotUids = new List<int>();
-            int nextSlotUid = 100; // Start from UID 100
-
-            while (nextSlotUid <= existingSlotUids.DefaultIfEmpty(99).Max() + 1)
-            {
-                if (!existingSlotUids.Contains(nextSlotUid))
-                {
-                    gapSlotUids.Add(nextSlotUid);
-                }
-                nextSlotUid++;
-            }
-
-            return gapSlotUids;
         }
 
         private void AppendSlotPair(StringBuilder sb, ModelData.SlotDataPair slotPair, bool isLast)
@@ -343,8 +326,29 @@ namespace doppelganger
             }
         }
 
-        private int DetermineNextAvailableSlotUid(string slotName, HashSet<int> existingSlotUids)
+        private int DetermineNextAvailableSlotUid(string category, string slotName, HashSet<int> existingSlotUids)
         {
+            Dictionary<string, int> specialSlotUids = new Dictionary<string, int>
+    {
+        {"HEAD", 100},
+        {"HEADCOVER", 200},
+        {"HEADCOVER_PART_1", 201},
+        {"PARAGLIDER", 520},
+        {"SHIELDHOLDER", 530},
+        {"PLAYER_GLOVES", 810}
+    };
+
+            // If it's for 'Player' category and the slot is special, return predefined UID
+            if (category.Equals("Player", StringComparison.OrdinalIgnoreCase) && specialSlotUids.ContainsKey(slotName))
+            {
+                int specialUid = specialSlotUids[slotName];
+                if (!existingSlotUids.Contains(specialUid))
+                {
+                    Debug.Log($"Using predefined UID '{specialUid}' for slot '{slotName}' for category 'Player'.");
+                    return specialUid;
+                }
+            }
+
             if (slotUidLookup.TryGetValue(slotName, out Queue<int> availableUids))
             {
                 while (availableUids.Count > 0)
@@ -355,10 +359,6 @@ namespace doppelganger
                         //Debug.Log($"Found available UID '{uid}' for slot '{slotName}'.");
                         return uid; // Found an available UID
                     }
-                    //else
-                    //{
-                    //    Debug.Log($"UID '{uid}' is already in use.");
-                    //}
                 }
             }
             else
@@ -366,7 +366,7 @@ namespace doppelganger
                 Debug.LogWarning($"No available UIDs found for slot '{slotName}'.");
             }
             int startUid = 100;
-            int endUid = 199;
+            int endUid = 999;
             int newUid = startUid;
 
             while (existingSlotUids.Contains(newUid))

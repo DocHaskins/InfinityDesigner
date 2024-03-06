@@ -186,28 +186,28 @@ namespace doppelganger
 
                 if (newMaterial != null && currentRenderer != null)
                 {
-                    
-                    // Debug logs to ensure correct operation
+                    if (!currentRenderer.enabled)
+                    {
+                        Debug.Log($"Enabling renderer: {currentRenderer.name} before applying new material.");
+                        currentRenderer.enabled = true;
+                    }
+
                     Debug.Log($"Original material name: {currentRenderer.material.name}");
                     Debug.Log($"New material loaded: {newMaterial.name}");
 
-                    // Replace the target renderer's material
-                    currentRenderer.material = newMaterial; // Directly set the new material
+                    currentRenderer.material = newMaterial;
 
-                    // Additional debug logs if needed
                     Debug.Log($"Applied '{newMaterial.name}' to {currentRenderer.gameObject.name}.");
 
-                    // Additional application logic
                     string modelName = currentModelName.Replace("(Clone)", "");
                     string currentSlider = interfaceManager.currentSlider;
-                    //UpdateModelInfoPanel(currentSlider);
+
                     if (modelSpecificChanges.ContainsKey(modelName))
                     {
-                        // Remove all changes for this model
                         modelSpecificChanges.Remove(modelName);
                         Debug.Log($"All changes cleared for model: {modelName}.");
                     }
-                    // Log the current model name and slider being used
+
                     Debug.Log($"Model Name: {modelName}, Current Slider: {currentSlider}");
 
                     int rendererIndex = GetRendererIndexByName(currentRenderer.name);
@@ -217,13 +217,12 @@ namespace doppelganger
                         return;
                     }
                     selectedMaterialName.text = newMaterial.name.Replace(" (Instance)", "");
-                    // Log the index of the renderer
                     Debug.Log($"Renderer index in the current model: {rendererIndex}");
 
                     RecordMaterialChange(modelName, originalName, newMaterial.name, rendererIndex);
                 }
             }
-            else 
+            else
             {
                 Debug.LogError($"Select a material slot (#'s) to apply this material");
             }
