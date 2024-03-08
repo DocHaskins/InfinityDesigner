@@ -33,9 +33,6 @@ namespace doppelganger
         public TMP_Dropdown categoryDropdown;
         public TMP_Dropdown classDropdown;
         public TMP_InputField saveName;
-        public TMP_Dropdown saveTypeDropdown;
-        public TMP_Dropdown saveCategoryDropdown;
-        public TMP_Dropdown saveClassDropdown;
         public GameObject slidersPanel;
         public GameObject sliderPrefab;
         public GameObject variationSliderPrefab;
@@ -44,8 +41,8 @@ namespace doppelganger
 
         private string currentType;
         private string currentPath;
-        public string currentPreset;
-        public string currentPresetPath;
+        public string currentPreset = "player_tpp_skeleton.json";
+        public string currentPresetPath = Path.Combine(Application.streamingAssetsPath, "Jsons", "Human", "Player", "player_tpp_skeleton.json");
 
         private string lastFilterCategoryKey = "";
         private string selectedCategory;
@@ -87,9 +84,6 @@ namespace doppelganger
             string initialType = "Human";
             string initialCategory = "ALL";
             PopulateDropdown(categoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", "Human"), "ALL", true);
-            PopulateDropdown(saveTypeDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData"), "Human", false);
-            PopulateDropdown(saveCategoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", "Human"), "Player", false);
-            PopulateDropdown(saveClassDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", initialType, initialCategory), "ALL", true);
 
             StartCoroutine(SetInitialDropdownValues());
 
@@ -128,20 +122,13 @@ namespace doppelganger
 
             categoryDropdown.value = categoryDropdown.options.FindIndex(option => option.text == "Player");
             classDropdown.value = classDropdown.options.FindIndex(option => option.text == "ALL");
-            SetDropdownByValue(saveTypeDropdown, "Human");
-            SetDropdownByValue(saveCategoryDropdown, "Player");
-            SetDropdownByValue(saveClassDropdown, "ALL");
 
             OnCategoryChanged(categoryDropdown.value);
 
             categoryDropdown.onValueChanged.AddListener(OnCategoryChanged);
             classDropdown.onValueChanged.AddListener(OnClassChanged);
-            saveTypeDropdown.onValueChanged.AddListener(OnSaveTypeChanged);
-            saveCategoryDropdown.onValueChanged.AddListener(OnSaveCategoryChanged);
 
             UpdateInterfaceBasedOnDropdownSelection();
-
-            
         }
 
         public void PopulateDropdown(TMPro.TMP_Dropdown dropdown, string path, string defaultValue, bool includeAllOption = false)
@@ -183,16 +170,12 @@ namespace doppelganger
         {
             // Assuming you have a way to map the index to a type
             string selectedType = GetTypeBasedOnIndex(index);
-            //PopulateDropdown(saveCategoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType), "ALL", false);
-            string selectedCategory = saveCategoryDropdown.options[index].text;
-            //PopulateDropdown(saveClassDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType, selectedCategory), "ALL", true);
         }
         public void OnTypeChanged(int index)
         {
             // Assuming you have a way to map the index to a type
             string selectedType = GetTypeBasedOnIndex(index);
             PopulateDropdown(categoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType), "ALL", true);
-            PopulateDropdown(saveCategoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType), "ALL", true);
             UpdateInterfaceBasedOnDropdownSelection();
         }
 
@@ -215,15 +198,6 @@ namespace doppelganger
             }
         }
 
-        public void OnSaveCategoryChanged(int index)
-        {
-            string selectedType = GetTypeFromSelector();
-            string selectedCategory = saveCategoryDropdown.options[index].text;
-
-            // Use the selectedType to populate the classDropdown based on the selected category
-            PopulateDropdown(saveClassDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType, selectedCategory), "ALL");
-        }
-
         public void OnCategoryChanged(int index)
         {
             string selectedType = GetTypeFromSelector();
@@ -231,7 +205,6 @@ namespace doppelganger
 
             // Use the selectedType to populate the classDropdown based on the selected category
             PopulateDropdown(classDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType, selectedCategory), "ALL");
-            PopulateDropdown(saveClassDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType, selectedCategory), "ALL");
             UpdateInterfaceBasedOnDropdownSelection();
         }
 

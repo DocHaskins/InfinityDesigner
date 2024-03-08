@@ -2,12 +2,16 @@ using System;
 using System.Collections;
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace doppelganger
 {
     public class ScreenshotManager : MonoBehaviour
     {
         public CharacterBuilder_InterfaceManager interfaceManager;
+        public PresetScroller presetScroller;
+
+        public RawImage currentPresetScreenshot_save;
 
         public Camera screenshotCamera;
         public Canvas canvasToExclude;
@@ -28,6 +32,45 @@ namespace doppelganger
                 {
                     Debug.LogError("No preset is currently loaded.");
                 }
+            }
+        }
+
+        public void TakeScreenshot()
+        {
+            string currentPresetPath = interfaceManager.currentPresetPath;
+            Debug.Log($"currentPresetPath {currentPresetPath}");
+            if (!string.IsNullOrEmpty(currentPresetPath))
+            {
+                CaptureAndSaveScreenshot(currentPresetPath, interfaceManager.currentPreset);
+            }
+            else
+            {
+                Debug.LogError("No preset is currently loaded.");
+            }
+        }
+
+        public void SetCurrentScreenshot()
+        {
+            string jsonPath = interfaceManager.currentPresetPath;
+            string imagePath = Path.ChangeExtension(jsonPath, ".png");
+
+            if (File.Exists(imagePath))
+            {
+                Texture2D texture = new Texture2D(2, 2);
+                byte[] fileData = File.ReadAllBytes(imagePath);
+                if (texture.LoadImage(fileData))
+                {
+                    currentPresetScreenshot_save.texture = texture;
+                    presetScroller.LoadPresets();
+                }
+                else
+                {
+                    Debug.LogError("Failed to load image from path: " + imagePath);
+                }
+            }
+            else
+            {
+                Debug.LogError("Image file not found at path: " + imagePath);
             }
         }
 
@@ -57,7 +100,7 @@ namespace doppelganger
 
             StartCoroutine(CaptureScreenshot(captureArea, tempScreenshotPath, () =>
             {
-                Debug.Log($"Screenshot {currentPreset} captured and saved to temporary path: {tempScreenshotPath}");
+                //Debug.Log($"Screenshot {currentPreset} captured and saved to temporary path: {tempScreenshotPath}");
 
                 // Restore the original culling mask
                 screenshotCamera.cullingMask = originalCullingMask;
@@ -71,28 +114,17 @@ namespace doppelganger
         {
             string dateSubfolder = System.DateTime.Now.ToString("yyyy_MM_dd");
             string screenshotFileName = fileNameWithoutExtension;
-
-            // Temporary path in the persistent data path to ensure write access
             string tempScreenshotPath = Path.Combine(Application.persistentDataPath, screenshotFileName);
-
-            // Final path for the screenshot
             string finalScreenshotPath = Path.Combine(Application.dataPath, "StreamingAssets/Output", dateSubfolder, screenshotFileName);
 
-            // Save the current culling mask
             int originalCullingMask = screenshotCamera.cullingMask;
 
-            // Exclude the UI layer from the culling mask
-            // Assuming your UI is on layer 5 (UI layer)
             screenshotCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("UI"));
 
             StartCoroutine(CaptureScreenshot(captureArea, tempScreenshotPath, () =>
             {
                 Debug.Log($"Screenshot captured and saved to temporary path: {tempScreenshotPath}");
-
-                // Restore the original culling mask
                 screenshotCamera.cullingMask = originalCullingMask;
-
-                // Start the coroutine to wait for the screenshot to be saved and then move it
                 StartCoroutine(WaitAndMoveScreenshot(tempScreenshotPath, finalScreenshotPath));
             }));
         }
@@ -182,7 +214,7 @@ namespace doppelganger
                 try
                 {
                     File.Delete(finalPath);
-                    Debug.Log($"Existing file at {finalPath} was successfully deleted.");
+                    //Debug.Log($"Existing file at {finalPath} was successfully deleted.");
                 }
                 catch (IOException e)
                 {
@@ -191,11 +223,11 @@ namespace doppelganger
                 }
             }
 
-            // Attempt to move the file
             try
             {
                 File.Move(tempPath, finalPath);
                 Debug.Log($"Screenshot successfully moved to: {finalPath}");
+                SetCurrentScreenshot();
             }
             catch (Exception e)
             {

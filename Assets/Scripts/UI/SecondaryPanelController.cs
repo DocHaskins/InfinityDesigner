@@ -13,10 +13,12 @@ namespace doppelganger
         public bool isPresets = false;
         public bool isSaves = false;
         public bool isVariations = false;
+        public bool isShare = false;
 
         public Button presetButton;
         public Button saveButton;
         public Button variationButton;
+        public Button shareButton;
 
         void Start()
         {
@@ -24,40 +26,46 @@ namespace doppelganger
             presetButton.onClick.AddListener(SetPreset);
             saveButton.onClick.AddListener(SetSave);
             variationButton.onClick.AddListener(SetVariation);
+            shareButton.onClick.AddListener(SetShare);
         }
 
         public void SetPreset()
         {
-            UpdateState(ref isPresets, ref isSaves, ref isVariations);
+            UpdateState(ref isPresets, ref isSaves, ref isVariations, ref isShare);
             animator.SetBool("isPresets", isPresets);
             presetScroller.LoadPresets();
         }
 
         public void SetSave()
         {
-            UpdateState(ref isSaves, ref isPresets, ref isVariations);
+            UpdateState(ref isSaves, ref isPresets, ref isVariations, ref isShare);
             animator.SetBool("isSaves", isSaves);
         }
 
         public void SetVariation()
         {
-            UpdateState(ref isVariations, ref isPresets, ref isSaves);
+            UpdateState(ref isVariations, ref isPresets, ref isSaves, ref isShare);
             animator.SetBool("isVariations", isVariations);
             variationBuilder.UpdateModelInfoPanel(interfaceManager.currentSlider);
         }
 
-        // Helper method to update state bools and ensure only one is true at a time
-        private void UpdateState(ref bool toTrue, ref bool toFalse1, ref bool toFalse2)
+        public void SetShare()
         {
-            // Set the bools for the state
+            UpdateState(ref isShare, ref isPresets, ref isSaves, ref isVariations);
+            animator.SetBool("isShare", isShare);
+        }
+
+        private void UpdateState(ref bool toTrue, ref bool toFalse1, ref bool toFalse2, ref bool toFalse3)
+        {
             toTrue = true;
             toFalse1 = false;
             toFalse2 = false;
+            toFalse3 = false;
 
-            // Update the Animator's parameters to reflect the new state
             animator.SetBool("isPresets", isPresets);
             animator.SetBool("isSaves", isSaves);
             animator.SetBool("isVariations", isVariations);
+            animator.SetBool("isShare", isShare);
         }
     }
 }

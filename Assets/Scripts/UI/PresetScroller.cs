@@ -119,7 +119,7 @@ namespace doppelganger
             {
                 string fileNameLower = Path.GetFileName(file).ToLower();
                 bool exclude = fileNameLower.Contains("fpp") ||
-                               fileNameLower.Contains("skeleton") ||
+                               (fileNameLower.Contains("skeleton") && fileNameLower != "player_tpp_skeleton.json") ||
                                fileNameLower.Contains("db_");
 
                 return !exclude && (string.IsNullOrEmpty(searchFilter) || fileNameLower.Contains(searchFilter));

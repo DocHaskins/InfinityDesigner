@@ -247,8 +247,8 @@ namespace doppelganger
                 return;
             }
 
-            string jsonOutputPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons/Custom", saveCategory, DateTime.Now.ToString("yyyy_MM_dd"), saveName.text + "_" + DateTime.Now.ToString("HH_mm_ss") + ".json");
-            string screenshotPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons/Custom", saveCategory, DateTime.Now.ToString("yyyy_MM_dd"), screenshotFileName + "_" + DateTime.Now.ToString("HH_mm_ss") + ".png");
+            string jsonOutputPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons/Custom", saveCategory, DateTime.Now.ToString("yyyy_MM_dd"), saveName.text + ".json");
+            string screenshotPath = Path.ChangeExtension(jsonOutputPath, ".png");
             string modelOutputPath = Path.Combine(customBasePath, "ph/source", fileName + ".model");
             Debug.Log($"jsonOutputDirectory {jsonOutputDirectory}, screenshotPath {screenshotPath}");
 
@@ -366,7 +366,8 @@ namespace doppelganger
 
             // Ensure slotPairs are sorted after appending empty slots
             slotPairs = slotPairs.OrderBy(pair => pair.slotData.slotUid).ToList();
-            screenshotManager.CaptureAndMoveScreenshot(screenshotPath);
+            interfaceManager.currentPresetPath = jsonOutputPath;
+            screenshotManager.TakeScreenshot();
 
             // First output configuration
             var outputData = new ModelData
@@ -384,8 +385,9 @@ namespace doppelganger
             // Write the first configuration to JSON
             FinalizeAndWrite(outputData, jsonOutputPath, modelOutputPath);
 
-            if(fppToggleSwitchManager.isOn)
-            { 
+            if (fppToggleSwitchManager.isOn)
+            {
+                string tppFileName = Path.GetFileNameWithoutExtension(jsonOutputPath);
                 bool shouldCreateDualOutputs = saveCategory.Equals("Player", StringComparison.OrdinalIgnoreCase) || saveNameText.Equals("Aiden", StringComparison.OrdinalIgnoreCase);
 
                 if (shouldCreateDualOutputs)
@@ -427,7 +429,7 @@ namespace doppelganger
                     }
 
                     // Define the second JSON and model output paths
-                    string jsonOutputPathSecond = Path.Combine(Application.dataPath, "StreamingAssets/Jsons/Custom", saveCategory, DateTime.Now.ToString("yyyy_MM_dd"), saveName.text + "_fpp_" + DateTime.Now.ToString("HH_mm_ss") + ".json");
+                    string jsonOutputPathSecond = Path.Combine(Application.dataPath, "StreamingAssets/Jsons/Custom", saveCategory, DateTime.Now.ToString("yyyy_MM_dd"), tppFileName + "_fpp.json");
                     string modelOutputPathSecond = Path.Combine(customBasePath, "ph/source", "player_fpp_skeleton.model");
 
                     // Write the second configuration to model

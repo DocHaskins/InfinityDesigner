@@ -19,6 +19,7 @@ namespace doppelganger
         [Header("Managers")]
         public Platform platform;
         public CharacterBuilder_InterfaceManager interfaceManager;
+        public ScreenshotManager screenshotManager;
         public SkeletonLookup skeletonLookup;
         public FilterMapping filterMapping;
         public VariationBuilder variationBuilder;
@@ -306,6 +307,9 @@ namespace doppelganger
                     Debug.LogWarning("Failed to deserialize JSON data");
                 }
                 interfaceManager.usedSliders.Clear();
+                interfaceManager.currentPreset = Path.GetFileName(jsonPath);
+                interfaceManager.currentPresetPath = jsonPath;
+                screenshotManager.SetCurrentScreenshot();
             }
             else
             {

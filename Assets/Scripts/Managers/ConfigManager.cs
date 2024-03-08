@@ -1,12 +1,16 @@
+using Newtonsoft.Json.Bson;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace doppelganger
 {
     public class ConfigManager : MonoBehaviour
     {
+        public Text discordName;
+        public Text discordID;
         private static string configPath = Path.Combine(Application.streamingAssetsPath, "config.ini");
 
         public static void SaveSetting(string section, string key, string value)
@@ -83,6 +87,27 @@ namespace doppelganger
                     }
                     writer.WriteLine(); // Add a blank line for readability
                 }
+            }
+        }
+
+        public void StoreDiscordID()
+        {
+
+            string name = "";
+            string id = "";
+
+            if (discordName != null) name = discordName.text;
+            if (discordID != null) id = discordID.text.Replace("ID: ", "");
+
+            if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(id))
+            {
+                // Store these values in the config.ini file under the new section "Discord"
+                SaveSetting("Discord", "Name", name);
+                SaveSetting("Discord", "ID", id);
+            }
+            else
+            {
+                Debug.LogError("Discord tagged objects with Name and ID not found in the scene!");
             }
         }
     }
