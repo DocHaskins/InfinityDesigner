@@ -306,9 +306,11 @@ namespace doppelganger
                 {
                     Debug.LogWarning("Failed to deserialize JSON data");
                 }
+                string presetName = Path.GetFileNameWithoutExtension(jsonPath);
                 interfaceManager.usedSliders.Clear();
-                interfaceManager.currentPreset = Path.GetFileName(jsonPath);
+                interfaceManager.currentPreset = presetName;
                 interfaceManager.currentPresetPath = jsonPath;
+                interfaceManager.currentPresetLabel.text = presetName;
                 screenshotManager.SetCurrentScreenshot();
             }
             else

@@ -27,6 +27,7 @@ namespace doppelganger
         public TMP_InputField filterInputField;
         public bool debug = false;
 
+
         private struct ButtonAction
         {
             public Action Action;
@@ -69,51 +70,67 @@ namespace doppelganger
             }
         }
 
-        private string GetSelectedFolderPath(string selectedOption)
+        public void LoadPresets()
         {
-            // Example mapping logic. Update according to your specific requirements.
+            // Dictionary holding folder mappings, assume it's class-level if used elsewhere
             var folderMappings = new Dictionary<string, string>
     {
         {"Custom", "Custom/"},
         {"Player", "Human/Player"},
         {"Man", "Human/Man"},
-        {"Woman", "Human/Wmn"},
+        {"Woman", "Human/Woman"},
         {"Child", "Human/Child"},
         {"Biter", "Infected/Biter"},
         {"Special Infected", "Infected/Special Infected"},
         {"Viral", "Infected/Viral"}
     };
 
-            return folderMappings.TryGetValue(selectedOption, out string path) ? path : string.Empty;
-        }
-
-        public void LoadPresets()
-        {
-            string selectedOption = presetTypeDropdown.options[presetTypeDropdown.value].text;
-            string selectedFolder = GetSelectedFolderPath(selectedOption);
-            string searchFilter = filterInputField.text.Trim().ToLower();
-
             // List to hold all valid json file paths
             List<string> allJsonFiles = new List<string>();
+            string searchFilter = filterInputField.text.Trim().ToLower();
+            bool filesFound = false;
 
-            // First, load JSONs from the predefined path
-            string fullPath = Path.Combine(Application.streamingAssetsPath, "Jsons", selectedFolder);
-            var jsonFiles = Directory.GetFiles(fullPath, "*.json", SearchOption.AllDirectories);
-            allJsonFiles.AddRange(jsonFiles);
+            foreach (var entry in folderMappings)
+            {
+                string selectedOption = presetTypeDropdown.options[presetTypeDropdown.value].text;
+                string selectedFolder = folderMappings.TryGetValue(selectedOption, out string path) ? path : string.Empty;
+
+                // Create the directory if it does not exist
+                string fullPath = Path.Combine(Application.streamingAssetsPath, "Jsons", selectedFolder);
+                if (!Directory.Exists(fullPath))
+                {
+                    Directory.CreateDirectory(fullPath); // Create the missing directory
+                }
+
+                // Check JSON files in the directory and subdirectories
+                var jsonFiles = Directory.GetFiles(fullPath, "*.json", SearchOption.AllDirectories);
+                if (jsonFiles.Length > 0) // Check if there are JSON files
+                {
+                    allJsonFiles.AddRange(jsonFiles);
+                    filesFound = true; // Mark that we found files
+                    break; // Exit the loop as we've found valid files
+                }
+
+                if (!filesFound)
+                {
+                    presetTypeDropdown.value = (presetTypeDropdown.value + 1) % presetTypeDropdown.options.Count;
+                }
+                else
+                {
+                    break;
+                }
+            }
 
             // Now, load JSONs from the output_path if it is set
             string output_path = ConfigManager.LoadSetting("SavePath", "Output_Path");
             if (!string.IsNullOrEmpty(output_path))
             {
-                if (Directory.Exists(output_path)) // Check if the directory actually exists
+                if (!Directory.Exists(output_path))
                 {
-                    var outputJsonFiles = Directory.GetFiles(output_path, "*.json", SearchOption.AllDirectories);
-                    allJsonFiles.AddRange(outputJsonFiles);
+                    Directory.CreateDirectory(output_path); // Create the directory if it does not exist
                 }
-                else
-                {
-                    Debug.LogWarning($"Output path does not exist: {output_path}");
-                }
+                var outputJsonFiles = Directory.GetFiles(output_path, "*.json", SearchOption.AllDirectories);
+                allJsonFiles.AddRange(outputJsonFiles);
             }
 
             // Filter out unwanted files and apply search filter if necessary
@@ -228,13 +245,14 @@ namespace doppelganger
                                 {
                                     string jsonContent = reader.ReadToEnd();
                                     dynamic installInfo = JsonConvert.DeserializeObject(jsonContent);
+                                    string userName = installInfo.Metadata.Username;
                                     string category = installInfo.Metadata.Category;
                                     string cls = installInfo.Metadata.Class;
 
                                     //Debug.Log($"Read from install.json: Category = {category}, Class = {cls}");
 
                                     // Define the custom folder path based on category and class
-                                    string customFolderPath = baseCustomFolderPath;
+                                    string customFolderPath = Path.Combine(baseCustomFolderPath, userName);
                                     if (category != "ALL")
                                     {
                                         customFolderPath = Path.Combine(customFolderPath, category);

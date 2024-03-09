@@ -44,6 +44,7 @@ namespace doppelganger
 
         private string currentType;
         private string currentPath;
+        public TMP_Text currentPresetLabel;
         public string currentPreset = "player_tpp_skeleton.json";
         public string currentPresetPath = Path.Combine(Application.streamingAssetsPath, "Jsons", "Human", "Player", "player_tpp_skeleton.json");
 
@@ -944,6 +945,7 @@ namespace doppelganger
                 Debug.Log("Loading JSON from path: " + presetsPath);
                 characterBuilder.LoadJsonAndSetSliders(presetsPath);
                 saveName.text = jsonName;
+                currentPresetLabel.text = Path.GetFileNameWithoutExtension(jsonName);
                 currentPreset = jsonName;
                 currentPresetPath = presetsPath;
             }

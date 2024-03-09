@@ -367,6 +367,7 @@ namespace doppelganger
             // Ensure slotPairs are sorted after appending empty slots
             slotPairs = slotPairs.OrderBy(pair => pair.slotData.slotUid).ToList();
             interfaceManager.currentPresetPath = jsonOutputPath;
+            interfaceManager.currentPresetLabel.text = Path.GetFileNameWithoutExtension(jsonOutputPath);
             screenshotManager.TakeScreenshot();
 
             // First output configuration

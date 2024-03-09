@@ -29,7 +29,7 @@ public class PreBuildScript : IPreprocessBuildWithReport
         }
 
         List<string> lines = new List<string>(File.ReadAllLines(configPath));
-        List<string> keysToRemove = new List<string> { "Path=", "DL2_Game=", "ProcessedVersion=" };
+        List<string> keysToRemove = new List<string> { "Path=", "DL2_Game=", "ProcessedVersion=", "Name=", "ID=" };
 
         // Iterate through the lines in reverse to safely remove items without affecting the iteration
         for (int i = lines.Count - 1; i >= 0; i--)

@@ -86,7 +86,7 @@ namespace doppelganger
         public void SendWebhookWithAttachments()
         {
             string discordDisplayName = ConfigManager.LoadSetting("Discord", "Name");
-            Debug.LogError($"discordDisplayName: {discordDisplayName}");
+            //Debug.LogError($"discordDisplayName: {discordDisplayName}");
             string message = "Category: " + categoryDropdown.options[categoryDropdown.value].text + "\n" +
                              "Class: " + classDropdown.options[classDropdown.value].text + "\n";
             string title = discordDisplayName + ": " + _titleTextField?.text;
@@ -147,6 +147,7 @@ namespace doppelganger
                 {
                     Metadata = new
                     {
+                        Username = discordDisplayName,
                         Category = categoryDropdown.options[categoryDropdown.value].text,
                         Class = classDropdown.options[classDropdown.value].text
                     },

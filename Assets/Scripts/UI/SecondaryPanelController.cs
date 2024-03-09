@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +9,8 @@ namespace doppelganger
         public PresetScroller presetScroller;
         public CharacterBuilder_InterfaceManager interfaceManager;
         public VariationBuilder variationBuilder;
+
+        public TMP_Text currentPresetLabel;
         
         public Animator animator;
         public bool isPresets = false;
@@ -31,6 +34,7 @@ namespace doppelganger
 
         public void SetPreset()
         {
+            currentPresetLabel.gameObject.SetActive(true);
             UpdateState(ref isPresets, ref isSaves, ref isVariations, ref isShare);
             animator.SetBool("isPresets", isPresets);
             presetScroller.LoadPresets();
@@ -38,12 +42,14 @@ namespace doppelganger
 
         public void SetSave()
         {
+            currentPresetLabel.gameObject.SetActive(true);
             UpdateState(ref isSaves, ref isPresets, ref isVariations, ref isShare);
             animator.SetBool("isSaves", isSaves);
         }
 
         public void SetVariation()
         {
+            currentPresetLabel.gameObject.SetActive(false);
             UpdateState(ref isVariations, ref isPresets, ref isSaves, ref isShare);
             animator.SetBool("isVariations", isVariations);
             variationBuilder.UpdateModelInfoPanel(interfaceManager.currentSlider);
@@ -51,6 +57,7 @@ namespace doppelganger
 
         public void SetShare()
         {
+            currentPresetLabel.gameObject.SetActive(false);
             UpdateState(ref isShare, ref isPresets, ref isSaves, ref isVariations);
             animator.SetBool("isShare", isShare);
         }

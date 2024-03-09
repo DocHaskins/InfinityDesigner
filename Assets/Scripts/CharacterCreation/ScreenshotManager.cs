@@ -61,7 +61,6 @@ namespace doppelganger
                 if (texture.LoadImage(fileData))
                 {
                     currentPresetScreenshot_save.texture = texture;
-                    presetScroller.LoadPresets();
                 }
                 else
                 {
@@ -228,6 +227,7 @@ namespace doppelganger
                 File.Move(tempPath, finalPath);
                 Debug.Log($"Screenshot successfully moved to: {finalPath}");
                 SetCurrentScreenshot();
+                presetScroller.LoadPresets();
             }
             catch (Exception e)
             {
