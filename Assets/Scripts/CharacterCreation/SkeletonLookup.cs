@@ -19,7 +19,7 @@ namespace doppelganger
         public TMP_Dropdown categoryDropdown;
         public TMP_Dropdown classDropdown;
 
-        private Dictionary<string, Dictionary<string, string>> skeletonMapping = new Dictionary<string, Dictionary<string, string>>
+        public Dictionary<string, Dictionary<string, string>> skeletonMapping = new Dictionary<string, Dictionary<string, string>>
 {
     {
         "ALL", new Dictionary<string, string>
@@ -87,8 +87,7 @@ namespace doppelganger
             {"screamer", "zmb_screamer_skeleton"},
             {"spitter", "zmb_spitter_skeleton"},
             {"suicider", "zmb_suicider_skeleton"},
-            {"volatile", "zmb_volataile_skeleton"},
-            {"ALL", "player_skeleton"}
+            {"volatile", "zmb_volataile_skeleton"}
         }
     },
     {
@@ -108,9 +107,9 @@ namespace doppelganger
 
             if (skeletonMapping.ContainsKey(selectedCategory) && skeletonMapping[selectedCategory].ContainsKey(selectedClass))
             {
-                Debug.Log("GetSelectedSkeleton: Selected Category: " + selectedCategory + ", Selected Class: " + selectedClass);
+                //Debug.Log("GetSelectedSkeleton: Selected Category: " + selectedCategory + ", Selected Class: " + selectedClass);
                 string selectedSkeleton = skeletonMapping[selectedCategory][selectedClass];
-                Debug.Log("GetSelectedSkeleton: Selected Skeleton: " + selectedSkeleton);
+                //Debug.Log("GetSelectedSkeleton: Selected Skeleton: " + selectedSkeleton);
                 return selectedSkeleton + ".msh";
             }
             else
@@ -125,9 +124,9 @@ namespace doppelganger
             // Directly use the provided selectedCategory and selectedClass parameters
             if (skeletonMapping.ContainsKey(selectedCategory) && skeletonMapping[selectedCategory].ContainsKey(selectedClass))
             {
-                Debug.Log("Selected Category: " + selectedCategory + ", Selected Class: " + selectedClass);
+                //Debug.Log("Selected Category: " + selectedCategory + ", Selected Class: " + selectedClass);
                 string selectedSkeleton = skeletonMapping[selectedCategory][selectedClass];
-                Debug.Log("Selected Skeleton: " + selectedSkeleton);
+                //Debug.Log("Selected Skeleton: " + selectedSkeleton);
                 return selectedSkeleton + ".msh";
             }
             else

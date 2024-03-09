@@ -259,12 +259,12 @@ namespace doppelganger
                                 // Remove the '.msh' extension from the model name
                                 string modelNameWithClone = Path.GetFileNameWithoutExtension(modelInfo.name) + "(Clone)";
 
-                                Debug.Log($"Processing model: {modelInfo.name}, looking for slot.");
+                                //Debug.Log($"Processing model: {modelInfo.name}, looking for slot.");
 
                                 string slotName = interfaceManager.FindSlotForModel(modelInfo.name);
                                 if (!string.IsNullOrEmpty(slotName))
                                 {
-                                    Debug.Log($"Found slot '{slotName}' for model '{modelInfo.name}'.");
+                                    //Debug.Log($"Found slot '{slotName}' for model '{modelInfo.name}'.");
 
                                     int modelIndex = interfaceManager.GetModelIndex(slotName, modelInfo.name);
                                     if (modelIndex != -1)
@@ -277,7 +277,7 @@ namespace doppelganger
                                         GameObject modelInstance = GameObject.Find(modelNameWithClone); // Adjusted to use modelNameWithClone
                                         if (modelInstance != null) // Assuming modelInstance is found
                                         {
-                                            Debug.Log($"Applying materials directly from JSON data for '{modelInfo.name}'.");
+                                            //Debug.Log($"Applying materials directly from JSON data for '{modelInfo.name}'.");
                                             ApplyPresetMaterialsDirectly(modelInstance, modelInfo, slotName, modelIndex);
                                         }
                                         else
@@ -325,14 +325,14 @@ namespace doppelganger
                 return;
             }
 
-            Debug.Log($"Starting to apply materials directly based on JSON for model instance '{modelInstance.name}'. Total materials resources: {modelInfo.materialsResources.Count}");
+            //Debug.Log($"Starting to apply materials directly based on JSON for model instance '{modelInstance.name}'. Total materials resources: {modelInfo.materialsResources.Count}");
 
             var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
 
             foreach (var materialResource in modelInfo.materialsResources)
             {
                 int rendererIndex = materialResource.number - 1;
-                Debug.Log($"Processing material resource with index {rendererIndex} having {materialResource.resources.Count} resources.");
+                //Debug.Log($"Processing material resource with index {rendererIndex} having {materialResource.resources.Count} resources.");
 
                 if (rendererIndex >= 0 && rendererIndex < skinnedMeshRenderers.Length)
                 {
@@ -341,7 +341,7 @@ namespace doppelganger
                     foreach (var resource in materialResource.resources)
                     {
                         // Ignore the 'selected' flag and apply all materials
-                        Debug.Log($"Forcibly applying material '{resource.name}' with RTTI values to renderer at index {rendererIndex}, regardless of 'selected' status.");
+                        //Debug.Log($"Applying material '{resource.name}' with RTTI values to renderer at index {rendererIndex}, regardless of 'selected' status.");
                         ApplyMaterialToRenderer(renderer, resource.name, modelInstance, resource.rttiValues, slotName, modelIndex);
                     }
                 }
@@ -680,7 +680,7 @@ namespace doppelganger
             }
 
             var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
-            Debug.Log($"[ApplyMaterials] Found {skinnedMeshRenderers.Length} SkinnedMeshRenderer components in {modelInstance.name}.");
+            //Debug.Log($"[ApplyMaterials] Found {skinnedMeshRenderers.Length} SkinnedMeshRenderer components in {modelInstance.name}.");
 
             if (!initialRendererStates.ContainsKey(modelInstance))
             {
@@ -688,7 +688,7 @@ namespace doppelganger
                 //Debug.Log("[ApplyMaterials] Initial renderer states stored.");
             }
 
-            Debug.Log($"[ApplyMaterials] Processing {modelInfo.materialsResources.Count} materialsResources for model '{modelInfo.name}'.");
+            //Debug.Log($"[ApplyMaterials] Processing {modelInfo.materialsResources.Count} materialsResources for model '{modelInfo.name}'.");
             foreach (var materialData in modelInfo.materialsData)
             {
                 if (materialData == null)
@@ -727,7 +727,6 @@ namespace doppelganger
 
         private void ApplyMaterialToRenderer(SkinnedMeshRenderer renderer, string materialName, GameObject modelInstance, List<RttiValue> rttiValues, string slotName, int materialIndex)
         {
-            Debug.Log($"ApplyMaterialToRenderer");
             if (materialName.Equals("null.mat", StringComparison.OrdinalIgnoreCase))
             {
                 Debug.Log($"Renderer '{renderer.gameObject.name}' disabled due to null material.");
@@ -740,7 +739,7 @@ namespace doppelganger
             Material loadedMaterial = LoadMaterial(materialName);
             if (loadedMaterial != null)
             {
-                Debug.Log($"Loaded material '{materialName}' for renderer '{renderer.gameObject.name}'. Preparing to apply RTTI values.");
+                //Debug.Log($"Loaded material '{materialName}' for renderer '{renderer.gameObject.name}'. Preparing to apply RTTI values.");
                 Material clonedMaterial = new Material(loadedMaterial);
                 renderer.sharedMaterials = new Material[] { clonedMaterial };
 
@@ -754,7 +753,7 @@ namespace doppelganger
                 }
                 else
                 {
-                    Debug.Log($"No RTTI values found for material '{materialName}'.");
+                    //Debug.Log($"No RTTI values found for material '{materialName}'.");
                 }
             }
             else

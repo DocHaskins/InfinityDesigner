@@ -16,9 +16,9 @@ namespace doppelganger
         
         [SerializeField]
         private TMP_InputField _titleTextField;
-        public Text discordDisplayName;
         private string discordUserName;
         private string discordUserId;
+        public Button discordSubmit;
 
         public TMP_Dropdown categoryDropdown;
         public TMP_Dropdown classDropdown;
@@ -45,6 +45,10 @@ namespace doppelganger
         {
             string discordUserName = ConfigManager.LoadSetting("Discord", "Name");
             string discordUserId = ConfigManager.LoadSetting("Discord", "ID");
+            if (discordUserName != null)
+            {
+                discordSubmit.gameObject.SetActive(true);
+            }
             LoadBadWords();
         }
 
@@ -81,9 +85,11 @@ namespace doppelganger
 
         public void SendWebhookWithAttachments()
         {
+            string discordDisplayName = ConfigManager.LoadSetting("Discord", "Name");
+            Debug.LogError($"discordDisplayName: {discordDisplayName}");
             string message = "Category: " + categoryDropdown.options[categoryDropdown.value].text + "\n" +
                              "Class: " + classDropdown.options[classDropdown.value].text + "\n";
-            string title = discordDisplayName.text + ": " + _titleTextField?.text;
+            string title = discordDisplayName + ": " + _titleTextField?.text;
 
             string foundWordInMessage, foundWordInTitle;
 
@@ -144,7 +150,7 @@ namespace doppelganger
                         Category = categoryDropdown.options[categoryDropdown.value].text,
                         Class = classDropdown.options[classDropdown.value].text
                     },
-                    Files = new[] { jsonFileName, fppJsonFilePath != null ? Path.GetFileName(fppJsonFilePath) : null, currentJsonImageName, "PLACEHOLDER_InfinityDesigner_json.file" }
+                    Files = new[] { jsonFileName, fppJsonFilePath != null ? Path.GetFileName(fppJsonFilePath) : null, currentJsonImageName }
                 };
 
                 string installJsonContent = JsonConvert.SerializeObject(installInfo, Formatting.Indented);

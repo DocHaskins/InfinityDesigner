@@ -19,6 +19,7 @@ namespace doppelganger
         public bool autoGenerate;
         public bool isTextures = true;
         public bool isMaterials = false;
+        private bool useFilteredMaterials = false;
         public string searchTerm = "";
         public string additionalFilterTerm = "";
         public GameObject currentModel;
@@ -82,7 +83,7 @@ namespace doppelganger
             }
             LoadTextures(searchTerm, additionalFilterTerm);
             filterInputField.onEndEdit.AddListener(delegate { RefreshResources(); });
-            imageTypeDropdown.onValueChanged.AddListener(delegate { DropdownIndexChanged(imageTypeDropdown); });
+            imageTypeDropdown.onValueChanged.AddListener(delegate { RefreshResources(); });
             materialsButton.onClick.AddListener(() => ReloadMaterials());
             texturesButton.onClick.AddListener(() => ReloadTextures());
         }
@@ -126,6 +127,124 @@ namespace doppelganger
                 materialsInitialized = true; // Ensure this initialization only happens once
             }
         }
+
+        public void ReloadMaterials()
+        {
+            isMaterials = true;
+            isTextures = false;
+            UpdateButtonColors(materialsButton);
+            RefreshResources();
+        }
+
+        public void ReloadTextures()
+        {
+            isTextures = true;
+            isMaterials = false;
+            UpdateButtonColors(texturesButton);
+            RefreshResources();
+        }
+
+        public void FilterTextures(string filter)
+        {
+            filteredTextures = allTextures.Where(t => t.name.Contains(filter)).ToList();
+            HandleTextureGeneration();
+        }
+
+        private void FilterMaterialsByTextureProperty(string property)
+        {
+            allMaterials = allMaterials.Where(m => m.HasProperty(property) && m.GetTexture(property) != null).ToList();
+            //Debug.Log($"Total Materials after filter for property {property}: {allMaterials.Count}");
+        }
+
+        private void UpdateButtonColors(Button activeButton)
+        {
+            // Reset both buttons to the default color
+            materialsButton.image.color = defaultButtonColor;
+            texturesButton.image.color = defaultButtonColor;
+
+            // Set the active button to the selected color
+            activeButton.image.color = selectedButtonColor;
+        }
+
+        public void SetCurrentSelectionPanel(VariationTextureSlotsPanel panel)
+        {
+            currentSelectionPanel = panel;
+            Debug.Log($"SetCurrentSelectionPanel: currentSelectionPanel: {currentSelectionPanel}");
+        }
+
+        public void ClearCurrentSelectionPanel()
+        {
+            currentSelectionPanel = null;
+            //Debug.Log($"ClearCurrentSelectionPanel: currentSelectionPanel: {currentSelectionPanel}");
+        }
+
+        public VariationTextureSlotsPanel GetCurrentSelectionPanel()
+        {
+            return currentSelectionPanel;
+        }
+
+        public void PrepareForSelection(VariationTextureSlotsPanel selectionPanel, string slotName)
+        {
+            currentSelectionPanel = selectionPanel;
+            currentSlotForSelection = slotName;
+            Debug.Log($"Preparing for texture selection for selectionPanel {selectionPanel} on slotName {slotName}");
+            //ReloadTextures();
+            SetSearchTermFromOtherUI(slotName);
+        }
+
+        private void RefreshResources()
+        {
+            ClearExistingCells();
+            string containsFilter = filterInputField.text.Trim().ToLower();
+            string searchTerm = imageTypeDropdown.options[imageTypeDropdown.value].text;
+            if (isMaterials)
+            {
+                LoadAndFilterMaterials(searchTerm, containsFilter);
+                //Debug.Log($"RefreshResources: Material - searchTerm {searchTerm}, containsFilter {containsFilter}");
+            }
+            else if (isTextures)
+            {
+                string endingFilter = searchTerm;
+                LoadTextures(endingFilter, containsFilter);
+            }
+        }
+
+        private void LoadAndFilterMaterials(string property, string containsFilter)
+        {
+            LoadMaterialsFromJson();
+            FilterMaterialsByTextureProperty(property);
+            ApplyContainsFilterToMaterials(containsFilter);
+            HandleMaterialGeneration();
+        }
+
+        private void ApplyContainsFilterToMaterials(string containsFilter)
+        {
+            if (!string.IsNullOrEmpty(containsFilter))
+            {
+                allMaterials = allMaterials.Where(m => m.name.ToLower().Contains(containsFilter)).ToList();
+                Debug.Log($"ApplyContainsFilterToMaterials: Total Materials after filter for property {containsFilter}: {allMaterials.Count}");
+            }
+        }
+
+        private void LoadMaterialsFromJson()
+        {
+            allMaterials.Clear();
+            if (materialNamesFromJson == null || materialNamesFromJson.Count == 0)
+            {
+                Debug.LogError("Material names list is empty.");
+                return;
+            }
+
+            foreach (string matName in materialNamesFromJson)
+            {
+                Material mat = Resources.Load<Material>($"Materials/{matName.Replace(".mat", "").Trim()}");
+                if (mat != null)
+                {
+                    allMaterials.Add(mat);
+                }
+            }
+        }
+
 
         public void LoadTextures(string endingFilter, string containsFilter)
         {
@@ -226,111 +345,9 @@ namespace doppelganger
                     allMaterials.Add(mat);
                 }
             }
+
             Debug.Log($"Total Materials after filter: {allMaterials.Count}");
             HandleMaterialGeneration();
-        }
-
-        public void FilterTextures(string filter)
-        {
-            filteredTextures = allTextures.Where(t => t.name.Contains(filter)).ToList();
-            HandleTextureGeneration();
-        }
-
-        public void FilterMaterials(string filter)
-        {
-            filteredMaterials = allMaterials.Where(m => m.HasProperty(filter)).ToList();
-            HandleMaterialGeneration();
-        }
-
-        public void ReloadMaterials()
-        {
-            isMaterials = true;
-            isTextures = false;
-            UpdateButtonColors(materialsButton);
-            UpdateFilterFromDropdown();
-            RefreshResources();
-        }
-
-        public void ReloadTextures()
-        {
-            isTextures = true;
-            isMaterials = false;
-            UpdateButtonColors(texturesButton);
-            UpdateFilterFromDropdown();
-            RefreshResources();
-        }
-
-        private void UpdateFilterFromDropdown()
-        {
-            if (imageTypeDropdown.options.Count > imageTypeDropdown.value)
-            {
-                searchTerm = imageTypeDropdown.options[imageTypeDropdown.value].text.Trim().ToLower();
-            }
-        }
-
-        private void UpdateButtonColors(Button activeButton)
-        {
-            // Reset both buttons to the default color
-            materialsButton.image.color = defaultButtonColor;
-            texturesButton.image.color = defaultButtonColor;
-
-            // Set the active button to the selected color
-            activeButton.image.color = selectedButtonColor;
-        }
-
-        public void SetCurrentSelectionPanel(VariationTextureSlotsPanel panel)
-        {
-            currentSelectionPanel = panel;
-            Debug.Log($"SetCurrentSelectionPanel: currentSelectionPanel: {currentSelectionPanel}");
-        }
-
-        public void ClearCurrentSelectionPanel()
-        {
-            currentSelectionPanel = null;
-            //Debug.Log($"ClearCurrentSelectionPanel: currentSelectionPanel: {currentSelectionPanel}");
-        }
-
-        public VariationTextureSlotsPanel GetCurrentSelectionPanel()
-        {
-            return currentSelectionPanel;
-        }
-
-        public void PrepareForSelection(VariationTextureSlotsPanel selectionPanel, string slotName)
-        {
-            currentSelectionPanel = selectionPanel;
-            currentSlotForSelection = slotName;
-            Debug.Log($"Preparing for texture selection for selectionPanel {selectionPanel} on slotName {slotName}");
-            //ReloadTextures();
-            SetSearchTermFromOtherUI(slotName);
-        }
-
-        public void DropdownIndexChanged(TMP_Dropdown dropdown)
-        {
-            searchTerm = dropdown.options[dropdown.value].text.Trim().ToLower();
-            if (isMaterials)
-            {
-                ReloadMaterials();
-            }
-            else
-            {
-                ReloadTextures();
-            }
-        }
-
-        private void RefreshResources()
-        {
-            ClearExistingCells();
-            string endingFilter = searchTerm;
-            string containsFilter = filterInputField.text.Trim().ToLower(); 
-
-            if (isTextures)
-            {
-                LoadTextures(endingFilter, containsFilter);
-            }
-            else if (isMaterials)
-            {
-                LoadMaterials(containsFilter);
-            }
         }
 
         private void HandleTextureGeneration()
@@ -367,7 +384,6 @@ namespace doppelganger
 
         private void HandleMaterialGeneration()
         {
-            Debug.Log($"Total Materials after filter: {allMaterials.Count}");
             if (gridUnlimitedScroller != null)
             {
                 gridUnlimitedScroller.cellPerRow = 5;
@@ -484,11 +500,6 @@ namespace doppelganger
             {
                 Debug.LogError("Select a material slot in the active panel and try again");
             }
-        }
-
-        private void RefreshTexturesWithAdditionalFilter()
-        {
-            RefreshResources();
         }
 
         private void ClearExistingCells()

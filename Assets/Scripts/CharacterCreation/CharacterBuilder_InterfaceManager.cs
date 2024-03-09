@@ -25,6 +25,7 @@ namespace doppelganger
         public VariationBuilder variationBuilder;
         public SliderKeyboardControl sliderKeyboardControl;
         public FilterMapping filterMapping;
+        public SkeletonLookup skeletonLookup;
         public TextureScroller textureScroller;
 
         [Header("Interface")]
@@ -33,6 +34,8 @@ namespace doppelganger
         public TMP_Dropdown categoryDropdown;
         public TMP_Dropdown classDropdown;
         public TMP_InputField saveName;
+        public TMP_Dropdown saveCategoryDropdown;
+        public TMP_Dropdown saveClassDropdown;
         public GameObject slidersPanel;
         public GameObject sliderPrefab;
         public GameObject variationSliderPrefab;
@@ -103,6 +106,13 @@ namespace doppelganger
                 Debug.LogWarning("Player type not found in dropdown options.");
             }
 
+            PopulateSaveCategoryDropdown();
+            PopulateSaveClassDropdown(skeletonLookup.skeletonMapping.Keys.First()); // Default to the first category
+
+            saveCategoryDropdown.onValueChanged.AddListener(delegate {
+                SaveCategoryChanged(saveCategoryDropdown.options[saveCategoryDropdown.value].text);
+            });
+
             // Manually trigger the interface update as if the dropdown values were changed
             UpdateInterfaceBasedOnDropdownSelection();
 
@@ -122,6 +132,8 @@ namespace doppelganger
 
             categoryDropdown.value = categoryDropdown.options.FindIndex(option => option.text == "Player");
             classDropdown.value = classDropdown.options.FindIndex(option => option.text == "ALL");
+            SetDropdownByValue(saveCategoryDropdown, "Player");
+            SetDropdownByValue(saveClassDropdown, "ALL");
 
             OnCategoryChanged(categoryDropdown.value);
 
@@ -129,6 +141,8 @@ namespace doppelganger
             classDropdown.onValueChanged.AddListener(OnClassChanged);
 
             UpdateInterfaceBasedOnDropdownSelection();
+
+            
         }
 
         public void PopulateDropdown(TMPro.TMP_Dropdown dropdown, string path, string defaultValue, bool includeAllOption = false)
@@ -166,16 +180,12 @@ namespace doppelganger
             return new List<string>();
         }
 
-        public void OnSaveTypeChanged(int index)
-        {
-            // Assuming you have a way to map the index to a type
-            string selectedType = GetTypeBasedOnIndex(index);
-        }
         public void OnTypeChanged(int index)
         {
             // Assuming you have a way to map the index to a type
             string selectedType = GetTypeBasedOnIndex(index);
             PopulateDropdown(categoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType), "ALL", true);
+            PopulateDropdown(saveCategoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType), "ALL", true);
             UpdateInterfaceBasedOnDropdownSelection();
         }
 
@@ -198,6 +208,7 @@ namespace doppelganger
             }
         }
 
+
         public void OnCategoryChanged(int index)
         {
             string selectedType = GetTypeFromSelector();
@@ -205,12 +216,40 @@ namespace doppelganger
 
             // Use the selectedType to populate the classDropdown based on the selected category
             PopulateDropdown(classDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType, selectedCategory), "ALL");
+            PopulateDropdown(saveClassDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType, selectedCategory), "ALL");
             UpdateInterfaceBasedOnDropdownSelection();
         }
 
         public void OnClassChanged(int index)
         {
             UpdateInterfaceBasedOnDropdownSelection();
+        }
+
+        private void PopulateSaveCategoryDropdown()
+        {
+            saveCategoryDropdown.ClearOptions();
+            saveCategoryDropdown.AddOptions(skeletonLookup.skeletonMapping.Keys.ToList());
+            saveCategoryDropdown.RefreshShownValue();
+        }
+
+        private void PopulateSaveClassDropdown(string selectedCategory)
+        {
+            saveClassDropdown.ClearOptions();
+            if (skeletonLookup.skeletonMapping.ContainsKey(selectedCategory))
+            {
+                // Adding class options based on the selected category
+                saveClassDropdown.AddOptions(skeletonLookup.skeletonMapping[selectedCategory].Keys.ToList());
+            }
+            else
+            {
+                Debug.LogError("Selected category not found in skeleton mapping: " + selectedCategory);
+            }
+            saveClassDropdown.RefreshShownValue();
+        }
+
+        public void SaveCategoryChanged(string selectedCategory)
+        {
+            PopulateSaveClassDropdown(selectedCategory);
         }
 
 

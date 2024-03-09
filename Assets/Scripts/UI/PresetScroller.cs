@@ -8,6 +8,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnlimitedScrollUI.Example;
+using Newtonsoft.Json;
+using System.IO.Compression;
 
 namespace doppelganger
 {
@@ -175,6 +177,125 @@ namespace doppelganger
 
                 // Now reload presets from the Custom folder
                 RefreshCustomPresets(customFolderPath); // Implement this based on your existing logic
+            }
+        }
+
+        public void InstallZips()
+        {
+            // Define the custom folder path base
+            string baseCustomFolderPath = Path.Combine(Application.streamingAssetsPath, "Jsons", "Custom");
+            Debug.Log($"Checking or creating base custom folder path: {baseCustomFolderPath}");
+
+            // Ensure the custom base folder exists
+            if (!Directory.Exists(baseCustomFolderPath))
+            {
+                Directory.CreateDirectory(baseCustomFolderPath);
+                Debug.Log($"Created base custom folder path: {baseCustomFolderPath}");
+            }
+
+            // Call the Standalone File Browser to select a folder
+            string[] paths = StandaloneFileBrowser.OpenFolderPanel("Select Folder", "", false);
+            if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
+            {
+                Debug.Log($"Selected folder for zip files: {paths[0]}");
+
+                // Load all ZIP files from the selected folder
+                List<string> zipFiles = new List<string>();
+                try
+                {
+                    zipFiles.AddRange(Directory.GetFiles(paths[0], "*.zip", SearchOption.AllDirectories));
+                    Debug.Log($"Found {zipFiles.Count} zip files in selected directory.");
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Error while loading ZIP files: {e.Message}");
+                    return; // Stop execution if we can't load the files
+                }
+
+                foreach (string zipFile in zipFiles)
+                {
+                    //Debug.Log($"Processing zip file: {zipFile}");
+                    using (ZipArchive archive = ZipFile.OpenRead(zipFile))
+                    {
+                        if (archive.GetEntry("PLACEHOLDER_InfinityDesigner_json.file") != null)
+                        {
+                            //Debug.Log($"Found placeholder file in: {zipFile}");
+
+                            ZipArchiveEntry installJsonEntry = archive.GetEntry("install.json");
+                            if (installJsonEntry != null)
+                            {
+                                using (StreamReader reader = new StreamReader(installJsonEntry.Open()))
+                                {
+                                    string jsonContent = reader.ReadToEnd();
+                                    dynamic installInfo = JsonConvert.DeserializeObject(jsonContent);
+                                    string category = installInfo.Metadata.Category;
+                                    string cls = installInfo.Metadata.Class;
+
+                                    //Debug.Log($"Read from install.json: Category = {category}, Class = {cls}");
+
+                                    // Define the custom folder path based on category and class
+                                    string customFolderPath = baseCustomFolderPath;
+                                    if (category != "ALL")
+                                    {
+                                        customFolderPath = Path.Combine(customFolderPath, category);
+                                    }
+                                    if (cls != "ALL")
+                                    {
+                                        customFolderPath = Path.Combine(customFolderPath, cls);
+                                    }
+
+                                    // Ensure the custom folder exists
+                                    if (!Directory.Exists(customFolderPath))
+                                    {
+                                        Directory.CreateDirectory(customFolderPath);
+                                        //Debug.Log($"Created custom folder path for extraction: {customFolderPath}");
+                                    }
+
+                                    // Initialize paths for files to delete after extraction
+                                    List<string> filesToDelete = new List<string>();
+
+                                    // Extract files except the placeholder
+                                    foreach (ZipArchiveEntry entry in archive.Entries)
+                                    {
+                                        string destinationPath = Path.Combine(customFolderPath, entry.FullName);
+                                        // Direct extraction for non-placeholder and non-install.json files
+                                        if (!entry.FullName.Equals("PLACEHOLDER_InfinityDesigner_json.file", StringComparison.OrdinalIgnoreCase) &&
+                                            !entry.FullName.Equals("install.json", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            entry.ExtractToFile(destinationPath, true);
+                                            //Debug.Log($"Extracted file: {entry.FullName} to {destinationPath}");
+                                        }
+                                        else
+                                        {
+                                            // Add placeholder and install.json to the deletion list
+                                            filesToDelete.Add(destinationPath);
+                                        }
+                                    }
+
+                                    // Now delete placeholder and install.json after extraction
+                                    foreach (string fileToDelete in filesToDelete)
+                                    {
+                                        if (File.Exists(fileToDelete))
+                                        {
+                                            File.Delete(fileToDelete);
+                                            //Debug.Log($"Deleted file: {fileToDelete}");
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                Debug.LogError("install.json not found within: " + zipFile);
+                            }
+                        }
+                        else
+                        {
+                            Debug.Log("Placeholder file not found in: " + zipFile);
+                        }
+                    }
+                }
+                RefreshCustomPresets(baseCustomFolderPath);
+                LoadPresets();
             }
         }
 

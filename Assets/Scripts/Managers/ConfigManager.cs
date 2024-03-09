@@ -110,5 +110,25 @@ namespace doppelganger
                 Debug.LogError("Discord tagged objects with Name and ID not found in the scene!");
             }
         }
+
+        public void DestroyDiscordID()
+        {
+
+            string name = "";
+            string id = "";
+
+            if (discordName != null) name = "";
+            if (discordID != null) id = "";
+
+            if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(id))
+            {
+                SaveSetting("Discord", "Name", name);
+                SaveSetting("Discord", "ID", id);
+            }
+            else
+            {
+                Debug.LogError("Discord tagged objects with Name and ID not found in the scene!");
+            }
+        }
     }
 }

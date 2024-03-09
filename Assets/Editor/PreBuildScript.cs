@@ -9,13 +9,16 @@ public class PreBuildScript : IPreprocessBuildWithReport
 {
     public int callbackOrder => 0;
 
+    private string _sessionSavePath = Path.Combine(Application.dataPath, "StreamingAssets", "discordSession.json");
+
     public void OnPreprocessBuild(BuildReport report)
     {
         string configPath = Path.Combine(Application.streamingAssetsPath, "config.ini");
         string version = PlayerSettings.bundleVersion;
 
-        ClearSpecificConfigData(configPath); // Clear specific config data first
-        WriteVersionToConfig(configPath, version); // Then write or update the version
+        ClearSpecificConfigData(configPath);
+        DestroyDiscordSession();
+        WriteVersionToConfig(configPath, version);
     }
 
     private void ClearSpecificConfigData(string configPath)
@@ -43,6 +46,21 @@ public class PreBuildScript : IPreprocessBuildWithReport
 
         // Rewrite the modified lines back to the file
         File.WriteAllLines(configPath, lines.ToArray());
+    }
+
+    private void DestroyDiscordSession()
+    {
+        // Check if the file exists
+        if (File.Exists(_sessionSavePath))
+        {
+            // Delete the file
+            File.Delete(_sessionSavePath);
+            Debug.Log("Discord session destroyed.");
+        }
+        else
+        {
+            Debug.Log("No Discord session to destroy.");
+        }
     }
 
     private void WriteVersionToConfig(string configPath, string version)
