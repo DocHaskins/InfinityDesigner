@@ -118,7 +118,11 @@ namespace doppelganger
                 string newJsonData = JsonConvert.SerializeObject(variationOutput, Formatting.Indented);
                 File.WriteAllText(materialJsonFilePath, newJsonData);
                 Debug.Log($"New variation created on slider for model: {variationBuilder.currentModel.name} on slot: {interfaceManager.currentSlider}");
-                interfaceManager.CreateOrUpdateVariationSlider(interfaceManager.currentSlider, variationBuilder.currentModel.name);
+                if (variationOutput.variations != null)
+                {
+                    interfaceManager.UpdateVariationSlider(interfaceManager.currentSlider, variationOutput.variations.Count);
+                    interfaceManager.SetVariationSliderValue(interfaceManager.currentSlider, nextVariationId);
+                }
                 Debug.Log($"New variation saved for model: {currentlyLoadedModelName} with ID: {newVariation.id}");
             }
             else

@@ -182,7 +182,7 @@ namespace doppelganger
                 {
                     button.onClick.AddListener(() =>
                     {
-                        Debug.Log($"Button '{buttonName}' pressed. Attempting to focus on {targetArea}.");
+                        //Debug.Log($"Button '{buttonName}' pressed. Attempting to focus on {targetArea}.");
                         characterBuilder.FilterCategory(buttonName);
                         autoTargetCinemachineCamera.FocusOnArea(targetArea);
                     });

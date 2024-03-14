@@ -143,7 +143,7 @@ namespace doppelganger
 
             UpdateInterfaceBasedOnDropdownSelection();
 
-            
+            FilterCategory("Button_All");
         }
 
         public void PopulateDropdown(TMPro.TMP_Dropdown dropdown, string path, string defaultValue, bool includeAllOption = false)
@@ -772,6 +772,35 @@ namespace doppelganger
                 variationSlider.wholeNumbers = true;
                 variationSlider.onValueChanged.AddListener(delegate { OnVariationSliderValueChanged(slotName, variationSlider.value); });
             }
+        }
+
+        public void UpdateVariationSlider(string slotName, int variationCount)
+        {
+            RemoveVariationSlider(slotName);
+            CreateVariationSlider(slotName, variationCount);
+        }
+
+        public void SetVariationSliderValue(string slotName, int variationIndex)
+        {
+            Slider variationSlider = GetVariationSliderBySlotName(slotName);
+            if (variationSlider != null)
+            {
+                variationSlider.value = variationIndex;
+            }
+            else
+            {
+                Debug.LogError($"Variation slider not found for slot: {slotName}");
+            }
+        }
+
+        private Slider GetVariationSliderBySlotName(string slotName)
+        {
+            GameObject sliderObject = slidersPanel.transform.Find(slotName + "_VariationSlider")?.gameObject;
+            if (sliderObject != null)
+            {
+                return sliderObject.GetComponentInChildren<Slider>();
+            }
+            return null;
         }
 
         public void OnVariationSliderValueChanged(string slotName, float value)

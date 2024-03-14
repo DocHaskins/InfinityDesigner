@@ -255,8 +255,8 @@ namespace doppelganger
             string output_path = ConfigManager.LoadSetting("SavePath", "Output_Path");
             if (!string.IsNullOrEmpty(output_path))
             {
-                jsonOutputPath = Path.Combine(output_path, saveName.text + DateTime.Now.ToString("HH_mm_ss") + ".json");
-                screenshotPath = Path.Combine(output_path, screenshotFileName + DateTime.Now.ToString("HH_mm_ss") + ".png");
+                jsonOutputPath = Path.Combine(output_path, saveCategory, saveName.text + ".json");
+                screenshotPath = Path.Combine(output_path, saveCategory, screenshotFileName + ".png");
             }
 
             var sliderValues = interfaceManager.GetSliderValues();

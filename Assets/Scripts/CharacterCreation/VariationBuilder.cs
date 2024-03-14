@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.UI;
 using static ModelData;
@@ -32,6 +33,7 @@ namespace doppelganger
         public GameObject currentModel;
         public Transform currentSpawn;
         public SkinnedMeshRenderer currentRenderer;
+        public Material nullMat;
         public string currentModelName;
         public string currentSlot;
         public bool isPanelOpen = false;
@@ -113,6 +115,11 @@ namespace doppelganger
                 TextMeshProUGUI nameText = labelGameObject.transform.Find("Button_Options/Name").GetComponent<TextMeshProUGUI>();
                 nameText.text = $"{rendererCounter}";
 
+                GameObject optionsButton = labelGameObject.transform.Find("Button_Options").gameObject; // Get the options button
+                AddRightClickListener(optionsButton, () => {
+                    ApplyMaterialDirectly(nullMat);
+                });
+
                 optionsToggle.onValueChanged.RemoveAllListeners();
                 optionsToggle.onValueChanged.AddListener((isOn) => {
                     Debug.Log($"Toggle_Options changed for material: {currentMaterial.name}, Renderer: {renderer.name}: {isOn}");
@@ -123,12 +130,11 @@ namespace doppelganger
                         selectedMaterialName = labelGameObject.transform.Find("materialLabel").GetComponent<TextMeshProUGUI>();
                         Debug.Log($"Panel active state for material: {currentMaterial.name}, Renderer: {renderer.name}: {isPanelActive}");
 
-                        // Deactivate other labels
                         foreach (GameObject otherLabel in allLabels)
                         {
-                            if (otherLabel != labelGameObject)  // Check if it's not the current label
+                            if (otherLabel != labelGameObject)
                             {
-                                otherLabel.SetActive(!isOn);  // Deactivate other labels
+                                otherLabel.SetActive(!isOn);
                             }
                         }
                     }
@@ -137,8 +143,7 @@ namespace doppelganger
                         currentRenderer = null;
                         selectedMaterialName = null;
                         toggleScript.DeactivatePanel();
-                        textureScroller.ClearCurrentSelectionPanel(); // Clear the current selection when toggled off.
-                                                                      // Reactivate other labels
+                        textureScroller.ClearCurrentSelectionPanel();
                         foreach (GameObject otherLabel in allLabels)
                         {
                             otherLabel.SetActive(true);
@@ -148,6 +153,21 @@ namespace doppelganger
 
                 rendererCounter++;
             }
+        }
+
+        private void AddRightClickListener(GameObject gameObject, Action action)
+        {
+            EventTrigger trigger = gameObject.GetComponent<EventTrigger>() ?? gameObject.AddComponent<EventTrigger>();
+            EventTrigger.Entry entry = new EventTrigger.Entry();
+            entry.eventID = EventTriggerType.PointerDown;
+            entry.callback.AddListener((eventData) => {
+                PointerEventData pointerEventData = (PointerEventData)eventData;
+                if (pointerEventData.button == PointerEventData.InputButton.Right)
+                {
+                    action.Invoke();
+                }
+            });
+            trigger.triggers.Add(entry);
         }
 
         public void RegisterPanelScript(SkinnedMeshRenderer renderer, VariationTextureSlotsPanel panelScript)
@@ -202,11 +222,11 @@ namespace doppelganger
                     string modelName = currentModelName.Replace("(Clone)", "");
                     string currentSlider = interfaceManager.currentSlider;
 
-                    if (modelSpecificChanges.ContainsKey(modelName))
-                    {
-                        modelSpecificChanges.Remove(modelName);
-                        Debug.Log($"All changes cleared for model: {modelName}.");
-                    }
+                    //if (modelSpecificChanges.ContainsKey(modelName))
+                    //{
+                    //    modelSpecificChanges.Remove(modelName);
+                    //    Debug.Log($"All changes cleared for model: {modelName}.");
+                    //}
 
                     Debug.Log($"Model Name: {modelName}, Current Slider: {currentSlider}");
 

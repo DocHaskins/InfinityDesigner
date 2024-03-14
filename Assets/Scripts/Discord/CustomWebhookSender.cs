@@ -3,17 +3,24 @@ using UnityEngine.UI;
 using System;
 using TMPro; // Include this for TMP_Text
 using ShadowGroveGames.WebhooksForDiscord.Scripts;
+using ShadowGroveGames.FeedbackOverDiscord.Scripts;
+using ShadowGroveGames.FeedbackOverDiscord.Scripts.Control;
+using ShadowGroveGames.FeedbackOverDiscord.Scripts.Extentions;
 using System.IO;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.IO.Compression;
+using ShadowGroveGames.WebhooksForDiscord.Scripts.DTO;
+using System.Collections;
+using System.Threading.Tasks;
 
 namespace doppelganger
 {
     public class CustomWebhookSender : MonoBehaviour
     {
         public CharacterBuilder_InterfaceManager interfaceManager;
-        
+        private DiscordWebhook _discordWebhook;
+
         [SerializeField]
         private TMP_InputField _titleTextField;
         private string discordUserName;
@@ -27,18 +34,36 @@ namespace doppelganger
         private bool _isForumChannel = true;
         private List<string> badWords = new List<string>();
 
-        private readonly static List<string> tags = new List<string>()
-        {
-            "Survivor",
-            "PeaceKeeper",
-            "GRE"
-        };
+        [SerializeField]
+        [Tooltip("This event is fired after a feedback submit has been successfully sent!")]
+        private OnSuccessFeedbackSubmit _onSuccessFeedbackSubmit = new OnSuccessFeedbackSubmit();
+
+        [SerializeField]
+        [Tooltip("This event is triggered after a feedback could not be sent!")]
+        private OnFailedFeedbackSubmit _onFailedFeedbackSubmit = new OnFailedFeedbackSubmit();
 
         private readonly Dictionary<string, ulong> categoryToTagId = new Dictionary<string, ulong>()
 {
-    {"Survivor", 1},
-    {"PeaceKeeper", 2},
-    {"GRE", 3}
+    {"Player", 1215664689317417010},
+    {"Renegade", 1215664706367262740},
+    {"PeaceKeeper", 1215664718354714644},
+    {"Colonel", 1215664764252848138},
+    {"WorldBurner", 1215664791981531157},
+    {"Wolves", 1215664819517128856},
+    {"PlagueBearer", 1215664836856381531},
+    {"Survivor", 1215664868187705364},
+    {"NPC", 1215664886781050950},
+    {"Biter", 1215664905517137940},
+    {"Viral", 1215664915524878377},
+    {"Goon", 1215664927520595988},
+    {"Volatile", 1215664940858474566},
+    {"Demolisher", 1215664954594566154},
+    {"Spitter", 1215664971510321152},
+    {"Howler", 1215664982147207178},
+    {"GRE Anomalie", 1215665404882452592},
+    {"Suicider", 1215665447450447873},
+    {"Child", 1215666275456524328},
+    {"GRE", 1215667025662316545}
 };
 
         private void Start()
@@ -163,35 +188,60 @@ namespace doppelganger
                 }
             }
 
-            // Now delete the temporary files outside of the using statement to avoid file lock issues
             File.Delete(Path.Combine(directoryPath, "PLACEHOLDER_InfinityDesigner_json.file"));
             File.Delete(Path.Combine(directoryPath, "install.json"));
 
-            // Prepare byte array for ZIP file to upload after closing the ZIP to ensure all changes are applied
             byte[] zipFileData = File.ReadAllBytes(zipFilePath);
 
             
             byte[] screenshotData = File.ReadAllBytes(imagePath);
 
-            // Create and configure the webhook message
-            var webhook = DiscordWebhook.Create(webhookUrl)
-                                        .WithUsername(discordUserName)
-                                        .WithContent(message);
+            string selectedCategoryName = categoryDropdown.options[categoryDropdown.value].text;
+            ulong selectedCategoryTagId = categoryToTagId.ContainsKey(selectedCategoryName) ? categoryToTagId[selectedCategoryName] : 0;
 
-            // Attach ZIP file and screenshot
-            webhook.AddAttachment(jsonFileNameCleaned + ".zip", zipFileData);
-            webhook.AddAttachment(currentJsonImageName, screenshotData);
-
-            // If in forum channel, set the thread name
-            if (_isForumChannel && !string.IsNullOrWhiteSpace(title))
+            if (selectedCategoryTagId == 0)
             {
-                webhook.WithThreadName(title);
+                Debug.LogError($"Invalid category selected: {selectedCategoryName}");
+                return;
             }
 
-            // Send the webhook message
-            webhook.Send();
+            _discordWebhook = DiscordWebhook.Create(webhookUrl)
+                                            .WithUsername(discordDisplayName)
+                                            .WithContent(message);
+
+            _discordWebhook.AddAttachment(jsonFileNameCleaned + ".zip", zipFileData);
+            _discordWebhook.AddAttachment(currentJsonImageName, screenshotData);
+
+            if (_isForumChannel && !string.IsNullOrWhiteSpace(title))
+            {
+                _discordWebhook.WithThreadName(title);
+            }
+
+            _discordWebhook.AddTag(selectedCategoryTagId);
+            var asyncSend = _discordWebhook.SendAsync();
+
+            StartCoroutine(WaitForWebhookSend(asyncSend));
 
             File.Delete(zipFilePath);
+        }
+
+        private IEnumerator WaitForWebhookSend(Task<MessageResponse?> sendTask)
+        {
+            while (!sendTask.IsCompleted)
+            {
+                yield return null;
+            }
+
+            if (sendTask.IsFaulted)
+            {
+                _onFailedFeedbackSubmit?.Invoke();
+            }
+            else
+            {
+                _onSuccessFeedbackSubmit?.Invoke();
+            }
+
+            _discordWebhook = DiscordWebhook.Create(webhookUrl);
         }
     }
 }

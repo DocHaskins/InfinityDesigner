@@ -456,16 +456,28 @@ namespace doppelganger
 
         public void RemoveModelAndVariationSlider(string slotName)
         {
-            // Remove model
             if (currentlyLoadedModels.TryGetValue(slotName, out GameObject currentModel))
             {
+                string modelName = currentModel.name.Replace("(Clone)", "");
+                if (variationBuilder.modelSpecificChanges.ContainsKey(modelName))
+                {
+                    variationBuilder.modelSpecificChanges.Remove(modelName);
+                    Debug.Log($"All changes cleared for model: {modelName}.");
+                }
                 Destroy(currentModel);
                 currentlyLoadedModels.Remove(slotName);
             }
 
-            // Remove variation slider
-            Transform existingVariationSlider = interfaceManager.slidersPanel.transform.Find(slotName + "VariationSlider");
-            if (existingVariationSlider != null) Destroy(existingVariationSlider.gameObject);
+            Transform existingVariationSlider = interfaceManager.slidersPanel.transform.Find(slotName + "_VariationSlider");
+            if (existingVariationSlider != null)
+            {
+                //Debug.Log("Existing variation slider found. Destroying...");
+                Destroy(existingVariationSlider.gameObject);
+            }
+            else
+            {
+                Debug.Log($"No existing variation slider found for {slotName}.");
+            }
         }
 
 
@@ -729,13 +741,13 @@ namespace doppelganger
 
         private void ApplyMaterialToRenderer(SkinnedMeshRenderer renderer, string materialName, GameObject modelInstance, List<RttiValue> rttiValues, string slotName, int materialIndex)
         {
-            if (materialName.Equals("null.mat", StringComparison.OrdinalIgnoreCase))
-            {
-                Debug.Log($"Renderer '{renderer.gameObject.name}' disabled due to null material.");
-                renderer.enabled = false;
-                AddToDisabledRenderers(modelInstance, renderer);
-                return;
-            }
+            //if (materialName.Equals("null.mat", StringComparison.OrdinalIgnoreCase))
+            //{
+            //    Debug.Log($"Renderer '{renderer.gameObject.name}' disabled due to null material.");
+            //    renderer.enabled = false;
+            //    AddToDisabledRenderers(modelInstance, renderer);
+            //    return;
+            //}
             renderer.enabled = true;
 
             Material loadedMaterial = LoadMaterial(materialName);
