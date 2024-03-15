@@ -69,12 +69,14 @@ namespace doppelganger
         {"ALL_rhand", "HANDS_PART_1"},
         {"ALL_lhand", "HANDS_PART_1"},
         {"ALL_gloves", "PLAYER_GLOVES"},
+        {"ALL_gloves_2", "HANDS_PART_1"},
         {"ALL_arm_access", "HANDS_PART_1"},
         {"ALL_arm_access_2", "HANDS_PART_1"},
         {"ALL_rings", "HANDS_PART_1"},
         {"ALL_backpack", "TORSO_PART_1"},
         {"ALL_torso", "TORSO"},
         {"ALL_torso_2", "TORSO_PART_1"},
+        {"ALL_belts", "TORSO_PART_1"},
         {"ALL_cape", "TORSO_PART_1"},
         {"ALL_necklace", "TORSO_PART_1"},
         {"ALL_torso_access", "TORSO_PART_1"},
@@ -98,10 +100,11 @@ namespace doppelganger
         {"ALL_legs_extra", "LEGS_PART_1"},
         {"ALL_shoes", "LEGS_PART_1"},
         {"ALL_decals", "OTHER_PART_1"},
+        {"ALL_decals_2", "OTHER_PART_1"},
         {"ALL_decals_extra", "OTHER_PART_1"},
         {"ALL_decals_logo", "OTHER_PART_1"},
         {"ALL_tattoo", "OTHER_PART_1"},
-        // Add other mappings here
+        {"ALL_tattoo_2", "OTHER_PART_1"},
     };
         private Dictionary<string, List<string>> fallbackSlots = new Dictionary<string, List<string>>()
 {
@@ -237,7 +240,6 @@ namespace doppelganger
                 Debug.Log($"Fallback skeleton name {skeletonName} obtained using the LookupSkeleton method for {saveCategory}, {saveClass}.");
             }
 
-            // Overwrite fileName if saveCategory is "Player"
             string fileName = saveCategory.Equals("Player", StringComparison.OrdinalIgnoreCase) ? (string.IsNullOrWhiteSpace(saveName.text) || saveName.text.Equals("Aiden", StringComparison.OrdinalIgnoreCase) ? "player_tpp_skeleton" : saveName.text) : saveName.text;
 
             // Ensure fileName is valid
@@ -326,9 +328,9 @@ namespace doppelganger
                                                 slotPair = CreateSlotDataPair(model, fallbackOption, nextAvailableSlotUid);
                                                 slotPairs.Add(slotPair);
                                                 usedSlotUids.Add(nextAvailableSlotUid);
-                                                usedSlots.Add(fallbackOption); // Mark the slot name as used
+                                                usedSlots.Add(fallbackOption);
                                                 Debug.Log($"Assigned fallback {fallbackOption} slot for {slider.Key} with Slot UID: {nextAvailableSlotUid}");
-                                                break; // Break since a slot has been successfully assigned
+                                                break;
                                             }
                                         }
                                     }
@@ -352,7 +354,6 @@ namespace doppelganger
                 }
             }
 
-            // Ensure slotPairs are sorted after appending empty slots
             void FinalizeAndWrite(ModelData modelData, string jsonPath, string modelPath, string skeletonOverride = null)
             {
                 if (!string.IsNullOrWhiteSpace(skeletonOverride))
@@ -364,22 +365,20 @@ namespace doppelganger
                 WriteConfigurationOutput(modelData, jsonPath, modelPath);
             }
 
-            // Ensure slotPairs are sorted after appending empty slots
             slotPairs = slotPairs.OrderBy(pair => pair.slotData.slotUid).ToList();
             interfaceManager.currentPresetPath = jsonOutputPath;
             interfaceManager.currentPresetLabel.text = Path.GetFileNameWithoutExtension(jsonOutputPath);
             screenshotManager.TakeScreenshot();
 
-            // First output configuration
             var outputData = new ModelData
             {
                 skeletonName = skeletonName,
                 slotPairs = slotPairs,
                 modelProperties = new ModelData.ModelProperties
                 {
-                    @class = saveClass.Equals("ALL", StringComparison.OrdinalIgnoreCase) ? "NPC" : saveClass,
-                    race = "Unknown", // Customize as needed
-                    sex = DetermineCharacterSex(slotPairs) // Implement this method based on your logic
+                    @class = saveClass.Equals("ALL", StringComparison.OrdinalIgnoreCase) ? "zombie" : saveClass,
+                    race = "Unknown",
+                    sex = DetermineCharacterSex(slotPairs)
                 }
             };
 
@@ -405,19 +404,19 @@ namespace doppelganger
                     {
                         skeletonName = "player_fpp_skeleton.msh",
                         slotPairs = filteredSlotPairs,
-                        modelProperties = outputData.modelProperties // Reuse the model properties from the first output
+                        modelProperties = outputData.modelProperties
                     };
 
                     foreach (var slotPair in outputDataSecond.slotPairs)
                     {
                         foreach (var modelInfo in slotPair.slotData.models)
                         {
-                            modelInfo.name = UpdateModelAndMaterialNames(modelInfo.name, isMaterial: false);  // false because it's a model
+                            modelInfo.name = UpdateModelAndMaterialNames(modelInfo.name, isMaterial: false);
 
-                            foreach (var materialData in modelInfo.materialsData)
-                            {
-                                materialData.name = UpdateModelAndMaterialNames(materialData.name, isMaterial: true); // true because it's a material
-                            }
+                            //foreach (var materialData in modelInfo.materialsData)
+                            //{
+                            //    materialData.name = UpdateModelAndMaterialNames(materialData.name, isMaterial: true);
+                            //}
 
                             foreach (var materialResource in modelInfo.materialsResources)
                             {

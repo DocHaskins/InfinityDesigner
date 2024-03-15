@@ -14,60 +14,36 @@
         "filterText": "head",
         "models": [
           {
-            "name": "sh_wmn_viral_a.msh",
+            "name": "sh_wmn_b.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "sh_wmn_viral_a.mat"
-              },
-              {
-                "number": 2,
-                "name": "sh_eye.mat"
-              },
-              {
-                "number": 3,
                 "name": "sh_mouth_interior.mat"
               },
               {
-                "number": 4,
+                "number": 2,
                 "name": "sh_eyelashes.mat"
               },
               {
+                "number": 3,
+                "name": "sh_wmn_b.mat"
+              },
+              {
+                "number": 4,
+                "name": "sh_eye.mat"
+              },
+              {
                 "number": 5,
-                "name": "sh_eye_shadow.mat"
+                "name": "sh_wet_eye.mat"
               },
               {
                 "number": 6,
-                "name": "sh_wet_eye.mat"
+                "name": "sh_eye_shadow.mat"
               }
             ],
             "materialsResources": [
               {
                 "number": 1,
-                "resources": [
-                  {
-                    "name": "sh_wmn_viral_b.mat",
-                    "selected": true,
-                    "layoutId": 4,
-                    "loadFlags": "S",
-                    "rttiValues": []
-                  }
-                ]
-              },
-              {
-                "number": 2,
-                "resources": [
-                  {
-                    "name": "sh_eye_man_viral_b.mat",
-                    "selected": true,
-                    "layoutId": 4,
-                    "loadFlags": "S",
-                    "rttiValues": []
-                  }
-                ]
-              },
-              {
-                "number": 3,
                 "resources": [
                   {
                     "name": "sh_mouth_interior_zmb.mat",
@@ -79,7 +55,7 @@
                 ]
               },
               {
-                "number": 4,
+                "number": 2,
                 "resources": [
                   {
                     "name": "sh_eyelashes.mat",
@@ -91,10 +67,34 @@
                 ]
               },
               {
+                "number": 3,
+                "resources": [
+                  {
+                    "name": "sh_man_viral_basic_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
+                "number": 4,
+                "resources": [
+                  {
+                    "name": "sh_eye_viral_b.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              },
+              {
                 "number": 5,
                 "resources": [
                   {
-                    "name": "sh_eye_shadow.mat",
+                    "name": "sh_wet_eye.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -106,7 +106,7 @@
                 "number": 6,
                 "resources": [
                   {
-                    "name": "sh_wet_eye.mat",
+                    "name": "sh_eye_shadow.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -127,11 +127,11 @@
         "filterText": "head",
         "models": [
           {
-            "name": "wmn_viral_hair_a.msh",
+            "name": "sh_zmb_viral_hairs_a.msh",
             "materialsData": [
               {
                 "number": 1,
-                "name": "viral_hair_a.mat"
+                "name": "sh_zmb_hairs_a.mat"
               }
             ],
             "materialsResources": [
@@ -139,7 +139,7 @@
                 "number": 1,
                 "resources": [
                   {
-                    "name": "viral_hair_a.mat",
+                    "name": "sh_zmb_hairs_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -167,7 +167,31 @@
         "slotUid": 103,
         "name": "ARMS",
         "filterText": "arms",
-        "models": []
+        "models": [
+          {
+            "name": "wmn_viral_body_hands_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "man_viral_body_hands_a.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "man_viral_body_hands_a.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     },
     {
@@ -176,7 +200,31 @@
         "slotUid": 104,
         "name": "HANDS",
         "filterText": "hands",
-        "models": []
+        "models": [
+          {
+            "name": "wmn_tpp_biomarker_a.msh",
+            "materialsData": [
+              {
+                "number": 1,
+                "name": "tpp_biomarker.mat"
+              }
+            ],
+            "materialsResources": [
+              {
+                "number": 1,
+                "resources": [
+                  {
+                    "name": "tpp_biomarker_red.mat",
+                    "selected": true,
+                    "layoutId": 4,
+                    "loadFlags": "S",
+                    "rttiValues": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     },
     {
@@ -203,7 +251,7 @@
               },
               {
                 "number": 4,
-                "name": "viral_torso_b.mat"
+                "name": "man_viral_body_torso_a.mat"
               },
               {
                 "number": 5,
@@ -255,7 +303,7 @@
                 "number": 4,
                 "resources": [
                   {
-                    "name": "viral_torso_b.mat",
+                    "name": "man_viral_body_torso_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",
@@ -380,31 +428,7 @@
         "slotUid": 108,
         "name": "TORSO_PART_3",
         "filterText": "torso",
-        "models": [
-          {
-            "name": "wmn_viral_a_torso_d_arms_a.msh",
-            "materialsData": [
-              {
-                "number": 1,
-                "name": "viral_torso_b.mat"
-              }
-            ],
-            "materialsResources": [
-              {
-                "number": 1,
-                "resources": [
-                  {
-                    "name": "viral_torso_b.mat",
-                    "selected": true,
-                    "layoutId": 4,
-                    "loadFlags": "S",
-                    "rttiValues": []
-                  }
-                ]
-              }
-            ]
-          }
-        ]
+        "models": []
       }
     },
     {
@@ -423,7 +447,7 @@
               },
               {
                 "number": 2,
-                "name": "viral_legs_c.mat"
+                "name": "man_viral_body_legs_a.mat"
               }
             ],
             "materialsResources": [
@@ -443,7 +467,7 @@
                 "number": 2,
                 "resources": [
                   {
-                    "name": "viral_legs_b.mat",
+                    "name": "man_viral_body_legs_a.mat",
                     "selected": true,
                     "layoutId": 4,
                     "loadFlags": "S",

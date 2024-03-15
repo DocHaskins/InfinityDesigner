@@ -170,6 +170,7 @@ namespace doppelganger
                     sb.AppendLine("            \"selected\": true,");
                     sb.AppendLine("            \"layoutId\": 4,");
                     AppendUserData(sb, userData);
+                    sb.AppendLine("            \"variantType\": \"standard\", ");
                     AppendMaterialsData(sb, model.materialsData);
                     AppendMaterialsResources(sb, model.materialsResources);
                     sb.AppendLine("          }" + (!model.Equals(slotPair.slotData.models.Last()) ? "," : ""));
