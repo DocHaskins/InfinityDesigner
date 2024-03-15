@@ -2229,7 +2229,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: -8679921383154817045}
-  - component: {fileID: -4212518951117296804}
+  - component: {fileID: -467547677014096079}
   m_Layer: 0
   m_Name: player_range_gloves_a_tpp
   m_TagString: Untagged
@@ -2255,7 +2255,7 @@ Transform:
   - {fileID: -7167682007006185811}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-4212518951117296804
+--- !u!114 &-467547677014096079
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2267,6 +2267,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 561564395a9436a46a1dd670320b44b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lerpSpeed: 0.01
+  weight: 0.7
 --- !u!1 &977357775356782835
 GameObject:
   m_ObjectHideFlags: 0

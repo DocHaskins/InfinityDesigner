@@ -2173,7 +2173,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 257
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 6222432791020675876, guid: ab8cb9ef01f1cdb45a6e42e7e5a4e61d, type: 3}
+  - {fileID: 2100000, guid: a31a25a7312aa04478331e9b85540494, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2585,6 +2585,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: -8679921383154817045}
+  - component: {fileID: -2632453786743490638}
   m_Layer: 0
   m_Name: man_zmb_fat_body_legs_a
   m_TagString: Untagged
@@ -2611,6 +2612,20 @@ Transform:
   - {fileID: -708437195177472538}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-2632453786743490638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132149155446097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 561564395a9436a46a1dd670320b44b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lerpSpeed: 0.01
+  weight: 0.7
 --- !u!1 &922043900838431320
 GameObject:
   m_ObjectHideFlags: 0
@@ -3431,7 +3446,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 257
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -6669078724020471730, guid: ab8cb9ef01f1cdb45a6e42e7e5a4e61d, type: 3}
+  - {fileID: 2100000, guid: 5a564ff45abbb204fa77eaee7ae89329, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

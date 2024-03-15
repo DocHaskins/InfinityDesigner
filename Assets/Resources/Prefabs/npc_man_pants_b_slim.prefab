@@ -2121,7 +2121,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: -8679921383154817045}
-  - component: {fileID: -3449113617507085294}
+  - component: {fileID: -8141369023764773924}
   m_Layer: 0
   m_Name: npc_man_pants_b_slim
   m_TagString: Untagged
@@ -2146,7 +2146,7 @@ Transform:
   - {fileID: -6728747661269504156}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-3449113617507085294
+--- !u!114 &-8141369023764773924
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2158,6 +2158,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 561564395a9436a46a1dd670320b44b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lerpSpeed: 0.01
+  weight: 0.7
 --- !u!1 &922043900838431320
 GameObject:
   m_ObjectHideFlags: 0

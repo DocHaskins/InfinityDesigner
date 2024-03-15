@@ -72,7 +72,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: -8679921383154817045}
-  - component: {fileID: 6534038281910120651}
+  - component: {fileID: -9076652207859402733}
   m_Layer: 0
   m_Name: man_bandit_head_armor_a
   m_TagString: Untagged
@@ -97,7 +97,7 @@ Transform:
   - {fileID: 7877120231830708338}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6534038281910120651
+--- !u!114 &-9076652207859402733
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -109,6 +109,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 561564395a9436a46a1dd670320b44b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lerpSpeed: 0.01
+  weight: 0.7
 --- !u!1 &1569075160943992345
 GameObject:
   m_ObjectHideFlags: 0

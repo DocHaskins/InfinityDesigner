@@ -196,6 +196,13 @@ public class JsonCreatorWindow : EditorWindow
 
         EditorGUILayout.Space();
 
+        if (GUILayout.Button("Create Material Reference Jsons"))
+        {
+            GenerateMaterialDataJsons();
+        }
+
+        EditorGUILayout.Space();
+
         if (GUILayout.Button("Create Variation Jsons"))
         {
             CreateVariationJsons();
@@ -277,7 +284,7 @@ public class JsonCreatorWindow : EditorWindow
         List<string> jsonFiles = new List<string>();
         Dictionary<string, Dictionary<string, List<string>>> modelsSortedByCategory = new Dictionary<string, Dictionary<string, List<string>>>();
         HashSet<string> unsortedModels = new HashSet<string>();
-        HashSet<string> ignoreList = new HashSet<string> { "player_legs_a.msh", "player_camo_bracers_a_tpp.msh", "player_camo_bracers_a_fpp.msh", "man_bdt_torso_c_shawl_b.msh", "chr_player_healer_mask.msh", "reporter_woman_old_skeleton.msh", "player_camo_gloves_a_tpp.msh", "player_camo_headwear_a_tpp.msh", "player_camo_hood_a_tpp.msh", "player_camo_pants_a_tpp.msh", "npc_colonel_coat_b.msh" };
+        HashSet<string> ignoreList = new HashSet<string> { "player_legs_a.msh", "man_bdt_torso_c_shawl_b.msh", "chr_player_healer_mask.msh", "reporter_woman_old_skeleton.msh", "npc_colonel_coat_b.msh" };
         Dictionary<string, List<string>> modelToFilterLookup = new Dictionary<string, List<string>>();
         Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>> modelsByClassAndFilter = new Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>>();
         Dictionary<string, string> specificTermsToCategory = new Dictionary<string, string>
@@ -931,6 +938,50 @@ public class JsonCreatorWindow : EditorWindow
 
         return jsonObj.ToString(Formatting.Indented);
     }
+
+    public static void GenerateMaterialDataJsons()
+    {
+        string jsonsDir = Path.Combine(Application.dataPath, "StreamingAssets/Jsons");
+        string outputDir = Path.Combine(Application.dataPath, "StreamingAssets/Mesh References");
+
+        var jsonFiles = Directory.GetFiles(jsonsDir, "*.json", SearchOption.AllDirectories);
+        foreach (var file in jsonFiles)
+        {
+            string jsonContent = File.ReadAllText(file);
+            ModelData modelData = JsonConvert.DeserializeObject<ModelData>(jsonContent);
+
+            foreach (var slotPair in modelData.slotPairs)
+            {
+                foreach (var modelInfo in slotPair.slotData.models)
+                {
+                    if (string.IsNullOrWhiteSpace(modelInfo.name)) continue;
+
+                    string meshName = Path.GetFileNameWithoutExtension(modelInfo.name);
+                    string sanitizedMeshName = SanitizeFilename(meshName);
+                    string outputFilePath = Path.Combine(outputDir, $"{sanitizedMeshName}.json");
+
+                    MeshReferenceData meshReferenceData = new MeshReferenceData();
+                    if (File.Exists(outputFilePath))
+                    {
+                        string existingJson = File.ReadAllText(outputFilePath);
+                        meshReferenceData = JsonConvert.DeserializeObject<MeshReferenceData>(existingJson);
+                        // Assuming you want to update the existing materialsData
+                        meshReferenceData.materialsData = modelInfo.materialsData;
+                    }
+                    else
+                    {
+                        meshReferenceData.materialsData = modelInfo.materialsData;
+                    }
+
+                    string outputJson = JsonConvert.SerializeObject(meshReferenceData, Formatting.Indented);
+                    File.WriteAllText(outputFilePath, outputJson);
+                }
+            }
+        }
+
+        Debug.Log("Finished generating material data JSONs.");
+    }
+
 
     public static void CreateVariationJsons()
     {

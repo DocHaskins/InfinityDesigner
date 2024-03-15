@@ -2914,7 +2914,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: -8679921383154817045}
-  - component: {fileID: -5761346433643137674}
+  - component: {fileID: -8408092527718074368}
   m_Layer: 0
   m_Name: man_sc_runner_torso_b_bag_a
   m_TagString: Untagged
@@ -2940,7 +2940,7 @@ Transform:
   - {fileID: 7805060138354582788}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-5761346433643137674
+--- !u!114 &-8408092527718074368
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2952,6 +2952,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 561564395a9436a46a1dd670320b44b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lerpSpeed: 0.01
+  weight: 0.7
 --- !u!1 &922043900838431320
 GameObject:
   m_ObjectHideFlags: 0

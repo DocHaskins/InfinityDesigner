@@ -17,6 +17,7 @@ public class RunTimeDataBuilder : MonoBehaviour
     private Dictionary<string, List<string>> filters;
     private Dictionary<string, string[]> categoryPrefixes;
     private Dictionary<string, List<string>> exclude_filters;
+    private static string materialsDataDir = Path.Combine(Application.dataPath, "StreamingAssets/Mesh References");
     Dictionary<string, List<string>> modelToFilterLookup = new Dictionary<string, List<string>>();
     Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>> modelsByClassAndFilter = new Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>>();
     private Dictionary<string, string> skeletonToCategory = new Dictionary<string, string>
@@ -91,8 +92,8 @@ public class RunTimeDataBuilder : MonoBehaviour
         exclude_filters = new Dictionary<string, List<string>>()
         {
             {"head", new List<string> {"hat", "cap", "headwear", "blisters", "headgear", "armor", "mask", "bdt_balaclava", "horns", "sh_benchmark_npc_hakon_cc", "beret", "glasses", "hair", "bandana", "facial_hair", "beard", "headcover", "emblem", "hat", "cap", "headwear", "bandana", "beanie", "hood"}},
-            {"hat", new List<string> {"part", "player_camo_headwear_a_tpp", "fringe", "base", "braids", "player_headwear_crane_b_tpp", "player_tank_headwear_a_tpp", "player_camo_hood_a_tpp", "npc_man_torso_g_hood_b", "glasses", "hair", "decal_logo", "cape", "mask", "_addon", "decal", "facial_hair"}},
-            {"hat_access", new List<string> {"player_camo_headwear_a_tpp", "player_headwear_crane_b_tpp", "player_tank_headwear_a_tpp", "player_camo_hood_a_tpp", "npc_man_torso_g_hood_b", "glasses", "hair", "cape", "mask", "facial_hair"}},
+            {"hat", new List<string> {"part", "fringe", "base", "braids", "player_headwear_crane_b_tpp", "player_tank_headwear_a_tpp", "npc_man_torso_g_hood_b", "glasses", "hair", "decal_logo", "cape", "mask", "_addon", "decal", "facial_hair"}},
+            {"hat_access", new List<string> {"player_headwear_crane_b_tpp", "player_tank_headwear_a_tpp", "npc_man_torso_g_hood_b", "glasses", "hair", "cape", "mask", "facial_hair"}},
             {"mask", new List<string> {"glasses", "hair", "decal_logo", "cape", "_addon", "chr_player_healer_mask", "facial_hair"}},
             {"mask_access", new List<string> {"glasses", "hair", "decal_logo", "cape", "chr_player_healer_mask", "facial_hair"}},
             {"glasses", new List<string> {"hat", "cap", "npc_waltz_torso_a_glasses_addon", "headwear", "mask", "hair", "facial_hair"}},
@@ -105,8 +106,8 @@ public class RunTimeDataBuilder : MonoBehaviour
             {"hair_3", new List<string> {"cap", "headwear", "mask", "glasses", "decal", "facial_hair", "young_hair"}},
             {"facial_hair", new List<string> {"hat", "cap", "headwear", "mask", "decal", "glasses" }},
             {"cape", new List<string> {"mask", "spikes", "belts", "scarf_a_part_d", "bags", "scarf_a_part_c"}},
-            {"torso", new List<string> {"armor", "sleeve", "flashlight", "plates", "wrench", "jacket", "_adds", "upperright", "upperleft", "bracelet", "back_", "pin", "beard", "shawl", "detail", "vest", "skirt", "center",  "wmn_torso_e", "bracer", "bracers", "sh_npc_anderson", "wmn_torso_i", "bottom", "base", "front_", "fronttop",  "torso_c_sweater", "rag", "stethoscope", "plaguewitch", "centre", "nuwa_torso_a", "horns", "wpntmp", "equipment", "head", "hair", "shoulderpad", "player_camo_torso_a_tpp", "hat", "mask", "player_inquisitor_torso_a_tpp", "player_torso_tpp_a", "addon", "machete_tpp", "skull", "chain_armour", "hands", "battery", "arms", "cape", "turtleneck", "apron", "pants", "backpack", "bag", "parachute", "suspenders", "legs", "hood", "spikes", "chain", "decal", "collar", "scarf", "pouch", "zipper", "belt", "part", "patch", "bag", "pocket", "jewelry", "necklace", "ring"}},
-            {"torso_2", new List<string> {"armor", "sleeve", "plates", "wrench", "detail", "bracer", "bracers", "sh_npc_anderson", "base", "torso_c_sweater", "stethoscope", "plaguewitch", "horns", "wpntmp", "equipment", "head", "hair", "shoulderpad", "player_camo_torso_a_tpp", "hat", "mask", "player_inquisitor_torso_a_tpp", "player_torso_tpp_a", "addon", "machete_tpp", "skull", "chain_armour", "hands", "battery", "arms", "cape", "turtleneck", "apron", "pants", "backpack", "bag", "parachute", "suspenders", "legs", "hood", "spikes", "chain", "decal", "collar", "scarf", "pouch", "zipper", "belt", "part", "patch", "bag", "pocket", "jewelry", "necklace", "ring"}},
+            {"torso", new List<string> {"armor", "sleeve", "flashlight", "plates", "wrench", "jacket", "_adds", "upperright", "upperleft", "bracelet", "back_", "pin", "beard", "shawl", "detail", "vest", "skirt", "center",  "wmn_torso_e", "bracer", "bracers", "sh_npc_anderson", "wmn_torso_i", "bottom", "base", "front_", "fronttop",  "torso_c_sweater", "rag", "stethoscope", "plaguewitch", "centre", "nuwa_torso_a", "horns", "wpntmp", "equipment", "head", "hair", "shoulderpad", "hat", "mask", "player_inquisitor_torso_a_tpp", "player_torso_tpp_a", "addon", "machete_tpp", "skull", "chain_armour", "hands", "battery", "arms", "cape", "turtleneck", "apron", "pants", "backpack", "bag", "parachute", "suspenders", "legs", "hood", "spikes", "chain", "decal", "collar", "scarf", "pouch", "zipper", "belt", "part", "patch", "bag", "pocket", "jewelry", "necklace", "ring"}},
+            {"torso_2", new List<string> {"armor", "sleeve", "plates", "wrench", "detail", "bracer", "bracers", "sh_npc_anderson", "base", "torso_c_sweater", "stethoscope", "plaguewitch", "horns", "wpntmp", "equipment", "head", "hair", "shoulderpad", "hat", "mask", "player_inquisitor_torso_a_tpp", "player_torso_tpp_a", "addon", "machete_tpp", "skull", "chain_armour", "hands", "battery", "arms", "cape", "turtleneck", "apron", "pants", "backpack", "bag", "parachute", "suspenders", "legs", "hood", "spikes", "chain", "decal", "collar", "scarf", "pouch", "zipper", "belt", "part", "patch", "bag", "pocket", "jewelry", "necklace", "ring"}},
             {"torso_extra", new List<string> {"armor", "mask", "gloves", "sleeve", "hands", "battery", "arms", "cape", "pants", "backpack", "bag", "parachute", "legs", "hood", "spikes", "chain", "decal", "collar", "scarf", "pouch", "zipper", "bag", "pocket", "jewelry", "necklace", "ring"}},
             {"torso_access", new List<string> {"pants", "leg", "legs", "shoes", "man_bdt_chain_i", "bracken_bandage", "man_bdt_chain_g", "man_bdt_chain_h", "man_bdt_chain_f"}},
             {"belts", new List<string> {"mask"}},
@@ -125,7 +126,7 @@ public class RunTimeDataBuilder : MonoBehaviour
             {"decals_graphic", new List<string> {"mask"}},
             {"tattoo", new List<string> {"mask"}},
             {"tattoo_2", new List<string> {"mask"}},
-            {"legs", new List<string> {"mask", "shoes", "player_legs_a", "sc_ov_legs", "feet", "part", "child_torso_a_bottom", "child_pants_b", "player_camo_pants_a_tpp", "arm", "chain", "elbow", "_right", "npc_jack_legs_adds", "bandage", "sleeve", "patch", "add_", "armor", "glove", "addon", "bag", "tapes", "man_srv_legs_b_bottom_a", "element", "hand", "decal", "equipment", "pocket", "pouch", "element", "decal_logo", "belt", "pad", "pants_b_rag", "bumbag", "bag", "patch_"}},
+            {"legs", new List<string> {"mask", "shoes", "player_legs_a", "sc_ov_legs", "feet", "part", "child_torso_a_bottom", "child_pants_b", "arm", "chain", "elbow", "_right", "npc_jack_legs_adds", "bandage", "sleeve", "patch", "add_", "armor", "glove", "addon", "bag", "tapes", "man_srv_legs_b_bottom_a", "element", "hand", "decal", "equipment", "pocket", "pouch", "element", "decal_logo", "belt", "pad", "pants_b_rag", "bumbag", "bag", "patch_"}},
             {"legs_extra", new List<string> {"armor", "man_bdt_belt_d_pouches_a", "hair", "chainmail", "bracken_bandage", "man_bdt_belt_g", "man_bdt_belt_c_addon_a", "man_bdt_belt_c", "man_bzr_belt_c", "man_bdt_belt_d", "man_bzr_belt_a", "man_srv_belt_bags_a", "torso", "elbow", "decal_logo", "shoes", "arm", "sleeve", "armor", "glove", "torso", "hand", "hat"}},
             {"legs_access", new List<string> {"armor", "man_bdt_belt_d_pouches_a", "hair", "chainmail", "bracken_bandage", "man_bdt_belt_g", "man_bdt_belt_c_addon_a", "man_bdt_belt_c", "man_bzr_belt_c", "man_bdt_belt_d", "man_bzr_belt_a", "man_srv_belt_bags_a", "torso", "elbow", "decal_logo", "shoes", "arm", "sleeve", "armor", "glove", "torso", "hand", "hat"}},
             {"shoes", new List<string> {"mask"}},
@@ -491,7 +492,7 @@ public class RunTimeDataBuilder : MonoBehaviour
         List<string> jsonFiles = new List<string>();
         Dictionary<string, Dictionary<string, List<string>>> modelsSortedByCategory = new Dictionary<string, Dictionary<string, List<string>>>();
         HashSet<string> unsortedModels = new HashSet<string>();
-        HashSet<string> ignoreList = new HashSet<string> { "player_legs_a.msh", "player_shoes_a.msh", "player_torso_tpp_a_hood.msh", "player_inquisitor_torso_a_tpp.msh", "player_inquisitor_headwear_a_tpp.msh", "player_camo_shoes_a_tpp.msh", "player_camo_torso_a_tpp.msh", "player_camo_gloves_a_fpp.msh", "player_camo_belt_a_tpp.msh", "player_inquisitor_bracers_a_tpp.msh", "player_camo_bracers_a_tpp.msh", "player_camo_bracers_a_fpp.msh", "man_bdt_torso_c_shawl_b.msh", "chr_player_healer_mask.msh", "reporter_woman_old_skeleton.msh", "player_camo_gloves_a_tpp.msh", "player_camo_headwear_a_tpp.msh", "player_camo_pants_a_tpp.msh", "npc_colonel_coat_b.msh" };
+        HashSet<string> ignoreList = new HashSet<string> { "player_legs_a.msh", "player_shoes_a.msh", "player_torso_tpp_a_hood.msh", "player_inquisitor_torso_a_tpp.msh", "player_inquisitor_headwear_a_tpp.msh", "player_inquisitor_bracers_a_tpp.msh", "man_bdt_torso_c_shawl_b.msh", "chr_player_healer_mask.msh", "reporter_woman_old_skeleton.msh", "player_camo_gloves_a_tpp.msh", "player_camo_headwear_a_tpp.msh", "player_camo_pants_a_tpp.msh", "npc_colonel_coat_b.msh" };
         Dictionary<string, List<string>> modelToFilterLookup = new Dictionary<string, List<string>>();
         Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>> modelsByClassAndFilter = new Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>>();
         Dictionary<string, string> specificTermsToCategory = new Dictionary<string, string>
@@ -502,7 +503,7 @@ public class RunTimeDataBuilder : MonoBehaviour
     { "npc_mq_kiddie", "Human/Man" }
     // Add more terms as needed
 };
-
+        Directory.CreateDirectory(materialsDataDir);
         foreach (var typeDir in Directory.GetDirectories(jsonsDir))
         {
             foreach (var categoryDir in Directory.GetDirectories(typeDir))
@@ -534,6 +535,20 @@ public class RunTimeDataBuilder : MonoBehaviour
                                 SortModel(modelName, modelsSortedByCategory, unsortedModels, modelToFilterLookup, ignoreList, specificTermsToCategory, initialCategory, modelData, modelsByClassAndFilter);
                             }
                         }
+
+                        foreach (var slotPair in modelData.slotPairs)
+                        {
+                            foreach (var modelInfo in slotPair.slotData.models)
+                            {
+                                // Check if model name is valid
+                                if (!string.IsNullOrWhiteSpace(modelInfo.name))
+                                {
+                                    // Create or update JSON file for the model's material data
+                                    string modelName = modelInfo.name.ToLower();
+                                    UpdateMaterialDataJson(modelName, modelInfo.materialsData);
+                                }
+                            }
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -548,6 +563,31 @@ public class RunTimeDataBuilder : MonoBehaviour
         SaveModelFilterLookup(modelToFilterLookup);
         ReorganizeAndCombineJsonFiles();
         Debug.Log("JSON files organized and saved.");
+    }
+
+    private void UpdateMaterialDataJson(string modelName, List<MaterialData> materialsData)
+    {
+        string sanitizedModelName = SanitizeFilename(modelName);
+        string finalModelName = Path.GetFileNameWithoutExtension(sanitizedModelName);
+        string materialFilePath = Path.Combine(materialsDataDir, $"{finalModelName}.json");
+
+        MeshReferenceData meshReferenceData = new MeshReferenceData
+        {
+            materialsData = materialsData,
+            variations = new List<Variation>()
+        };
+
+        if (File.Exists(materialFilePath))
+        {
+            string existingJson = File.ReadAllText(materialFilePath);
+            MeshReferenceData existingData = JsonConvert.DeserializeObject<MeshReferenceData>(existingJson);
+
+            existingData.materialsData = materialsData;
+            meshReferenceData = existingData;
+        }
+
+        string outputJson = JsonConvert.SerializeObject(meshReferenceData, Formatting.Indented);
+        File.WriteAllText(materialFilePath, outputJson);
     }
 
     void SortModel(string modelName, Dictionary<string, Dictionary<string, List<string>>> modelsSortedByCategory, HashSet<string> unsortedModels, Dictionary<string, List<string>> modelToFilterLookup, HashSet<string> ignoreList, Dictionary<string, string> specificTermsToCategory, string initialCategory, ModelData modelData, Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>> modelsByClassAndFilter)

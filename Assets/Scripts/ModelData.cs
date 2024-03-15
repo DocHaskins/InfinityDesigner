@@ -147,6 +147,7 @@ public class ModelData
     public class MeshReferenceData
     {
         public List<MaterialData> materialsData;
+        public List<Variation> variations = new List<Variation>();
     }
 
     [Serializable]

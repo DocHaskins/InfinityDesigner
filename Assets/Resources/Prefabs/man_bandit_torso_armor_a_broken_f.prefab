@@ -41,7 +41,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: -8679921383154817045}
-  - component: {fileID: -8519737699345714514}
+  - component: {fileID: 2530459494384316968}
   m_Layer: 0
   m_Name: man_bandit_torso_armor_a_broken_f
   m_TagString: Untagged
@@ -66,7 +66,7 @@ Transform:
   - {fileID: -5921756239292376014}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-8519737699345714514
+--- !u!114 &2530459494384316968
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -78,6 +78,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 561564395a9436a46a1dd670320b44b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lerpSpeed: 0.01
+  weight: 0.7
 --- !u!1 &3914495668735552005
 GameObject:
   m_ObjectHideFlags: 0
