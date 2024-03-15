@@ -104,7 +104,7 @@ namespace doppelganger
                 string uniquePanelName = "Panel_" + slotName + "_" + currentModel.name;
                 labelGameObject.name = uniquePanelName;
                 selectedMaterialName = labelGameObject.transform.Find("materialLabel").GetComponent<TextMeshProUGUI>();
-                selectedMaterialName.text = currentMaterial.name;
+                selectedMaterialName.text = currentMaterial.name.Replace("(Instance)","");
                 allLabels.Add(labelGameObject);
 
                 Toggle optionsToggle = labelGameObject.transform.Find("Button_Options").GetComponent<Toggle>();
@@ -382,10 +382,12 @@ namespace doppelganger
 
         public void RecordTextureChange(string modelName, string materialName, string slotName, string textureName, int rendererIndex)
         {
-            if (!modelSpecificChanges.TryGetValue(modelName, out var modelChange))
+            string newModelName = modelName.Replace("(Clone)", "");
+            Debug.Log($"Processing RecordTextureChange for model: {newModelName}, slot: {slotName}, renderer index: {rendererIndex}, material: {materialName}, to texture: {textureName}");
+            if (!modelSpecificChanges.TryGetValue(newModelName, out var modelChange))
             {
                 modelChange = new ModelChange();
-                modelSpecificChanges[modelName] = modelChange;
+                modelSpecificChanges[newModelName] = modelChange;
             }
 
             if (!modelChange.MaterialsByRenderer.TryGetValue(rendererIndex, out var materialChange))
@@ -399,25 +401,44 @@ namespace doppelganger
                 modelChange.MaterialsByRenderer[rendererIndex] = materialChange;
             }
 
-            string finalSlotName = slotName.Replace("_", "") + "_0_tex";
+            string finalSlotName = slotName.EndsWith("_tex") ? slotName : ConvertSlotNameToFull(slotName);
 
-            // Determine the final texture name, appending ".png" only if the texture name is not "null"
-            string finalTextureName = textureName == "null" ? "null" : textureName + ".png";
+            string finalTextureName = EnsurePngExtension(textureName, 7);
 
             var existingChange = materialChange.TextureChanges.FirstOrDefault(tc => tc.name == finalSlotName);
             if (existingChange != null)
             {
-                // If there is already a change recorded for this slot, update it
                 existingChange.val_str = finalTextureName;
-                existingChange.type = textureName == "null" ? existingChange.type : 7; // Set type to 7 for PNG changes
-                Debug.Log($"Updated texture change for model: {modelName}, slot: {finalSlotName}, renderer index: {rendererIndex}, material: {materialName}, to texture: {finalTextureName}");
+                existingChange.type = finalTextureName == "null" ? existingChange.type : 7; // Set type to 7 for PNG changes
+                Debug.Log($"Updated texture change for model: {newModelName}, slot: {finalSlotName}, renderer index: {rendererIndex}, material: {materialName}, to texture: {finalTextureName}");
             }
             else
             {
-                // If no change is recorded for this slot, add a new one
-                materialChange.TextureChanges.Add(new RttiValue { name = finalSlotName, val_str = finalTextureName, type = textureName == "null" ? 0 : 7 });
-                Debug.Log($"Recorded new texture change for model: {modelName}, slot: {finalSlotName}, renderer index: {rendererIndex}, material: {materialName}, texture: {finalTextureName}");
+                materialChange.TextureChanges.Add(new RttiValue { name = finalSlotName, val_str = finalTextureName, type = finalTextureName == "null" ? 0 : 7 });
+                Debug.Log($"Recorded new texture change for model: {newModelName}, slot: {finalSlotName}, renderer index: {rendererIndex}, material: {materialName}, texture: {finalTextureName}");
             }
+        }
+
+        private string ConvertSlotNameToFull(string slotName)
+        {
+            string slotBase = slotName.TrimStart('_');
+            Dictionary<string, string> mapping = new Dictionary<string, string>
+    {
+        {"dif", "dif_0_tex"}, {"dif_1", "dif_1_tex"}, {"nrm", "nrm_0_tex"}, {"spc", "spc_0_tex"}, {"rgh", "rgh_0_tex"},
+        {"msk", "msk_0_tex"}, {"msk_1", "msk_1_tex"}, {"gra", "gra_0_tex"}, {"idx", "idx_0_tex"}, {"clp", "clp_0_tex"},
+        {"ocl", "ocl_0_tex"}, {"ems", "ems_0_tex"}
+    };
+
+            return mapping.TryGetValue(slotBase, out var fullSlotName) ? fullSlotName : slotName;
+        }
+
+        private string EnsurePngExtension(string textureName, int type)
+        {
+            if (type == 7 && !textureName.Equals("null") && !textureName.EndsWith(".png"))
+            {
+                return textureName + ".png";
+            }
+            return textureName;
         }
 
         public void ClearAllChangesForModel()

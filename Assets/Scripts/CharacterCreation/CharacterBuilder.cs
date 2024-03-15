@@ -312,6 +312,16 @@ namespace doppelganger
                 interfaceManager.currentPresetPath = jsonPath;
                 interfaceManager.currentPresetLabel.text = presetName;
                 screenshotManager.SetCurrentScreenshot();
+
+                if (interfaceManager.slidersPanel.transform.childCount > 0)
+                {
+                    GameObject firstSlider = interfaceManager.slidersPanel.transform.GetChild(0).gameObject;
+                    string firstSliderName = firstSlider.name.Replace("Slider", "");
+                    interfaceManager.currentSlider = firstSliderName;
+
+                    // Update the model info panel with the current slider
+                    variationBuilder.UpdateModelInfoPanel(interfaceManager.currentSlider);
+                }
             }
             else
             {
@@ -832,8 +842,7 @@ namespace doppelganger
                 {
                     Debug.Log($"Applying texture to shader property: {shaderProperty}. RTTI Value Name: {rttiValueName}, Texture Name: {textureName}.");
                     material.SetTexture(shaderProperty, texture);
-                    variationBuilder.RecordTextureChange(modelInstance.name, material.name, slotName, textureName, modelIndex);
-                    //void RecordTextureChange(string modelName, string materialName, string slotName, string textureName, int rendererIndex)
+                    variationBuilder.RecordTextureChange(modelInstance.name, material.name, rttiValueName, textureName, modelIndex);
                     ApplyAdditionalSettings(material, rttiValueName, texture);
                 }
                 else

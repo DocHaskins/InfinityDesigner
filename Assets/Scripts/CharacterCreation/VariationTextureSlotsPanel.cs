@@ -34,12 +34,12 @@ namespace doppelganger
         public TextMeshProUGUI currentButtonClickedText;
 
         private readonly string[] textureSlots = {
-        "_msk", "_idx", "_gra", "_spc", "_clp", "_rgh", "_ocl", "_ems", "_dif_1", "_dif", "_nrm",
+        "_msk", "_msk_1", "_idx", "_gra", "_spc", "_clp", "_rgh", "_ocl", "_ems", "_dif_1", "_dif", "_nrm",
         "_BaseColorMap", "_NormalMap", "_MaskMap", "_EmissiveColorMap"
     };
 
         private readonly string[] orderedSlotNames = {
-    "_dif", "_nrm", "_spc", "_rgh", "_msk", "_gra", "_idx", "_clp", "_ocl", "_ems"
+    "_dif", "_dif_1", "_nrm", "_spc", "_rgh", "_msk", "_msk_1", "_gra", "_idx", "_clp", "_ocl", "_ems"
 };
 
         void Awake()

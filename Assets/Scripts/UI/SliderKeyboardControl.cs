@@ -10,8 +10,11 @@ public class SliderKeyboardControl : MonoBehaviour
     public CharacterBuilder_InterfaceManager characterBuilder; // Assuming this has a reference to your UI elements
     
     public bool DebugMode = false;
-    private List<Slider> sliders = new List<Slider>();
+    
     private int currentSliderIndex = 0;
+
+    private List<Slider> sliders = new List<Slider>();
+    private List<TMP_InputField> inputFields = new List<TMP_InputField>();
 
     void Start()
     {
@@ -20,6 +23,11 @@ public class SliderKeyboardControl : MonoBehaviour
 
     void Update()
     {
+        if (IsAnyInputFieldFocused())
+        {
+            return;
+        }
+
         if (Input.GetKey(KeyCode.UpArrow))
         {
             if (!isMovingSlider)
@@ -48,6 +56,18 @@ public class SliderKeyboardControl : MonoBehaviour
         {
             ResetCurrentSlider();
         }
+    }
+
+    private bool IsAnyInputFieldFocused()
+    {
+        foreach (var inputField in inputFields)
+        {
+            if (inputField.isFocused)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void ResetCurrentSlider()
@@ -124,6 +144,13 @@ public class SliderKeyboardControl : MonoBehaviour
                     sliders.Add(sliderFallback);
                 }
             }
+        }
+
+        inputFields.Clear();
+        TMP_InputField[] allInputFields = FindObjectsOfType<TMP_InputField>();
+        foreach (TMP_InputField inputField in allInputFields)
+        {
+            inputFields.Add(inputField);
         }
         HighlightCurrentSlider();
     }

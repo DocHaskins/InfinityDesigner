@@ -9,6 +9,7 @@ namespace doppelganger
         public CinemachineVirtualCamera cinemachineCamera;
         public CinemachineFollowZoom cameraZoomTool;
         public CharacterBuilder characterBuilder;
+        public CinemachineRecomposer recomposer;
 
         public string targetTag = "Player";
         public float padding = 1.1f;
@@ -62,6 +63,7 @@ namespace doppelganger
             {
                 debugBoundsList.Clear();
             }
+            recomposer.m_Tilt = 0.0f;
             AdjustCameraToFitObject(targetObject);
         }
 
@@ -175,6 +177,7 @@ namespace doppelganger
 
         private void AdjustCameraToFitObject(GameObject targetObject)
         {
+            Debug.Log($"AdjustCameraToFitObject: targetObject {targetObject}");
             Bounds bounds = CalculateBounds(targetObject);
             lookAtTarget.position = bounds.center;
             cinemachineCamera.LookAt = lookAtTarget;

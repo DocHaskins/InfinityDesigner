@@ -188,7 +188,7 @@ namespace doppelganger
             currentSelectionPanel = selectionPanel;
             currentSlotForSelection = slotName;
             Debug.Log($"Preparing for texture selection for selectionPanel {selectionPanel} on slotName {slotName}");
-            //ReloadTextures();
+            ReloadTextures();
             SetSearchTermFromOtherUI(slotName);
         }
 

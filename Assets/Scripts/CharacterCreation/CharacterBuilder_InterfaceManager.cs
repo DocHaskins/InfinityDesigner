@@ -692,6 +692,7 @@ namespace doppelganger
             {
                 currentSliderButton.onClick.AddListener(() =>
                 {
+                    autoTargetCinemachineCamera.FocusOnSingleObject(variationBuilder.currentModel);
                     currentSlider = slotName;
                     variationBuilder.UpdateModelInfoPanel(currentSlider);
                 });
@@ -812,6 +813,13 @@ namespace doppelganger
                 return;
             }
 
+            string currentModelName = currentModel.name.Replace("(Clone)", "");
+            if (variationBuilder.modelSpecificChanges.ContainsKey(currentModelName))
+            {
+                variationBuilder.modelSpecificChanges.Remove(currentModelName);
+                Debug.Log($"All changes cleared for model and Original materials reapplied: {currentModelName}.");
+            }
+
             if (value == 0 && characterBuilder.originalMaterials.TryGetValue(slotName, out List<Material> mats))
             {
                 characterBuilder.ApplyOriginalMaterials(currentModel, mats);
@@ -819,7 +827,6 @@ namespace doppelganger
                 return;
             }
 
-            // Retrieve the model index from the primary slider
             int modelIndex = Mathf.Clamp((int)sliderValues[slotName] - 1, 0, int.MaxValue);
             string modelName = GetModelNameFromIndex(slotName, modelIndex);
             string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");

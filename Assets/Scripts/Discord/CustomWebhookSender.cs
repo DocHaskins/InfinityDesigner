@@ -45,6 +45,8 @@ namespace doppelganger
         private readonly Dictionary<string, ulong> categoryToTagId = new Dictionary<string, ulong>()
 {
     {"Player", 1215664689317417010},
+    {"Man", 1217837300583632927},
+    {"Wmn", 1217837312256245761},
     {"Renegade", 1215664706367262740},
     {"PeaceKeeper", 1215664718354714644},
     {"Colonel", 1215664764252848138},
