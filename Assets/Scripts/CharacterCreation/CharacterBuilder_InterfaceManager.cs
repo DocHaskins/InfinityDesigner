@@ -838,11 +838,11 @@ namespace doppelganger
                 if (modelInfo != null && modelInfo.variations != null && modelInfo.variations.Count > 0)
                 {
                     int variationIndex = Mathf.Clamp((int)value - 1, 0, modelInfo.variations.Count - 1);
-                    var variationResources = modelInfo.variations[variationIndex].materialsResources;
+                    var variation = modelInfo.variations[variationIndex]; // Changed this line
 
-                    if (variationResources != null)
+                    if (variation != null)
                     {
-                        characterBuilder.ApplyVariationMaterials(currentModel, variationResources, slotName, modelIndex);
+                        characterBuilder.ApplyVariationMaterials(currentModel, variation, slotName, modelIndex); // Changed this line
                     }
                 }
             }
@@ -851,12 +851,10 @@ namespace doppelganger
                 Debug.LogError("Material JSON file not found: " + materialJsonFilePath);
             }
 
-            Debug.Log($"OnVariationSliderValueChanged: currentSlider {currentSlider}");
+            //Debug.Log($"OnVariationSliderValueChanged: currentSlider {currentSlider}");
             variationBuilder.currentSlot = slotName;
             selectedVariationIndexes[slotName] = Mathf.Clamp((int)value - 1, 0, int.MaxValue);
             variationBuilder.UpdateModelInfoPanel(currentSlider);
-            // Debug log to show the actual stored index for each slot
-            Debug.Log("OnVariationSliderValueChanged:");
             foreach (var kvp in selectedVariationIndexes)
             {
                 Debug.Log($"Slot: {kvp.Key}, Stored Index: {kvp.Value}");

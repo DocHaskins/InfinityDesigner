@@ -319,21 +319,14 @@ namespace doppelganger
                 modelSpecificChanges[modelName] = modelChange;
             }
 
-            if (!modelChange.MaterialsByRenderer.ContainsKey(rendererIndex))
+            modelChange.MaterialsByRenderer[rendererIndex] = new MaterialChange
             {
-                modelChange.MaterialsByRenderer[rendererIndex] = new MaterialChange
-                {
-                    OriginalName = originalMaterialName,
-                    NewName = newMaterialName.Replace("(Instance)", ""),
-                    TextureChanges = new List<RttiValue>()
-                };
-            }
-            else
-            {
-                modelChange.MaterialsByRenderer[rendererIndex].NewName = newMaterialName.Replace("(Instance)", "");
-            }
+                OriginalName = originalMaterialName,
+                NewName = newMaterialName.Replace("(Instance)", ""),
+                TextureChanges = new List<RttiValue>()
+            };
 
-            Debug.Log($"Material change recorded for model: {modelName}, renderer index: {rendererIndex}, from: {originalMaterialName} to: {newMaterialName}");
+            //Debug.Log($"[RecordMaterialChange] Material change recorded for model: {modelName}, renderer index: {rendererIndex}, from: {originalMaterialName} to: {newMaterialName}");
         }
 
 
@@ -383,7 +376,7 @@ namespace doppelganger
         public void RecordTextureChange(string modelName, string materialName, string slotName, string textureName, int rendererIndex)
         {
             string newModelName = modelName.Replace("(Clone)", "");
-            Debug.Log($"Processing RecordTextureChange for model: {newModelName}, slot: {slotName}, renderer index: {rendererIndex}, material: {materialName}, to texture: {textureName}");
+            //Debug.Log($"Processing RecordTextureChange for model: {newModelName}, slot: {slotName}, renderer index: {rendererIndex}, material: {materialName}, to texture: {textureName}");
             if (!modelSpecificChanges.TryGetValue(newModelName, out var modelChange))
             {
                 modelChange = new ModelChange();

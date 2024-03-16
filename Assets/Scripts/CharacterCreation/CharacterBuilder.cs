@@ -29,6 +29,7 @@ namespace doppelganger
         private Dictionary<GameObject, bool[]> initialRendererStates = new Dictionary<GameObject, bool[]>();
         public Dictionary<string, List<Material>> originalMaterials = new Dictionary<string, List<Material>>();
         public Dictionary<string, GameObject> currentlyLoadedModels = new Dictionary<string, GameObject>();
+        public Dictionary<int, SkinnedMeshRenderer> materialIndexToRendererMap = new Dictionary<int, SkinnedMeshRenderer>();
 
         void Update()
         {
@@ -571,6 +572,37 @@ namespace doppelganger
             return meshName.EndsWith(".msh") ? meshName.Substring(0, meshName.Length - 4) : meshName;
         }
 
+        public GameObject LoadModelPrefab(string modelName, string slotName)
+        {
+            string prefabPath = Path.Combine("Prefabs", modelName);
+            GameObject prefab = Resources.Load<GameObject>(prefabPath);
+
+            if (prefab != null)
+            {
+                // Instantiate the model as a child of 'CurrentModels'
+                GameObject modelInstance = Instantiate(prefab, Vector3.zero, Quaternion.Euler(0, 0, 0), platform.transform);
+                platform.ResetChildRotations();
+                currentlyLoadedModels[slotName] = modelInstance;
+                return modelInstance;
+            }
+            else
+            {
+                Debug.LogWarning("Prefab not found: " + prefabPath);
+                return null;
+            }
+        }
+
+        private Transform DeepFind(Transform parent, string name)
+        {
+            if (parent.name.Equals(name)) return parent;
+            foreach (Transform child in parent)
+            {
+                Transform result = DeepFind(child, name);
+                if (result != null) return result;
+            }
+            return null;
+        }
+
         public void LoadAndApplyMaterials(string modelName, GameObject modelInstance, string slotName)
         {
             string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");
@@ -624,127 +656,143 @@ namespace doppelganger
             }
         }
 
-        public void ApplyVariationMaterials(GameObject modelInstance, List<ModelData.MaterialResource> materialsResources, string slotName, int modelIndex)
-        {
-            var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
-            string modelName = modelInstance.name.Replace("(Clone)", "");
-
-            Debug.Log($"Cleared all changes for {modelName}");
-            ResetRenderersToInitialState(modelInstance, skinnedMeshRenderers);
-
-            // Apply each materialResource to the appropriate renderer and record the changes
-            foreach (var materialResource in materialsResources)
-            {
-                foreach (var resource in materialResource.resources)
-                {
-                    int rendererIndex = materialResource.number - 1; // Assuming 'number' indicates the renderer's index, adjusting for 0-based index
-                    if (rendererIndex >= 0 && rendererIndex < skinnedMeshRenderers.Length)
-                    {
-                        var renderer = skinnedMeshRenderers[rendererIndex];
-                        string originalMaterialName = renderer.sharedMaterials.Length > 0 ? renderer.sharedMaterials[0].name : "UnknownOriginal"; // Placeholder for actual original material name logic
-
-                        ApplyMaterialToRenderer(renderer, resource.name, modelInstance, resource.rttiValues, slotName, modelIndex);
-
-                        // Record the material change
-                        variationBuilder.RecordMaterialChange(modelName, originalMaterialName, resource.name, rendererIndex);
-
-                        // Debug loaded material and applied changes
-                        Debug.Log($"Loaded material '{resource.name}' applied to renderer '{renderer.name}' in model '{modelName}'. Original material was '{originalMaterialName}'.");
-                        if (resource.rttiValues.Any())
-                        {
-                            Debug.Log($"Changes applied to material '{resource.name}': {string.Join(", ", resource.rttiValues.Select(r => r.name + ": " + r.val_str))}");
-                        }
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"Renderer index out of bounds: {rendererIndex} for material resource number {materialResource.number} in model '{modelName}'");
-                    }
-                }
-            }
-        }
-
-
-        public GameObject LoadModelPrefab(string modelName, string slotName)
-        {
-            string prefabPath = Path.Combine("Prefabs", modelName);
-            GameObject prefab = Resources.Load<GameObject>(prefabPath);
-
-            if (prefab != null)
-            {
-                // Instantiate the model as a child of 'CurrentModels'
-                GameObject modelInstance = Instantiate(prefab, Vector3.zero, Quaternion.Euler(0,0,0), platform.transform);
-                platform.ResetChildRotations();
-                currentlyLoadedModels[slotName] = modelInstance;
-                return modelInstance;
-            }
-            else
-            {
-                Debug.LogWarning("Prefab not found: " + prefabPath);
-                return null;
-            }
-        }
-
-        private Transform DeepFind(Transform parent, string name)
-        {
-            if (parent.name.Equals(name)) return parent;
-            foreach (Transform child in parent)
-            {
-                Transform result = DeepFind(child, name);
-                if (result != null) return result;
-            }
-            return null;
-        }
-
         private void ApplyMaterials(GameObject modelInstance, ModelData.ModelInfo modelInfo)
         {
-            if (modelInstance == null || modelInfo == null || modelInfo.materialsResources == null)
+            if (modelInstance == null || modelInfo == null || modelInfo.materialsData == null)
             {
-                Debug.LogWarning("[ApplyMaterials] modelInstance, modelInfo, or modelInfo.materialsResources is null.");
+                Debug.LogWarning("[ApplyMaterials] modelInstance, modelInfo, or modelInfo.materialsData is null.");
                 return;
             }
 
+            materialIndexToRendererMap.Clear();
             var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
-            //Debug.Log($"[ApplyMaterials] Found {skinnedMeshRenderers.Length} SkinnedMeshRenderer components in {modelInstance.name}.");
+            var rendererNameMap = new Dictionary<string, int>();
 
-            if (!initialRendererStates.ContainsKey(modelInstance))
+            for (int i = 0; i < skinnedMeshRenderers.Length; i++)
             {
-                initialRendererStates[modelInstance] = skinnedMeshRenderers.Select(r => r.enabled).ToArray();
-                //Debug.Log("[ApplyMaterials] Initial renderer states stored.");
+                string formattedName = FormatRendererName(skinnedMeshRenderers[i].name, modelInstance.name.Replace("sh_", "").Replace("(Clone)", ""));
+                rendererNameMap[formattedName] = i; // Direct assignment assuming unique names after formatting
             }
 
-            //Debug.Log($"[ApplyMaterials] Processing {modelInfo.materialsResources.Count} materialsResources for model '{modelInfo.name}'.");
+            Debug.Log("[ApplyMaterials] All formatted renderer names mapped: " + string.Join(", ", rendererNameMap.Keys));
+            Debug.Log("[ApplyMaterials] All material names from JSON: " + string.Join(", ", modelInfo.materialsData.Select(md => md.name.Replace(".mat", ""))));
+
             foreach (var materialData in modelInfo.materialsData)
             {
                 if (materialData == null)
                 {
-                    Debug.LogWarning("[ApplyMaterials] Material resource data is null or empty.");
+                    Debug.LogWarning("[ApplyMaterials] Material data is null or empty.");
                     continue;
                 }
 
-                int rendererIndex = materialData.number - 1; // Adjusting index for 0-based array
+                string formattedMaterialName = materialData.name.Replace(".mat", "");
+                bool matched = false;
 
-                if (rendererIndex >= 0 && rendererIndex < skinnedMeshRenderers.Length)
+                foreach (var kvp in rendererNameMap)
                 {
-                    var renderer = skinnedMeshRenderers[rendererIndex];
-                    string originalMaterialName = renderer.material.name.Replace(" (Instance)", "");
-                    //Debug.Log($"[ApplyMaterials] Found renderer '{renderer.name}' for material '{materialData.name}'.");
-
-                    string resourcePath = $"Materials/{materialData.name.Replace(".mat", "")}";
-                    Material material = Resources.Load<Material>(resourcePath);
-                    if (material != null)
+                    if (kvp.Key.EndsWith(formattedMaterialName))
                     {
-                        renderer.material = material;
-                        variationBuilder.RecordMaterialChange(modelInstance.name, originalMaterialName, material.name, rendererIndex);
-                        //Debug.Log($"[ApplyMaterials] Applied material '{materialData.name}' successfully to '{renderer.name}' from path '{resourcePath}'.");
+                        Material material = Resources.Load<Material>($"Materials/{formattedMaterialName}");
+                        if (material != null)
+                        {
+                            var renderer = skinnedMeshRenderers[kvp.Value];
+                            string originalMaterialName = renderer.material.name; // Assuming renderer already has a material
+
+                            renderer.material = material;
+                            Debug.Log($"[ApplyMaterials] Successfully applied material '{formattedMaterialName}' to renderer {renderer.name}.");
+
+                            // Record the material change
+                            variationBuilder.RecordMaterialChange(modelInstance.name.Replace("(Clone)", ""), originalMaterialName, materialData.name, kvp.Value);
+                            matched = true;
+                            break; // Stop searching once a match is found
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"[ApplyMaterials] Failed to load material '{formattedMaterialName}' from Resources.");
+                        }
+                    }
+                }
+
+                if (!matched)
+                {
+                    Debug.LogWarning($"[ApplyMaterials] No matching renderer found for formatted material name '{formattedMaterialName}'.");
+                }
+            }
+            Debug.Log("[ApplyMaterials] Finished applying materials.");
+        }
+
+        private string FormatRendererName(string rendererName, string modelName)
+        {
+            string prefixPattern = @"sm_\d+_";
+            string lodPattern = @"lod_\d+_";
+            string modelNamePattern = modelName + @"_\d+";
+            string cleanedName = System.Text.RegularExpressions.Regex.Replace(rendererName, prefixPattern, "");
+            cleanedName = System.Text.RegularExpressions.Regex.Replace(cleanedName, lodPattern, "");
+            cleanedName = System.Text.RegularExpressions.Regex.Replace(cleanedName, modelNamePattern, "");
+            cleanedName = System.Text.RegularExpressions.Regex.Replace(cleanedName, "_+", "_");
+            cleanedName = cleanedName.TrimStart('_');
+            cleanedName = cleanedName.Replace(".mat", "");
+
+            //Debug.Log($"[FormatRendererName] modelName {modelName}, Child Original: {rendererName}, Cleaned: {cleanedName}");
+
+            return cleanedName;
+        }
+
+        public void ApplyVariationMaterials(GameObject modelInstance, ModelData.Variation variation, string slotName, int modelIndex)
+        {
+            Debug.Log($"[ApplyVariationMaterials] Starting material application for model: {modelInstance.name}, Slot: {slotName}, ModelIndex: {modelIndex}");
+
+            ValidateAndRemapMaterials(modelInstance, variation.materialsData);
+
+            foreach (var materialResource in variation.materialsResources)
+            {
+                foreach (var resource in materialResource.resources)
+                {
+                    if (materialIndexToRendererMap.TryGetValue(materialResource.number, out SkinnedMeshRenderer renderer))
+                    {
+                        string originalMaterialName = renderer.sharedMaterial ? renderer.sharedMaterial.name : "UnknownOriginal";
+                        ApplyMaterialToRenderer(renderer, resource.name, modelInstance, resource.rttiValues, slotName, modelIndex);
+
+                        int actualRendererIndex = Array.IndexOf(modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(), renderer);
+
+                        variationBuilder.RecordMaterialChange(modelInstance.name.Replace("(Clone)", ""), originalMaterialName, resource.name, actualRendererIndex);
+
+                        //Debug.Log($"[ApplyVariationMaterials] Applied variation material '{resource.name}' to renderer {renderer.name}. Original material was '{originalMaterialName}', Renderer index used: {actualRendererIndex}.");
                     }
                     else
                     {
-                        Debug.LogWarning($"[ApplyMaterials] Failed to load material '{materialData.name}' from path '{resourcePath}'. Ensure the material exists in the Resources/Materials folder without the .mat extension and that the name is correct.");
+                        Debug.LogWarning($"[ApplyVariationMaterials] No renderer found for material index {materialResource.number}.");
                     }
                 }
-                else
+            }
+            Debug.Log("[ApplyVariationMaterials] Finished applying variation materials.");
+        }
+
+        private void ValidateAndRemapMaterials(GameObject modelInstance, List<ModelData.MaterialData> materialsData)
+        {
+            var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+            string modelName = modelInstance.name.Replace("(Clone)", "").Replace("sh_", "");
+
+            var tempRendererNameMap = new Dictionary<string, SkinnedMeshRenderer>();
+
+            foreach (var renderer in skinnedMeshRenderers)
+            {
+                string formattedName = FormatRendererName(renderer.name, modelName);
+                tempRendererNameMap[formattedName] = renderer;
+            }
+
+            materialIndexToRendererMap.Clear(); // Clear previous mappings
+
+            foreach (var materialData in materialsData)
+            {
+                string expectedFormattedName = materialData.name.Replace(".mat", "");
+                foreach (var entry in tempRendererNameMap)
                 {
-                    Debug.LogWarning($"[ApplyMaterials] Renderer index {rendererIndex} out of bounds for material number {materialData.number} in model '{modelInfo.name}'. Total renderers: {skinnedMeshRenderers.Length}.");
+                    if (entry.Key.Contains(expectedFormattedName))
+                    {
+                        materialIndexToRendererMap[materialData.number] = entry.Value;
+                        break; // Match found, no need to continue for this material
+                    }
                 }
             }
         }
