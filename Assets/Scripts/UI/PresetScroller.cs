@@ -415,8 +415,8 @@ namespace doppelganger
 
         public IEnumerator DocumentationButtonPresses(float delayBetweenPresses = 3.0f, float postDocumentationDelay = 2.0f)
         {
-            // Assuming buttonPressActions contains all the actions for pressing each preset button
-            foreach (var buttonAction in buttonPressActions)
+            var tempButtonPressActions = new List<ButtonAction>(buttonPressActions);
+            foreach (var buttonAction in tempButtonPressActions)
             {
                 characterBuilder.Reset();
                 buttonAction.Action.Invoke();
@@ -428,15 +428,17 @@ namespace doppelganger
 
         public IEnumerator DocumentationButtonPressesForNoThumbnail(float delayBetweenPresses = 3.0f, float postDocumentationDelay = 2.0f)
         {
-            foreach (var buttonAction in buttonPressActions)
+            var tempButtonPressActions = new List<ButtonAction>(buttonPressActions);
+
+            // Now iterate over the temporary list instead of the original one
+            foreach (var buttonAction in tempButtonPressActions)
             {
                 if (!buttonAction.HasThumbnail)
                 {
                     characterBuilder.Reset();
-                    buttonAction.Action.Invoke(); // Simulate the button press
+                    buttonAction.Action.Invoke();
                     screenshotManager.DocumentPreset();
-                    yield return new WaitForSeconds(delayBetweenPresses); // Wait for specified delay
-                    //yield return new WaitForSeconds(postDocumentationDelay);
+                    yield return new WaitForSeconds(delayBetweenPresses);
                 }
             }
         }

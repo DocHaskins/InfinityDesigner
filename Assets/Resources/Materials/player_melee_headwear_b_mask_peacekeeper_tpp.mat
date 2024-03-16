@@ -76,27 +76,31 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _gra:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: aaf2fbf930e9e144f8a7d936292c6a9e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _idx:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: b1231d9928a37854ea28e5fbe81b740d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _msk:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _nrm:
+    - _msk_1:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _nrm:
+        m_Texture: {fileID: 2800000, guid: e8fa0c56a17515d4cbd5aff72c603a8e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ocl:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: ed37773b270550646ad7e389b25171cd, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _rgh:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 16e4c68e18bb5e04dab69add675b8cf6, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _spc:
@@ -122,6 +126,7 @@ Material:
     - _AlphaCutoffEnable: 0
     - _AlphaDstBlend: 0
     - _AlphaSrcBlend: 1
+    - _Alpha_Threshold: 0.01
     - _BlendMode: 0
     - _BumpScale: 1
     - _ConservativeDepthOffsetEnable: 0

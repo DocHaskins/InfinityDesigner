@@ -33,6 +33,7 @@ namespace doppelganger
         public Dictionary<int, SkinnedMeshRenderer> materialIndexToRendererMap = new Dictionary<int, SkinnedMeshRenderer>();
         public Dictionary<int, SkinnedMeshRenderer> correctedMaterialIndexToRendererMap = new Dictionary<int, SkinnedMeshRenderer>();
         Dictionary<int, SkinnedMeshRenderer> finalSortedMaterialIndexToRendererMap = new Dictionary<int, SkinnedMeshRenderer>();
+        public Dictionary<string, Dictionary<int, int>> ModelIndexChanges { get; private set; } = new Dictionary<string, Dictionary<int, int>>();
 
         void Update()
         {
@@ -488,10 +489,6 @@ namespace doppelganger
                 //Debug.Log("Existing variation slider found. Destroying...");
                 Destroy(existingVariationSlider.gameObject);
             }
-            else
-            {
-                Debug.Log($"No existing variation slider found for {slotName}.");
-            }
         }
 
 
@@ -636,6 +633,7 @@ namespace doppelganger
                 return;
             }
 
+            correctedMaterialIndexToRendererMap.Clear();
             materialIndexToRendererMap.Clear();
             var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
 
@@ -646,8 +644,8 @@ namespace doppelganger
                 rendererNameToIndexMap[formattedName] = i;
             }
 
-            Debug.Log("[ApplyMaterials] All formatted renderer names mapped: " + string.Join(", ", rendererNameToIndexMap.Keys));
-            Debug.Log("[ApplyMaterials] All material names from JSON: " + string.Join(", ", modelInfo.materialsData.Select(md => md.name.Replace(".mat", ""))));
+            //Debug.Log("[ApplyMaterials] All formatted renderer names mapped: " + string.Join(", ", rendererNameToIndexMap.Keys));
+            //Debug.Log("[ApplyMaterials] All material names from JSON: " + string.Join(", ", modelInfo.materialsData.Select(md => md.name.Replace(".mat", ""))));
 
             for (int matIndex = 0; matIndex < modelInfo.materialsData.Count; matIndex++) // Fixed from .Length to .Count
             {
@@ -691,7 +689,60 @@ namespace doppelganger
 
                 if (!matched)
                 {
-                    Debug.LogWarning($"[ApplyMaterials] No matching renderer found for formatted material name '{formattedMaterialName}' at material index {matIndex}.");
+                    // Try removing 'tpp' or 'fpp' from the material name if no match was found.
+                    string alternativeMaterialName = formattedMaterialName.Replace("_tpp", "").Replace("_fpp", "");
+                    foreach (var kvp in rendererNameToIndexMap)
+                    {
+                        if (kvp.Key.EndsWith(alternativeMaterialName))
+                        {
+                            Material material = Resources.Load<Material>($"Materials/{formattedMaterialName}");
+                            if (material != null)
+                            {
+                                var renderer = skinnedMeshRenderers[kvp.Value];
+                                string originalMaterialName = renderer.material.name;
+
+                                renderer.material = material;
+
+                                materialIndexToRendererMap[matIndex] = renderer;
+                                correctedMaterialIndexToRendererMap[kvp.Value] = renderer;
+
+                                variationBuilder.RecordMaterialChange(modelInstance.name.Replace("(Clone)", ""), originalMaterialName, materialData.name, matIndex);
+                                matched = true;
+                                break;
+                            }
+                            else
+                            {
+                                Debug.LogWarning($"[ApplyMaterials] Failed to load alternative material '{alternativeMaterialName}' from Resources.");
+                            }
+                        }
+                    }
+
+                    if (!matched)
+                    {
+                        Debug.LogWarning($"[ApplyMaterials] No matching renderer found for both original and alternative material names '{formattedMaterialName}' at material index {matIndex}.");
+
+                        // Attempt to apply material using the original method based on JSON data
+                        if (matIndex >= 0 && matIndex < skinnedMeshRenderers.Length)
+                        {
+                            var renderer = skinnedMeshRenderers[matIndex];
+                            string originalMaterialName = renderer.material.name.Replace(" (Instance)", "");
+                            string resourcePath = $"Materials/{materialData.name.Replace(".mat", "")}";
+                            Material material = Resources.Load<Material>(resourcePath);
+                            if (material != null)
+                            {
+                                renderer.material = material;
+                                variationBuilder.RecordMaterialChange(modelInstance.name.Replace("(Clone)", ""), originalMaterialName, materialData.name, matIndex);
+                            }
+                            else
+                            {
+                                Debug.LogWarning($"[ApplyMaterials] Failed to load material '{materialData.name}' from path '{resourcePath}'. Ensure the material exists in the Resources/Materials folder without the .mat extension and that the name is correct.");
+                            }
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"[ApplyMaterials] Renderer index {matIndex} out of bounds for the model '{modelInfo.name}'. Total renderers: {skinnedMeshRenderers.Length}.");
+                        }
+                    }
                 }
             }
             var sortedMaterialToRendererMap = correctedMaterialIndexToRendererMap.OrderBy(entry => entry.Key);
@@ -704,8 +755,8 @@ namespace doppelganger
             }
 
             // Convert the sorted result to a string if you want to use it elsewhere
-            string sortedMapToString = string.Join("; ", sortedMaterialToRendererMap.Select(entry => $"MaterialIndex: {entry.Key}, RendererName: {entry.Value.name}"));
-            Debug.Log($"[ApplyMaterials] Final Sorted materialIndexToRendererMap: {sortedMapToString}");
+            //string sortedMapToString = string.Join("; ", sortedMaterialToRendererMap.Select(entry => $"MaterialIndex: {entry.Key}, RendererName: {entry.Value.name}"));
+            //Debug.Log($"[ApplyMaterials] Final Sorted materialIndexToRendererMap: {sortedMapToString}");
         }
 
         private string FormatRendererName(string rendererName, string modelName)
@@ -760,6 +811,8 @@ namespace doppelganger
                     Debug.LogWarning($"[ApplyVariationMaterials] No corrected index found for original index {originalIndex}.");
                 }
             }
+            ModelIndexChanges[modelInstance.name.Replace("(Clone)", "")] = new Dictionary<int, int>(indexChanges);
+            Debug.Log($"[ApplyVariationMaterials] Final ModelIndexChanges for '{modelInstance.name.Replace("(Clone)", "")}': {intMapToString(indexChanges)}");
 
             foreach (var materialResource in materialsResources)
             {
@@ -775,7 +828,7 @@ namespace doppelganger
                     foreach (var resource in materialResource.resources)
                     {
                         string originalMaterialName = renderer.sharedMaterials.Length > 0 ? renderer.sharedMaterials[0].name : "UnknownOriginal";
-                        variationBuilder.RecordMaterialChange(modelInstance.name.Replace("(Clone)", ""), originalMaterialName, resource.name, originalIndex);
+                        variationBuilder.RecordMaterialChange(modelInstance.name.Replace("(Clone)", ""), originalMaterialName.Replace(" (Instance)", ""), resource.name, originalIndex);
 
                         ApplyMaterialToRenderer(renderer, resource.name, modelInstance, resource.rttiValues, slotName, modelIndex);
                         //Debug.Log($"[ApplyVariationMaterials] Material '{resource.name}' applied to renderer '{renderer.name}', which was originally at index {originalIndex} but now at corrected index {correctedIndex}. Original material was '{originalMaterialName}'.");
@@ -786,6 +839,11 @@ namespace doppelganger
                     Debug.LogWarning($"[ApplyVariationMaterials] No renderer found for corrected material index {correctedIndex} (original index was {originalIndex}).");
                 }
             }
+        }
+
+        private string intMapToString(Dictionary<int, int> map)
+        {
+            return "{" + string.Join(", ", map.Select(kvp => $"{kvp.Key}: {kvp.Value}")) + "}";
         }
 
         private string MapToString(Dictionary<int, SkinnedMeshRenderer> map)
@@ -895,7 +953,7 @@ namespace doppelganger
 
         private void ApplyTextureToMaterial(GameObject modelInstance, Material material, string rttiValueName, string textureName, string slotName, int modelIndex)
         {
-            //Debug.Log($"[ApplyTextureToMaterial] modelInstance '{modelInstance}', material '{material.name}', rttiValueName '{rttiValueName}', textureName '{textureName}', slotName '{slotName}', modelIndex '{modelIndex}'");
+            Debug.Log($"[ApplyTextureToMaterial] modelInstance '{modelInstance}', material '{material.name}', rttiValueName '{rttiValueName}', textureName '{textureName}', slotName '{slotName}', modelIndex '{modelIndex}'");
 
             // Attempt to find the shader property from custom shader mapping, then HDRP mapping as fallback
             string shaderProperty = GetShaderProperty(rttiValueName);
