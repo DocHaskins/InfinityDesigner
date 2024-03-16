@@ -106,7 +106,7 @@ namespace doppelganger
                         bool isLast = slotsToCreate.IndexOf(requiredSlot) == slotsToCreate.Count - 1; // Check if this is the last slot to create
 
                         // Note: The following log might need adjustment since createdCount isn't updated in this snippet
-                        Debug.Log($"nextAvailableSlotUid: {nextAvailableSlotUid}, total required: {totalRequired}, created: {slotsToCreate.IndexOf(requiredSlot) + 1}, isLast: {isLast}");
+                        //Debug.Log($"nextAvailableSlotUid: {nextAvailableSlotUid}, total required: {totalRequired}, created: {slotsToCreate.IndexOf(requiredSlot) + 1}, isLast: {isLast}");
 
                         AppendEmptySlot(sb, requiredSlot, nextAvailableSlotUid, isFirstSlotAppended, isPreviousSlotAppended, isLast);
 
@@ -382,7 +382,7 @@ namespace doppelganger
                 }
             }
 
-            Debug.Log($"Generated new UID '{newUid}' for slot '{slotName}'.");
+            //Debug.Log($"Generated new UID '{newUid}' for slot '{slotName}'.");
             return newUid;
         }
 

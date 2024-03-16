@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -308,7 +309,7 @@ namespace doppelganger
             string modelName = currentModel.name.Replace("(Clone)", ""); // Assuming 'currentModel' is a field for the current model
             string materialName = materialToModify.name;
             string textureName = texture == null ? "null" : texture.name;
-            RecordTextureChange(modelName, materialName, slotName, textureName, rendererIndex);
+            RecordTextureChange(modelName, materialName.Replace(" (Instance)",""), slotName, textureName, rendererIndex);
         }
 
         public void RecordMaterialChange(string modelName, string originalMaterialName, string newMaterialName, int rendererIndex)
@@ -325,8 +326,12 @@ namespace doppelganger
                 NewName = newMaterialName.Replace("(Instance)", ""),
                 TextureChanges = new List<RttiValue>()
             };
-
-            //Debug.Log($"[RecordMaterialChange] Material change recorded for model: {modelName}, renderer index: {rendererIndex}, from: {originalMaterialName} to: {newMaterialName}");
+            //foreach (var kvp in modelSpecificChanges)
+            //{
+            //    string modelChangesJson = JsonConvert.SerializeObject(kvp.Value, Formatting.Indented);
+            //    Debug.Log($"ModelSpecificChanges for Key: {kvp.Key}, Detailed Changes: \n{modelChangesJson}");
+            //}
+            Debug.Log($"[RecordMaterialChange] Material change recorded for model: {modelName}, renderer index: {rendererIndex}, from: {originalMaterialName} to: {newMaterialName}");
         }
 
 
@@ -376,7 +381,7 @@ namespace doppelganger
         public void RecordTextureChange(string modelName, string materialName, string slotName, string textureName, int rendererIndex)
         {
             string newModelName = modelName.Replace("(Clone)", "");
-            //Debug.Log($"Processing RecordTextureChange for model: {newModelName}, slot: {slotName}, renderer index: {rendererIndex}, material: {materialName}, to texture: {textureName}");
+            Debug.Log($"Processing RecordTextureChange for model: {newModelName}, slot: {slotName}, renderer index: {rendererIndex}, material: {materialName}, to texture: {textureName}");
             if (!modelSpecificChanges.TryGetValue(newModelName, out var modelChange))
             {
                 modelChange = new ModelChange();
@@ -410,6 +415,11 @@ namespace doppelganger
                 materialChange.TextureChanges.Add(new RttiValue { name = finalSlotName, val_str = finalTextureName, type = finalTextureName == "null" ? 0 : 7 });
                 Debug.Log($"Recorded new texture change for model: {newModelName}, slot: {finalSlotName}, renderer index: {rendererIndex}, material: {materialName}, texture: {finalTextureName}");
             }
+            //foreach (var kvp in modelSpecificChanges)
+            //{
+            //    string modelChangesJson = JsonConvert.SerializeObject(kvp.Value, Formatting.Indented);
+            //    Debug.Log($"ModelSpecificChanges for Key: {kvp.Key}, Detailed Changes: \n{modelChangesJson}");
+            //}
         }
 
         private string ConvertSlotNameToFull(string slotName)

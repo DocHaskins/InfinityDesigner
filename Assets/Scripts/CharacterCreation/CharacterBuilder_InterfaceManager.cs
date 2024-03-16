@@ -817,7 +817,6 @@ namespace doppelganger
             if (variationBuilder.modelSpecificChanges.ContainsKey(currentModelName))
             {
                 variationBuilder.modelSpecificChanges.Remove(currentModelName);
-                Debug.Log($"All changes cleared for model and Original materials reapplied: {currentModelName}.");
             }
 
             if (value == 0 && characterBuilder.originalMaterials.TryGetValue(slotName, out List<Material> mats))
@@ -838,11 +837,11 @@ namespace doppelganger
                 if (modelInfo != null && modelInfo.variations != null && modelInfo.variations.Count > 0)
                 {
                     int variationIndex = Mathf.Clamp((int)value - 1, 0, modelInfo.variations.Count - 1);
-                    var variation = modelInfo.variations[variationIndex]; // Changed this line
+                    var variationResources = modelInfo.variations[variationIndex].materialsResources;
 
-                    if (variation != null)
+                    if (variationResources != null)
                     {
-                        characterBuilder.ApplyVariationMaterials(currentModel, variation, slotName, modelIndex); // Changed this line
+                        characterBuilder.ApplyVariationMaterials(currentModel, variationResources, slotName, modelIndex);
                     }
                 }
             }
@@ -850,8 +849,6 @@ namespace doppelganger
             {
                 Debug.LogError("Material JSON file not found: " + materialJsonFilePath);
             }
-
-            //Debug.Log($"OnVariationSliderValueChanged: currentSlider {currentSlider}");
             variationBuilder.currentSlot = slotName;
             selectedVariationIndexes[slotName] = Mathf.Clamp((int)value - 1, 0, int.MaxValue);
             variationBuilder.UpdateModelInfoPanel(currentSlider);

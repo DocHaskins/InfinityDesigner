@@ -299,7 +299,7 @@ namespace doppelganger
                                     Debug.Log($"Checking possible slot: {possibleSlot.name} with Slot UID: {possibleSlot.slotUid} against used slots and UIDs.");
                                     if (!usedSlotUids.Contains(possibleSlot.slotUid) && !usedSlots.Contains(possibleSlot.name))
                                     {
-                                        Debug.Log($"Creating SlotDataPair for model {modelName} with intended slot {slotKey} and assigning to actual slot {possibleSlot.name}.");
+                                        //Debug.Log($"Creating SlotDataPair for model {modelName} with intended slot {slotKey} and assigning to actual slot {possibleSlot.name}.");
                                         slotPair = CreateSlotDataPair(model, possibleSlot.name, possibleSlot.slotUid);
                                         slotPairs.Add(slotPair);
                                         usedSlotUids.Add(possibleSlot.slotUid);
@@ -741,7 +741,7 @@ namespace doppelganger
             Debug.Log($"Creating SlotDataPair for {model.name} with original slot {originalSlotKey} and lookup slot {lookupSlotKey}");
 
             string formattedModelName = FormatModelName(model.name);
-            Debug.Log($"Formatted model name: {formattedModelName}");
+            //Debug.Log($"Formatted model name: {formattedModelName}");
 
             var slotData = new ModelData.SlotData
             {
@@ -751,7 +751,7 @@ namespace doppelganger
             };
 
             string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", $"{formattedModelName.Replace(".msh", "")}.json");
-            Debug.Log($"Looking for material JSON at: {materialJsonFilePath}");
+            //Debug.Log($"Looking for material JSON at: {materialJsonFilePath}");
 
             // Initialize a new model info
             var modelInfo = new ModelData.ModelInfo
@@ -759,6 +759,12 @@ namespace doppelganger
                 name = formattedModelName,
                 materialsData = GetMaterialsDataFromStreamingAssets(formattedModelName.Replace(".msh", "")), // Default materials data
             };
+
+            foreach (var kvp in variationBuilder.modelSpecificChanges)
+            {
+                string modelChangesJson = JsonConvert.SerializeObject(kvp.Value, Formatting.Indented);
+                Debug.Log($"[CreateSlotDataPair] ModelSpecificChanges for Key: {kvp.Key}, Detailed Changes: \n{modelChangesJson}");
+            }
 
             // Check if there are specific model changes
             if (variationBuilder.modelSpecificChanges.TryGetValue(formattedModelName.Replace(".msh", ""), out ModelChange modelChanges))
@@ -784,12 +790,17 @@ namespace doppelganger
 
         private List<ModelData.MaterialResource> GetMaterialsResourcesFromModelChanges(GameObject model, ModelChange modelChanges)
         {
+            Debug.Log($"[GetMaterialsResourcesFromModelChanges] Starting to retrieve material resources from model changes for '{model.name}'.");
+
             List<ModelData.MaterialResource> materialsResources = new List<ModelData.MaterialResource>();
             var renderers = model.GetComponentsInChildren<SkinnedMeshRenderer>();
+
+            Debug.Log($"[GetMaterialsResourcesFromModelChanges] Found {renderers.Length} SkinnedMeshRenderers in '{model.name}'.");
 
             for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
             {
                 var renderer = renderers[rendererIndex];
+
                 var resource = new ModelData.Resource
                 {
                     name = renderer.sharedMaterial.name.Replace("(Instance)", "").Replace(" ", "") + (renderer.sharedMaterial.name.Replace("(Instance)", "").Replace(" ", "").EndsWith(".mat") ? "" : ".mat"),
@@ -800,7 +811,15 @@ namespace doppelganger
                 {
                     resource.name = materialChange.NewName.Replace("(Instance)", "").EndsWith(".mat") ? materialChange.NewName.Replace("(Instance)", "").Replace(" ", "") : $"{materialChange.NewName.Replace("(Instance)", "").Replace(" ", "")}.mat";
                     resource.rttiValues = materialChange.TextureChanges;
-                    Debug.Log($"Applying specific material changes to renderer {rendererIndex} for model {model.name}.");
+
+                    foreach (var texChange in materialChange.TextureChanges)
+                    {
+                        Debug.Log($"[GetMaterialsResourcesFromModelChanges] Texture change: slot '{texChange.name}' now uses texture '{texChange.val_str}'.");
+                    }
+                }
+                else
+                {
+                    Debug.Log($"[GetMaterialsResourcesFromModelChanges] No specific material change found for renderer {rendererIndex}. Using default material name: '{resource.name}'.");
                 }
 
                 materialsResources.Add(new ModelData.MaterialResource
@@ -810,6 +829,7 @@ namespace doppelganger
                 });
             }
 
+            Debug.Log($"[GetMaterialsResourcesFromModelChanges] Completed creating material resources for model '{model.name}'. Total resources created: {materialsResources.Count}.");
             return materialsResources;
         }
 
