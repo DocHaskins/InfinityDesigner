@@ -282,7 +282,7 @@ namespace doppelganger
                                         GameObject modelInstance = GameObject.Find(modelNameWithClone); // Adjusted to use modelNameWithClone
                                         if (modelInstance != null) // Check if the model instance is found
                                         {
-                                            LoadAndApplyMaterials(modelName, modelInstance, slotName);
+                                            ApplyPresetMaterialsDirectly(modelInstance, modelInfo, slotName, modelIndex);
                                         }
                                         else
                                         {
@@ -335,35 +335,45 @@ namespace doppelganger
 
         private void ApplyPresetMaterialsDirectly(GameObject modelInstance, ModelData.ModelInfo modelInfo, string slotName, int modelIndex)
         {
-            if (modelInstance == null || modelInfo == null || modelInfo.materialsResources == null)
+            if (modelInstance == null || modelInfo == null || modelInfo.materialsData == null || modelInfo.materialsResources == null)
             {
-                Debug.LogWarning("ApplyPresetMaterialsDirectly: modelInstance or modelInfo is null.");
+                Debug.LogWarning("ApplyPresetMaterialsDirectly: modelInstance, modelInfo, or its materials are null.");
                 return;
             }
 
-            //Debug.Log($"Starting to apply materials directly based on JSON for model instance '{modelInstance.name}'. Total materials resources: {modelInfo.materialsResources.Count}");
-
             var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
-
-            foreach (var materialResource in modelInfo.materialsResources)
+            var rendererNameToIndexMap = new Dictionary<string, int>();
+            for (int i = 0; i < skinnedMeshRenderers.Length; i++)
             {
-                int rendererIndex = materialResource.number - 1;
-                //Debug.Log($"Processing material resource with index {rendererIndex} having {materialResource.resources.Count} resources.");
+                string formattedName = FormatRendererName(skinnedMeshRenderers[i].name, modelInstance.name.Replace("sh_", "").Replace("(Clone)", ""));
+                rendererNameToIndexMap[formattedName] = i;
+            }
 
-                if (rendererIndex >= 0 && rendererIndex < skinnedMeshRenderers.Length)
+            // Iterate over materialsData for matching, but apply materials from materialsResources
+            for (int dataIdx = 0; dataIdx < modelInfo.materialsData.Count; dataIdx++)
+            {
+                var materialData = modelInfo.materialsData[dataIdx];
+                if (materialData == null) continue;
+
+                // Convert material name from materialsData for matching
+                string formattedMaterialName = materialData.name.Replace(".mat", "");
+
+                // Find corresponding materialResource based on the index
+                ModelData.MaterialResource materialResource = modelInfo.materialsResources.FirstOrDefault(mr => mr.number == dataIdx + 1);
+                if (materialResource == null) continue;
+
+                foreach (var kvp in rendererNameToIndexMap)
                 {
-                    var renderer = skinnedMeshRenderers[rendererIndex];
-
-                    foreach (var resource in materialResource.resources)
+                    if (kvp.Key.EndsWith(formattedMaterialName)) // Check if renderer corresponds to this material
                     {
-                        // Ignore the 'selected' flag and apply all materials
-                        //Debug.Log($"Applying material '{resource.name}' with RTTI values to renderer at index {rendererIndex}, regardless of 'selected' status.");
-                        ApplyMaterialToRenderer(renderer, resource.name, modelInstance, resource.rttiValues, slotName, modelIndex);
+                        var renderer = skinnedMeshRenderers[kvp.Value];
+                        foreach (var resource in materialResource.resources)
+                        {
+                            // Here, actually apply each material from the resource to the renderer
+                            ApplyMaterialToRenderer(renderer, resource.name, modelInstance, resource.rttiValues, slotName, modelIndex);
+                        }
+                        break; // Break after applying all resources for a matched renderer
                     }
-                }
-                else
-                {
-                    Debug.LogWarning($"Renderer index out of bounds: {rendererIndex} for materialResource number {materialResource.number} in model '{modelInfo.name}'");
                 }
             }
         }
