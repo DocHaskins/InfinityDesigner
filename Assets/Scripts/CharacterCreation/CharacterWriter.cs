@@ -281,14 +281,18 @@ namespace doppelganger
                         {
                             Debug.Log($"Mapping found: {slider.Key} maps to {slotKey}");
                             string modelName = model.name.Replace("(Clone)", ".msh").ToLower();
-                            string potentialSkeletonName = skeletonLookup.FindMatchingSkeleton(modelName);
-                            Debug.Log($"{potentialSkeletonName} Skeleton updated to {skeletonName} based on loaded models.");
-                            if (!string.IsNullOrEmpty(potentialSkeletonName) && potentialSkeletonName != "player_skeleton.msh" && potentialSkeletonName != skeletonName)
+                            if (saveCategory != "Player")
                             {
-                                skeletonName = potentialSkeletonName;
-                                skeletonUpdated = true;
+                                string potentialSkeletonName = skeletonLookup.FindMatchingSkeleton(modelName);
                                 Debug.Log($"{potentialSkeletonName} Skeleton updated to {skeletonName} based on loaded models.");
+                                if (!string.IsNullOrEmpty(potentialSkeletonName) && potentialSkeletonName != "player_skeleton.msh" && potentialSkeletonName != skeletonName)
+                                {
+                                    skeletonName = potentialSkeletonName;
+                                    skeletonUpdated = true;
+                                    Debug.Log($"{potentialSkeletonName} Skeleton updated to {skeletonName} based on loaded models.");
+                                }
                             }
+
                             if (slotUIDLookup.ModelSlots.TryGetValue(modelName, out List<ModelData.SlotInfo> possibleSlots))
                             {
                                 Debug.Log($"Found possible slots for model {modelName}: {possibleSlots.Count}");

@@ -24,7 +24,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: man_zmb_body_torso_a_degenerated_african
-  m_Shader: {fileID: -6465566751694194690, guid: 0cf98c43b16dd6e4abfc0e3e03e66cd6, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 9f8f796d521fd424dbe975db255b6e93, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -88,6 +88,14 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _dif:
+        m_Texture: {fileID: 2800000, guid: 015dc82b5028e134880af5ec134a2aae, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _dif_1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ems:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -103,16 +111,20 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _nrm:
+    - _msk_1:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _nrm:
+        m_Texture: {fileID: 2800000, guid: 8a66cff8b7bd2a24cabf50357b1f6e77, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ocl:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 7430bd236265d7e4e9f671ac192d8bf0, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _rgh:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 44f81a4aa71b4694b9b118884b3e0d33, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _spc:
@@ -138,6 +150,7 @@ Material:
     - _AlphaCutoffEnable: 0
     - _AlphaDstBlend: 0
     - _AlphaSrcBlend: 1
+    - _Alpha_Threshold: 0.01
     - _BlendMode: 0
     - _BumpScale: 1
     - _ConservativeDepthOffsetEnable: 0
@@ -195,6 +208,7 @@ Material:
     - _ZTestGBuffer: 4
     - _ZTestTransparent: 4
     - _ZWrite: 1
+    - _ems_intensity: 0.7
     - _metallic_default: 0
     - _spc_default: 0
     m_Colors:

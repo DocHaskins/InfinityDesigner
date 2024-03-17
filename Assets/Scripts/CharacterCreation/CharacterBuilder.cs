@@ -280,10 +280,9 @@ namespace doppelganger
                                         // Attempt to find and load the model instance
                                         string modelName = Path.GetFileNameWithoutExtension(modelInfo.name);
                                         GameObject modelInstance = GameObject.Find(modelNameWithClone); // Adjusted to use modelNameWithClone
-                                        if (modelInstance != null) // Assuming modelInstance is found
+                                        if (modelInstance != null) // Check if the model instance is found
                                         {
-                                            //Debug.Log($"Applying materials directly from JSON data for '{modelInfo.name}'.");
-                                            ApplyPresetMaterialsDirectly(modelInstance, modelInfo, slotName, modelIndex);
+                                            LoadAndApplyMaterials(modelName, modelInstance, slotName);
                                         }
                                         else
                                         {
@@ -417,19 +416,16 @@ namespace doppelganger
             // Get the selected skeleton name based on category and class
             string selectedSkeleton = skeletonLookup.GetSelectedSkeleton();
             string resourcePath = "Prefabs/" + selectedSkeleton.Replace(".msh", "");
-
-            // Check for the current skeleton in the scene
+            
             GameObject currentSkeleton = GameObject.FindGameObjectWithTag("Skeleton");
             bool shouldLoadSkeleton = true;
 
-            // If there is a current skeleton, check its prefab name against the selected skeleton
             if (currentSkeleton != null && currentSkeleton.name.StartsWith(selectedSkeleton))
             {
                 shouldLoadSkeleton = false;
             }
             else if (currentSkeleton != null)
             {
-                // If there is a skeleton but with a wrong name, destroy it
                 Destroy(currentSkeleton);
             }
 
@@ -719,8 +715,6 @@ namespace doppelganger
 
                     if (!matched)
                     {
-                        Debug.LogWarning($"[ApplyMaterials] No matching renderer found for both original and alternative material names '{formattedMaterialName}' at material index {matIndex}.");
-
                         // Attempt to apply material using the original method based on JSON data
                         if (matIndex >= 0 && matIndex < skinnedMeshRenderers.Length)
                         {
@@ -819,7 +813,7 @@ namespace doppelganger
                 int originalIndex = materialResource.number - 1; // Adjusting index to 0-based.
                 int correctedIndex = indexChanges.ContainsKey(originalIndex) ? indexChanges[originalIndex] : originalIndex;
 
-                //Debug.Log($"[ApplyVariationMaterials] Attempting to apply material for original index {originalIndex} (corrected index: {correctedIndex}).");
+                Debug.Log($"[ApplyVariationMaterials] Attempting to apply material for original index {originalIndex} (corrected index: {correctedIndex}).");
 
                 if (finalSortedMaterialIndexToRendererMap.ContainsKey(correctedIndex))
                 {
@@ -831,7 +825,7 @@ namespace doppelganger
                         variationBuilder.RecordMaterialChange(modelInstance.name.Replace("(Clone)", ""), originalMaterialName.Replace(" (Instance)", ""), resource.name, originalIndex);
 
                         ApplyMaterialToRenderer(renderer, resource.name, modelInstance, resource.rttiValues, slotName, modelIndex);
-                        //Debug.Log($"[ApplyVariationMaterials] Material '{resource.name}' applied to renderer '{renderer.name}', which was originally at index {originalIndex} but now at corrected index {correctedIndex}. Original material was '{originalMaterialName}'.");
+                        Debug.Log($"[ApplyVariationMaterials] Material '{resource.name}' applied to renderer '{renderer.name}', which was originally at index {originalIndex} but now at corrected index {correctedIndex}. Original material was '{originalMaterialName}'.");
                     }
                 }
                 else

@@ -24,14 +24,14 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: wmn_zmb_torso_e_threads
-  m_Shader: {fileID: -6465566751694194690, guid: 9f8f796d521fd424dbe975db255b6e93, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 921ad4346783ba24a9c2e29a817e4c4e, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
+  - _ALPHATEST_ON
   - _ENABLE_FOG_ON_TRANSPARENT
   - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords:
-  - _ALPHATEST_ON
   - _BACK_THEN_FRONT_RENDERING
   - _MASKMAP
   - _NORMALMAP
@@ -204,11 +204,19 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _msk_1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _nrm:
         m_Texture: {fileID: 2800000, guid: d9bc17a3d55f2e648b7548e44b4d4b10, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ocl:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _opc:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -251,6 +259,7 @@ Material:
     - _AlphaRemapMin: 0
     - _AlphaSrcBlend: 1
     - _AlphaToMask: 0
+    - _Alpha_Threshold: 0.01
     - _Anisotropy: 0
     - _Blend: 0.9
     - _BlendMode: 0
@@ -317,6 +326,7 @@ Material:
     - _ObjectSpaceUVMappingEmissive: 0
     - _OcclusionStrength: 1
     - _OpaqueCullMode: 2
+    - _Override_Color: 0
     - _PPDLodThreshold: 5
     - _PPDMaxSamples: 15
     - _PPDMinSamples: 5
@@ -329,7 +339,7 @@ Material:
     - _ReceivesSSR: 1
     - _ReceivesSSRTransparent: 1
     - _RefractionModel: 0
-    - _RenderQueueType: 1
+    - _RenderQueueType: 4
     - _RequireSplitLighting: 0
     - _Smoothness: 0.5
     - _SmoothnessRemapMax: 0.25
@@ -378,6 +388,7 @@ Material:
     - _ZTestTransparent: 4
     - _ZWrite: 0
     - _ems_intensity: 0.7
+    - _ems_scale: 5
     - _metallic_default: 0
     - _spc_default: 0
     m_Colors:
@@ -398,6 +409,7 @@ Material:
     - _UVDetailsMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMaskEmissive: {r: 1, g: 0, b: 0, a: 0}
+    - _color: {r: 1, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &7632630100718323128
 MonoBehaviour:

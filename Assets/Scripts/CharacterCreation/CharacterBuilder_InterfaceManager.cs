@@ -87,6 +87,7 @@ namespace doppelganger
         {
             string initialType = "Human";
             string initialCategory = "ALL";
+            List<string> sliderOrder = filterMapping.buttonMappings["Button_All"];
             PopulateDropdown(categoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", "Human"), "ALL", true);
 
             StartCoroutine(SetInitialDropdownValues());
@@ -528,7 +529,6 @@ namespace doppelganger
             // Assuming PopulateSlidersWithFilters does the actual update
             PopulateSlidersWithFilters(currentPath, filters);
 
-            // Presumed existing functionality
             UpdateInterfaceBasedOnType();
             UpdateSlidersBasedOnSelection();
             sliderKeyboardControl.RefreshSliders();
@@ -574,12 +574,20 @@ namespace doppelganger
             // Clear existing sliders first
             ClearExistingSliders();
 
-            // Your logic to load sliders from the specified path
-            string[] files = Directory.GetFiles(path, "*.json");
-            foreach (var file in files)
+            // Your logic to load sliders based on the predefined order
+            List<string> sliderOrder = filterMapping.buttonMappings["Button_All"];
+            foreach (string sliderName in sliderOrder)
             {
-                string fileName = Path.GetFileNameWithoutExtension(file);
-                CreateSliderForSlot(fileName, path); // Pass the path here
+                string fullPath = Path.Combine(path, sliderName + ".json");
+                if (File.Exists(fullPath))
+                {
+                    CreateSliderForSlot(sliderName, path);
+                }
+                else
+                {
+                    // Optionally log if a slider JSON is expected for every item in sliderOrder
+                    Debug.LogWarning("JSON file not found for slider: " + fullPath);
+                }
             }
 
             // Rebuild layout if necessary
@@ -590,21 +598,25 @@ namespace doppelganger
         {
             ClearExistingSliders();
 
-            foreach (var filter in filters)
+            List<string> sliderOrder = filterMapping.buttonMappings["Button_All"];
+            foreach (string sliderName in sliderOrder)
             {
-                string fullPath = Path.Combine(basePath, filter + ".json");
-                if (File.Exists(fullPath))
+                if (filters.Contains(sliderName))
                 {
-                    CreateSliderForSlot(filter, basePath);
-                }
-                else
-                {
-                    Debug.LogWarning("JSON file not found for filter: " + fullPath);
+                    string fullPath = Path.Combine(basePath, sliderName + ".json");
+                    if (File.Exists(fullPath))
+                    {
+                        CreateSliderForSlot(sliderName, basePath);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("JSON file not found for filter: " + fullPath);
+                    }
                 }
             }
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(slidersPanel.GetComponent<RectTransform>());
-            //CreateDynamicButtons(filters);
+            //CreateDynamicButtons(filters); // Uncomment if dynamic buttons should be created based on filters
         }
 
         public void SetCurrentType(string type)

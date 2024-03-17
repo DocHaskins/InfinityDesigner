@@ -78,7 +78,7 @@ namespace doppelganger
         {"Custom", "Custom/"},
         {"Player", "Human/Player"},
         {"Man", "Human/Man"},
-        {"Woman", "Human/Woman"},
+        {"Woman", "Human/Wmn"},
         {"Child", "Human/Child"},
         {"Biter", "Infected/Biter"},
         {"Special Infected", "Infected/Special Infected"},

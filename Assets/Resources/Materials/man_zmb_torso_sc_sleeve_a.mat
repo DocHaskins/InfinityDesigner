@@ -24,7 +24,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: man_zmb_torso_sc_sleeve_a
-  m_Shader: {fileID: -6465566751694194690, guid: 9f8f796d521fd424dbe975db255b6e93, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 0cf98c43b16dd6e4abfc0e3e03e66cd6, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -150,7 +150,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _gra:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 81fbfe39c066b6b4cbad537958248c9c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _idx:
@@ -158,6 +158,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _msk:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _msk_1:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -206,6 +210,7 @@ Material:
     - _AlphaRemapMax: 1
     - _AlphaRemapMin: 0
     - _AlphaSrcBlend: 1
+    - _Alpha_Threshold: 0.01
     - _Anisotropy: 0
     - _BlendMode: 0
     - _CoatMask: 0
@@ -330,4 +335,6 @@ Material:
     - _UVDetailsMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMaskEmissive: {r: 1, g: 0, b: 0, a: 0}
+    - _idx_Tiling: {r: 0.5, g: 1, b: 0, a: 0}
+    - _idx_offset: {r: 1, g: 0.25, b: 0, a: 0}
   m_BuildTextureStacks: []

@@ -87,6 +87,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _msk_1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _nrm:
         m_Texture: {fileID: 2800000, guid: dec829627c7dff1418da9b378c546690, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -122,6 +126,7 @@ Material:
     - _AlphaCutoffEnable: 0
     - _AlphaDstBlend: 0
     - _AlphaSrcBlend: 1
+    - _Alpha_Threshold: 0.01
     - _BlendMode: 0
     - _BumpScale: 1
     - _ConservativeDepthOffsetEnable: 0
@@ -185,8 +190,8 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DoubleSidedConstants: {r: 1, g: 1, b: 1, a: 0}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
-    - _idx_Tiling: {r: 0.5, g: 1, b: 0, a: 0}
-    - _idx_offset: {r: 1, g: 0.25, b: 0, a: 0}
+    - _idx_Tiling: {r: 0.14, g: 1, b: 0, a: 0}
+    - _idx_offset: {r: 0.22, g: 0.25, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &8027735510916793479
 MonoBehaviour:

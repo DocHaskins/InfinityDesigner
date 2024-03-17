@@ -25,8 +25,22 @@ namespace doppelganger
         "ALL", new Dictionary<string, string>
         {
             {"ALL", "man_basic_skeleton"},
+            {"bandit", "man_bdt_medium_skeleton"},
+            {"peacekeeper", "man_pk_medium_skeleton"},
+            {"renegade", "man_bdt_medium_skeleton"},
+            {"scavenger", "man_sc_medium_skeleton"},
+            {"survivor", "man_srv_medium_skeleton"},
             {"Biter", "man_zmb_skeleton"},
-            {"Special Infected", "player_skeleton"},
+            {"Banshee", "zmb_banshee_skeleton"},
+            {"bolter", "zmb_bolter_skeleton"},
+            {"charger", "zmb_charger_skeleton"},
+            {"corruptor", "zmb_corruptor_skeleton"},
+            {"demolisher", "zmb_demolisher_skeleton"},
+            {"goon", "zmb_goon_skeleton"},
+            {"screamer", "zmb_screamer_skeleton"},
+            {"spitter", "zmb_spitter_skeleton"},
+            {"suicider", "zmb_suicider_skeleton"},
+            {"volatile", "zmb_volataile_skeleton"},
             {"Viral", "viral_skeleton"}
         }
     },

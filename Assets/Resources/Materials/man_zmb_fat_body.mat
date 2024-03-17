@@ -24,7 +24,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: man_zmb_fat_body
-  m_Shader: {fileID: -6465566751694194690, guid: 0cf98c43b16dd6e4abfc0e3e03e66cd6, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 9f8f796d521fd424dbe975db255b6e93, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -136,11 +136,19 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _dif:
+        m_Texture: {fileID: 2800000, guid: 488fb992ebc0dc440bd30ba80de95fb3, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _dif_1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ems:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _gra:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 5076998d84b8f884ab07ccc888ce74bf, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _idx:
@@ -151,16 +159,20 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _nrm:
+    - _msk_1:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _nrm:
+        m_Texture: {fileID: 2800000, guid: 1dbd56cdf9b0ab845aac5e5c0113b498, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ocl:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 7a465239fa7ec874cbbe6f8987ffc3b7, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _rgh:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 143b7cf929993c3439d802769915b33d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _spc:
@@ -196,6 +208,7 @@ Material:
     - _AlphaRemapMax: 1
     - _AlphaRemapMin: 0
     - _AlphaSrcBlend: 1
+    - _Alpha_Threshold: 0.01
     - _Anisotropy: 0
     - _BlendMode: 0
     - _CoatMask: 0
@@ -300,6 +313,7 @@ Material:
     - _ZTestGBuffer: 4
     - _ZTestTransparent: 4
     - _ZWrite: 1
+    - _ems_intensity: 0.7
     - _metallic_default: 0
     - _spc_default: 0
     m_Colors:

@@ -72,18 +72,22 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _dif:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 3472ef24abbbba941811e18e80373a71, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _gra:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 2498f755e9c890641b7f891b91684f03, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _idx:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 0e2193d7ebed31f479183ba0bfe32b98, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _msk:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _msk_1:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -92,11 +96,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ocl:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 2a0524eaa664cc44e81dc8cd84d1112e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _rgh:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 987cabaee42c66849b3aa99bbc8b67eb, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _spc:
@@ -122,6 +126,7 @@ Material:
     - _AlphaCutoffEnable: 0
     - _AlphaDstBlend: 0
     - _AlphaSrcBlend: 1
+    - _Alpha_Threshold: 0.01
     - _BlendMode: 0
     - _BumpScale: 1
     - _ConservativeDepthOffsetEnable: 0
@@ -185,8 +190,8 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DoubleSidedConstants: {r: 1, g: 1, b: 1, a: 0}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
-    - _idx_Tiling: {r: 0.5, g: 1, b: 0, a: 0}
-    - _idx_offset: {r: 1, g: 0.25, b: 0, a: 0}
+    - _idx_Tiling: {r: 0, g: 1, b: 0, a: 0}
+    - _idx_offset: {r: 0.29, g: 0.25, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &5135581677940757642
 MonoBehaviour:
