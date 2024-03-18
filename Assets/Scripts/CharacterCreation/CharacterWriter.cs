@@ -35,6 +35,8 @@ namespace doppelganger
         [Header("Save Fields")]
         public TMP_InputField saveName;
         public TMP_InputField pathInputField;
+        public TMP_InputField customContentPathInputField;
+        public TMP_InputField customOutputPathInputField;
         public TMP_Dropdown saveTypeDropdown;
         public TMP_Dropdown saveCategoryDropdown;
         public TMP_Dropdown saveClassDropdown;
@@ -163,6 +165,18 @@ namespace doppelganger
                 pathInputField.text = savePath;
             }
 
+            string outputPath = ConfigManager.LoadSetting("SavePath", "Output_Path");
+            if (!string.IsNullOrEmpty(savePath))
+            {
+                customOutputPathInputField.text = outputPath;
+            }
+
+            string contentPath = ConfigManager.LoadSetting("SavePath", "Content_Path");
+            if (!string.IsNullOrEmpty(savePath))
+            {
+                customContentPathInputField.text = contentPath;
+            }
+
             if (characterBuilder == null)
             {
                 characterBuilder = FindObjectOfType<CharacterBuilder>();
@@ -172,7 +186,6 @@ namespace doppelganger
             LoadSlotUidLookup();
         }
 
-
         public void OpenSetPathDialog()
         {
             // Open folder browser and then save the selected path
@@ -180,9 +193,54 @@ namespace doppelganger
             if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
             {
                 string path = paths[0];
-                SavePathToConfig(path);
-                pathInputField.text = path; // Update the input field with the selected path
-                Debug.Log($"Path set and saved: {path}");
+
+                // Attempt to find the executable in the expected directory structure
+                string exePath = Path.Combine(path, "ph", "work", "bin", "x64", "DyingLightGame_x64_rwdi.exe");
+
+                // Check if the executable exists
+                if (File.Exists(exePath))
+                {
+                    SavePathToConfig(path);
+                    pathInputField.text = path;
+                    Debug.Log($"Path set and saved: {path}");
+                }
+                else
+                {
+                    pathInputField.text = "Set Path";
+                    Debug.LogError($"Dying Light 2 executable not found, make sure this is the Dying Light 2 Root folder");
+                }
+            }
+            else
+            {
+                Debug.LogError("No path selected.");
+            }
+        }
+
+        public void OpenSetOutputPathDialog()
+        {
+            // Open folder browser and then save the selected path
+            var paths = StandaloneFileBrowser.OpenFolderPanel("Select Custom Output Folder", "", false);
+            if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
+            {
+                string Outputpath = paths[0];
+                customOutputPathInputField.text = Outputpath;
+                ConfigManager.SaveSetting("SavePath", "Output_Path", Outputpath);
+            }
+            else
+            {
+                Debug.LogError("No path selected.");
+            }
+        }
+
+        public void OpenSetContentPathDialog()
+        {
+            // Open folder browser and then save the selected path
+            var paths = StandaloneFileBrowser.OpenFolderPanel("Select Custom Content Folder", "", false);
+            if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
+            {
+                string Contentpath = paths[0];
+                customContentPathInputField.text = Contentpath;
+                ConfigManager.SaveSetting("SavePath", "Content_Path", Contentpath);
             }
             else
             {
@@ -205,8 +263,8 @@ namespace doppelganger
             }
 
             string customBasePath = ConfigManager.LoadSetting("SavePath", "Path");
-            string targetPath = Path.Combine(customBasePath, "ph/source");
-
+            string targetPath = !string.IsNullOrEmpty(customBasePath) ? Path.Combine(customBasePath, "ph/source") : Path.Combine(Application.dataPath, "StreamingAssets/Jsons/Custom");
+            
             if (!Directory.Exists(targetPath))
             {
                 Directory.CreateDirectory(targetPath);
@@ -220,6 +278,7 @@ namespace doppelganger
             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(saveNameText);
             string screenshotFileName = fileNameWithoutExtension;
             string slotUIDLookupFullPath = Path.Combine(Application.streamingAssetsPath, slotUIDLookupRelativePath);
+
             SlotUIDLookup slotUIDLookup = SlotUIDLookup.LoadFromJson(slotUIDLookupFullPath);
             Debug.Log($"saveNameText {saveNameText} found in lookup for {fileNameWithoutExtension}.");
 
@@ -249,17 +308,12 @@ namespace doppelganger
                 return;
             }
 
-            string jsonOutputPath = Path.Combine(Application.dataPath, "StreamingAssets/Jsons/Custom", saveCategory, DateTime.Now.ToString("yyyy_MM_dd"), saveName.text + ".json");
-            string screenshotPath = Path.ChangeExtension(jsonOutputPath, ".png");
-            string modelOutputPath = Path.Combine(customBasePath, "ph/source", fileName + ".model");
-            Debug.Log($"jsonOutputDirectory {jsonOutputDirectory}, screenshotPath {screenshotPath}");
-
             string output_path = ConfigManager.LoadSetting("SavePath", "Output_Path");
-            if (!string.IsNullOrEmpty(output_path))
-            {
-                jsonOutputPath = Path.Combine(output_path, saveCategory, saveName.text + ".json");
-                screenshotPath = Path.Combine(output_path, saveCategory, screenshotFileName + ".png");
-            }
+            string jsonBaseOutputPath = !string.IsNullOrEmpty(output_path) ? output_path : Path.Combine(Application.dataPath, "StreamingAssets/Jsons/Custom");
+            string jsonOutputPath = Path.Combine(jsonBaseOutputPath, saveCategory, DateTime.Now.ToString("yyyy_MM_dd"), saveName.text + ".json");
+            string screenshotPath = Path.ChangeExtension(jsonOutputPath, ".png");
+            string modelOutputPath = Path.Combine(targetPath, fileName + ".model");
+            Debug.Log($"jsonOutputDirectory {jsonOutputDirectory}, screenshotPath {screenshotPath}");
 
             var sliderValues = interfaceManager.GetSliderValues();
             var currentlyLoadedModels = characterBuilder.GetCurrentlyLoadedModels();
@@ -402,7 +456,7 @@ namespace doppelganger
 
                     var filteredSlotPairs = slotPairs.Where(pair => !excludedSlots.Contains(pair.key)).ToList();
 
-                    FinalizeAndWrite(outputData, jsonOutputPath, Path.Combine(customBasePath, "ph/source", "player_tpp_skeleton.model"), skeletonName);
+                    //FinalizeAndWrite(outputData, jsonOutputPath, Path.Combine(customBasePath, "ph/source", "player_tpp_skeleton.model"), skeletonName);
 
                     var outputDataSecond = new ModelData
                     {
@@ -433,8 +487,10 @@ namespace doppelganger
                     }
 
                     // Define the second JSON and model output paths
-                    string jsonOutputPathSecond = Path.Combine(Application.dataPath, "StreamingAssets/Jsons/Custom", saveCategory, DateTime.Now.ToString("yyyy_MM_dd"), tppFileName + "_fpp.json");
-                    string modelOutputPathSecond = Path.Combine(customBasePath, "ph/source", "player_fpp_skeleton.model");
+                    string fppFileName = tppFileName.EndsWith("_tpp") ? tppFileName.Replace("_tpp", "_fpp") : tppFileName + "_fpp";
+                    string jsonOutputPathSecond = Path.Combine(jsonBaseOutputPath, saveCategory, DateTime.Now.ToString("yyyy_MM_dd"), fppFileName + ".json");
+                    string modelFileNameSecond = saveNameText.Equals("Aiden", StringComparison.OrdinalIgnoreCase) ? "player_fpp_skeleton.model" : fppFileName + ".model";
+                    string modelOutputPathSecond = Path.Combine(targetPath, modelFileNameSecond);
 
                     // Write the second configuration to model
                     FinalizeAndWrite(outputDataSecond, jsonOutputPathSecond, modelOutputPathSecond, "player_fpp_skeleton.msh");

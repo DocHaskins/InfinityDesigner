@@ -11,6 +11,7 @@ public class IdleManager : MonoBehaviour
     public bool debugDisplay;
 
     private float deltaTime = 0.0f;
+    public Canvas mainCanvas;
     public Camera mainCamera;
     public RawImage renderTextureDisplay;
     public RenderTexture unfocusedRenderTexture;
@@ -61,10 +62,10 @@ public class IdleManager : MonoBehaviour
             // Disable the main camera to stop it from updating
             mainCamera.enabled = false;
         }
-
+        mainCanvas.enabled = false;
         QualitySettings.SetQualityLevel(0, true);
         QualitySettings.vSyncCount = 0;
-        StartCoroutine(LimitFrameRate(10));
+        StartCoroutine(LimitFrameRate(0));
 
         if (globalVolume != null)
         {
@@ -78,6 +79,7 @@ public class IdleManager : MonoBehaviour
 
     private void RestoreRendering()
     {
+        mainCanvas.enabled = true;
         renderTextureDisplay.gameObject.SetActive(false);
         if (mainCamera != null)
         {
