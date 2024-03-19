@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5662316556195246575}
   - component: {fileID: 6029823896943450805}
   - component: {fileID: 7003148979992506596}
+  - component: {fileID: 6273614934561232838}
   m_Layer: 5
   m_Name: Button_currentSlider
   m_TagString: Untagged
@@ -122,6 +123,27 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6273614934561232838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1784761416639449404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99634edca86565b4a96a0b7b261787f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  simpleTooltipStyle: {fileID: 11400000, guid: 1f0cc7a28e7642f4697d87459836c5a9, type: 2}
+  infoLeft: '@Select Variation Slot
+
+    `Sets the currently loaded model in the
+    Variation Builder Panel
+
+    ~Double Click to focus camera'
+  infoRight: 
+  showDelay: 3
 --- !u!1 &2096458133828612553
 GameObject:
   m_ObjectHideFlags: 0
@@ -1464,10 +1486,36 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7198425875522181744, guid: f1e18125d92807b4eb8ed234dee1c508, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 887521050501710617}
   m_SourcePrefab: {fileID: 100100000, guid: f1e18125d92807b4eb8ed234dee1c508, type: 3}
 --- !u!224 &1554475323091572636 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1637145430556842333, guid: f1e18125d92807b4eb8ed234dee1c508, type: 3}
   m_PrefabInstance: {fileID: 228227872111021761}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &6975836385777259697 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7198425875522181744, guid: f1e18125d92807b4eb8ed234dee1c508, type: 3}
+  m_PrefabInstance: {fileID: 228227872111021761}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &887521050501710617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6975836385777259697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99634edca86565b4a96a0b7b261787f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  simpleTooltipStyle: {fileID: 11400000, guid: 1f0cc7a28e7642f4697d87459836c5a9, type: 2}
+  infoLeft: '@Toggle Lock Status
+
+    `Toggle Locked Status for the slider when rerolling'
+  infoRight: 
+  showDelay: 3

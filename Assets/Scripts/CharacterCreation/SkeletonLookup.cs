@@ -51,6 +51,12 @@ namespace doppelganger
         }
     },
     {
+        "Player_Skin", new Dictionary<string, string>
+        {
+            {"ALL", "player_skeleton"}
+        }
+    },
+    {
         "Man", new Dictionary<string, string>
         {
             {"ALL", "man_basic_skeleton"},

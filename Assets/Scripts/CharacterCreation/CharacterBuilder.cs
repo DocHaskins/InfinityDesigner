@@ -868,6 +868,7 @@ namespace doppelganger
                 GameObject modelInstance = Instantiate(prefab, Vector3.zero, Quaternion.Euler(0,0,0), platform.transform);
                 platform.ResetChildRotations();
                 currentlyLoadedModels[slotName] = modelInstance;
+                variationBuilder.currentModel = modelInstance;
                 return modelInstance;
             }
             else
