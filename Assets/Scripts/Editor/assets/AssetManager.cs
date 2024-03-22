@@ -84,10 +84,16 @@ namespace doppelganger
             GUILayout.Space(4);
             materialProcessingLimit = EditorGUILayout.IntField("Max .Mat to Process:", materialProcessingLimit);
 
-            if (GUILayout.Button("Fix White Materials"))
+            if (GUILayout.Button("Fix FPP/TPP Materials"))
             {
-                FixWhiteMaterials();
+                FixTPPFPPMaterials();
             }
+
+            if (GUILayout.Button("Fix Variant Materials"))
+            {
+                FixVariantMaterials();
+            }
+
             if (GUILayout.Button("Check Missing Materials"))
             {
                 CheckAllMaterials();
@@ -119,6 +125,11 @@ namespace doppelganger
             }
 
         }
+
+        private List<string> variationSuffixes = new List<string>
+{
+    "_b", "_tpp_dirt", "_monster_fpp", "_02", "_03", "_tpp_02", "_tpp_03", "_02_fpp", "_02_tpp", "_03_fpp", "_03_tpp", "_03_r2_fpp", "_03_r2_tpp", "_03_r3_fpp", "_03_r3_tpp", "_03_r4_fpp", "_03_r4_tpp", "_03_r5_fpp", "_03_r5_tpp"
+};
 
         private static void CreateAndUpdatePrefabs(int maxCount)
         {
@@ -619,11 +630,10 @@ namespace doppelganger
             return hairNames.Any(name => resourceName.StartsWith(name));
         }
 
-        private void FixWhiteMaterials()
+        private void FixTPPFPPMaterials()
         {
             string materialsPath = "Assets/Resources/Materials";
             var existingMaterials = LoadMaterialsFromFolder(materialsPath);
-            var textureFiles = LoadTexturesFromFolder("Assets/Resources/Textures");
 
             // List of custom texture slots to check
             string[] textureSlots = new string[] { "_dif", "_ems", "_gra", "_nrm", "_spc", "_rgh", "_msk", "_idx", "_clp", "_ocl" };
@@ -634,68 +644,164 @@ namespace doppelganger
             {
                 Material material = materialEntry.Value;
 
-                // Check if any of the custom texture slots are not empty
+                // Initially assume the material is empty
                 bool materialIsEmpty = true;
                 foreach (string slot in textureSlots)
                 {
                     if (material.HasProperty(slot) && material.GetTexture(slot) != null)
                     {
-                        materialIsEmpty = false;
-                        break; // A texture is found, no need to check further
+                        materialIsEmpty = false; // Found a texture, mark as not empty
+                        break;
                     }
                 }
 
-                // Skip processing this material if it is not empty
-                if (!materialIsEmpty)
-                {
-                    continue;
-                }
+                // Continue to the next material if this one is not empty
+                if (!materialIsEmpty) continue;
 
-                // Process the material
-                string baseName = RemoveSuffix(materialEntry.Key); // Remove '_tpp' or '_fpp'
-                List<string> matchingTextures = FindTexturesForMaterial(textureFiles, baseName);
+                // Strip off any suffixes and determine what type of material this is (FPP or TPP)
+                string baseName = Path.GetFileNameWithoutExtension(materialEntry.Key);
+                string subjectName = ExtractSubjectName(baseName);
+                bool isFPP = baseName.EndsWith("_fpp");
+                bool isTPP = baseName.EndsWith("_tpp");
 
-                if (matchingTextures.Count == 0)
+                // Skip materials that are neither FPP nor TPP as they have no clear counterpart
+                if (!isFPP && !isTPP) continue;
+
+                // Determine the counterpart's name
+                string counterpartBaseName = isFPP ? $"{subjectName}_tpp" : $"{subjectName}_fpp";
+
+                // Try to find the counterpart material
+                Material counterpartMaterial = existingMaterials.Values.FirstOrDefault(m => Path.GetFileNameWithoutExtension(AssetDatabase.GetAssetPath(m)) == counterpartBaseName);
+
+                if (counterpartMaterial != null)
                 {
-                    string modifiedBaseName = SequentiallyShortenName(baseName);
-                    while (modifiedBaseName != baseName && matchingTextures.Count == 0)
+                    // Check if counterpart material has textures in the relevant slots and assign them to the current material
+                    bool texturesAssigned = false;
+                    foreach (string slot in textureSlots)
                     {
-                        matchingTextures = FindTexturesForMaterial(textureFiles, modifiedBaseName);
-                        if (matchingTextures.Count == 0)
+                        if (material.HasProperty(slot) && counterpartMaterial.HasProperty(slot) && counterpartMaterial.GetTexture(slot) != null)
                         {
-                            modifiedBaseName = SequentiallyShortenName(modifiedBaseName);
+                            material.SetTexture(slot, counterpartMaterial.GetTexture(slot));
+                            texturesAssigned = true; // Mark that we've made an assignment for logging
                         }
                     }
-                    // Update baseName if textures are found
-                    if (matchingTextures.Count > 0)
-                    {
-                        baseName = modifiedBaseName;
-                    }
-                }
 
-                // Only increment the processedMaterialsCount if the material was actually fixed
-                if (matchingTextures.Count > 0)
-                {
-                    AssignTexturesToMaterial(material, matchingTextures, baseName);
-                    EditorUtility.SetDirty(material);
-                    processedMaterialsCount++; // Increment only if textures were successfully found and assigned
-
-                    // Check if we've reached the processing limit after successfully fixing a material
-                    if (processedMaterialsCount >= materialProcessingLimit)
+                    if (texturesAssigned)
                     {
-                        Debug.Log($"Processing limit of {materialProcessingLimit} materials reached after successfully fixing materials. Stopping.");
-                        break;
+                        EditorUtility.SetDirty(material);
+                        processedMaterialsCount++;
                     }
                 }
                 else
                 {
-                    Debug.LogError($"No matching textures found for material: {baseName}");
+                    Debug.LogWarning($"No matching counterpart found for material: {baseName}. Expected counterpart: {counterpartBaseName}");
                 }
             }
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            Debug.Log($"Processed {processedMaterialsCount} materials.");
+            Debug.Log($"Processed {processedMaterialsCount} materials with missing textures.");
+        }
+
+        private void FixVariantMaterials()
+        {
+            string materialsPath = "Assets/Resources/Materials";
+            var existingMaterials = LoadMaterialsFromFolder(materialsPath);
+
+            string[] textureSlots = new string[] { "_dif", "_ems", "_gra", "_nrm", "_spc", "_rgh", "_msk", "_idx", "_clp", "_ocl" };
+
+            int processedMaterialsCount = 0;
+            Dictionary<string, List<Material>> allMaterials = new Dictionary<string, List<Material>>();
+
+            // Group materials by their base names
+            foreach (var materialEntry in existingMaterials)
+            {
+                string materialName = Path.GetFileNameWithoutExtension(materialEntry.Key);
+                string baseName = ExtractBaseName(materialName);
+
+                if (!allMaterials.ContainsKey(baseName))
+                {
+                    allMaterials[baseName] = new List<Material>();
+                }
+                allMaterials[baseName].Add(materialEntry.Value);
+            }
+
+            // Process each group of materials
+            foreach (var baseName in allMaterials.Keys)
+            {
+                var materialsGroup = allMaterials[baseName];
+
+                // Identify the material with the most textures
+                Material referenceMaterial = null;
+                int maxTexturesCount = 0;
+                foreach (var material in materialsGroup)
+                {
+                    int textureCount = textureSlots.Count(slot => material.HasProperty(slot) && material.GetTexture(slot) != null);
+                    if (textureCount > maxTexturesCount)
+                    {
+                        maxTexturesCount = textureCount;
+                        referenceMaterial = material;
+                    }
+                }
+
+                // Copy missing textures to other materials in the group
+                if (referenceMaterial != null)
+                {
+                    foreach (var material in materialsGroup)
+                    {
+                        if (material == referenceMaterial) continue; // Skip the reference material itself
+
+                        int texturesAdded = 0;
+                        foreach (var slot in textureSlots)
+                        {
+                            if (!material.HasProperty(slot) || material.GetTexture(slot) != null) continue; // Skip if property does not exist or texture already assigned
+
+                            if (referenceMaterial.HasProperty(slot) && referenceMaterial.GetTexture(slot) != null)
+                            {
+                                material.SetTexture(slot, referenceMaterial.GetTexture(slot));
+                                texturesAdded++;
+                                EditorUtility.SetDirty(material);
+                            }
+                        }
+
+                        if (texturesAdded > 0)
+                        {
+                            processedMaterialsCount++;
+                            Debug.Log($"[FixVariantMaterials] Copied {texturesAdded} textures from '{referenceMaterial.name}' to '{material.name}'");
+                        }
+                    }
+                }
+            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"[FixVariantMaterials] Processed {processedMaterialsCount} materials by adding missing textures.");
+        }
+
+        private string ExtractBaseName(string materialName)
+        {
+            var sortedVariationSuffixes = variationSuffixes.OrderByDescending(suffix => suffix.Length);
+
+            foreach (var suffix in sortedVariationSuffixes)
+            {
+                if (materialName.EndsWith(suffix))
+                {
+                    int index = materialName.LastIndexOf(suffix);
+                    if (index > 0)
+                    {
+                        // Remove the suffix to find the base name
+                        return materialName.Substring(0, index);
+                    }
+                }
+            }
+            // Return the original name if no variation suffix is found
+            return materialName;
+        }
+
+        private string ExtractSubjectName(string baseName)
+        {
+            // Remove the known suffixes that indicate perspective or type
+            return baseName.Replace("_fpp", "").Replace("_tpp", "");
         }
 
         private string RemoveSuffix(string name)
@@ -764,38 +870,28 @@ namespace doppelganger
             string meshReferencesFolderPath = "Assets/StreamingAssets/Mesh References";
             string texturesIndexPath = Path.Combine(meshReferencesFolderPath, "textures_index.json");
 
-            // Check if the Textures folder exists
             if (!Directory.Exists(texturesFolderPath))
             {
                 Debug.LogError("Textures folder not found at: " + texturesFolderPath);
                 return;
             }
 
-            // Create a list to store texture names
             List<string> textureNames = new List<string>();
-
-            // Get all the textures in the Textures folder
             string[] textureFiles = Directory.GetFiles(texturesFolderPath, "*.png", SearchOption.AllDirectories);
             foreach (string textureFile in textureFiles)
             {
-                // Get the texture name without the extension
                 string textureName = Path.GetFileNameWithoutExtension(textureFile);
                 textureNames.Add(textureName);
             }
 
-            // Wrap the list in an object
             TexturesIndex texturesIndex = new TexturesIndex { textures = textureNames };
-
-            // Convert the dictionary to JSON
             string texturesIndexJson = JsonUtility.ToJson(texturesIndex, true);
 
-            // Create the Mesh References folder if it doesn't exist
             if (!Directory.Exists(meshReferencesFolderPath))
             {
                 Directory.CreateDirectory(meshReferencesFolderPath);
             }
 
-            // Write the JSON to the textures index file
             File.WriteAllText(texturesIndexPath, texturesIndexJson);
 
             Debug.Log("Textures index created successfully at: " + texturesIndexPath);
@@ -817,8 +913,6 @@ namespace doppelganger
                 Material material = materialEntry.Value;
 
                 Debug.Log($"Processing material: {material.name}, Shader: {material.shader.name}");
-
-                // Check if material uses any of the specific shaders
                 if (material.shader.name == "Shader Graphs/Clothing" ||
                     material.shader.name == "Shader Graphs/Hair" ||
                     material.shader.name == "Shader Graphs/Decal" ||

@@ -21,6 +21,7 @@ namespace doppelganger
         public CharacterBuilder characterBuilder;
         public ScreenshotManager screenshotManager;
 
+        public string currentPath;
         public Transform contentPanel;
         public GameObject cellPrefab;
         public TMP_Dropdown presetTypeDropdown;
@@ -72,7 +73,6 @@ namespace doppelganger
 
         public void LoadPresets()
         {
-            // Dictionary holding folder mappings, assume it's class-level if used elsewhere
             var folderMappings = new Dictionary<string, string>
     {
         {"Custom", "Custom/"},
@@ -85,7 +85,6 @@ namespace doppelganger
         {"Viral", "Infected/Viral"}
     };
 
-            // List to hold all valid json file paths
             List<string> allJsonFiles = new List<string>();
             string searchFilter = filterInputField.text.Trim().ToLower();
             bool filesFound = false;
@@ -95,20 +94,18 @@ namespace doppelganger
                 string selectedOption = presetTypeDropdown.options[presetTypeDropdown.value].text;
                 string selectedFolder = folderMappings.TryGetValue(selectedOption, out string path) ? path : string.Empty;
 
-                // Create the directory if it does not exist
-                string fullPath = Path.Combine(Application.streamingAssetsPath, "Jsons", selectedFolder);
-                if (!Directory.Exists(fullPath))
+                currentPath = Path.Combine(Application.streamingAssetsPath, "Jsons", selectedFolder);
+                if (!Directory.Exists(currentPath))
                 {
-                    Directory.CreateDirectory(fullPath); // Create the missing directory
+                    Directory.CreateDirectory(currentPath);
                 }
 
-                // Check JSON files in the directory and subdirectories
-                var jsonFiles = Directory.GetFiles(fullPath, "*.json", SearchOption.AllDirectories);
-                if (jsonFiles.Length > 0) // Check if there are JSON files
+                var jsonFiles = Directory.GetFiles(currentPath, "*.json", SearchOption.AllDirectories);
+                if (jsonFiles.Length > 0)
                 {
                     allJsonFiles.AddRange(jsonFiles);
-                    filesFound = true; // Mark that we found files
-                    break; // Exit the loop as we've found valid files
+                    filesFound = true;
+                    break;
                 }
 
                 if (!filesFound)
@@ -121,19 +118,17 @@ namespace doppelganger
                 }
             }
 
-            // Now, load JSONs from the output_path if it is set
             string output_path = ConfigManager.LoadSetting("SavePath", "Output_Path");
             if (!string.IsNullOrEmpty(output_path))
             {
                 if (!Directory.Exists(output_path))
                 {
-                    Directory.CreateDirectory(output_path); // Create the directory if it does not exist
+                    Directory.CreateDirectory(output_path);
                 }
                 var outputJsonFiles = Directory.GetFiles(output_path, "*.json", SearchOption.AllDirectories);
                 allJsonFiles.AddRange(outputJsonFiles);
             }
 
-            // Filter out unwanted files and apply search filter if necessary
             var filteredFiles = allJsonFiles.Where(file =>
             {
                 string fileNameLower = Path.GetFileName(file).ToLower();
@@ -147,177 +142,7 @@ namespace doppelganger
             GenerateButtons(filteredFiles);
         }
 
-        public void BrowseAndLoadJsons()
-        {
-            // Define the custom folder path
-            string customFolderPath = Path.Combine(Application.streamingAssetsPath, "Jsons", "Custom");
-
-            // Ensure the custom folder exists
-            if (!Directory.Exists(customFolderPath))
-            {
-                Directory.CreateDirectory(customFolderPath);
-            }
-
-            // Call the Standalone File Browser to select a folder
-            string[] paths = StandaloneFileBrowser.OpenFolderPanel("Select Folder", "", false);
-
-            if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
-            {
-                Debug.Log($"Selected folder: {paths[0]}");
-
-                // Load all JSON files from the selected folder
-                List<string> jsonFiles = new List<string>();
-                try
-                {
-                    jsonFiles.AddRange(Directory.GetFiles(paths[0], "*.json", SearchOption.AllDirectories));
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError($"Error while loading JSON files: {e.Message}");
-                }
-
-                // Copy JSONs and their matching PNGs to the Custom folder
-                foreach (string jsonFile in jsonFiles)
-                {
-                    string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(jsonFile);
-                    string pngFile = Path.ChangeExtension(jsonFile, ".png");
-
-                    if (File.Exists(pngFile)) // Check if the matching PNG exists
-                    {
-                        string destJson = Path.Combine(customFolderPath, Path.GetFileName(jsonFile));
-                        string destPng = Path.Combine(customFolderPath, Path.GetFileName(pngFile));
-
-                        File.Copy(jsonFile, destJson, true); // Copy JSON to the Custom folder
-                        File.Copy(pngFile, destPng, true); // Copy PNG to the Custom folder
-                    }
-                }
-
-                // Now reload presets from the Custom folder
-                RefreshCustomPresets(customFolderPath); // Implement this based on your existing logic
-            }
-        }
-
-        public void InstallZips()
-        {
-            // Define the custom folder path base
-            string baseCustomFolderPath = Path.Combine(Application.streamingAssetsPath, "Jsons", "Custom");
-            Debug.Log($"Checking or creating base custom folder path: {baseCustomFolderPath}");
-
-            // Ensure the custom base folder exists
-            if (!Directory.Exists(baseCustomFolderPath))
-            {
-                Directory.CreateDirectory(baseCustomFolderPath);
-                Debug.Log($"Created base custom folder path: {baseCustomFolderPath}");
-            }
-
-            // Call the Standalone File Browser to select a folder
-            string[] paths = StandaloneFileBrowser.OpenFolderPanel("Select Folder", "", false);
-            if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
-            {
-                Debug.Log($"Selected folder for zip files: {paths[0]}");
-
-                // Load all ZIP files from the selected folder
-                List<string> zipFiles = new List<string>();
-                try
-                {
-                    zipFiles.AddRange(Directory.GetFiles(paths[0], "*.zip", SearchOption.AllDirectories));
-                    Debug.Log($"Found {zipFiles.Count} zip files in selected directory.");
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError($"Error while loading ZIP files: {e.Message}");
-                    return; // Stop execution if we can't load the files
-                }
-
-                foreach (string zipFile in zipFiles)
-                {
-                    //Debug.Log($"Processing zip file: {zipFile}");
-                    using (ZipArchive archive = ZipFile.OpenRead(zipFile))
-                    {
-                        if (archive.GetEntry("PLACEHOLDER_InfinityDesigner_json.file") != null)
-                        {
-                            //Debug.Log($"Found placeholder file in: {zipFile}");
-
-                            ZipArchiveEntry installJsonEntry = archive.GetEntry("install.json");
-                            if (installJsonEntry != null)
-                            {
-                                using (StreamReader reader = new StreamReader(installJsonEntry.Open()))
-                                {
-                                    string jsonContent = reader.ReadToEnd();
-                                    dynamic installInfo = JsonConvert.DeserializeObject(jsonContent);
-                                    string userName = installInfo.Metadata.Username;
-                                    string category = installInfo.Metadata.Category;
-                                    string cls = installInfo.Metadata.Class;
-
-                                    //Debug.Log($"Read from install.json: Category = {category}, Class = {cls}");
-
-                                    // Define the custom folder path based on category and class
-                                    string customFolderPath = Path.Combine(baseCustomFolderPath, userName);
-                                    if (category != "ALL")
-                                    {
-                                        customFolderPath = Path.Combine(customFolderPath, category);
-                                    }
-                                    if (cls != "ALL")
-                                    {
-                                        customFolderPath = Path.Combine(customFolderPath, cls);
-                                    }
-
-                                    // Ensure the custom folder exists
-                                    if (!Directory.Exists(customFolderPath))
-                                    {
-                                        Directory.CreateDirectory(customFolderPath);
-                                        //Debug.Log($"Created custom folder path for extraction: {customFolderPath}");
-                                    }
-
-                                    // Initialize paths for files to delete after extraction
-                                    List<string> filesToDelete = new List<string>();
-
-                                    // Extract files except the placeholder
-                                    foreach (ZipArchiveEntry entry in archive.Entries)
-                                    {
-                                        string destinationPath = Path.Combine(customFolderPath, entry.FullName);
-                                        // Direct extraction for non-placeholder and non-install.json files
-                                        if (!entry.FullName.Equals("PLACEHOLDER_InfinityDesigner_json.file", StringComparison.OrdinalIgnoreCase) &&
-                                            !entry.FullName.Equals("install.json", StringComparison.OrdinalIgnoreCase))
-                                        {
-                                            entry.ExtractToFile(destinationPath, true);
-                                            //Debug.Log($"Extracted file: {entry.FullName} to {destinationPath}");
-                                        }
-                                        else
-                                        {
-                                            // Add placeholder and install.json to the deletion list
-                                            filesToDelete.Add(destinationPath);
-                                        }
-                                    }
-
-                                    // Now delete placeholder and install.json after extraction
-                                    foreach (string fileToDelete in filesToDelete)
-                                    {
-                                        if (File.Exists(fileToDelete))
-                                        {
-                                            File.Delete(fileToDelete);
-                                            //Debug.Log($"Deleted file: {fileToDelete}");
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                Debug.LogError("install.json not found within: " + zipFile);
-                            }
-                        }
-                        else
-                        {
-                            Debug.Log("Placeholder file not found in: " + zipFile);
-                        }
-                    }
-                }
-                RefreshCustomPresets(baseCustomFolderPath);
-                LoadPresets();
-            }
-        }
-
-        private void RefreshCustomPresets(string folderPath)
+        public void RefreshCustomPresets(string folderPath)
         {
             var customJsonFiles = Directory.GetFiles(folderPath, "*.json", SearchOption.TopDirectoryOnly);
             var filteredFiles = FilterJsonFiles(customJsonFiles.ToList());
@@ -362,20 +187,15 @@ namespace doppelganger
                     if (hasThumbnail)
                     {
                         imageComponent.sprite = Sprite.Create(thumbnail, new Rect(0, 0, thumbnail.width, thumbnail.height), new Vector2(0.5f, 0.5f), 100);
-                        imageComponent.enabled = true; // Ensure the Image component is enabled
-                        imageComponent.color = Color.white; // Set the Image component color to white
-                    }
-                    else
-                    {
-                        // Optionally, handle the case when there is no thumbnail
+                        imageComponent.enabled = true;
+                        imageComponent.color = Color.white;
                     }
 
-                    // Ensure the button's click listener is properly set up
-                    cell.GetComponent<Button>().onClick.RemoveAllListeners(); // Remove existing listeners to prevent stacking
+                    cell.GetComponent<Button>().onClick.RemoveAllListeners();
                     cell.GetComponent<Button>().onClick.AddListener(() => 
                         interfaceManager.OnPresetLoadButtonPressed(jsonPath, jsonName));
-                    cell.transform.localScale = Vector3.one; // Ensure the cell's scale is reset to default
-                    // Store the action with information about the thumbnail presence
+                    cell.transform.localScale = Vector3.one;
+
                     Action action = () => interfaceManager.OnPresetLoadButtonPressed(jsonPath, jsonName);
                     buttonPressActions.Add(new ButtonAction(action, hasThumbnail));
                 }
@@ -392,7 +212,7 @@ namespace doppelganger
                 texture.LoadImage(fileData);
                 return texture;
             }
-            return null; // No thumbnail found
+            return null;
         }
 
         public void RefreshPresets()
@@ -402,7 +222,6 @@ namespace doppelganger
 
         private void ClearExistingCells()
         {
-            // Clear logic here, similar to the TextureScroller's ClearExistingCells method
             if (unlimitedScroller != null)
             {
                 unlimitedScroller.Clear();
@@ -430,7 +249,6 @@ namespace doppelganger
         {
             var tempButtonPressActions = new List<ButtonAction>(buttonPressActions);
 
-            // Now iterate over the temporary list instead of the original one
             foreach (var buttonAction in tempButtonPressActions)
             {
                 if (!buttonAction.HasThumbnail)

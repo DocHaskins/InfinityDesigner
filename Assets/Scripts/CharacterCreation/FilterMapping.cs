@@ -24,6 +24,7 @@ namespace doppelganger
     { "Button_UpperBody", "UpperBody" },
     { "Button_UpperBody_armor", "UpperBody" },
     { "Button_UpperBody_access", "UpperBody" },
+    { "Button_Decals", "All" },
     { "Button_Hands", "Hands" },
     { "Button_Legs", "LowerBody" },
     { "Button_Legs_armor", "Feet" }
@@ -36,8 +37,7 @@ namespace doppelganger
                 "ALL_head",
                 "ALL_hat",
                 "ALL_hat_access",
-                "ALL_armor_helmet",
-                "ALL_armor_helmet_access",
+                "ALL_hood",
                 "ALL_mask",
                 "ALL_mask_access",
                 "ALL_glasses",
@@ -54,6 +54,11 @@ namespace doppelganger
                 "ALL_torso_2",
                 "ALL_torso_extra",
                 "ALL_torso_access",
+                "ALL_shirt",
+                "ALL_jacket",
+                "ALL_flashlight",
+                "ALL_waist",
+                "ALL_weapons",
                 "ALL_belts",
                 "ALL_hands",
                 "ALL_lhand",
@@ -64,6 +69,13 @@ namespace doppelganger
                 "ALL_arm_access_2",
                 "ALL_sleeve",
                 "ALL_backpack",
+                "ALL_bumbag",
+                "ALL_gastank",
+                "ALL_blisters_1",
+                "ALL_blisters_2",
+                "ALL_blisters_3",
+                "ALL_blisters_4",
+                "ALL_pockets",
                 "ALL_decals",
                 "ALL_decals_2",
                 "ALL_decals_extra",
@@ -74,6 +86,8 @@ namespace doppelganger
                 "ALL_legs_extra",
                 "ALL_legs_access",
                 "ALL_shoes",
+                "ALL_armor_helmet",
+                "ALL_armor_helmet_access",
                 "ALL_armor_torso",
                 "ALL_armor_torso_access",
                 "ALL_armor_torso_upperright",
@@ -103,11 +117,16 @@ namespace doppelganger
                 "ALL_hat_access",
                 "ALL_armor_helmet",
                 "ALL_armor_helmet_access",
+                "ALL_hood",
                 "ALL_mask",
                 "ALL_mask_access",
                 "ALL_glasses",
                 "ALL_necklace",
-                "ALL_earrings"
+                "ALL_earrings",
+                "ALL_blisters_1",
+                "ALL_blisters_2",
+                "ALL_blisters_3",
+                "ALL_blisters_4"
             }
         },
         { "Button_UpperBody", new List<string>
@@ -116,6 +135,10 @@ namespace doppelganger
                 "ALL_torso_2",
                 "ALL_torso_access",
                 "ALL_torso_extra",
+                "ALL_cape",
+                "ALL_shirt",
+                "ALL_jacket",
+                "ALL_waist",
                 "ALL_belts",
                 "ALL_sleeve"
             }
@@ -127,21 +150,29 @@ namespace doppelganger
                 "ALL_armor_torso_upperright",
                 "ALL_armor_torso_upperleft",
                 "ALL_armor_torso_lowerright",
-                "ALL_armor_torso_lowerleft",
-                "ALL_cape"
+                "ALL_armor_torso_lowerleft"
             }
         },
         { "Button_UpperBody_access", new List<string>
             {
-                "ALL_backpack",
-                "ALL_belts",
                 "ALL_cape",
+                "ALL_backpack",
+                "ALL_bumbag",
+                "ALL_gastank",
+                "ALL_flashlight",
+                "ALL_weapons",
+                "ALL_pockets",
+                "ALL_belts"
+            }
+        },
+        { "Button_Decals", new List<string>
+            {
+                "ALL_tattoo",
+                "ALL_tattoo_2",
                 "ALL_decals",
                 "ALL_decals_2",
                 "ALL_decals_extra",
-                "ALL_decals_logo",
-                "ALL_tattoo",
-                "ALL_tattoo_2"
+                "ALL_decals_logo"
             }
         },
         { "Button_Hands", new List<string>
@@ -162,6 +193,7 @@ namespace doppelganger
                 "ALL_legs",
                 "ALL_legs_extra",
                 "ALL_legs_access",
+                "ALL_pockets",
                 "ALL_shoes"
             }
         },

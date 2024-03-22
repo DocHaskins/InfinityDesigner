@@ -33,6 +33,7 @@ namespace doppelganger
         public Dictionary<int, SkinnedMeshRenderer> materialIndexToRendererMap = new Dictionary<int, SkinnedMeshRenderer>();
         public Dictionary<int, SkinnedMeshRenderer> correctedMaterialIndexToRendererMap = new Dictionary<int, SkinnedMeshRenderer>();
         Dictionary<int, SkinnedMeshRenderer> finalSortedMaterialIndexToRendererMap = new Dictionary<int, SkinnedMeshRenderer>();
+        List<ModelData.MaterialResource> unappliedMaterials = new List<ModelData.MaterialResource>();
         public Dictionary<string, Dictionary<int, int>> ModelIndexChanges { get; private set; } = new Dictionary<string, Dictionary<int, int>>();
 
         void Update()
@@ -335,44 +336,84 @@ namespace doppelganger
 
         private void ApplyPresetMaterialsDirectly(GameObject modelInstance, ModelData.ModelInfo modelInfo, string slotName, int modelIndex)
         {
+            //Debug.Log($"[ApplyPresetMaterialsDirectly] Model Name: {modelInfo.name}");
+            //Debug.Log($"[ApplyPresetMaterialsDirectly] Materials Data Count: {modelInfo.materialsData.Count}");
+            //foreach (var matData in modelInfo.materialsData)
+            //{
+            //    Debug.Log($"[ApplyPresetMaterialsDirectly] Material Data - Number: {matData.number}, Name: {matData.name}");
+            //}
+            //foreach (var matRes in modelInfo.materialsResources)
+            //{
+            //    Debug.Log($"[ApplyPresetMaterialsDirectly] Material Resource - Number: {matRes.number}, Resources Count: {matRes.resources.Count}");
+            //    foreach (var res in matRes.resources)
+            //    {
+            //        Debug.Log($"[ApplyPresetMaterialsDirectly] Resource - Name: {res.name}, Selected: {res.selected}, LayoutId: {res.layoutId}, LoadFlags: {res.loadFlags}");
+            //        foreach (var rtti in res.rttiValues)
+            //        {
+            //            Debug.Log($"[ApplyPresetMaterialsDirectly] RTTI Value - Name: {rtti.name}, Type: {rtti.type}, Value: {rtti.val_str}");
+            //        }
+            //    }
+            //}
+
             if (modelInstance == null || modelInfo == null || modelInfo.materialsData == null || modelInfo.materialsResources == null)
             {
-                Debug.LogWarning("ApplyPresetMaterialsDirectly: modelInstance, modelInfo, or its materials are null.");
+                Debug.LogWarning("[ApplyPresetMaterialsDirectly] Model instance, modelInfo, or its materials are null.");
                 return;
             }
 
             var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+            //Debug.Log($"[ApplyPresetMaterialsDirectly] Found {skinnedMeshRenderers.Length} SkinnedMeshRenderer components in the model.");
+
             var rendererNameToIndexMap = new Dictionary<string, int>();
             for (int i = 0; i < skinnedMeshRenderers.Length; i++)
             {
                 string formattedName = FormatRendererName(skinnedMeshRenderers[i].name, modelInstance.name.Replace("sh_", "").Replace("(Clone)", ""));
                 rendererNameToIndexMap[formattedName] = i;
+                //Debug.Log($"[ApplyPresetMaterialsDirectly] Mapping renderer '{skinnedMeshRenderers[i].name}' to formatted name '{formattedName}' at index {i}.");
             }
 
-            // Iterate over materialsData for matching, but apply materials from materialsResources
-            for (int dataIdx = 0; dataIdx < modelInfo.materialsData.Count; dataIdx++)
+            for (int i = 0; i < skinnedMeshRenderers.Length && i < modelInfo.materialsData.Count; i++)
             {
-                var materialData = modelInfo.materialsData[dataIdx];
-                if (materialData == null) continue;
-
-                // Convert material name from materialsData for matching
-                string formattedMaterialName = materialData.name.Replace(".mat", "");
-
-                // Find corresponding materialResource based on the index
-                ModelData.MaterialResource materialResource = modelInfo.materialsResources.FirstOrDefault(mr => mr.number == dataIdx + 1);
-                if (materialResource == null) continue;
-
-                foreach (var kvp in rendererNameToIndexMap)
+                var materialData = modelInfo.materialsData[i];
+                if (materialData == null)
                 {
-                    if (kvp.Key.EndsWith(formattedMaterialName)) // Check if renderer corresponds to this material
+                    Debug.LogWarning($"[ApplyPresetMaterialsDirectly] Material data at index {i} is null.");
+                    continue;
+                }
+
+                ModelData.MaterialResource materialResource = modelInfo.materialsResources.FirstOrDefault(mr => mr.number == i + 1);
+                if (materialResource == null)
+                {
+                    Debug.LogWarning($"[ApplyPresetMaterialsDirectly] No material resource found for data index {i + 1}.");
+                    continue;
+                }
+
+                //Debug.Log($"[ApplyPresetMaterialsDirectly] Applying material '{materialData.name}' to renderer at index {i} based on index matching.");
+                foreach (var resource in materialResource.resources)
+                {
+                    ApplyMaterialToRenderer(skinnedMeshRenderers[i], resource.name, modelInstance, resource.rttiValues, slotName, modelIndex);
+                }
+            }
+
+            foreach (var kvp in rendererNameToIndexMap)
+            {
+                string rendererNameWithoutSuffix = kvp.Key.Replace("_fpp", "").Replace("_tpp", "");
+
+                foreach (var materialResource in modelInfo.materialsResources)
+                {
+                    var materialData = modelInfo.materialsData.FirstOrDefault(md => md.number == materialResource.number);
+                    if (materialData == null) continue;
+
+                    string formattedMaterialName = materialData.name.Replace(".mat", "").Replace("_fpp", "").Replace("_tpp", "");
+
+                    if (rendererNameWithoutSuffix.Equals(formattedMaterialName))
                     {
                         var renderer = skinnedMeshRenderers[kvp.Value];
+                        //Debug.Log($"[ApplyPresetMaterialsDirectly] Found specific matching renderer '{renderer.gameObject.name}' for material '{formattedMaterialName}'. Reapplying this material.");
                         foreach (var resource in materialResource.resources)
                         {
-                            // Here, actually apply each material from the resource to the renderer
                             ApplyMaterialToRenderer(renderer, resource.name, modelInstance, resource.rttiValues, slotName, modelIndex);
                         }
-                        break; // Break after applying all resources for a matched renderer
                     }
                 }
             }
@@ -891,16 +932,8 @@ namespace doppelganger
 
         private void ApplyMaterialToRenderer(SkinnedMeshRenderer renderer, string materialName, GameObject modelInstance, List<RttiValue> rttiValues, string slotName, int materialIndex)
         {
-            //Debug.Log($"[ApplyMaterialToRenderer] renderer '{renderer}', materialName '{materialName}', modelInstance '{modelInstance}', modelInstance '{rttiValues}', slotName '{slotName}', materialIndex '{materialIndex}'");
-            //if (materialName.Equals("null.mat", StringComparison.OrdinalIgnoreCase))
-            //{
-            //    Debug.Log($"Renderer '{renderer.gameObject.name}' disabled due to null material.");
-            //    renderer.enabled = false;
-            //    AddToDisabledRenderers(modelInstance, renderer);
-            //    return;
-            //}
             renderer.enabled = true;
-
+            //Debug.Log($"[ApplyPresetMaterialsDirectly] Attempting to apply material {materialName} to renderer {renderer.gameObject.name}");
             Material loadedMaterial = LoadMaterial(materialName);
             if (loadedMaterial != null)
             {
@@ -1052,7 +1085,7 @@ namespace doppelganger
             return new Dictionary<string, string>
             {
                 { "msk_0_tex", "_msk" },
-                { "msk_1_tex", "_msk" },
+                { "msk_1_tex", "_msk_1" },
                 { "msk_1_add_tex", "_msk" },
                 { "idx_0_tex", "_idx" },
                 { "idx_1_tex", "_idx" },

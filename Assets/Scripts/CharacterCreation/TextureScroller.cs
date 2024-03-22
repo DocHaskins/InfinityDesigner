@@ -456,11 +456,11 @@ namespace doppelganger
                     Texture tex = material.GetTexture(propertyName);
                     if (tex != null)
                     {
-                        return tex.name;
+                        return propertyName;
                     }
                 }
             }
-            return null; // Return null if no suitable texture is found
+            return null;
         }
 
         private Texture2D GenerateThumbnail(Texture2D sourceTexture)
