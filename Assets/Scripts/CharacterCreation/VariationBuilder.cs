@@ -9,6 +9,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.UI;
 using static ModelData;
+using static TreeEditor.TextureAtlas;
 
 namespace doppelganger
 {
@@ -314,31 +315,26 @@ namespace doppelganger
 
         public void RecordMaterialChange(string modelName, string originalMaterialName, string newMaterialName, int rendererIndex)
         {
+            Debug.Log($"Processing RecordTextureChange for model: {modelName}, originalMaterialName: {originalMaterialName}, newMaterialName: {newMaterialName}, rendererIndex: {rendererIndex}");
             if (!modelSpecificChanges.TryGetValue(modelName, out ModelChange modelChange))
             {
                 modelChange = new ModelChange();
                 modelSpecificChanges[modelName] = modelChange;
             }
 
-            // Initialize a list to hold the current texture changes (if any)
             List<RttiValue> currentTextureChanges = new List<RttiValue>();
 
-            // Check for index changes and preserve texture changes if present
             if (characterBuilder.ModelIndexChanges.TryGetValue(modelName, out var indexChanges) &&
                 indexChanges.TryGetValue(rendererIndex, out int correctedIndex))
             {
-                // If there's a corrected index, check if there are existing texture changes for this corrected index
                 if (modelChange.MaterialsByRenderer.TryGetValue(correctedIndex, out MaterialChange existingChangeForCorrectedIndex))
                 {
-                    // If there are existing texture changes, copy them to the current texture changes list
                     currentTextureChanges = new List<RttiValue>(existingChangeForCorrectedIndex.TextureChanges);
                 }
             }
 
-            // Check if there's already a MaterialChange for this renderer index. If not, use the current texture changes.
             if (!modelChange.MaterialsByRenderer.TryGetValue(rendererIndex, out MaterialChange existingMaterialChange))
             {
-                // Create a new MaterialChange using the current texture changes
                 existingMaterialChange = new MaterialChange
                 {
                     OriginalName = originalMaterialName,
@@ -348,17 +344,14 @@ namespace doppelganger
             }
             else
             {
-                // Update existing MaterialChange but preserve its texture changes if we haven't got new ones due to index changes.
                 existingMaterialChange.OriginalName = originalMaterialName;
                 existingMaterialChange.NewName = newMaterialName.Replace("(Instance)", "");
                 if (currentTextureChanges.Count > 0)
                 {
-                    // Only update the texture changes if there are new ones from a corrected index.
                     existingMaterialChange.TextureChanges = currentTextureChanges;
                 }
             }
 
-            // Assign the updated MaterialChange back to the model-specific changes
             modelChange.MaterialsByRenderer[rendererIndex] = existingMaterialChange;
 
             //// Debug logging
@@ -419,10 +412,8 @@ namespace doppelganger
             string newModelName = modelName.Replace("(Clone)", "");
             Debug.Log($"Processing RecordTextureChange for model: {newModelName}, slot: {slotName}, renderer index: {rendererIndex}, material: {materialName}, to texture: {textureName}");
 
-            // Access CharacterBuilder to get any index changes for this model
             if (characterBuilder.ModelIndexChanges.TryGetValue(newModelName, out var indexChanges))
             {
-                // Check if there's a corrected index for this renderer
                 if (indexChanges.TryGetValue(rendererIndex, out int correctedIndex))
                 {
                     Debug.Log($"Index change detected for model: {newModelName}. Original index: {rendererIndex}, New index: {correctedIndex}");

@@ -528,13 +528,13 @@ namespace doppelganger
                 }
                 Destroy(currentModel);
                 currentlyLoadedModels.Remove(slotName);
-            }
-
-            Transform existingVariationSlider = interfaceManager.slidersPanel.transform.Find(slotName + "_VariationSlider");
-            if (existingVariationSlider != null)
-            {
-                //Debug.Log("Existing variation slider found. Destroying...");
-                Destroy(existingVariationSlider.gameObject);
+                
+                Transform existingVariationSlider = interfaceManager.slidersPanel.transform.Find(slotName + "Slider" + "_VariationSlider" + "_" + modelName);
+                if (existingVariationSlider != null)
+                {
+                    Debug.Log($"Existing variation slider found {existingVariationSlider}. Destroying...");
+                    Destroy(existingVariationSlider.gameObject);
+                }
             }
         }
 
@@ -545,7 +545,6 @@ namespace doppelganger
             var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
             for (int i = 0; i < skinnedMeshRenderers.Length; i++)
             {
-                // Ensure there's an original material for this renderer before applying
                 if (i < originalMats.Count)
                 {
                     skinnedMeshRenderers[i].sharedMaterial = originalMats[i];
@@ -555,7 +554,6 @@ namespace doppelganger
 
         public void LoadModelAndCreateVariationSlider(string slotName, int modelIndex)
         {
-            // Declare modelInstance at the start of the method
             GameObject modelInstance = null;
 
             string type = interfaceManager.GetTypeFromSelector();
@@ -591,15 +589,12 @@ namespace doppelganger
                     LoadAndApplyMaterials(modelName, modelInstance, slotName);
                     interfaceManager.CreateOrUpdateVariationSlider(slotName, modelName);
 
-                    // Update the currentlyLoadedModels dictionary
                     if (currentlyLoadedModels.ContainsKey(slotName))
                     {
-                        // Replace the existing model
                         currentlyLoadedModels[slotName] = modelInstance;
                     }
                     else
                     {
-                        // Add new model
                         currentlyLoadedModels.Add(slotName, modelInstance);
                     }
                 }
@@ -821,67 +816,69 @@ namespace doppelganger
             return cleanedName;
         }
 
-        public void ApplyVariationMaterials(GameObject modelInstance, List<ModelData.MaterialResource> materialsResources, string slotName, int modelIndex)
+        public void ApplyVariationMaterials(GameObject modelInstance, Variation variation, string slotName, int modelIndex)
         {
-            Debug.Log("[ApplyVariationMaterials] materialIndexToRendererMap: " + MapToString(materialIndexToRendererMap));
-            Debug.Log("[ApplyVariationMaterials] finalSortedMaterialIndexToRendererMap: " + MapToString(finalSortedMaterialIndexToRendererMap));
+            //Debug.Log($"[ApplyVariationMaterials] Start. Model: {modelInstance.name}, Slot: {slotName}, ModelIndex: {modelIndex}");
+
             var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
             ResetRenderersToInitialState(modelInstance, skinnedMeshRenderers);
-
-            var indexChanges = new Dictionary<int, int>();
-            HasMaterialIndicesChanged = false; // Initialize to false at the start of the method
-
-            foreach (var originalPair in materialIndexToRendererMap)
+            var rendererNameToIndexMap = new Dictionary<string, int>();
+            for (int i = 0; i < skinnedMeshRenderers.Length; i++)
             {
-                int originalIndex = originalPair.Key;
-                SkinnedMeshRenderer originalRenderer = originalPair.Value;
-
-                foreach (var correctedPair in finalSortedMaterialIndexToRendererMap)
-                {
-                    if (correctedPair.Value == originalRenderer)
-                    {
-                        int correctedIndex = correctedPair.Key;
-                        indexChanges[originalIndex] = correctedIndex;
-
-                        if (originalIndex != correctedIndex)
-                        {
-                            HasMaterialIndicesChanged = true;
-                        }
-                        break;
-                    }
-                }
-
-                if (!indexChanges.ContainsKey(originalIndex))
-                {
-                    Debug.LogWarning($"[ApplyVariationMaterials] No corrected index found for original index {originalIndex}.");
-                }
+                string formattedName = FormatRendererName(skinnedMeshRenderers[i].name, modelInstance.name.Replace("sh_", "").Replace("(Clone)", ""));
+                rendererNameToIndexMap[formattedName] = i;
             }
-            ModelIndexChanges[modelInstance.name.Replace("(Clone)", "")] = new Dictionary<int, int>(indexChanges);
-            Debug.Log($"[ApplyVariationMaterials] Final ModelIndexChanges for '{modelInstance.name.Replace("(Clone)", "")}': {intMapToString(indexChanges)}");
 
-            foreach (var materialResource in materialsResources)
+            foreach (var materialData in variation.materialsData)
             {
-                int originalIndex = materialResource.number - 1; // Adjusting index to 0-based.
-                int correctedIndex = indexChanges.ContainsKey(originalIndex) ? indexChanges[originalIndex] : originalIndex;
+                string materialDataName = materialData.name.Replace(".mat", "");
+                int materialDataIndex = materialData.number - 1; // Convert to 0-based index
+                //Debug.Log($"[ApplyVariationMaterials] Processing MaterialData: {materialDataName}");
 
-                Debug.Log($"[ApplyVariationMaterials] Attempting to apply material for original index {originalIndex} (corrected index: {correctedIndex}).");
-
-                if (finalSortedMaterialIndexToRendererMap.ContainsKey(correctedIndex))
+                foreach (var materialResource in variation.materialsResources)
                 {
-                    var renderer = finalSortedMaterialIndexToRendererMap[correctedIndex];
-
-                    foreach (var resource in materialResource.resources)
+                    if (materialResource.number == materialData.number)
                     {
-                        string originalMaterialName = renderer.sharedMaterials.Length > 0 ? renderer.sharedMaterials[0].name : "UnknownOriginal";
-                        variationBuilder.RecordMaterialChange(modelInstance.name.Replace("(Clone)", ""), originalMaterialName.Replace(" (Instance)", ""), resource.name, originalIndex);
+                        bool matched = false;
+                        //Debug.Log($"[ApplyVariationMaterials] Matching MaterialResource: {materialResource.resources.FirstOrDefault()?.name ?? "N/A"} to MaterialData: {materialDataName}");
 
-                        ApplyMaterialToRenderer(renderer, resource.name, modelInstance, resource.rttiValues, slotName, modelIndex);
-                        Debug.Log($"[ApplyVariationMaterials] Material '{resource.name}' applied to renderer '{renderer.name}', which was originally at index {originalIndex} but now at corrected index {correctedIndex}. Original material was '{originalMaterialName}'.");
+                        foreach (var kvp in rendererNameToIndexMap)
+                        {
+                            if (kvp.Key.Contains(materialDataName))
+                            {
+                                SkinnedMeshRenderer matchedRenderer = skinnedMeshRenderers[kvp.Value];
+                                foreach (var resource in materialResource.resources)
+                                {
+                                    string originalMaterialName = matchedRenderer.material.name;
+                                    ApplyMaterialToRenderer(matchedRenderer, resource.name, modelInstance, resource.rttiValues, slotName, materialDataIndex);
+                                    //Debug.Log($"[ApplyVariationMaterials] Corrected material '{resource.name}' applied to matched renderer '{matchedRenderer.name}' based on name matching from Variation.");
+                                    variationBuilder.RecordMaterialChange(modelInstance.name.Replace("(Clone)", ""), originalMaterialName.Replace(" (Instance)", ""), resource.name, materialDataIndex);
+                                    matched = true;
+                                    break;
+                                }
+                                if (matched) break;
+                            }
+                        }
+
+                        if (!matched)
+                        {
+                            if (materialDataIndex >= 0 && materialDataIndex < skinnedMeshRenderers.Length)
+                            {
+                                SkinnedMeshRenderer fallbackRenderer = skinnedMeshRenderers[materialDataIndex];
+                                foreach (var resource in materialResource.resources)
+                                {
+                                    string originalMaterialName = fallbackRenderer.material.name;
+                                    ApplyMaterialToRenderer(fallbackRenderer, resource.name, modelInstance, resource.rttiValues, slotName, materialDataIndex);
+                                    variationBuilder.RecordMaterialChange(modelInstance.name.Replace("(Clone)", ""), originalMaterialName.Replace(" (Instance)", ""), resource.name, materialDataIndex);
+                                    //Debug.Log($"[ApplyVariationMaterials] Material '{resource.name}' applied to renderer '{fallbackRenderer.name}' by index as a fallback at {materialDataIndex}.");
+                                }
+                            }
+                            else
+                            {
+                                Debug.LogWarning($"[ApplyVariationMaterials] Index {materialDataIndex} out of bounds for model '{modelInstance.name}' and no matching renderer found by name in Variation.");
+                            }
+                        }
                     }
-                }
-                else
-                {
-                    Debug.LogWarning($"[ApplyVariationMaterials] No renderer found for corrected material index {correctedIndex} (original index was {originalIndex}).");
                 }
             }
         }

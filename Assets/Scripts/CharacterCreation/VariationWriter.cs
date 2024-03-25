@@ -120,8 +120,8 @@ namespace doppelganger
                 Debug.Log($"New variation created on slider for model: {variationBuilder.currentModel.name} on slot: {interfaceManager.currentSlider}");
                 if (variationOutput.variations != null)
                 {
-                    interfaceManager.UpdateVariationSlider(interfaceManager.currentSlider, variationOutput.variations.Count);
-                    interfaceManager.SetVariationSliderValue(interfaceManager.currentSlider, nextVariationId);
+                    interfaceManager.UpdateVariationSlider(interfaceManager.currentSlider, variationOutput.variations.Count, currentlyLoadedModelName);
+                    interfaceManager.SetVariationSliderValue(interfaceManager.currentSlider, nextVariationId, currentlyLoadedModelName);
                 }
                 Debug.Log($"New variation saved for model: {currentlyLoadedModelName} with ID: {newVariation.id}");
             }

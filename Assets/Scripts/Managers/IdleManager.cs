@@ -4,12 +4,14 @@ using System.Collections;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.UI;
+using doppelganger;
 
 public class IdleManager : MonoBehaviour
 {
     public TMP_Text debugText;
     public bool debugDisplay;
-
+    public float delaySeconds = 10f;
+    private bool delayElapsed = false;
     private float deltaTime = 0.0f;
     public Canvas mainCanvas;
     public Camera mainCamera;
@@ -32,6 +34,28 @@ public class IdleManager : MonoBehaviour
             debugText.gameObject.SetActive(false);
         }
     }
+    private void Start()
+    {
+        StartCoroutine(DelayBeforeReducingRendering(delaySeconds));
+        Debug.Log($"Starting delay timer for {delaySeconds}secs");
+    }
+
+    private IEnumerator DelayBeforeReducingRendering(float delaySeconds)
+    {
+        float remainingTime = delaySeconds;
+
+        Debug.Log($"DelayBeforeReducingRendering started. Waiting for {delaySeconds} seconds.");
+
+        while (remainingTime > 0)
+        {
+            Debug.Log($"Time until rendering can be reduced: {remainingTime} seconds remaining.");
+            yield return new WaitForSeconds(1);
+            remainingTime--;
+        }
+
+        delayElapsed = true;
+        Debug.Log($"Delay has elapsed. delayElapsed is now set to {delayElapsed}. Ready to reduce rendering if out of focus.");
+    }
 
     private IEnumerator LimitFrameRate(int targetFrameRate)
     {
@@ -45,7 +69,10 @@ public class IdleManager : MonoBehaviour
     {
         if (!hasFocus)
         {
-            ReduceRendering();
+            if (delayElapsed)
+            {
+                ReduceRendering();
+            }
         }
         else
         {
@@ -59,12 +86,11 @@ public class IdleManager : MonoBehaviour
         renderTextureDisplay.gameObject.SetActive(true);
         if (mainCamera != null)
         {
-            // Disable the main camera to stop it from updating
             mainCamera.enabled = false;
         }
         mainCanvas.enabled = false;
         QualitySettings.SetQualityLevel(0, true);
-        QualitySettings.vSyncCount = 0;
+        //QualitySettings.vSyncCount = 0;
         StartCoroutine(LimitFrameRate(0));
 
         if (globalVolume != null)
@@ -83,19 +109,17 @@ public class IdleManager : MonoBehaviour
         renderTextureDisplay.gameObject.SetActive(false);
         if (mainCamera != null)
         {
-            // Re-enable the main camera and reset its target texture to render to the screen again
             mainCamera.enabled = true;
             mainCamera.targetTexture = null;
         }
 
-        // Hide the RenderTexture display
         if (renderTextureDisplay != null)
         {
             renderTextureDisplay.enabled = false;
         }
 
         QualitySettings.SetQualityLevel(5, true);
-        QualitySettings.vSyncCount = 0;
+        //QualitySettings.vSyncCount = 0;
         StopAllCoroutines();
 
         if (globalVolume != null)
@@ -103,27 +127,20 @@ public class IdleManager : MonoBehaviour
             var rayTracingSettings = (RayTracingSettings)globalVolume.profile.components.Find(x => x is RayTracingSettings);
             if (rayTracingSettings != null)
             {
-                rayTracingSettings.active = true; // Enable Ray Tracing
+                rayTracingSettings.active = true;
             }
         }
     }
 
     private IEnumerator CaptureScreen()
     {
-        // Wait until the end of the frame to ensure all rendering is complete
         yield return new WaitForEndOfFrame();
-
-        // Create a Texture2D with the size of the screen
         Texture2D screenTexture = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
-
-        // Read screen contents into the texture
+        
         screenTexture.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
         screenTexture.Apply();
-
-        // Convert Texture2D to RenderTexture
         if (unfocusedRenderTexture == null || unfocusedRenderTexture.width != screenTexture.width || unfocusedRenderTexture.height != screenTexture.height)
         {
-            // Create or resize unfocusedRenderTexture
             if (unfocusedRenderTexture != null)
             {
                 unfocusedRenderTexture.Release();
@@ -131,17 +148,13 @@ public class IdleManager : MonoBehaviour
             unfocusedRenderTexture = new RenderTexture(screenTexture.width, screenTexture.height, 0);
         }
 
-        // Copy the content to the RenderTexture
         Graphics.Blit(screenTexture, unfocusedRenderTexture);
-
-        // Clean up the Texture2D now that we're done with it
         Destroy(screenTexture);
 
-        // Update the RawImage to display the new RenderTexture
         if (renderTextureDisplay != null)
         {
             renderTextureDisplay.texture = unfocusedRenderTexture;
-            renderTextureDisplay.enabled = true; // Display the screenshot
+            renderTextureDisplay.enabled = true;
         }
     }
 }

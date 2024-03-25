@@ -41,14 +41,23 @@ namespace doppelganger
             string savePath = ConfigManager.LoadSetting("SavePath", "Path");
             string outputPath = ConfigManager.LoadSetting("SavePath", "Output_Path");
             string contentPath = ConfigManager.LoadSetting("SavePath", "Content_Path");
-            string gameVersion = ConfigManager.LoadSetting("Version", "DL2_Game");
+            string projectVersion;
 
-            Debug.Log($"gameVersion {gameVersion}, savePath {savePath}.");
-            // Check if both settings are found and not empty
+            // Use UNITY_EDITOR directive to differentiate between editor and build environments
+#if UNITY_EDITOR
+            // If running in the editor, use the project settings version
+            projectVersion = Application.version; // Getting Unity project version
+            ConfigManager.SaveSetting("Version", "Engine_Version", projectVersion);
+#else
+    // If running in the built application, read the version from config.ini
+    projectVersion = ConfigManager.LoadSetting("Version", "Engine_Version");
+#endif
+
+            Debug.Log($"gameVersion {projectVersion}, savePath {savePath}.");
             bool savePathFound = !string.IsNullOrEmpty(savePath);
-            bool outputPathFound = !string.IsNullOrEmpty(savePath);
-            bool contentPathFound = !string.IsNullOrEmpty(savePath);
-            bool versionFound = !string.IsNullOrEmpty(gameVersion);
+            bool outputPathFound = !string.IsNullOrEmpty(outputPath);
+            bool contentPathFound = !string.IsNullOrEmpty(contentPath);
+            bool versionFound = !string.IsNullOrEmpty(projectVersion);
 
             if (!savePathFound || !versionFound)
             {
@@ -56,15 +65,12 @@ namespace doppelganger
                 return false;
             }
 
-            // Proceed with path combination only if the savePath is valid
-            string exePath = Path.Combine(new string[] { savePath, "ph", "work", "bin", "x64", "DyingLightGame_x64_rwdi.exe" });
-
             if (savePathFound)
             {
                 pathInputField.text = savePath;
                 Debug.Log($"savePathFound {savePath}");
+                string exePath = Path.Combine(new string[] { savePath, "ph", "work", "bin", "x64", "DyingLightGame_x64_rwdi.exe" });
                 updateManager.GetExeVersion(exePath);
-                
             }
 
             if (outputPathFound)
@@ -81,13 +87,10 @@ namespace doppelganger
 
             if (versionFound)
             {
-                Debug.Log($"versionFound {gameVersion}");
+                Debug.Log($"versionFound {projectVersion}");
+                engineVersion.text = projectVersion;
             }
 
-            string projectVersion = ConfigManager.LoadSetting("Version", "Engine_Version");
-            ConfigManager.SaveSetting("Version", "Engine_Version", projectVersion);
-            engineVersion.text = projectVersion;
-            Debug.Log($"engineVersion set {projectVersion}");
             updateManager.VersionCheck();
             return true;
         }
@@ -96,10 +99,9 @@ namespace doppelganger
         {
             if (popupCanvasGroup != null)
             {
-                // Make the popup fully visible and interactive immediately upon spawning
-                popupCanvasGroup.alpha = 1.0f; // Fully opaque
-                popupCanvasGroup.interactable = true; // Enable interaction
-                popupCanvasGroup.blocksRaycasts = true; // Block raycasts
+                popupCanvasGroup.alpha = 1.0f;
+                popupCanvasGroup.interactable = true;
+                popupCanvasGroup.blocksRaycasts = true;
             }
             else
             {
@@ -109,16 +111,12 @@ namespace doppelganger
 
         public void OpenSetPathDialog()
         {
-            // Open folder browser and then save the selected path
             var paths = StandaloneFileBrowser.OpenFolderPanel("Select Dying Light 2 Root Folder", "", false);
             if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
             {
                 string path = paths[0];
-
-                // Attempt to find the executable in the expected directory structure
                 string exePath = Path.Combine(path, "ph", "work", "bin", "x64", "DyingLightGame_x64_rwdi.exe");
 
-                // Check if the executable exists
                 if (File.Exists(exePath))
                 {
                     SavePathToConfig(path);
@@ -147,7 +145,6 @@ namespace doppelganger
 
         public void OpenSetOutputPathDialog()
         {
-            // Open folder browser and then save the selected path
             var paths = StandaloneFileBrowser.OpenFolderPanel("Select Custom Output Folder", "", false);
             if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
             {
@@ -163,7 +160,6 @@ namespace doppelganger
 
         public void OpenSetContentPathDialog()
         {
-            // Open folder browser and then save the selected path
             var paths = StandaloneFileBrowser.OpenFolderPanel("Select Custom Content Folder", "", false);
             if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
             {

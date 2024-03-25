@@ -61,6 +61,7 @@ namespace doppelganger
         public Dictionary<string, string> usedSliders = new Dictionary<string, string>();
         private Dictionary<string, List<string>> modelToPotentialSlots = new Dictionary<string, List<string>>();
         private Dictionary<string, string> modelToAssignedSlot = new Dictionary<string, string>();
+        private Dictionary<string, string> slotToModelMap = new Dictionary<string, string>();
 
         Dictionary<string, string> classConversions = new Dictionary<string, string>
 
@@ -316,48 +317,41 @@ namespace doppelganger
 
             //Debug.Log($"Searching in type: {type}, category: {category}, class: {classSelection}");
 
-            // Define the base path for slot data
             string basePath = Path.Combine(Application.streamingAssetsPath, "SlotData", type);
-
-            // Define a list to hold all the relevant directories to search
             List<string> searchPaths = new List<string>();
             if (category == "ALL" && classSelection == "ALL")
             {
-                // If both category and classSelection are "ALL", search in the base path and all its subdirectories
-                searchPaths.Add(basePath); // Add the base path itself
+                searchPaths.Add(basePath);
                 foreach (var categoryDir in Directory.GetDirectories(basePath))
                 {
                     foreach (var classDir in Directory.GetDirectories(categoryDir))
                     {
-                        searchPaths.Add(classDir); // Add paths for each class under each category
+                        searchPaths.Add(classDir);
                     }
                 }
             }
             else if (category != "ALL" && classSelection == "ALL")
             {
-                // If only category is specified, search in all class directories under this category
                 string categoryPath = Path.Combine(basePath, category);
-                searchPaths.Add(categoryPath); // Add the category path itself
+                searchPaths.Add(categoryPath);
                 foreach (var classDir in Directory.GetDirectories(categoryPath))
                 {
-                    searchPaths.Add(classDir); // Add paths for each class under the specified category
+                    searchPaths.Add(classDir);
                 }
             }
             else
             {
-                // If both category and classSelection are specified, search only in the specified directory
                 string specificPath = Path.Combine(basePath, category, classSelection);
-                searchPaths.Add(specificPath); // Add this specific path
+                searchPaths.Add(specificPath);
             }
 
-            // Iterate through all collected paths to search for the model
             foreach (var searchPath in searchPaths)
             {
                 //Debug.Log($"Searching for {modelName} in slot data path: {searchPath}");
                 if (!Directory.Exists(searchPath))
                 {
                     Debug.LogWarning($"Slot data folder not found: {searchPath}");
-                    continue; // Skip this path if it does not exist
+                    continue;
                 }
 
                 foreach (var slotFile in Directory.GetFiles(searchPath, "*.json"))
@@ -387,10 +381,10 @@ namespace doppelganger
             {
                 if (!usedSliders.ContainsKey(potentialSlot))
                 {
-                    usedSliders[potentialSlot] = modelName; // Assign this slot to the model
-                    modelToAssignedSlot[modelName] = potentialSlot; // Keep track of which slot is assigned to which model
+                    usedSliders[potentialSlot] = modelName;
+                    modelToAssignedSlot[modelName] = potentialSlot;
                     assignedSlot = potentialSlot;
-                    break; // Exit the loop once a slot has been assigned
+                    break;
                 }
             }
 
@@ -401,7 +395,7 @@ namespace doppelganger
                     if (AttemptReassignSlot(fallbackSlot, modelName))
                     {
                         assignedSlot = fallbackSlot;
-                        break; // Exit the loop once a slot has been successfully reassigned
+                        break;
                     }
                 }
             }
@@ -724,6 +718,7 @@ namespace doppelganger
             {
                 characterBuilder.RemoveModelAndVariationSlider(slotName);
                 selectedVariationIndexes.Remove(slotName);
+                slotToModelMap.Remove(slotName);
 
                 if (secondaryPanelController.isVariations)
                 {
@@ -734,6 +729,11 @@ namespace doppelganger
             {
                 int modelIndex = Mathf.Clamp((int)(value - 1), 0, int.MaxValue);
                 characterBuilder.LoadModelAndCreateVariationSlider(slotName, modelIndex);
+                string modelName = GetModelNameFromIndex(slotName, modelIndex);
+                if (!string.IsNullOrEmpty(modelName))
+                {
+                    slotToModelMap[slotName] = modelName;
+                }
 
                 if (secondaryPanelController.isVariations)
                 {
@@ -745,8 +745,7 @@ namespace doppelganger
 
         public void CreateOrUpdateVariationSlider(string slotName, string modelName)
         {
-            // Check if a variation slider already exists and remove it
-            RemoveVariationSlider(slotName);
+            RemoveVariationSlider(slotName, modelName);
 
             string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");
             if (File.Exists(materialJsonFilePath))
@@ -756,16 +755,16 @@ namespace doppelganger
 
                 if (modelInfo != null && modelInfo.variations != null && modelInfo.variations.Count > 0)
                 {
-                    CreateVariationSlider(slotName, modelInfo.variations.Count);
+                    CreateVariationSlider(slotName, modelInfo.variations.Count, modelName);
                 }
                 // No else block needed, as RemoveVariationSlider has already been called
             }
         }
 
-        public void CreateVariationSlider(string slotName, int variationCount)
+        public void CreateVariationSlider(string slotName, int variationCount, string modelName)
         {
             GameObject variationSliderObject = Instantiate(variationSliderPrefab, slidersPanel.transform, false);
-            variationSliderObject.name = slotName + "_VariationSlider";
+            variationSliderObject.name = slotName + "Slider" + "_VariationSlider" + "_" + modelName;
 
             // Find the index of the primary slider in the slidersPanel
             int primarySliderIndex = FindSliderIndex(slotName + "Slider");
@@ -787,15 +786,15 @@ namespace doppelganger
             }
         }
 
-        public void UpdateVariationSlider(string slotName, int variationCount)
+        public void UpdateVariationSlider(string slotName, int variationCount, string modelName)
         {
-            RemoveVariationSlider(slotName);
-            CreateVariationSlider(slotName, variationCount);
+            RemoveVariationSlider(slotName, modelName);
+            CreateVariationSlider(slotName, variationCount, modelName);
         }
 
-        public void SetVariationSliderValue(string slotName, int variationIndex)
+        public void SetVariationSliderValue(string slotName, int variationIndex, string modelName)
         {
-            Slider variationSlider = GetVariationSliderBySlotName(slotName);
+            Slider variationSlider = GetVariationSliderBySlotName(slotName, modelName);
             if (variationSlider != null)
             {
                 variationSlider.value = variationIndex;
@@ -806,9 +805,9 @@ namespace doppelganger
             }
         }
 
-        private Slider GetVariationSliderBySlotName(string slotName)
+        private Slider GetVariationSliderBySlotName(string slotName, string modelName)
         {
-            GameObject sliderObject = slidersPanel.transform.Find(slotName + "_VariationSlider")?.gameObject;
+            GameObject sliderObject = slidersPanel.transform.Find(slotName + "Slider" + "_VariationSlider" + "_" + modelName)?.gameObject;
             if (sliderObject != null)
             {
                 return sliderObject.GetComponentInChildren<Slider>();
@@ -819,55 +818,87 @@ namespace doppelganger
         public void OnVariationSliderValueChanged(string slotName, float value)
         {
             Debug.Log($"OnVariationSliderValueChanged for slot: {slotName} with value: {value}");
-            if (!characterBuilder.currentlyLoadedModels.TryGetValue(slotName, out GameObject currentModel))
+
+            if (!slotToModelMap.TryGetValue(slotName, out string modelName))
             {
-                Debug.LogError($"No model currently loaded for slot: {slotName}");
+                Debug.LogError($"No model associated with slot: {slotName}");
                 return;
             }
 
-            string currentModelName = currentModel.name.Replace("(Clone)", "");
-            if (variationBuilder.modelSpecificChanges.ContainsKey(currentModelName))
+            if (variationBuilder.modelSpecificChanges.ContainsKey(modelName))
             {
-                variationBuilder.modelSpecificChanges.Remove(currentModelName);
+                variationBuilder.modelSpecificChanges.Remove(modelName);
+                Debug.Log($"All changes cleared for model: {modelName}.");
             }
+
+            if (!characterBuilder.currentlyLoadedModels.TryGetValue(slotName, out GameObject currentModel) || currentModel.name.Replace("(Clone)", "") != modelName)
+            {
+                Debug.LogError($"The model for slot: {slotName} does not match the expected model: {modelName}");
+                return;
+            }
+            
+            Debug.Log($"Current model for slot {slotName} is {currentModel.name.Replace("(Clone)", "")}");
+
+            ModelData.ModelInfo modelInfo = null;
+
+            string currentModelName = currentModel.name.Replace("(Clone)", "");
+            Debug.Log($"Current model for slot {slotName} is {currentModelName}");
 
             if (value == 0 && characterBuilder.originalMaterials.TryGetValue(slotName, out List<Material> mats))
             {
                 characterBuilder.ApplyOriginalMaterials(currentModel, mats);
-                variationBuilder.UpdateModelInfoPanel(slotName);
+                if (secondaryPanelController.isVariations)
+                {
+                    variationBuilder.UpdateModelInfoPanel(currentSlider);
+                }
                 return;
             }
 
             int modelIndex = Mathf.Clamp((int)sliderValues[slotName] - 1, 0, int.MaxValue);
-            string modelName = GetModelNameFromIndex(slotName, modelIndex);
-            string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");
+            Debug.Log($"Model for variation: {modelName}");
 
+            string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");
             if (File.Exists(materialJsonFilePath))
             {
                 string materialJsonData = File.ReadAllText(materialJsonFilePath);
-                ModelData.ModelInfo modelInfo = JsonUtility.FromJson<ModelData.ModelInfo>(materialJsonData);
+                modelInfo = JsonUtility.FromJson<ModelData.ModelInfo>(materialJsonData);
+
                 if (modelInfo != null && modelInfo.variations != null && modelInfo.variations.Count > 0)
                 {
                     int variationIndex = Mathf.Clamp((int)value - 1, 0, modelInfo.variations.Count - 1);
-                    var variationResources = modelInfo.variations[variationIndex].materialsResources;
-
-                    if (variationResources != null)
-                    {
-                        characterBuilder.ApplyVariationMaterials(currentModel, variationResources, slotName, modelIndex);
-                    }
+                    Debug.Log($"Applying variation materials for slot: {slotName} on model: {currentModelName} for variation index: {variationIndex}");
+                    var variation = modelInfo.variations[variationIndex]; // This is assuming ApplyVariationMaterials expects Variation type.
+                    characterBuilder.ApplyVariationMaterials(currentModel, variation, slotName, variationIndex);
                 }
             }
             else
             {
-                Debug.LogError("Material JSON file not found: " + materialJsonFilePath);
+                Debug.LogError($"Material JSON file not found: {materialJsonFilePath}");
             }
-            variationBuilder.currentSlot = slotName;
-            selectedVariationIndexes[slotName] = Mathf.Clamp((int)value - 1, 0, int.MaxValue);
-            variationBuilder.UpdateModelInfoPanel(currentSlider);
-            foreach (var kvp in selectedVariationIndexes)
+
+            if (secondaryPanelController.isVariations)
             {
-                Debug.Log($"Slot: {kvp.Key}, Stored Index: {kvp.Value}");
+                variationBuilder.currentSlot = slotName;
+                variationBuilder.UpdateModelInfoPanel(currentSlider);
             }
+            if (modelInfo != null) // Ensure modelInfo was actually set
+            {
+                selectedVariationIndexes[slotName] = Mathf.Clamp((int)value - 1, 0, modelInfo.variations.Count - 1);
+                foreach (var kvp in selectedVariationIndexes)
+                {
+                    Debug.Log($"Slot: {kvp.Key}, Stored Index: {kvp.Value}");
+                }
+            }
+        }
+
+        private string ExtractModelNameFromSlider(string slotName)
+        {
+            var parts = slotName.Split('_');
+            if (parts.Length > 3)
+            {
+                return parts[3];
+            }
+            return null;
         }
 
         public void ResetVariationSliderAndUpdate(string slotName)
@@ -888,9 +919,9 @@ namespace doppelganger
             }
         }
 
-        public void RemoveVariationSlider(string slotName)
+        public void RemoveVariationSlider(string slotName, string modelName)
         {
-            Transform existingVariationSlider = slidersPanel.transform.Find(slotName + "_VariationSlider");
+            Transform existingVariationSlider = slidersPanel.transform.Find(slotName + "Slider" + "_VariationSlider" + "_" + modelName);
             if (existingVariationSlider != null) Destroy(existingVariationSlider.gameObject);
         }
 

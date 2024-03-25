@@ -30,7 +30,7 @@ namespace doppelganger
             ConfigManager.SaveSetting("Version", "DL2_Game", exeVersion);
             string projectVersion = ConfigManager.LoadSetting("Version", "Engine_Version");
             gameVersion = exeVersion;
-            datamanager.gameVersionLabel.text = exeVersion.Replace("na", "");
+            //datamanager.gameVersionLabel.text = exeVersion.Replace("na", "");
             datamanager.engineVersion.text = projectVersion;
         }
 
@@ -40,7 +40,7 @@ namespace doppelganger
             string storedGameVersion = ConfigManager.LoadSetting("Version", "DL2_Game");
             string exePath = Path.Combine(savePath, "ph", "work", "bin", "x64", "DyingLightGame_x64_rwdi.exe"); // Ensure savePath is used
             string exeVersion = GetExeVersion(exePath);
-            datamanager.gameVersionLabel.text = exeVersion;
+            //datamanager.gameVersionLabel.text = exeVersion;
             // Check if the stored game version matches the exe version
             if (!string.Equals(storedGameVersion, exeVersion))
             {
@@ -81,7 +81,7 @@ namespace doppelganger
             {
                 var versionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(path);
                 Debug.Log($"GetExeVersion path: {versionInfo.FileVersion}");
-                datamanager.gameVersionLabel.text = versionInfo.FileVersion.Replace("na", "");
+                //datamanager.gameVersionLabel.text = versionInfo.FileVersion.Replace("na", "");
                 gameVersion = versionInfo.FileVersion;
                 return versionInfo.FileVersion;
             }

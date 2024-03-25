@@ -50,6 +50,7 @@ namespace doppelganger
                 "ALL_hair_3",
                 "ALL_facial_hair",
                 "ALL_cape",
+                "ALL_chest",
                 "ALL_torso",
                 "ALL_torso_2",
                 "ALL_torso_extra",
@@ -90,11 +91,13 @@ namespace doppelganger
                 "ALL_armor_helmet_access",
                 "ALL_armor_torso",
                 "ALL_armor_torso_access",
+                "ALL_armor_torso_extra",
                 "ALL_armor_torso_upperright",
                 "ALL_armor_torso_upperleft",
                 "ALL_armor_torso_lowerright",
                 "ALL_armor_torso_lowerleft",
                 "ALL_armor_legs",
+                "ALL_armor_legs_access",
                 "ALL_armor_legs_upperright",
                 "ALL_armor_legs_upperleft",
                 "ALL_armor_legs_lowerright",
@@ -131,6 +134,7 @@ namespace doppelganger
         },
         { "Button_UpperBody", new List<string>
             {
+                "ALL_chest",
                 "ALL_torso",
                 "ALL_torso_2",
                 "ALL_torso_access",
@@ -147,6 +151,7 @@ namespace doppelganger
             {
                 "ALL_armor_torso",
                 "ALL_armor_torso_access",
+                "ALL_armor_torso_extra",
                 "ALL_armor_torso_upperright",
                 "ALL_armor_torso_upperleft",
                 "ALL_armor_torso_lowerright",
@@ -200,6 +205,7 @@ namespace doppelganger
         { "Button_Legs_armor", new List<string>
             {
                 "ALL_armor_legs",
+                "ALL_armor_legs_access",
                 "ALL_armor_legs_upperright",
                 "ALL_armor_legs_upperleft",
                 "ALL_armor_legs_lowerright",
