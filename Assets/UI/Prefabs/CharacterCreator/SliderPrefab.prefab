@@ -644,9 +644,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86b80b401c26b3248b192bcfdb234b9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioSource: {fileID: 0}
+  audioSource: {fileID: 2033975839523315181}
   hoverSound: {fileID: 0}
-  clickSound: {fileID: 8300000, guid: 4cf7161a22a632242b0ef2aff4be5849, type: 3}
+  clickSound: {fileID: 8300000, guid: c5d48e64010d535428b28378f7ec0976, type: 3}
   notificationSound: {fileID: 0}
   enableHoverSound: 0
   enableClickSound: 1
@@ -662,7 +662,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 243485103152924164, guid: b3e9cd88a146b5b44a5d6fbe1eddb79c, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.301
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -1395,6 +1395,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4762257881128259806}
     m_Modifications:
+    - target: {fileID: 227124015112109066, guid: f1e18125d92807b4eb8ed234dee1c508, type: 3}
+      propertyPath: m_Volume
+      value: 0.301
+      objectReference: {fileID: 0}
     - target: {fileID: 1637145430556842333, guid: f1e18125d92807b4eb8ed234dee1c508, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

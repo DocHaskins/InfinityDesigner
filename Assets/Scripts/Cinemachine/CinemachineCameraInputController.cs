@@ -2,7 +2,9 @@ using Cinemachine;
 using RootMotion.FinalIK;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 namespace doppelganger
 {
     public class CinemachineCameraInputController : MonoBehaviour
@@ -45,63 +47,65 @@ namespace doppelganger
         {
             float scrollInput = Input.GetAxis("Mouse ScrollWheel");
 
-            // Check if scroll input is not zero (scrolling occurred)
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                PointerEventData pointerEventData = new PointerEventData(EventSystem.current) { position = Input.mousePosition };
+                List<RaycastResult> results = new List<RaycastResult>();
+                EventSystem.current.RaycastAll(pointerEventData, results);
+
+                bool overPanel = results.Any(r => r.gameObject.CompareTag("NoZoomPanel"));
+
+                if (overPanel)
+                {
+                    return;
+                }
+            }
+
             if (scrollInput != 0)
             {
-                // Negate scroll input to reverse the direction
                 scrollInput *= -1;
 
-                // Calculate new width based on scroll direction and amount
                 float newWidth = cameraZoomTool.m_Width + scrollInput * scrollSpeed * scrollAmount;
 
-                // Clamp new width within the specified range
                 newWidth = Mathf.Clamp(newWidth, minWidth, maxWidth);
 
-                // Set the new width to the camera tool
                 cameraZoomTool.m_Width = newWidth;
             }
 
             Transform lookAtTarget = virtualCamera.LookAt;
             if (lookAtTarget == null) return;
 
-            if (Input.GetMouseButtonDown(1)) // Right mouse button pressed
+            if (Input.GetMouseButtonDown(1))
             {
                 dragOrigin = Input.mousePosition;
             }
 
-            if (Input.GetMouseButton(1)) // Right mouse button held down
+            if (Input.GetMouseButton(1))
             {
                 Vector3 mouseDelta = Input.mousePosition - dragOrigin;
                 dragOrigin = Input.mousePosition;
 
-                // Calculate vertical movement based on mouse input, adjusting by verticalSpeed and Time.deltaTime
-                float verticalMovement = -mouseDelta.y * verticalSpeed * Time.deltaTime; // Negative to invert direction
+                float verticalMovement = -mouseDelta.y * verticalSpeed * Time.deltaTime;
 
-                // Calculate the new Y position, starting from the camera's initial Y position, and clamp it
                 float newYPosition = Mathf.Clamp(virtualCamera.transform.position.y + verticalMovement, initialY + minY, initialY + maxY);
-
-                // Update the camera's position with the new clamped Y position, while keeping X and Z the same
                 virtualCamera.transform.position = new Vector3(virtualCamera.transform.position.x, newYPosition, virtualCamera.transform.position.z);
             }
 
-            if (Input.GetMouseButtonDown(2)) // Middle mouse button pressed
+            if (Input.GetMouseButtonDown(2))
             {
                 dragOrigin = Input.mousePosition;
             }
 
-            if (Input.GetMouseButton(2) && recomposer != null) // Middle mouse button held down
+            if (Input.GetMouseButton(2) && recomposer != null)
             {
                 Vector3 mouseDelta = Input.mousePosition - dragOrigin;
                 dragOrigin = Input.mousePosition;
 
-                // Calculate the tilt adjustment based on the vertical mouse movement
                 float tiltAdjustment = -mouseDelta.y * tiltSpeed;
 
-                // Update the recomposer's tilt
                 recomposer.m_Tilt += tiltAdjustment;
 
-                // Optionally, clamp the tilt value to prevent over-tilting
-                recomposer.m_Tilt = Mathf.Clamp(recomposer.m_Tilt, -20f, 20f); // Adjust these values as necessary
+                recomposer.m_Tilt = Mathf.Clamp(recomposer.m_Tilt, -20f, 20f);
             }
         }
     }
