@@ -9,7 +9,6 @@ using UnityEngine.EventSystems;
 using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.UI;
 using static ModelData;
-using static TreeEditor.TextureAtlas;
 
 namespace doppelganger
 {
@@ -315,7 +314,7 @@ namespace doppelganger
 
         public void RecordMaterialChange(string modelName, string originalMaterialName, string newMaterialName, int rendererIndex)
         {
-            Debug.Log($"Processing RecordTextureChange for model: {modelName}, originalMaterialName: {originalMaterialName}, newMaterialName: {newMaterialName}, rendererIndex: {rendererIndex}");
+            //Debug.Log($"Processing RecordTextureChange for model: {modelName}, originalMaterialName: {originalMaterialName}, newMaterialName: {newMaterialName}, rendererIndex: {rendererIndex}");
             if (!modelSpecificChanges.TryGetValue(modelName, out ModelChange modelChange))
             {
                 modelChange = new ModelChange();

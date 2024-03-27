@@ -47,7 +47,8 @@ namespace doppelganger
     {
         "Player", new Dictionary<string, string>
         {
-            {"ALL", "player_skeleton"}
+            {"ALL", "player_skeleton"},
+            {"survivor", "player_skeleton"}
         }
     },
     {

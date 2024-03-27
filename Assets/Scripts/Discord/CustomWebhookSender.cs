@@ -20,6 +20,7 @@ namespace doppelganger
     {
         public CharacterBuilder_InterfaceManager interfaceManager;
         private DiscordWebhook _discordWebhook;
+        public NotificationManager notificationManager;
 
         [SerializeField]
         private TMP_InputField _titleTextField;
@@ -223,7 +224,10 @@ namespace doppelganger
             var asyncSend = _discordWebhook.SendAsync();
 
             StartCoroutine(WaitForWebhookSend(asyncSend));
-
+            if (notificationManager != null)
+            {
+                notificationManager.ShowNotification($"Model {jsonFileNameCleaned} has been shared on the Infinity Designer/Share Discord Channel with the tag: {selectedCategoryName}");
+            }
             File.Delete(zipFilePath);
         }
 

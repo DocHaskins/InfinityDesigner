@@ -9,18 +9,15 @@ namespace doppelganger
         [Header("Toggle Components")]
         public Toggle childToggle;
         public Image toggleImage;
-        public TextMeshProUGUI statusText;
+        public Text statusLockedText;
+        public Text statusUnlockedText;
 
         [Header("State Visuals")]
         public Sprite lockedSprite;
         public Sprite unlockedSprite;
 
-        [Header("State Texts")]
-        public string textWhenLocked = "Locked";
-        public string textWhenUnlocked = "Unlocked";
-
         [Header("Audio")]
-        public AudioSource audioSource; // Assign an AudioSource component
+        public AudioSource audioSource;
         public AudioClip lockSound;
         public AudioClip unlockSound;
 
@@ -32,7 +29,6 @@ namespace doppelganger
                 return;
             }
 
-            // Subscribe to the toggle's value changed event
             childToggle.onValueChanged.AddListener(OnToggleValueChanged);
         }
 
@@ -49,7 +45,6 @@ namespace doppelganger
         {
             UpdateVisuals(isOn);
 
-            // Play the appropriate sound
             if (audioSource != null)
             {
                 audioSource.clip = isOn ? unlockSound : lockSound;
@@ -68,10 +63,10 @@ namespace doppelganger
                 toggleImage.sprite = isOn ? lockedSprite : unlockedSprite;
             }
 
-            // Update the text to reflect the correct state based on `isOn`
-            if (statusText != null)
+            if (statusLockedText != null && statusUnlockedText != null)
             {
-                statusText.text = isOn ? textWhenLocked : textWhenUnlocked;
+                statusLockedText.gameObject.SetActive(isOn);
+                statusUnlockedText.gameObject.SetActive(!isOn);
             }
         }
     }

@@ -1,24 +1,18 @@
 using System.Collections;
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
+using Assets.SimpleLocalization.Scripts;
 
 namespace doppelganger
 {
-    public class ErrorManagerChild : ErrorManager
+    public class NotificationManagerChild : NotificationManager
     {
         protected new void OnEnable()
         {
-            // Call base class OnEnable explicitly to ensure logFilePath is initialized
-            base.OnEnable(); // This ensures logFilePath is set before any operations on it
-
-            // Re-attach the log handler - consider if you need this since base.OnEnable already does it
-            // Application.logMessageReceived += HandleLog; // Might be redundant
-
-            // Check and create the log file if it does not exist, without clearing it.
+            base.OnEnable();
             EnsureLogFileExists();
-
-            // Update UI components to use the new "ErrorPanel" Tag
             UpdateUIComponents();
         }
 
@@ -32,7 +26,6 @@ namespace doppelganger
 
             if (!File.Exists(logFilePath))
             {
-                // Using StreamWriter to create or open the file for appending
                 using (var sw = File.AppendText(logFilePath)) { }
             }
         }
@@ -42,9 +35,11 @@ namespace doppelganger
             GameObject errorPanel = GameObject.FindGameObjectWithTag("ErrorPanel");
             if (errorPanel != null)
             {
-                errorPopup = errorPanel; // Update the errorPopup reference
-                canvasGroup = errorPopup.GetComponent<CanvasGroup>();
-                errorMessageText = errorPopup.GetComponentInChildren<TMP_Text>();
+                notificationPopup = errorPanel;
+                canvasGroup = notificationPopup.GetComponent<CanvasGroup>();
+                categoryLabel = notificationPopup.transform.Find("CategoryLabel")?.GetComponent<Text>();
+                notificationMessageText = notificationPopup.GetComponentInChildren<TMP_Text>();
+                displayTextComponent = notificationPopup.GetComponentInChildren<LocalizedText>(); // Make sure to update this reference as well
             }
             else
             {

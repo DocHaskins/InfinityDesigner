@@ -1,3 +1,4 @@
+using Assets.SimpleLocalization.Scripts;
 using Michsky.UI.Heat;
 using System;
 using System.Collections;
@@ -109,12 +110,12 @@ namespace doppelganger
                 Debug.LogWarning("Player type not found in dropdown options.");
             }
 
-            PopulateSaveCategoryDropdown();
-            PopulateSaveClassDropdown(skeletonLookup.skeletonMapping.Keys.First()); // Default to the first category
+            //PopulateSaveCategoryDropdown();
+            //PopulateSaveClassDropdown(skeletonLookup.skeletonMapping.Keys.First()); // Default to the first category
 
-            saveCategoryDropdown.onValueChanged.AddListener(delegate {
-                SaveCategoryChanged(saveCategoryDropdown.options[saveCategoryDropdown.value].text);
-            });
+            //saveCategoryDropdown.onValueChanged.AddListener(delegate {
+            //    SaveCategoryChanged(saveCategoryDropdown.options[saveCategoryDropdown.value].text);
+            //});
 
             // Manually trigger the interface update as if the dropdown values were changed
             UpdateInterfaceBasedOnDropdownSelection();
@@ -135,8 +136,8 @@ namespace doppelganger
 
             categoryDropdown.value = categoryDropdown.options.FindIndex(option => option.text == "Player");
             classDropdown.value = classDropdown.options.FindIndex(option => option.text == "ALL");
-            SetDropdownByValue(saveCategoryDropdown, "Player");
-            SetDropdownByValue(saveClassDropdown, "ALL");
+            //SetDropdownByValue(saveCategoryDropdown, "Player");
+            //SetDropdownByValue(saveClassDropdown, "ALL");
 
             OnCategoryChanged(categoryDropdown.value);
 
@@ -188,7 +189,7 @@ namespace doppelganger
             // Assuming you have a way to map the index to a type
             string selectedType = GetTypeBasedOnIndex(index);
             PopulateDropdown(categoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType), "ALL", true);
-            PopulateDropdown(saveCategoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType), "ALL", true);
+            //PopulateDropdown(saveCategoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType), "ALL", true);
             UpdateInterfaceBasedOnDropdownSelection();
         }
 
@@ -219,7 +220,7 @@ namespace doppelganger
 
             // Use the selectedType to populate the classDropdown based on the selected category
             PopulateDropdown(classDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType, selectedCategory), "ALL");
-            PopulateDropdown(saveClassDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType, selectedCategory), "ALL");
+            //PopulateDropdown(saveClassDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType, selectedCategory), "ALL");
             UpdateInterfaceBasedOnDropdownSelection();
         }
 
@@ -504,11 +505,9 @@ namespace doppelganger
         {
             string category = categoryDropdown.options[categoryDropdown.value].text;
 
-            // New approach to determine filters based on the selected category
             List<string> filters = new List<string>();
             if (category != "ALL")
             {
-                // Assume 'buttonMappings' contains keys that match dropdown options
                 if (filterMapping.buttonMappings.TryGetValue("Button_" + category, out List<string> categoryFilters))
                 {
                     filters.AddRange(categoryFilters);
@@ -516,11 +515,9 @@ namespace doppelganger
             }
             else
             {
-                // If category is "ALL", add all filters from buttonMappings
                 filters.AddRange(filterMapping.buttonMappings.SelectMany(pair => pair.Value).Distinct());
             }
 
-            // Assuming PopulateSlidersWithFilters does the actual update
             PopulateSlidersWithFilters(currentPath, filters);
 
             UpdateInterfaceBasedOnType();
@@ -551,7 +548,6 @@ namespace doppelganger
 
         public void FilterCategory(string categoryKey)
         {
-            // Assuming 'buttonMappings' is now part of this script or accessible through a reference
             if (filterMapping.buttonMappings.TryGetValue(categoryKey, out List<string> filters))
             {
                 PopulateSlidersWithFilters(currentPath, filters);
@@ -565,10 +561,7 @@ namespace doppelganger
 
         public void PopulateSliders(string path)
         {
-            // Clear existing sliders first
             ClearExistingSliders();
-
-            // Your logic to load sliders based on the predefined order
             List<string> sliderOrder = filterMapping.buttonMappings["Button_All"];
             foreach (string sliderName in sliderOrder)
             {
@@ -579,12 +572,9 @@ namespace doppelganger
                 }
                 else
                 {
-                    // Optionally log if a slider JSON is expected for every item in sliderOrder
                     Debug.LogWarning("JSON file not found for slider: " + fullPath);
                 }
             }
-
-            // Rebuild layout if necessary
             LayoutRebuilder.ForceRebuildLayoutImmediate(slidersPanel.GetComponent<RectTransform>());
         }
 
@@ -686,11 +676,22 @@ namespace doppelganger
                 slider.onValueChanged.AddListener(delegate { OnSliderValueChanged(slotName, slider.value, true); });
             }
 
-            // Set label text only for the slider
-            TextMeshProUGUI labelText = sliderObject.GetComponentInChildren<TextMeshProUGUI>();
+            Text labelText = sliderObject.GetComponentInChildren<Text>();
             if (labelText != null && sliderObject.name.Contains("Slider"))
             {
                 labelText.text = slotName.Replace("ALL_", "");
+            }
+
+            Text displayText = sliderObject.GetComponentInChildren<Text>();
+            if (displayText != null && sliderObject.name.Contains("Slider"))
+            {
+                displayText.text = slotName.Replace("ALL_", "");
+            }
+            LocalizedText displayTextComponent = sliderObject.GetComponentInChildren<LocalizedText>();
+            if (displayTextComponent != null)
+            {
+                string cleanSlotName = slotName.Replace("ALL_", "");
+                displayTextComponent.LocalizationKey = "CC." + cleanSlotName;
             }
 
             Button currentSliderButton = sliderObject.transform.Find("Button_currentSlider").GetComponent<Button>();
@@ -817,7 +818,7 @@ namespace doppelganger
 
         public void OnVariationSliderValueChanged(string slotName, float value)
         {
-            Debug.Log($"OnVariationSliderValueChanged for slot: {slotName} with value: {value}");
+            //Debug.Log($"OnVariationSliderValueChanged for slot: {slotName} with value: {value}");
 
             if (!slotToModelMap.TryGetValue(slotName, out string modelName))
             {
@@ -837,7 +838,7 @@ namespace doppelganger
                 return;
             }
             
-            Debug.Log($"Current model for slot {slotName} is {currentModel.name.Replace("(Clone)", "")}");
+            //Debug.Log($"Current model for slot {slotName} is {currentModel.name.Replace("(Clone)", "")}");
 
             ModelData.ModelInfo modelInfo = null;
 
@@ -884,10 +885,10 @@ namespace doppelganger
             if (modelInfo != null) // Ensure modelInfo was actually set
             {
                 selectedVariationIndexes[slotName] = Mathf.Clamp((int)value - 1, 0, modelInfo.variations.Count - 1);
-                foreach (var kvp in selectedVariationIndexes)
-                {
-                    Debug.Log($"Slot: {kvp.Key}, Stored Index: {kvp.Value}");
-                }
+                //foreach (var kvp in selectedVariationIndexes)
+                //{
+                //    Debug.Log($"Slot: {kvp.Key}, Stored Index: {kvp.Value}");
+                //}
             }
         }
 

@@ -12,6 +12,7 @@ namespace doppelganger
     {
         private VariationBuilder variationBuilder;
         public CharacterBuilder_InterfaceManager interfaceManager;
+        public NotificationManager notificationManager;
 
         private void Awake()
         {
@@ -124,6 +125,10 @@ namespace doppelganger
                     interfaceManager.SetVariationSliderValue(interfaceManager.currentSlider, nextVariationId, currentlyLoadedModelName);
                 }
                 Debug.Log($"New variation saved for model: {currentlyLoadedModelName} with ID: {newVariation.id}");
+                if (notificationManager != null)
+                {
+                    notificationManager.ShowNotification($"New variation saved for model: {currentlyLoadedModelName}");
+                }
             }
             else
             {

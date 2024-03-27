@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class SliderKeyboardControl : MonoBehaviour
 {
-    public CharacterBuilder_InterfaceManager characterBuilder; // Assuming this has a reference to your UI elements
+    public CharacterBuilder_InterfaceManager characterBuilder;
     
     public bool DebugMode = false;
     
@@ -46,11 +46,11 @@ public class SliderKeyboardControl : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            AdjustCurrentSlider(-1.0f); // Adjust the value by a small increment to the left
+            AdjustCurrentSlider(-1.0f);
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            AdjustCurrentSlider(1.0f); // Adjust the value by a small increment to the right
+            AdjustCurrentSlider(1.0f);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha0))
         {
@@ -74,18 +74,17 @@ public class SliderKeyboardControl : MonoBehaviour
     {
         if (sliders.Count > 0 && currentSliderIndex >= 0 && currentSliderIndex < sliders.Count)
         {
-            // Set the current slider's value to 0
             sliders[currentSliderIndex].value = 0;
             Debug.Log($"Slider '{sliders[currentSliderIndex].name}' reset to 0.");
         }
     }
 
-    private bool isMovingSlider = false; // To prevent multiple coroutine instances
+    private bool isMovingSlider = false;
 
     private IEnumerator ContinuousSliderMovement(KeyCode keyCode)
     {
         isMovingSlider = true;
-        yield return new WaitForSeconds(0.1f); // Initial delay before continuous movement starts
+        yield return new WaitForSeconds(0.1f);
 
         while (Input.GetKey(keyCode))
         {
@@ -106,7 +105,7 @@ public class SliderKeyboardControl : MonoBehaviour
                 AdjustCurrentSlider(1.0f);
             }
 
-            yield return new WaitForSeconds(0.1f); // Adjust this value as needed for faster or slower movement
+            yield return new WaitForSeconds(0.1f);
         }
 
         isMovingSlider = false;
@@ -120,12 +119,11 @@ public class SliderKeyboardControl : MonoBehaviour
 
     private IEnumerator RefreshSlidersCoroutine()
     {
-        yield return new WaitForSeconds(2.0f); // Wait for potential UI updates
+        yield return new WaitForSeconds(2.0f);
         sliders.Clear();
         GameObject[] taggedObjects = GameObject.FindGameObjectsWithTag("PrimarySlider");
         foreach (GameObject obj in taggedObjects)
         {
-            // Attempt to find a child named "PrimarySlider" which should contain the actual Slider component
             Transform primarySliderChild = obj.transform.Find("primarySlider");
             if (primarySliderChild != null)
             {
@@ -137,7 +135,6 @@ public class SliderKeyboardControl : MonoBehaviour
             }
             else
             {
-                // Fallback to checking the parent object if no such child is found
                 Slider sliderFallback = obj.GetComponent<Slider>();
                 if (sliderFallback != null)
                 {
@@ -159,7 +156,7 @@ public class SliderKeyboardControl : MonoBehaviour
     {
         if (sliders.Count == 0) return;
 
-        currentSliderIndex = (currentSliderIndex + 1) % sliders.Count; // Loop through sliders
+        currentSliderIndex = (currentSliderIndex + 1) % sliders.Count;
         HighlightCurrentSlider();
     }
 
@@ -168,7 +165,7 @@ public class SliderKeyboardControl : MonoBehaviour
         if (sliders.Count == 0) return;
 
         currentSliderIndex--;
-        if (currentSliderIndex < 0) currentSliderIndex = sliders.Count - 1; // Loop to the last slider
+        if (currentSliderIndex < 0) currentSliderIndex = sliders.Count - 1;
         HighlightCurrentSlider();
     }
 
@@ -177,34 +174,29 @@ public class SliderKeyboardControl : MonoBehaviour
         if (sliders.Count == 0 || currentSliderIndex < 0 || currentSliderIndex >= sliders.Count) return;
 
         Slider currentSlider = sliders[currentSliderIndex];
-        currentSlider.value += direction; // Adjust the slider value by the direction
+        currentSlider.value += direction;
     }
 
     private void HighlightCurrentSlider()
     {
-        bool DebugMode = false; // Assuming DebugMode is defined elsewhere, set it accordingly
+        bool DebugMode = false;
 
-        // Default color for deselected sliders
-        Color defaultColor = new Color(0f, 0f, 0f, 0.8f); // White color, adjust if necessary
-
-        // Color to use for the selected slider's background when not in DebugMode
-        Color selectedBackgroundColor = new Color(0.2803922f, 0.2803922f, 0.2803922f, 1f); // Equivalent to #616161
+        Color defaultColor = new Color(0f, 0f, 0f, 0.8f);
+        Color selectedBackgroundColor = new Color(0.2803922f, 0.2803922f, 0.2803922f, 1f);
 
         GameObject[] primarySliders = GameObject.FindGameObjectsWithTag("PrimarySlider");
         for (int i = 0; i < primarySliders.Length; i++)
         {
             GameObject sliderParent = primarySliders[i];
-
-            // Find the "bckgrd" and "labelText" child GameObjects within each primary slider
             Image bckgrdImage = sliderParent.transform.Find("bckgrd")?.GetComponent<Image>();
-            TMP_Text labelText = sliderParent.transform.Find("Button_currentSlider/labelText")?.GetComponent<TMP_Text>();
+            Text labelText = sliderParent.transform.Find("Button_currentSlider/labelText")?.GetComponent<Text>();
 
             if (bckgrdImage != null && labelText != null)
             {
                 if (i == currentSliderIndex)
                 {
-                    labelText.fontStyle = FontStyles.Bold;
-                    labelText.fontSize += 2; // Increase font size for the selected slider
+                    labelText.fontStyle = FontStyle.Bold;
+                    labelText.fontSize += 2;
 
                     if (!DebugMode)
                     {
@@ -213,15 +205,14 @@ public class SliderKeyboardControl : MonoBehaviour
                 }
                 else
                 {
-                    labelText.fontStyle = FontStyles.Normal;
-                    labelText.fontSize = Mathf.Max(labelText.fontSize - 2, 24); // Ensure font size does not go below a minimum value
+                    labelText.fontStyle = FontStyle.Normal;
+                    labelText.fontSize = Mathf.Max(labelText.fontSize - 2, 24);
 
-                    // Revert the background color for non-selected sliders
                     if (bckgrdImage != null)
                     {
                         bckgrdImage.color = defaultColor;
                     }
-                    bckgrdImage.color = DebugMode ? defaultColor : new Color(0f, 0f, 0f, 0.8f); // Make transparent if not in DebugMode
+                    bckgrdImage.color = DebugMode ? defaultColor : new Color(0f, 0f, 0f, 0.8f);
                 }
             }
             else

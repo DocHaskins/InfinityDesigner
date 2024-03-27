@@ -31,6 +31,7 @@ namespace doppelganger
         public ModelWriter modelWriter;
         public ScreenshotManager screenshotManager;
         public SkeletonLookup skeletonLookup;
+        public NotificationManager notificationManager;
 
         [Header("Save Fields")]
         public TMP_InputField saveName;
@@ -513,6 +514,7 @@ namespace doppelganger
                     FinalizeAndWrite(outputDataSecond, jsonOutputPathSecond, modelOutputPathSecond, "player_fpp_skeleton.msh");
                 }
             }
+            
         }
 
         private string UpdateModelAndMaterialNames(string originalName, bool isMaterial = false, string suffix = "_fpp")
@@ -563,15 +565,34 @@ namespace doppelganger
 
         private void WriteConfigurationOutput(ModelData outputData, string jsonOutputPath, string modelOutputPath)
         {
-            string customBasePath = ConfigManager.LoadSetting("SavePath", "Path");
-            string dataPath = Path.Combine(customBasePath, "ph/source");
-            string json = JsonConvert.SerializeObject(outputData, Formatting.Indented);
 
-            // Ensure the output directory exists
+
+            string customBasePath = ConfigManager.LoadSetting("SavePath", "Path");
+            if (string.IsNullOrEmpty(customBasePath))
+            {
+                if (notificationManager != null)
+                {
+                    notificationManager.ShowWarning("You need to set your Dying Light 2 path in options!");
+                }
+                return;
+            }
+            string dataPath;
+            try
+            {
+                dataPath = Path.Combine(customBasePath, "ph/source");
+            }
+            catch (ArgumentNullException)
+            {
+                if (notificationManager != null)
+                {
+                    notificationManager.ShowWarning("You need to set your Dying Light 2 path in options!");
+                }
+                return;
+            }
+            string json = JsonConvert.SerializeObject(outputData, Formatting.Indented);
             string outputDir = Path.GetDirectoryName(jsonOutputPath);
             Directory.CreateDirectory(outputDir);
 
-            // Write the JSON file
             File.WriteAllText(jsonOutputPath, json);
             Debug.Log($"Configuration saved to {jsonOutputPath}");
 
@@ -583,11 +604,15 @@ namespace doppelganger
 
                 string outputPakPath = DeterminePakFilePath(dataPath);
                 EnsurePlaceholderInPak(outputPakPath);
+                string pakName = Path.GetFileName(outputPakPath);
                 string modelFileNameWithinZip = Path.GetFileName(modelOutputPath);
                 ZipUtility.AddOrUpdateFilesInZip(modelOutputPath, outputPakPath, modelFileNameWithinZip);
                 Debug.Log($"{outputPakPath} updated with model data.");
+                if (notificationManager != null)
+                {
+                    notificationManager.ShowNotification($"Models: {modelFileNameWithinZip} have been added to Dying Light 2 in {pakName}");
+                }
 
-                // Cleanup: Optionally delete the temporary model file
                 try
                 {
                     File.Delete(modelOutputPath);
@@ -834,20 +859,20 @@ namespace doppelganger
             var modelInfo = new ModelData.ModelInfo
             {
                 name = formattedModelName,
-                materialsData = GetMaterialsDataFromStreamingAssets(formattedModelName.Replace(".msh", "")), // Default materials data
+                materialsData = GetMaterialsDataFromStreamingAssets(formattedModelName.Replace(".msh", "")),
             };
 
             foreach (var kvp in variationBuilder.modelSpecificChanges)
             {
                 string modelChangesJson = JsonConvert.SerializeObject(kvp.Value, Formatting.Indented);
-                Debug.Log($"[CreateSlotDataPair] ModelSpecificChanges for Key: {kvp.Key}, Detailed Changes: \n{modelChangesJson}");
+                //Debug.Log($"[CreateSlotDataPair] ModelSpecificChanges for Key: {kvp.Key}, Detailed Changes: \n{modelChangesJson}");
             }
 
             // Check if there are specific model changes
             if (variationBuilder.modelSpecificChanges.TryGetValue(formattedModelName.Replace(".msh", ""), out ModelChange modelChanges))
             {
-                modelInfo.materialsResources = GetMaterialsResourcesFromModelChanges(model, modelChanges); // Adjusted to a new method to handle changes
-                Debug.Log($"Using specific materials data and resources for model {formattedModelName}.");
+                modelInfo.materialsResources = GetMaterialsResourcesFromModelChanges(model, modelChanges);
+                //Debug.Log($"Using specific materials data and resources for model {formattedModelName}.");
             }
             else
             {
@@ -872,7 +897,7 @@ namespace doppelganger
             List<ModelData.MaterialResource> materialsResources = new List<ModelData.MaterialResource>();
             var renderers = model.GetComponentsInChildren<SkinnedMeshRenderer>();
 
-            Debug.Log($"[GetMaterialsResourcesFromModelChanges] Found {renderers.Length} SkinnedMeshRenderers in '{model.name}'.");
+            //Debug.Log($"[GetMaterialsResourcesFromModelChanges] Found {renderers.Length} SkinnedMeshRenderers in '{model.name}'.");
 
             for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
             {
@@ -906,7 +931,7 @@ namespace doppelganger
                 });
             }
 
-            Debug.Log($"[GetMaterialsResourcesFromModelChanges] Completed creating material resources for model '{model.name}'. Total resources created: {materialsResources.Count}.");
+            //Debug.Log($"[GetMaterialsResourcesFromModelChanges] Completed creating material resources for model '{model.name}'. Total resources created: {materialsResources.Count}.");
             return materialsResources;
         }
 

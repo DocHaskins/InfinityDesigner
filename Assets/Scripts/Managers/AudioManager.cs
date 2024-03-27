@@ -5,11 +5,10 @@ namespace doppelganger
 {
     public class AudioManager : MonoBehaviour
     {
-        public static AudioManager instance;
-
         public AudioSource backgroundMusicSource;
         public AudioSource uiSoundSource;
         private bool applicationLoaded;
+        private bool initialFocusReceived = false;
         private bool isFading = false;
         public float startFadeTime = 5.5f;
         public float focusFadeTime = 5.5f;
@@ -18,18 +17,9 @@ namespace doppelganger
         public float backgroundMusicLastVolume;
         public float uiSoundLastVolume;
 
-
         private void Awake()
         {
-            if (instance == null)
-            {
-                instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
+            bool hasFocus = true;
         }
 
         void Start()
@@ -51,28 +41,44 @@ namespace doppelganger
             }
             else
             {
-                uiSoundLastVolume = maxStartVolume; // Default volume or another appropriate default for UI sounds
+                uiSoundLastVolume = maxStartVolume;
             }
 
-            backgroundMusicSource.volume = 0; // Start with volume at 0 to fade in from silent
-            uiSoundSource.volume = 0; // Same for UI sounds
-            FadeIn(backgroundMusicSource, startFadeTime, () => applicationLoaded = true);
+            backgroundMusicSource.volume = 0;
+            //uiSoundSource.volume = 0;
+            applicationLoaded = false;
+            initialFocusReceived = false;
+
+            FadeIn(backgroundMusicSource, startFadeTime, () => {
+                applicationLoaded = true;
+            });
             FadeIn(uiSoundSource, startFadeTime);
         }
 
         private void OnApplicationFocus(bool hasFocus)
         {
-            if (applicationLoaded)
+            //Debug.Log($"OnApplicationFocus: {hasFocus}, applicationLoaded: {applicationLoaded}, initialFocusReceived: {initialFocusReceived}");
+
+            if (!initialFocusReceived && applicationLoaded)
             {
-                if (!hasFocus)
+                initialFocusReceived = true;
+                Debug.Log("Initial focus received after start-up.");
+                return;
+            }
+
+            if (applicationLoaded && initialFocusReceived)
+            {
+                if (hasFocus)
                 {
-                    FadeOut(backgroundMusicSource, focusFadeTime);
-                    FadeOut(uiSoundSource, focusFadeTime);
+                    //Debug.Log("Application gained focus - fading in audio.");
+                    FadeIn(backgroundMusicSource, focusFadeTime);
+                    FadeIn(uiSoundSource, focusFadeTime);
                 }
                 else
                 {
-                    FadeIn(backgroundMusicSource, focusFadeTime);
-                    FadeIn(uiSoundSource, focusFadeTime);
+                    //Debug.Log("Application lost focus - fading out audio.");
+                    FadeOut(backgroundMusicSource, focusFadeTime);
+                    FadeOut(uiSoundSource, focusFadeTime);
                 }
             }
         }
@@ -105,50 +111,46 @@ namespace doppelganger
 
         public void FadeIn(AudioSource audioSource, float duration, OnFadeComplete onComplete = null)
         {
-            bool isBackgroundMusic = audioSource == backgroundMusicSource;
-            StartCoroutine(FadeAudioSource.StartFade(audioSource, duration, backgroundMusicLastVolume, isBackgroundMusic, onComplete));
+            if (!isFading)
+            {
+                StartCoroutine(FadeAudioSource(audioSource, duration, backgroundMusicLastVolume, audioSource == backgroundMusicSource, onComplete));
+            }
         }
 
         public void FadeOut(AudioSource audioSource, float duration)
         {
-            bool isBackgroundMusic = audioSource == backgroundMusicSource;
-            StartCoroutine(FadeAudioSource.StartFade(audioSource, duration, 0, isBackgroundMusic, null));
+            if (!isFading)
+            {
+                StartCoroutine(FadeAudioSource(audioSource, duration, 0, audioSource == backgroundMusicSource, null));
+            }
         }
 
-        public static class FadeAudioSource
+        private IEnumerator FadeAudioSource(AudioSource audioSource, float duration, float targetVolume, bool isBackgroundMusic, OnFadeComplete onComplete)
         {
-            public static IEnumerator StartFade(AudioSource audioSource, float duration, float targetVolume, bool isBackgroundMusic, OnFadeComplete onComplete)
+            isFading = true;
+            float currentTime = 0;
+            float startVolume = audioSource.volume;
+
+            while (currentTime < duration)
             {
-                instance.isFading = true;  // Indicate that fading is starting
-
-                float currentTime = 0;
-                float startVolume = audioSource.volume;
-
-                if (isBackgroundMusic && !audioSource.isPlaying)
-                {
-                    audioSource.Play();
-                }
-
-                while (currentTime < duration)
-                {
-                    currentTime += Time.deltaTime;
-                    audioSource.volume = Mathf.Lerp(startVolume, targetVolume, currentTime / duration);
-                    yield return null;
-                }
-                audioSource.volume = targetVolume;
-
-                if (targetVolume == 0 && isBackgroundMusic)
-                {
-                    audioSource.Pause();
-                }
-
-                instance.isFading = false;
-
-                if (onComplete != null)
-                {
-                    onComplete();
-                }
+                currentTime += Time.deltaTime;
+                audioSource.volume = Mathf.Lerp(startVolume, targetVolume, currentTime / duration);
+                yield return null;
             }
+
+            audioSource.volume = targetVolume;
+            isFading = false;
+
+            if (targetVolume > 0 && isBackgroundMusic && !audioSource.isPlaying)
+            {
+                audioSource.Play();
+            }
+            else if (targetVolume == 0 && isBackgroundMusic)
+            {
+                audioSource.Pause();
+            }
+
+            onComplete?.Invoke();
         }
     }
 }
