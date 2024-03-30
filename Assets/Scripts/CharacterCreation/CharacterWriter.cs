@@ -636,27 +636,44 @@ namespace doppelganger
             Debug.Log($"Scanning directory for .pak files: {directoryPath}");
 
             var pakFiles = Directory.GetFiles(directoryPath, "data*.pak")
-                                    .Where(file => !Path.GetFileNameWithoutExtension(file).StartsWith("data_devtools"))
-                                    .Select(Path.GetFileNameWithoutExtension)
-                                    .Where(fileName => int.TryParse(fileName.Replace("data", ""), out int _))
-                                    .Select(fileName => new
-                                    {
-                                        FileName = fileName,
-                                        Number = int.Parse(fileName.Replace("data", ""))
-                                    })
-                                    .OrderBy(file => file.Number)
-                                    .ToList();
+                            .Where(file => !Path.GetFileNameWithoutExtension(file).StartsWith("data_devtools"))
+                            .Select(file => new
+                            {
+                                FullPath = file,
+                                FileName = Path.GetFileNameWithoutExtension(file),
+                                Number = int.TryParse(Path.GetFileNameWithoutExtension(file).Replace("data", ""), out int number) ? number : (int?)null
+                            })
+                            .Where(file => file.Number.HasValue)
+                            .OrderBy(file => file.Number.Value)
+                            .ToList();
 
             Debug.Log($"Filtered and processed .pak files: {string.Join(", ", pakFiles.Select(f => $"{f.FileName} => {f.Number}"))}");
-            int highestNumber = pakFiles.Any() ? pakFiles.Last().Number : 1; // Default to 1 if no .pak files are found
-            string highestPakPath = Path.Combine(directoryPath, $"data{highestNumber}.pak");
-            if (File.Exists(highestPakPath) && !ZipUtility.ZipContainsFile(highestPakPath, "PLACEHOLDER_InfinityDesigner.file"))
+
+            foreach (var pakFile in pakFiles)
             {
-                highestNumber++;
+                if (File.Exists(pakFile.FullPath) && ZipUtility.ZipContainsFile(pakFile.FullPath, "PLACEHOLDER_InfinityDesigner.file"))
+                {
+                    Debug.Log($"Using existing .pak file with placeholder: {pakFile.FullPath}");
+                    return pakFile.FullPath;
+                }
+            }
+            int nextAvailableNumber = 1;
+            for (int i = 0; i < pakFiles.Count; i++)
+            {
+                int currentNumber = pakFiles[i].Number.Value;
+                bool isLastFile = i == pakFiles.Count - 1;
+                bool hasNextFile = i + 1 < pakFiles.Count;
+                bool hasGap = hasNextFile && pakFiles[i + 1].Number > currentNumber + 1;
+
+                if (isLastFile || hasGap)
+                {
+                    nextAvailableNumber = currentNumber + 1;
+                    break;
+                }
             }
 
-            string newPakPath = Path.Combine(directoryPath, $"data{highestNumber}.pak");
-            Debug.Log($"Preparing new .pak file: {newPakPath}. This is the next sequence after checking existing .pak files.");
+            string newPakPath = Path.Combine(directoryPath, $"data{nextAvailableNumber}.pak");
+            Debug.Log($"Preparing new .pak file: {newPakPath}. This considers both placeholders and gaps in numbering.");
 
             return newPakPath;
         }
@@ -844,7 +861,7 @@ namespace doppelganger
             Debug.Log($"Creating SlotDataPair for {model.name} with original slot {originalSlotKey} and lookup slot {lookupSlotKey}");
 
             string formattedModelName = FormatModelName(model.name);
-            //Debug.Log($"Formatted model name: {formattedModelName}");
+            Debug.Log($"Formatted model name: {formattedModelName}");
 
             var slotData = new ModelData.SlotData
             {
@@ -854,9 +871,8 @@ namespace doppelganger
             };
 
             string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", $"{formattedModelName.Replace(".msh", "")}.json");
-            //Debug.Log($"Looking for material JSON at: {materialJsonFilePath}");
+            Debug.Log($"Looking for material JSON at: {materialJsonFilePath}");
 
-            // Initialize a new model info
             var modelInfo = new ModelData.ModelInfo
             {
                 name = formattedModelName,
@@ -869,16 +885,14 @@ namespace doppelganger
                 //Debug.Log($"[CreateSlotDataPair] ModelSpecificChanges for Key: {kvp.Key}, Detailed Changes: \n{modelChangesJson}");
             }
 
-            // Check if there are specific model changes
             if (variationBuilder.modelSpecificChanges.TryGetValue(formattedModelName.Replace(".msh", ""), out ModelChange modelChanges))
             {
                 modelInfo.materialsResources = GetMaterialsResourcesFromModelChanges(model, modelChanges);
-                //Debug.Log($"Using specific materials data and resources for model {formattedModelName}.");
+                Debug.Log($"Using specific materials data and resources for model {formattedModelName}.");
             }
             else
             {
                 Debug.Log($"No specific model changes found for {formattedModelName}. Copying materials data to materials resources.");
-                // Convert materialsData to materialsResources format
                 modelInfo.materialsResources = modelInfo.materialsData.Select(md => new ModelData.MaterialResource
                 {
                     number = md.number,
@@ -898,7 +912,7 @@ namespace doppelganger
             List<ModelData.MaterialResource> materialsResources = new List<ModelData.MaterialResource>();
             var renderers = model.GetComponentsInChildren<SkinnedMeshRenderer>();
 
-            //Debug.Log($"[GetMaterialsResourcesFromModelChanges] Found {renderers.Length} SkinnedMeshRenderers in '{model.name}'.");
+            Debug.Log($"[GetMaterialsResourcesFromModelChanges] Found {renderers.Length} SkinnedMeshRenderers in '{model.name}'.");
 
             for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
             {
@@ -907,7 +921,7 @@ namespace doppelganger
                 var resource = new ModelData.Resource
                 {
                     name = renderer.sharedMaterial.name.Replace("(Instance)", "").Replace(" ", "") + (renderer.sharedMaterial.name.Replace("(Instance)", "").Replace(" ", "").EndsWith(".mat") ? "" : ".mat"),
-                    rttiValues = new List<RttiValue>() // Initialize with an empty list to avoid null references
+                    rttiValues = new List<RttiValue>()
                 };
 
                 if (modelChanges.MaterialsByRenderer.TryGetValue(rendererIndex, out MaterialChange materialChange))
@@ -927,12 +941,12 @@ namespace doppelganger
 
                 materialsResources.Add(new ModelData.MaterialResource
                 {
-                    number = rendererIndex + 1, // Assuming numbering starts from 1
+                    number = rendererIndex + 1,
                     resources = new List<ModelData.Resource> { resource }
                 });
             }
 
-            //Debug.Log($"[GetMaterialsResourcesFromModelChanges] Completed creating material resources for model '{model.name}'. Total resources created: {materialsResources.Count}.");
+            Debug.Log($"[GetMaterialsResourcesFromModelChanges] Completed creating material resources for model '{model.name}'. Total resources created: {materialsResources.Count}.");
             return materialsResources;
         }
 

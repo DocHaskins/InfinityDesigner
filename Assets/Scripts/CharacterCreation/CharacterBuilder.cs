@@ -46,25 +46,20 @@ namespace doppelganger
 
         public void CreateCrashReport()
         {
-            // Ensure the "Crash Reports" directory exists
             string crashReportsDirectory = Path.Combine(Application.dataPath, "Crash Reports");
             Directory.CreateDirectory(crashReportsDirectory);
 
-            // Create the report file name with the current datetime
             string dateTimeFormat = "yyyyMMdd_HHmmss";
             string reportFileName = $"CrashReport_{DateTime.Now.ToString(dateTimeFormat)}.txt";
             string reportFilePath = Path.Combine(crashReportsDirectory, reportFileName);
 
-            // Initialize a StringBuilder to hold the report content
             StringBuilder reportContent = new StringBuilder();
 
-            // Iterate through currently loaded models
             foreach (var pair in currentlyLoadedModels)
             {
                 GameObject model = pair.Value;
                 reportContent.AppendLine($"Model Key: {pair.Key}, GameObject Name: {model.name}");
 
-                // Retrieve materials for each model
                 Renderer[] renderers = model.GetComponentsInChildren<Renderer>();
                 foreach (Renderer renderer in renderers)
                 {
@@ -73,10 +68,9 @@ namespace doppelganger
                         reportContent.AppendLine($"\tMaterial: {material.name}");
                     }
                 }
-                reportContent.AppendLine(); // Add an empty line for better readability
+                reportContent.AppendLine();
             }
 
-            // Write the report to the file
             File.WriteAllText(reportFilePath, reportContent.ToString());
 
             Debug.Log($"Crash report created at: {reportFilePath}");
@@ -88,7 +82,6 @@ namespace doppelganger
             {
                 ChildLockToggle lockToggleScript = sliderContainer.Find("LockToggle")?.GetComponent<ChildLockToggle>();
 
-                // Proceed only if either the lock toggle doesn't exist or it exists and is off
                 if (lockToggleScript != null && lockToggleScript.childToggle.isOn)
                 {
                     Debug.Log("Skipping locked slider: " + sliderContainer.name);
@@ -172,7 +165,6 @@ namespace doppelganger
         {
             foreach (Transform sliderContainer in interfaceManager.slidersPanel.transform)
             {
-                // Find the child object named "primarySlider" in the sliderContainer
                 Transform primarySliderTransform = sliderContainer.Find("primarySlider");
                 if (primarySliderTransform != null)
                 {
@@ -224,26 +216,21 @@ namespace doppelganger
                     string skeletonName = modelData.skeletonName;
                     if (!string.IsNullOrEmpty(skeletonName))
                     {
-                        // Find any existing skeleton
                         GameObject currentSkeleton = GameObject.FindGameObjectWithTag("Skeleton");
                         bool shouldLoadSkeleton = true;
 
-                        // Check if the found skeleton's name matches the required skeletonName
                         if (currentSkeleton != null)
                         {
                             if (currentSkeleton.name == skeletonName || currentSkeleton.name == skeletonName + "(Clone)")
                             {
-                                // If names match, no need to load a new skeleton
                                 shouldLoadSkeleton = false;
                             }
                             else
                             {
-                                // If names don't match, destroy the existing skeleton
                                 Destroy(currentSkeleton);
                             }
                         }
 
-                        // Load the skeleton only if needed
                         if (shouldLoadSkeleton)
                         {
                             LoadSkeleton(skeletonName);
@@ -262,7 +249,6 @@ namespace doppelganger
                             SlotData slot = slotPair.Value;
                             foreach (var modelInfo in slot.models)
                             {
-                                // Remove the '.msh' extension from the model name
                                 string modelNameWithClone = Path.GetFileNameWithoutExtension(modelInfo.name) + "(Clone)";
 
                                 //Debug.Log($"Processing model: {modelInfo.name}, looking for slot.");
@@ -278,10 +264,9 @@ namespace doppelganger
                                         //Debug.Log($"Setting slider value for '{slotName}' at index {modelIndex}.");
                                         interfaceManager.SetSliderValue(slotName, modelIndex);
 
-                                        // Attempt to find and load the model instance
                                         string modelName = Path.GetFileNameWithoutExtension(modelInfo.name);
-                                        GameObject modelInstance = GameObject.Find(modelNameWithClone); // Adjusted to use modelNameWithClone
-                                        if (modelInstance != null) // Check if the model instance is found
+                                        GameObject modelInstance = GameObject.Find(modelNameWithClone);
+                                        if (modelInstance != null)
                                         {
                                             ApplyPresetMaterialsDirectly(modelInstance, modelInfo, slotName, modelIndex);
                                         }
@@ -323,8 +308,6 @@ namespace doppelganger
                     GameObject firstSlider = interfaceManager.slidersPanel.transform.GetChild(0).gameObject;
                     string firstSliderName = firstSlider.name.Replace("Slider", "");
                     interfaceManager.currentSlider = firstSliderName;
-
-                    // Update the model info panel with the current slider
                     variationBuilder.UpdateModelInfoPanel(interfaceManager.currentSlider);
                 }
             }
@@ -362,14 +345,14 @@ namespace doppelganger
             }
 
             var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
-            //Debug.Log($"[ApplyPresetMaterialsDirectly] Found {skinnedMeshRenderers.Length} SkinnedMeshRenderer components in the model.");
+            Debug.Log($"[ApplyPresetMaterialsDirectly] Found {skinnedMeshRenderers.Length} SkinnedMeshRenderer components in the model.");
 
             var rendererNameToIndexMap = new Dictionary<string, int>();
             for (int i = 0; i < skinnedMeshRenderers.Length; i++)
             {
                 string formattedName = FormatRendererName(skinnedMeshRenderers[i].name, modelInstance.name.Replace("sh_", "").Replace("(Clone)", ""));
                 rendererNameToIndexMap[formattedName] = i;
-                //Debug.Log($"[ApplyPresetMaterialsDirectly] Mapping renderer '{skinnedMeshRenderers[i].name}' to formatted name '{formattedName}' at index {i}.");
+                Debug.Log($"[ApplyPresetMaterialsDirectly] Mapping renderer '{skinnedMeshRenderers[i].name}' to formatted name '{formattedName}' at index {i}.");
             }
 
             for (int i = 0; i < skinnedMeshRenderers.Length && i < modelInfo.materialsData.Count; i++)
@@ -388,7 +371,7 @@ namespace doppelganger
                     continue;
                 }
 
-                //Debug.Log($"[ApplyPresetMaterialsDirectly] Applying material '{materialData.name}' to renderer at index {i} based on index matching.");
+                Debug.Log($"[ApplyPresetMaterialsDirectly] Applying material '{materialData.name}' to renderer at index {i} based on index matching.");
                 foreach (var resource in materialResource.resources)
                 {
                     ApplyMaterialToRenderer(skinnedMeshRenderers[i], resource.name, modelInstance, resource.rttiValues, slotName, modelIndex);
@@ -409,10 +392,10 @@ namespace doppelganger
                     if (rendererNameWithoutSuffix.Equals(formattedMaterialName))
                     {
                         var renderer = skinnedMeshRenderers[kvp.Value];
-                        //Debug.Log($"[ApplyPresetMaterialsDirectly] Found specific matching renderer '{renderer.gameObject.name}' for material '{formattedMaterialName}'. Reapplying this material.");
+                        Debug.Log($"[ApplyPresetMaterialsDirectly] Found specific matching renderer '{renderer.gameObject.name}' for material '{formattedMaterialName}'. Reapplying this material.");
                         foreach (var resource in materialResource.resources)
                         {
-                            ApplyMaterialToRenderer(renderer, resource.name, modelInstance, resource.rttiValues, slotName, modelIndex);
+                            ApplyMaterialToRenderer(skinnedMeshRenderers[kvp.Value], resource.name, modelInstance, resource.rttiValues, slotName, kvp.Value);
                         }
                     }
                 }
@@ -438,17 +421,12 @@ namespace doppelganger
                 loadedSkeleton.tag = "Skeleton";
                 autoTargetCinemachineCamera.FocusOnSkeleton(loadedSkeleton);
                 Debug.Log("LoadSkeleton: Setting Camera to focus on:" + skeletonName);
-                // Find the 'pelvis' child in the loaded skeleton
+
                 Transform pelvis = loadedSkeleton.transform.Find("pelvis");
                 if (pelvis != null)
                 {
-                    // Create a new GameObject named 'Legs'
                     GameObject legs = new GameObject("legs");
-
-                    // Set 'Legs' as a child of 'pelvis'
                     legs.transform.SetParent(pelvis);
-
-                    // Set the local position of 'Legs' with the specified offset
                     legs.transform.localPosition = new Vector3(0, 0, -0.005f);
                 }
                 else
@@ -480,7 +458,6 @@ namespace doppelganger
                 Destroy(currentSkeleton);
             }
 
-            // Load and instantiate the new skeleton if needed
             if (shouldLoadSkeleton)
             {
                 //Debug.Log("Loading skeleton prefab from resource path: " + resourcePath);
@@ -492,7 +469,7 @@ namespace doppelganger
                     loadedSkeleton.name = selectedSkeleton; // Optionally set the name to manage future checks
                     //Debug.Log("LoadSkeleton: Setting Camera to focus on:" + loadedSkeleton);
                     autoTargetCinemachineCamera.FocusOnSkeleton(loadedSkeleton);
-                    // Find the 'pelvis' child in the loaded skeleton and handle 'legs' creation
+
                     Transform pelvis = loadedSkeleton.transform.Find("pelvis");
                     if (pelvis != null)
                     {
@@ -538,8 +515,6 @@ namespace doppelganger
             }
         }
 
-
-       
         public void ApplyOriginalMaterials(GameObject modelInstance, List<Material> originalMats)
         {
             var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
@@ -930,20 +905,24 @@ namespace doppelganger
         private void ApplyMaterialToRenderer(SkinnedMeshRenderer renderer, string materialName, GameObject modelInstance, List<RttiValue> rttiValues, string slotName, int materialIndex)
         {
             renderer.enabled = true;
-            //Debug.Log($"[ApplyPresetMaterialsDirectly] Attempting to apply material {materialName} to renderer {renderer.gameObject.name}");
+            Debug.Log($"[ApplyMaterialToRenderer] Attempting to apply material {materialName} to renderer {renderer.gameObject.name}, at materialIndex {materialIndex}");
+            string originalMaterialName = renderer.sharedMaterial != null ? renderer.sharedMaterial.name : "Unknown";
+
             Material loadedMaterial = LoadMaterial(materialName);
             if (loadedMaterial != null)
             {
-                //Debug.Log($"Loaded material '{materialName}' for renderer '{renderer.gameObject.name}'. Preparing to apply RTTI values.");
+                Debug.Log($"[ApplyMaterialToRenderer] Loaded material '{materialName}' for renderer '{renderer.gameObject.name}'. Preparing to apply RTTI values.");
                 Material clonedMaterial = new Material(loadedMaterial);
                 renderer.sharedMaterials = new Material[] { clonedMaterial };
+                variationBuilder.RecordMaterialChange(modelInstance.name.Replace("(Clone)", ""), originalMaterialName, materialName, materialIndex);
 
                 if (rttiValues != null && rttiValues.Count > 0)
                 {
                     foreach (var rttiValue in rttiValues)
                     {
-                        Debug.Log($"Detected RTTI value for '{materialName}': '{rttiValue.name}' with value '{rttiValue.val_str}'.");
+                        Debug.Log($"[ApplyMaterialToRenderer] Detected RTTI value for '{materialName}': '{rttiValue.name}' with value '{rttiValue.val_str}' on materialIndex {materialIndex}.");
                         ApplyTextureToMaterial(modelInstance, clonedMaterial, rttiValue.name, rttiValue.val_str, slotName, materialIndex);
+                        
                     }
                 }
                 else
@@ -989,8 +968,6 @@ namespace doppelganger
         private void ApplyTextureToMaterial(GameObject modelInstance, Material material, string rttiValueName, string textureName, string slotName, int modelIndex)
         {
             Debug.Log($"[ApplyTextureToMaterial] modelInstance '{modelInstance}', material '{material.name}', rttiValueName '{rttiValueName}', textureName '{textureName}', slotName '{slotName}', modelIndex '{modelIndex}'");
-
-            // Attempt to find the shader property from custom shader mapping, then HDRP mapping as fallback
             string shaderProperty = GetShaderProperty(rttiValueName);
 
             if (shaderProperty == null)
@@ -1004,6 +981,7 @@ namespace doppelganger
             if ("null".Equals(textureName, StringComparison.OrdinalIgnoreCase))
             {
                 Debug.Log($"Removing texture from shader property: {shaderProperty} for RTTI: {rttiValueName}.");
+                variationBuilder.RecordTextureChange(modelInstance.name, material.name.Replace(" (Instance)", ""), rttiValueName, newTextureName, modelIndex);
                 material.SetTexture(shaderProperty, null);
             }
             else if (!string.IsNullOrEmpty(textureName))

@@ -468,37 +468,27 @@ public class RunTimeDataBuilder : MonoBehaviour
 
     private static bool DoesVariationIntroduceChanges(Variation newVariation, ModelInfo model, HashSet<string> existingVariationSignatures)
     {
-        // First, check if the variation matches the original materialsData without any RTTI modifications.
         if (DoesVariationMatchOriginalMaterialsWithoutRTTI(newVariation, model))
         {
-            // If it matches and doesn't introduce new RTTI values, it's not considered a new variation.
             return false;
         }
 
-        // Generate a signature for the new variation based on material names and RTTI values.
         string variationSignature = GenerateVariationSignature(newVariation);
 
-        // Check if this variation signature has already been processed.
         if (existingVariationSignatures.Contains(variationSignature))
         {
-            // This variation does not introduce changes since its signature matches one that's already processed.
             return false;
         }
 
-        // The variation is new or introduces changes, add its signature to the set for future comparisons.
         existingVariationSignatures.Add(variationSignature);
-
-        // Since the variation is new, it introduces changes.
         return true;
     }
 
     private static bool DoesVariationMatchOriginalMaterialsWithoutRTTI(Variation variation, ModelInfo model)
     {
-        // Check if all material names in the variation's materialsResources match the original materialsData names.
         bool allNamesMatch = model.materialsData.All(md =>
             variation.materialsResources.SelectMany(mr => mr.resources).Any(r => r.name == md.name));
 
-        // Check if there are no RTTI values in the variation's materialsResources that match the original materialsData names.
         bool noRTTIValues = variation.materialsResources.SelectMany(mr => mr.resources).All(r =>
             !r.rttiValues.Any() && model.materialsData.Any(md => md.name == r.name));
 
@@ -600,31 +590,6 @@ public class RunTimeDataBuilder : MonoBehaviour
         Debug.Log("JSON files organized and saved.");
     }
 
-    private void UpdateMaterialDataJson(string modelName, List<MaterialData> materialsData)
-    {
-        string sanitizedModelName = SanitizeFilename(modelName);
-        string finalModelName = Path.GetFileNameWithoutExtension(sanitizedModelName);
-        string materialFilePath = Path.Combine(materialsDataDir, $"{finalModelName}.json");
-
-        MeshReferenceData meshReferenceData = new MeshReferenceData
-        {
-            materialsData = materialsData,
-            variations = new List<Variation>()
-        };
-
-        if (File.Exists(materialFilePath))
-        {
-            string existingJson = File.ReadAllText(materialFilePath);
-            MeshReferenceData existingData = JsonConvert.DeserializeObject<MeshReferenceData>(existingJson);
-
-            existingData.materialsData = materialsData;
-            meshReferenceData = existingData;
-        }
-
-        string outputJson = JsonConvert.SerializeObject(meshReferenceData, Formatting.Indented);
-        File.WriteAllText(materialFilePath, outputJson);
-    }
-
     void SortModel(string modelName, Dictionary<string, Dictionary<string, List<string>>> modelsSortedByCategory, HashSet<string> unsortedModels, Dictionary<string, List<string>> modelToFilterLookup, HashSet<string> ignoreList, Dictionary<string, string> specificTermsToCategory, string initialCategory, ModelData modelData, Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>> modelsByClassAndFilter)
     {
         if (ignoreList.Contains(modelName))
@@ -723,10 +688,8 @@ public class RunTimeDataBuilder : MonoBehaviour
     { "survivor", "_srv_" }
 };
 
-        // Iterate through each category
         foreach (var categoryKey in modelsSortedByCategory.Keys)
         {
-            // Directly use the categoryKey as part of the path, assuming it's structured like "Category/Subcategory"
             string categoryDir = Path.Combine(Application.dataPath, $"StreamingAssets/SlotData/{categoryKey}");
             Directory.CreateDirectory(categoryDir);
 
@@ -746,7 +709,7 @@ public class RunTimeDataBuilder : MonoBehaviour
                 {
                     if (classSkipList.Contains(classEntry.Key))
                     {
-                        continue; // Skip this class
+                        continue;
                     }
 
                     string classDir = Path.Combine(categoryDir, classEntry.Key);
@@ -754,14 +717,12 @@ public class RunTimeDataBuilder : MonoBehaviour
 
                     foreach (var filterEntry in classEntry.Value)
                     {
-                        // Filter models based on the class-specific identifier
                         string classIdentifier = classIdentifiers.ContainsKey(classEntry.Key) ? classIdentifiers[classEntry.Key] : "";
                         List<string> classSortedModels = filterEntry.Value
                             .Where(model => model.Contains(classIdentifier))
                             .Distinct().ToList();
                         classSortedModels.Sort();
 
-                        // Only write file if classSortedModels is not empty
                         if (classSortedModels.Any())
                         {
                             string classFilePath = Path.Combine(classDir, $"ALL_{filterEntry.Key}.json");
@@ -791,11 +752,11 @@ public class RunTimeDataBuilder : MonoBehaviour
     {
         string slotDataPath = Path.Combine(Application.dataPath, "StreamingAssets/SlotData");
 
-        // Create Human and Infected folders
+        string allPath = Path.Combine(slotDataPath, "ALL");
         string humanPath = Path.Combine(slotDataPath, "Human");
         string infectedPath = Path.Combine(slotDataPath, "Infected");
 
-        // Combine ALL_{filters}.json files
+        CombineJsonFiles(allPath);
         CombineJsonFiles(humanPath);
         CombineJsonFiles(infectedPath);
     }
@@ -810,10 +771,8 @@ public class RunTimeDataBuilder : MonoBehaviour
 
     void MergeDirectories(string sourceDir, string destDir)
     {
-        // Create the destination directory if it doesn't exist
         CreateDirectoryIfNotExists(destDir);
 
-        // Move each file and subdirectory from source to destination
         foreach (var file in Directory.GetFiles(sourceDir))
         {
             string destFile = Path.Combine(destDir, Path.GetFileName(file));
@@ -829,25 +788,15 @@ public class RunTimeDataBuilder : MonoBehaviour
             string destSubDir = Path.Combine(destDir, Path.GetFileName(directory));
             MergeDirectories(directory, destSubDir);
         }
-
-        // Optionally, delete the source directory if now empty
-        if (Directory.GetFileSystemEntries(sourceDir).Length == 0)
-        {
-            Directory.Delete(sourceDir);
-        }
     }
 
     void CombineJsonFiles(string parentFolderPath)
     {
-        // Retrieve all subfolder paths
         var subFolders = Directory.GetDirectories(parentFolderPath);
-
-        // Dictionary to store combined data
         var combinedData = new Dictionary<string, List<string>>();
 
         foreach (var folder in subFolders)
         {
-            // Skip the "Child" folder
             if (Path.GetFileName(folder).Equals("Child", StringComparison.OrdinalIgnoreCase))
             {
                 continue;
@@ -868,8 +817,6 @@ public class RunTimeDataBuilder : MonoBehaviour
             }
         }
 
-
-        // Write combined data to new JSON files
         foreach (var entry in combinedData)
         {
             string combinedFilePath = Path.Combine(parentFolderPath, entry.Key);

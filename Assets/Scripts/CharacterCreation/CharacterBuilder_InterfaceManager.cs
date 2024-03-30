@@ -186,7 +186,6 @@ namespace doppelganger
 
         public void OnTypeChanged(int index)
         {
-            // Assuming you have a way to map the index to a type
             string selectedType = GetTypeBasedOnIndex(index);
             PopulateDropdown(categoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType), "ALL", true);
             //PopulateDropdown(saveCategoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType), "ALL", true);
@@ -200,7 +199,7 @@ namespace doppelganger
 
         public string GetTypeBasedOnIndex(int index)
         {
-            string[] types = { "Human", "Infected" };
+            string[] types = { "All", "Human", "Infected" };
             if (index >= 0 && index < types.Length)
             {
                 return types[index];

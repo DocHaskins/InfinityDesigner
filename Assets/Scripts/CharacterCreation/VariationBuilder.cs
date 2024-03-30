@@ -240,7 +240,7 @@ namespace doppelganger
                     selectedMaterialName.text = newMaterial.name.Replace(" (Instance)", "");
                     Debug.Log($"Renderer index in the current model: {rendererIndex}");
 
-                    RecordMaterialChange(modelName, originalName, newMaterial.name, rendererIndex);
+                    RecordMaterialChange(modelName.Replace("(Clone)", ""), originalName, newMaterial.name, rendererIndex);
                 }
             }
             else
@@ -283,17 +283,14 @@ namespace doppelganger
                 return;
             }
 
-            // Check if the renderer has any materials
             if (renderer.materials.Length == 0)
             {
                 Debug.LogError($"Renderer '{renderer.name}' does not have any materials.");
                 return;
             }
 
-            // Instead of creating a new material, modify the renderer's current material directly
-            Material materialToModify = renderer.materials[0]; // Get the first material to modify
+            Material materialToModify = renderer.materials[0];
 
-            // Apply texture change directly to this material
             if (texture == null)
             {
                 materialToModify.SetTexture(slotName, null);
@@ -305,7 +302,6 @@ namespace doppelganger
 
             Debug.Log($"Applied texture '{texture?.name ?? "null"}' to slot '{slotName}' on '{renderer.gameObject.name}'.");
 
-            // Record the change for auditing or tracking purposes
             string modelName = currentModel.name.Replace("(Clone)", ""); // Assuming 'currentModel' is a field for the current model
             string materialName = materialToModify.name;
             string textureName = texture == null ? "null" : texture.name;
@@ -314,7 +310,7 @@ namespace doppelganger
 
         public void RecordMaterialChange(string modelName, string originalMaterialName, string newMaterialName, int rendererIndex)
         {
-            //Debug.Log($"Processing RecordTextureChange for model: {modelName}, originalMaterialName: {originalMaterialName}, newMaterialName: {newMaterialName}, rendererIndex: {rendererIndex}");
+            Debug.Log($"Processing RecordMaterialChange for model: {modelName}, originalMaterialName: {originalMaterialName}, newMaterialName: {newMaterialName}, rendererIndex: {rendererIndex}");
             if (!modelSpecificChanges.TryGetValue(modelName, out ModelChange modelChange))
             {
                 modelChange = new ModelChange();
