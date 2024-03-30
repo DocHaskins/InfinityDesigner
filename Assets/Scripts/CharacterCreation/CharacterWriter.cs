@@ -106,6 +106,7 @@ namespace doppelganger
         {"ALL_tattoo", "OTHER_PART_1"},
         {"ALL_tattoo_2", "OTHER_PART_1"},
         {"ALL_legs", "LEGS"},
+        {"ALL_legs_2", "LEGS_PART_1"},
         {"ALL_legs_extra", "LEGS_PART_1"},
         {"ALL_legs_access", "LEGS_PART_1"},
         {"ALL_shoes", "LEGS_PART_1"},

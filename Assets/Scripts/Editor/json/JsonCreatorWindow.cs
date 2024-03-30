@@ -507,10 +507,8 @@ public class JsonCreatorWindow : EditorWindow
     private void BuildUniqueSkeletonJsons()
     {
         Debug.Log($"Started Building Unique Skeleton Jsons");
-        // Initialize storeClassData based on your needs
         storeClassData = EditorGUILayout.Toggle("Store Class Data", storeClassData);
 
-        // Define the directory and gather JSON files
         string jsonsDir = Path.Combine(Application.dataPath, "StreamingAssets/Jsons");
         List<string> jsonFiles = new List<string>();
         Dictionary<string, HashSet<string>> allSkeletonMeshes = new Dictionary<string, HashSet<string>>();
@@ -526,15 +524,15 @@ public class JsonCreatorWindow : EditorWindow
         Debug.Log($"jsonsDir {jsonsDir}");
 
         string outputDir = Path.Combine(Application.dataPath, "StreamingAssets/Skeleton Data/");
-        // Ensure the output directory exists
+
         if (!Directory.Exists(outputDir))
         {
             Directory.CreateDirectory(outputDir);
         }
 
-        // List of target skeleton names
         HashSet<string> targetSkeletonNames = new HashSet<string>
     {
+        "player_phx_skeleton.msh",
         "man_bdt_heavy_coat_skeleton.msh",
         "man_bdt_heavy_skeleton.msh",
         "man_bdt_heavy_torso_d_skeleton.msh",
@@ -552,10 +550,8 @@ public class JsonCreatorWindow : EditorWindow
         "woman_npc_singer_skeleton.msh"
     };
 
-        // Dictionary to store meshes for each of the target skeletons
         Dictionary<string, HashSet<string>> skeletonMeshes = new Dictionary<string, HashSet<string>>();
 
-        // Process each JSON file
         foreach (var file in jsonFiles)
         {
             try

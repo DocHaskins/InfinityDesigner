@@ -84,6 +84,7 @@ namespace doppelganger
                 "ALL_tattoo",
                 "ALL_tattoo_2",
                 "ALL_legs",
+                "ALL_legs_2",
                 "ALL_legs_extra",
                 "ALL_legs_access",
                 "ALL_shoes",
@@ -196,6 +197,7 @@ namespace doppelganger
         { "Button_Legs", new List<string>
             {
                 "ALL_legs",
+                "ALL_legs_2",
                 "ALL_legs_extra",
                 "ALL_legs_access",
                 "ALL_pockets",
