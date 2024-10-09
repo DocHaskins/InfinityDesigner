@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: player_reburn_bracers_a_pipes_a_fpp
-  m_Shader: {fileID: -6465566751694194690, guid: 0cf98c43b16dd6e4abfc0e3e03e66cd6, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 9f8f796d521fd424dbe975db255b6e93, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -179,6 +179,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: b871235f4b5065c4bb6301a28a6f5c7d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _dif_1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _ems:
         m_Texture: {fileID: 2800000, guid: 76a2217f33a166e448224d9a584d66fd, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -204,7 +208,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ocl:
-        m_Texture: {fileID: 2800000, guid: b60dcb2222e06364abb4f2611fe1ede5, type: 3}
+        m_Texture: {fileID: 2800000, guid: 02d94f88c99eb334a896086313ef38a7, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _rgh:
@@ -373,6 +377,7 @@ Material:
     - _ZTestGBuffer: 4
     - _ZTestTransparent: 4
     - _ZWrite: 1
+    - _ems_intensity: 0.7
     - _metallic_default: 0
     - _spc_default: 0
     m_Colors:

@@ -24,7 +24,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: player_evil_elf_bracers_a_pipes_a
-  m_Shader: {fileID: -6465566751694194690, guid: 0cf98c43b16dd6e4abfc0e3e03e66cd6, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 9f8f796d521fd424dbe975db255b6e93, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -136,11 +136,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _dif:
-        m_Texture: {fileID: 2800000, guid: ad67166fe37135b44a0c7ac35e4bedb6, type: 3}
+        m_Texture: {fileID: 2800000, guid: a7f6d2e34710b5f439ddd103b225127d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _dif_1:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ems:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: d0f886533b99bf44dba5c7668cd118e9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _gra:
@@ -160,7 +164,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _nrm:
-        m_Texture: {fileID: 2800000, guid: ecf8a492b0900824fa970c679ea4962b, type: 3}
+        m_Texture: {fileID: 2800000, guid: 8af5f6631bf4c414385cc318c275131d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ocl:
@@ -168,11 +172,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _rgh:
-        m_Texture: {fileID: 2800000, guid: 71f930cfb3978e747b6c045775fccbb8, type: 3}
+        m_Texture: {fileID: 2800000, guid: 8a432fabf8f77ae4aaf1d98f8cfee209, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _spc:
-        m_Texture: {fileID: 2800000, guid: 8d192423aaab922499aee7ce61354dd2, type: 3}
+        m_Texture: {fileID: 2800000, guid: 3b22aae4c8fb8b546b899063fbea70a5, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -309,6 +313,7 @@ Material:
     - _ZTestGBuffer: 4
     - _ZTestTransparent: 4
     - _ZWrite: 1
+    - _ems_intensity: 0.7
     - _metallic_default: 0
     - _spc_default: 0
     m_Colors:

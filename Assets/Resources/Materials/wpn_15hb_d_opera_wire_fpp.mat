@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: wpn_15hb_d_opera_wire_fpp
-  m_Shader: {fileID: -6465566751694194690, guid: 0cf98c43b16dd6e4abfc0e3e03e66cd6, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 9f8f796d521fd424dbe975db255b6e93, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -170,11 +170,19 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _clp:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 57ccec842adb4574fad7f75f204cbd4e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _dif:
         m_Texture: {fileID: 2800000, guid: d6026b7d15316874fa26221ec0291939, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _dif_1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ems:
+        m_Texture: {fileID: 2800000, guid: 9582d596c6a671947b0406837cd4a073, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _gra:
@@ -182,11 +190,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _idx:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 4dc8aae4f78b8b147bc2945e668dd9a3, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _msk:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 867081b5246eb7443ae562300d37a73f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _msk_1:
@@ -194,15 +202,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _nrm:
-        m_Texture: {fileID: 2800000, guid: 02a48f2c66db7e44682d30e36688fa4f, type: 3}
+        m_Texture: {fileID: 2800000, guid: 7ef6a746c191a334ea676331409a1062, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ocl:
-        m_Texture: {fileID: 2800000, guid: 95a9fb58dcb04304baf01b473c2ed3a8, type: 3}
+        m_Texture: {fileID: 2800000, guid: cc4caaf170df1ed42a9eecebf5d70008, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _rgh:
-        m_Texture: {fileID: 2800000, guid: f0b28df2044999648b0f2a9a1d84b7dd, type: 3}
+        m_Texture: {fileID: 2800000, guid: ed04eb79466915545809092ae1921172, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _spc:
@@ -367,6 +375,7 @@ Material:
     - _ZTestGBuffer: 4
     - _ZTestTransparent: 4
     - _ZWrite: 1
+    - _ems_intensity: 0.7
     - _metallic_default: 0
     - _spc_default: 0
     m_Colors:

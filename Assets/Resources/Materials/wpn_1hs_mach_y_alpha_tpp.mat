@@ -24,14 +24,14 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: wpn_1hs_mach_y_alpha_tpp
-  m_Shader: {fileID: -6465566751694194690, guid: 921ad4346783ba24a9c2e29a817e4c4e, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 9f8f796d521fd424dbe975db255b6e93, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _ALPHATEST_ON
   - _ENABLE_FOG_ON_TRANSPARENT
   - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords:
+  - _ALPHATEST_ON
   - _BACK_THEN_FRONT_RENDERING
   - _MASKMAP
   - _NORMALMAP
@@ -184,8 +184,12 @@ Material:
         m_Texture: {fileID: 2800000, guid: d1895501d49b4ac4188cdf313403d205, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _ems:
+    - _dif_1:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ems:
+        m_Texture: {fileID: 2800000, guid: 9582d596c6a671947b0406837cd4a073, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _gra:
@@ -193,10 +197,14 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _idx:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 4dc8aae4f78b8b147bc2945e668dd9a3, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _msk:
+        m_Texture: {fileID: 2800000, guid: 867081b5246eb7443ae562300d37a73f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _msk_1:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -379,6 +387,7 @@ Material:
     - _ZTestGBuffer: 3
     - _ZTestTransparent: 4
     - _ZWrite: 0
+    - _ems_intensity: 0.7
     - _ems_scale: 5
     - _metallic_default: 0
     - _spc_default: 0
