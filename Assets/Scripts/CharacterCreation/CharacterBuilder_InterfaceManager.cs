@@ -64,6 +64,7 @@ namespace doppelganger
         private Dictionary<string, string> modelToAssignedSlot = new Dictionary<string, string>();
         private Dictionary<string, string> slotToModelMap = new Dictionary<string, string>();
         private Dictionary<string, GameObject> sliderToLoadedModelMap = new Dictionary<string, GameObject>();
+        private Dictionary<string, GameObject> persistentSlotToModelMap = new Dictionary<string, GameObject>();
 
         Dictionary<string, string> classConversions = new Dictionary<string, string>
 
@@ -677,7 +678,12 @@ namespace doppelganger
             {
                 currentSliderButton.onClick.AddListener(() =>
                 {
-                    if (sliderToLoadedModelMap.TryGetValue(slotName, out GameObject modelToFocus))
+                    GameObject modelToFocus = null;
+                    if (persistentSlotToModelMap.TryGetValue(slotName, out modelToFocus) && modelToFocus != null)
+                    {
+                        autoTargetCinemachineCamera.FocusOnSingleObject(modelToFocus);
+                    }
+                    else if (sliderToLoadedModelMap.TryGetValue(slotName, out modelToFocus) && modelToFocus != null)
                     {
                         autoTargetCinemachineCamera.FocusOnSingleObject(modelToFocus);
                     }
@@ -691,7 +697,7 @@ namespace doppelganger
             }
 
             // Initialize the sliderToLoadedModelMap entry
-            sliderToLoadedModelMap[slotName] = null;
+            sliderToLoadedModelMap[slotName] = persistentSlotToModelMap.ContainsKey(slotName) ? persistentSlotToModelMap[slotName] : null;
         }
 
 
@@ -709,7 +715,7 @@ namespace doppelganger
                 selectedVariationIndexes.Remove(slotName);
                 slotToModelMap.Remove(slotName);
                 sliderToLoadedModelMap[slotName] = null; // Clear the loaded model reference
-
+                persistentSlotToModelMap.Remove(slotName);
                 if (secondaryPanelController.isVariations)
                 {
                     variationBuilder.UpdateModelInfoPanel(null);
@@ -727,6 +733,7 @@ namespace doppelganger
                     if (characterBuilder.currentlyLoadedModels.TryGetValue(slotName, out GameObject loadedModel))
                     {
                         sliderToLoadedModelMap[slotName] = loadedModel;
+                        persistentSlotToModelMap[slotName] = loadedModel; // Add to persistent map
                     }
                 }
 
@@ -993,6 +1000,18 @@ namespace doppelganger
             else
             {
                 Debug.Log($"Slider index not found for {sliderName}");
+            }
+        }
+
+        public void UpdatePersistentSlotToModelMap(string slotName, GameObject model)
+        {
+            if (model != null)
+            {
+                persistentSlotToModelMap[slotName] = model;
+            }
+            else
+            {
+                persistentSlotToModelMap.Remove(slotName);
             }
         }
 
