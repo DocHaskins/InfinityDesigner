@@ -310,7 +310,7 @@ namespace doppelganger
 
         public void RecordMaterialChange(string modelName, string originalMaterialName, string newMaterialName, int rendererIndex)
         {
-            Debug.Log($"Processing RecordMaterialChange for model: {modelName}, originalMaterialName: {originalMaterialName}, newMaterialName: {newMaterialName}, rendererIndex: {rendererIndex}");
+            //Debug.Log($"Processing RecordMaterialChange for model: {modelName}, originalMaterialName: {originalMaterialName}, newMaterialName: {newMaterialName}, rendererIndex: {rendererIndex}");
             if (!modelSpecificChanges.TryGetValue(modelName, out ModelChange modelChange))
             {
                 modelChange = new ModelChange();
@@ -405,7 +405,7 @@ namespace doppelganger
         public void RecordTextureChange(string modelName, string materialName, string slotName, string textureName, int rendererIndex)
         {
             string newModelName = modelName.Replace("(Clone)", "");
-            Debug.Log($"Processing RecordTextureChange for model: {newModelName}, slot: {slotName}, renderer index: {rendererIndex}, material: {materialName}, to texture: {textureName}");
+            //Debug.Log($"Processing RecordTextureChange for model: {newModelName}, slot: {slotName}, renderer index: {rendererIndex}, material: {materialName}, to texture: {textureName}");
 
             if (characterBuilder.ModelIndexChanges.TryGetValue(newModelName, out var indexChanges))
             {
@@ -442,12 +442,12 @@ namespace doppelganger
             {
                 existingChange.val_str = finalTextureName;
                 existingChange.type = finalTextureName == "null" ? existingChange.type : 7; // Set type to 7 for PNG changes
-                Debug.Log($"Updated texture change for model: {newModelName}, slot: {finalSlotName}, renderer index: {rendererIndex}, material: {materialName}, to texture: {finalTextureName}");
+                //Debug.Log($"Updated texture change for model: {newModelName}, slot: {finalSlotName}, renderer index: {rendererIndex}, material: {materialName}, to texture: {finalTextureName}");
             }
             else
             {
                 materialChange.TextureChanges.Add(new RttiValue { name = finalSlotName, val_str = finalTextureName, type = finalTextureName == "null" ? 0 : 7 });
-                Debug.Log($"Recorded new texture change for model: {newModelName}, slot: {finalSlotName}, renderer index: {rendererIndex}, material: {materialName}, texture: {finalTextureName}");
+                //Debug.Log($"Recorded new texture change for model: {newModelName}, slot: {finalSlotName}, renderer index: {rendererIndex}, material: {materialName}, texture: {finalTextureName}");
             }
             //foreach (var kvp in modelSpecificChanges)
             //{

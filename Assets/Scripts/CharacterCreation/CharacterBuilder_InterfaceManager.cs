@@ -63,6 +63,7 @@ namespace doppelganger
         private Dictionary<string, List<string>> modelToPotentialSlots = new Dictionary<string, List<string>>();
         private Dictionary<string, string> modelToAssignedSlot = new Dictionary<string, string>();
         private Dictionary<string, string> slotToModelMap = new Dictionary<string, string>();
+        private Dictionary<string, GameObject> sliderToLoadedModelMap = new Dictionary<string, GameObject>();
 
         Dictionary<string, string> classConversions = new Dictionary<string, string>
 
@@ -110,13 +111,6 @@ namespace doppelganger
                 Debug.LogWarning("Player type not found in dropdown options.");
             }
 
-            //PopulateSaveCategoryDropdown();
-            //PopulateSaveClassDropdown(skeletonLookup.skeletonMapping.Keys.First()); // Default to the first category
-
-            //saveCategoryDropdown.onValueChanged.AddListener(delegate {
-            //    SaveCategoryChanged(saveCategoryDropdown.options[saveCategoryDropdown.value].text);
-            //});
-
             // Manually trigger the interface update as if the dropdown values were changed
             UpdateInterfaceBasedOnDropdownSelection();
 
@@ -132,12 +126,8 @@ namespace doppelganger
             yield return new WaitForEndOfFrame();
             string defaultJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Jsons", "Human", "Player", "player_tpp_skeleton.json");
             characterBuilder.LoadJsonAndSetSliders(defaultJsonFilePath);
-            // Set initial values for Type, Category, and Class dropdowns
-
             categoryDropdown.value = categoryDropdown.options.FindIndex(option => option.text == "Player");
             classDropdown.value = classDropdown.options.FindIndex(option => option.text == "ALL");
-            //SetDropdownByValue(saveCategoryDropdown, "Player");
-            //SetDropdownByValue(saveClassDropdown, "ALL");
 
             OnCategoryChanged(categoryDropdown.value);
 
@@ -188,7 +178,6 @@ namespace doppelganger
         {
             string selectedType = GetTypeBasedOnIndex(index);
             PopulateDropdown(categoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType), "ALL", true);
-            //PopulateDropdown(saveCategoryDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType), "ALL", true);
             UpdateInterfaceBasedOnDropdownSelection();
         }
 
@@ -219,20 +208,12 @@ namespace doppelganger
 
             // Use the selectedType to populate the classDropdown based on the selected category
             PopulateDropdown(classDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType, selectedCategory), "ALL");
-            //PopulateDropdown(saveClassDropdown, Path.Combine(Application.streamingAssetsPath, "SlotData", selectedType, selectedCategory), "ALL");
             UpdateInterfaceBasedOnDropdownSelection();
         }
 
         public void OnClassChanged(int index)
         {
             UpdateInterfaceBasedOnDropdownSelection();
-        }
-
-        private void PopulateSaveCategoryDropdown()
-        {
-            saveCategoryDropdown.ClearOptions();
-            saveCategoryDropdown.AddOptions(skeletonLookup.skeletonMapping.Keys.ToList());
-            saveCategoryDropdown.RefreshShownValue();
         }
 
         private void PopulateSaveClassDropdown(string selectedCategory)
@@ -571,7 +552,7 @@ namespace doppelganger
                 }
                 else
                 {
-                    Debug.LogWarning("JSON file not found for slider: " + fullPath);
+                    //Debug.LogWarning("JSON file not found for slider: " + fullPath);
                 }
             }
             LayoutRebuilder.ForceRebuildLayoutImmediate(slidersPanel.GetComponent<RectTransform>());
@@ -593,13 +574,12 @@ namespace doppelganger
                     }
                     else
                     {
-                        Debug.LogWarning("JSON file not found for filter: " + fullPath);
+                        //Debug.LogWarning("JSON file not found for filter: " + fullPath);
                     }
                 }
             }
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(slidersPanel.GetComponent<RectTransform>());
-            //CreateDynamicButtons(filters); // Uncomment if dynamic buttons should be created based on filters
         }
 
         public void SetCurrentType(string type)
@@ -625,7 +605,6 @@ namespace doppelganger
 
             // Create a list to store all filters
             List<string> allFilters = filterMapping.buttonMappings.SelectMany(pair => pair.Value).Distinct().ToList();
-            //CreateDynamicButtons(allFilters);
             sliderKeyboardControl.RefreshSliders();
         }
 
@@ -642,7 +621,6 @@ namespace doppelganger
         public void CreateSliderForSlot(string slotName, string path)
         {
             string slotJsonFilePath = Path.Combine(path, slotName + ".json");
-
             if (File.Exists(slotJsonFilePath))
             {
                 string slotJsonData = File.ReadAllText(slotJsonFilePath);
@@ -651,6 +629,7 @@ namespace doppelganger
                 if (slotModelData != null && slotModelData.meshes != null)
                 {
                     // Initialize primary slider with the full range of meshes
+                    //Debug.Log($"Creating slot for : {slotName} at {slotJsonFilePath} with {slotModelData.meshes.Count} models");
                     InitializePrimarySlider(slotName, slotModelData.meshes.Count);
                 }
             }
@@ -698,11 +677,21 @@ namespace doppelganger
             {
                 currentSliderButton.onClick.AddListener(() =>
                 {
-                    autoTargetCinemachineCamera.FocusOnSingleObject(variationBuilder.currentModel);
+                    if (sliderToLoadedModelMap.TryGetValue(slotName, out GameObject modelToFocus))
+                    {
+                        autoTargetCinemachineCamera.FocusOnSingleObject(modelToFocus);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"No loaded model found for slot: {slotName}");
+                    }
                     currentSlider = slotName;
                     variationBuilder.UpdateModelInfoPanel(currentSlider);
                 });
             }
+
+            // Initialize the sliderToLoadedModelMap entry
+            sliderToLoadedModelMap[slotName] = null;
         }
 
 
@@ -719,6 +708,7 @@ namespace doppelganger
                 characterBuilder.RemoveModelAndVariationSlider(slotName);
                 selectedVariationIndexes.Remove(slotName);
                 slotToModelMap.Remove(slotName);
+                sliderToLoadedModelMap[slotName] = null; // Clear the loaded model reference
 
                 if (secondaryPanelController.isVariations)
                 {
@@ -733,6 +723,11 @@ namespace doppelganger
                 if (!string.IsNullOrEmpty(modelName))
                 {
                     slotToModelMap[slotName] = modelName;
+                    // Update the loaded model reference
+                    if (characterBuilder.currentlyLoadedModels.TryGetValue(slotName, out GameObject loadedModel))
+                    {
+                        sliderToLoadedModelMap[slotName] = loadedModel;
+                    }
                 }
 
                 if (secondaryPanelController.isVariations)
@@ -741,6 +736,18 @@ namespace doppelganger
                 }
             }
             textureScroller.ClearCurrentSelectionPanel();
+        }
+
+        public void UpdateSliderLoadedModel(string slotName, GameObject loadedModel)
+        {
+            if (sliderToLoadedModelMap.ContainsKey(slotName))
+            {
+                sliderToLoadedModelMap[slotName] = loadedModel;
+            }
+            else
+            {
+                Debug.LogWarning($"Slider for slot {slotName} not found in sliderToLoadedModelMap");
+            }
         }
 
         public void CreateOrUpdateVariationSlider(string slotName, string modelName)
@@ -828,7 +835,7 @@ namespace doppelganger
             if (variationBuilder.modelSpecificChanges.ContainsKey(modelName))
             {
                 variationBuilder.modelSpecificChanges.Remove(modelName);
-                Debug.Log($"All changes cleared for model: {modelName}.");
+                //Debug.Log($"All changes cleared for model: {modelName}.");
             }
 
             if (!characterBuilder.currentlyLoadedModels.TryGetValue(slotName, out GameObject currentModel) || currentModel.name.Replace("(Clone)", "") != modelName)
@@ -842,7 +849,7 @@ namespace doppelganger
             ModelData.ModelInfo modelInfo = null;
 
             string currentModelName = currentModel.name.Replace("(Clone)", "");
-            Debug.Log($"Current model for slot {slotName} is {currentModelName}");
+            //Debug.Log($"Current model for slot {slotName} is {currentModelName}");
 
             if (value == 0 && characterBuilder.originalMaterials.TryGetValue(slotName, out List<Material> mats))
             {
@@ -855,7 +862,7 @@ namespace doppelganger
             }
 
             int modelIndex = Mathf.Clamp((int)sliderValues[slotName] - 1, 0, int.MaxValue);
-            Debug.Log($"Model for variation: {modelName}");
+            //Debug.Log($"Model for variation: {modelName}");
 
             string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", modelName + ".json");
             if (File.Exists(materialJsonFilePath))
@@ -866,7 +873,7 @@ namespace doppelganger
                 if (modelInfo != null && modelInfo.variations != null && modelInfo.variations.Count > 0)
                 {
                     int variationIndex = Mathf.Clamp((int)value - 1, 0, modelInfo.variations.Count - 1);
-                    Debug.Log($"Applying variation materials for slot: {slotName} on model: {currentModelName} for variation index: {variationIndex}");
+                    //Debug.Log($"Applying variation materials for slot: {slotName} on model: {currentModelName} for variation index: {variationIndex}");
                     var variation = modelInfo.variations[variationIndex]; // This is assuming ApplyVariationMaterials expects Variation type.
                     characterBuilder.ApplyVariationMaterials(currentModel, variation, slotName, variationIndex);
                 }
@@ -884,21 +891,7 @@ namespace doppelganger
             if (modelInfo != null) // Ensure modelInfo was actually set
             {
                 selectedVariationIndexes[slotName] = Mathf.Clamp((int)value - 1, 0, modelInfo.variations.Count - 1);
-                //foreach (var kvp in selectedVariationIndexes)
-                //{
-                //    Debug.Log($"Slot: {kvp.Key}, Stored Index: {kvp.Value}");
-                //}
             }
-        }
-
-        private string ExtractModelNameFromSlider(string slotName)
-        {
-            var parts = slotName.Split('_');
-            if (parts.Length > 3)
-            {
-                return parts[3];
-            }
-            return null;
         }
 
         public void ResetVariationSliderAndUpdate(string slotName)
@@ -936,8 +929,6 @@ namespace doppelganger
             }
             return -1; // Return -1 if the slider is not found
         }
-
-               
 
         public string GetModelNameFromIndex(string slotName, int modelIndex)
         {
@@ -1003,7 +994,6 @@ namespace doppelganger
             {
                 Debug.Log($"Slider index not found for {sliderName}");
             }
-            //ResetCameraToDefaultView();
         }
 
         public void OnPresetLoadButtonPressed(string selectedPreset, string jsonName)

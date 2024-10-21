@@ -44,17 +44,17 @@ public class IdleManager : MonoBehaviour
     {
         float remainingTime = delaySeconds;
 
-        Debug.Log($"DelayBeforeReducingRendering started. Waiting for {delaySeconds} seconds.");
+        //Debug.Log($"DelayBeforeReducingRendering started. Waiting for {delaySeconds} seconds.");
 
         while (remainingTime > 0)
         {
-            Debug.Log($"Time until rendering can be reduced: {remainingTime} seconds remaining.");
+            //Debug.Log($"Time until rendering can be reduced: {remainingTime} seconds remaining.");
             yield return new WaitForSeconds(1);
             remainingTime--;
         }
 
         delayElapsed = true;
-        Debug.Log($"Delay has elapsed. delayElapsed is now set to {delayElapsed}. Ready to reduce rendering if out of focus.");
+        //Debug.Log($"Delay has elapsed. delayElapsed is now set to {delayElapsed}. Ready to reduce rendering if out of focus.");
     }
 
     private IEnumerator LimitFrameRate(int targetFrameRate)

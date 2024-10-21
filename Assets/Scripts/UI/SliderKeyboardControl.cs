@@ -12,6 +12,7 @@ public class SliderKeyboardControl : MonoBehaviour
     public bool DebugMode = false;
     
     private int currentSliderIndex = 0;
+    public ScrollRect scrollArea;
 
     private List<Slider> sliders = new List<Slider>();
     private List<TMP_InputField> inputFields = new List<TMP_InputField>();
@@ -202,6 +203,34 @@ public class SliderKeyboardControl : MonoBehaviour
                     {
                         bckgrdImage.color = selectedBackgroundColor;
                     }
+
+                    // Adjust scroll area to ensure current slider is visible
+                    RectTransform sliderRectTransform = sliderParent.GetComponent<RectTransform>();
+                    RectTransform viewportRect = scrollArea.viewport;
+
+                    // Calculate the relative position of the slider within the viewport
+                    Vector3[] sliderCorners = new Vector3[4];
+                    sliderRectTransform.GetWorldCorners(sliderCorners);
+
+                    Vector3[] viewportCorners = new Vector3[4];
+                    viewportRect.GetWorldCorners(viewportCorners);
+
+                    float sliderTopY = sliderCorners[1].y; // Top of the slider
+                    float sliderBottomY = sliderCorners[0].y; // Bottom of the slider
+                    float viewportTopY = viewportCorners[1].y; // Top of the viewport
+                    float viewportBottomY = viewportCorners[0].y; // Bottom of the viewport
+
+                    // Check if the slider is out of bounds (above or below the visible viewport area)
+                    if (sliderTopY > viewportTopY)
+                    {
+                        // Slider is above the visible area, move the scroll rect down
+                        scrollArea.verticalNormalizedPosition += 0.1f; // Adjust this value as needed
+                    }
+                    else if (sliderBottomY < viewportBottomY)
+                    {
+                        // Slider is below the visible area, move the scroll rect up
+                        scrollArea.verticalNormalizedPosition -= 0.1f; // Adjust this value as needed
+                    }
                 }
                 else
                 {
@@ -218,7 +247,7 @@ public class SliderKeyboardControl : MonoBehaviour
             else
             {
                 if (bckgrdImage == null) Debug.LogError($"'bckgrd' Image component not found on {sliderParent.name}");
-                if (labelText == null) Debug.LogError($"'labelText' TextMeshPro component not found on {sliderParent.name}");
+                if (labelText == null) Debug.LogError($"'labelText' Text component not found on {sliderParent.name}");
             }
         }
     }

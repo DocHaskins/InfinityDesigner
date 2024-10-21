@@ -58,7 +58,7 @@ public class JsonLoaderWindow : EditorWindow
         types.Clear();
         categories.Clear();
 
-        string jsonsFolderPath = Path.Combine(Application.streamingAssetsPath, "Jsons");
+        string jsonsFolderPath = Path.Combine(Application.streamingAssetsPath, "/Jsons");
         if (!Directory.Exists(jsonsFolderPath))
         {
             UnityEngine.Debug.LogError("Jsons folder not found in StreamingAssets: " + jsonsFolderPath);
@@ -96,7 +96,7 @@ public class JsonLoaderWindow : EditorWindow
         relativeJsonFilePath = relativeJsonFilePath.Replace("%20", " ");
 
         // Correct the base path for JSON files
-        string jsonsBasePath = Path.Combine(Application.streamingAssetsPath, "Jsons");
+        string jsonsBasePath = Path.Combine(Application.streamingAssetsPath, "/Jsons");
 
         // Construct the full JSON file path
         string jsonFilePath = Path.Combine(jsonsBasePath, relativeJsonFilePath);

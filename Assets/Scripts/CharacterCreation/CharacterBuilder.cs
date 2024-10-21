@@ -192,7 +192,7 @@ namespace doppelganger
             string type = interfaceManager.GetTypeFromSelector();
             string category = interfaceManager.categoryDropdown.options[interfaceManager.categoryDropdown.value].text;
             string classSelection = interfaceManager.classDropdown.options[interfaceManager.classDropdown.value].text;
-            string jsonsBasePath = Path.Combine(Application.streamingAssetsPath, "Jsons");
+            string jsonsBasePath = Path.Combine(Application.streamingAssetsPath, "/Jsons");
 
             string path = jsonsBasePath;
             if (type != "ALL") path = Path.Combine(path, type);
@@ -207,7 +207,7 @@ namespace doppelganger
         {
             if (File.Exists(jsonPath))
             {
-                Debug.Log("JSON file found: " + jsonPath);
+                //Debug.Log("JSON file found: " + jsonPath);
                 string jsonData = File.ReadAllText(jsonPath);
                 ModelData modelData = JsonUtility.FromJson<ModelData>(jsonData);
 
@@ -345,14 +345,14 @@ namespace doppelganger
             }
 
             var skinnedMeshRenderers = modelInstance.GetComponentsInChildren<SkinnedMeshRenderer>(true);
-            Debug.Log($"[ApplyPresetMaterialsDirectly] Found {skinnedMeshRenderers.Length} SkinnedMeshRenderer components in the model.");
+            //Debug.Log($"[ApplyPresetMaterialsDirectly] Found {skinnedMeshRenderers.Length} SkinnedMeshRenderer components in the model.");
 
             var rendererNameToIndexMap = new Dictionary<string, int>();
             for (int i = 0; i < skinnedMeshRenderers.Length; i++)
             {
                 string formattedName = FormatRendererName(skinnedMeshRenderers[i].name, modelInstance.name.Replace("sh_", "").Replace("(Clone)", ""));
                 rendererNameToIndexMap[formattedName] = i;
-                Debug.Log($"[ApplyPresetMaterialsDirectly] Mapping renderer '{skinnedMeshRenderers[i].name}' to formatted name '{formattedName}' at index {i}.");
+                //Debug.Log($"[ApplyPresetMaterialsDirectly] Mapping renderer '{skinnedMeshRenderers[i].name}' to formatted name '{formattedName}' at index {i}.");
             }
 
             for (int i = 0; i < skinnedMeshRenderers.Length && i < modelInfo.materialsData.Count; i++)
@@ -371,7 +371,7 @@ namespace doppelganger
                     continue;
                 }
 
-                Debug.Log($"[ApplyPresetMaterialsDirectly] Applying material '{materialData.name}' to renderer at index {i} based on index matching.");
+                //Debug.Log($"[ApplyPresetMaterialsDirectly] Applying material '{materialData.name}' to renderer at index {i} based on index matching.");
                 foreach (var resource in materialResource.resources)
                 {
                     ApplyMaterialToRenderer(skinnedMeshRenderers[i], resource.name, modelInstance, resource.rttiValues, slotName, modelIndex);
@@ -392,7 +392,7 @@ namespace doppelganger
                     if (rendererNameWithoutSuffix.Equals(formattedMaterialName))
                     {
                         var renderer = skinnedMeshRenderers[kvp.Value];
-                        Debug.Log($"[ApplyPresetMaterialsDirectly] Found specific matching renderer '{renderer.gameObject.name}' for material '{formattedMaterialName}'. Reapplying this material.");
+                        //Debug.Log($"[ApplyPresetMaterialsDirectly] Found specific matching renderer '{renderer.gameObject.name}' for material '{formattedMaterialName}'. Reapplying this material.");
                         foreach (var resource in materialResource.resources)
                         {
                             ApplyMaterialToRenderer(skinnedMeshRenderers[kvp.Value], resource.name, modelInstance, resource.rttiValues, slotName, kvp.Value);
@@ -501,7 +501,7 @@ namespace doppelganger
                 if (variationBuilder.modelSpecificChanges.ContainsKey(modelName))
                 {
                     variationBuilder.modelSpecificChanges.Remove(modelName);
-                    Debug.Log($"All changes cleared for model: {modelName}.");
+                    //Debug.Log($"All changes cleared for model: {modelName}.");
                 }
                 Destroy(currentModel);
                 currentlyLoadedModels.Remove(slotName);
@@ -509,7 +509,7 @@ namespace doppelganger
                 Transform existingVariationSlider = interfaceManager.slidersPanel.transform.Find(slotName + "Slider" + "_VariationSlider" + "_" + modelName);
                 if (existingVariationSlider != null)
                 {
-                    Debug.Log($"Existing variation slider found {existingVariationSlider}. Destroying...");
+                    //Debug.Log($"Existing variation slider found {existingVariationSlider}. Destroying...");
                     Destroy(existingVariationSlider.gameObject);
                 }
             }
@@ -545,6 +545,21 @@ namespace doppelganger
                 {
                     path = Path.Combine(path, classSelection);
                 }
+            }
+
+            if (modelInstance != null)
+            {
+                if (currentlyLoadedModels.ContainsKey(slotName))
+                {
+                    currentlyLoadedModels[slotName] = modelInstance;
+                }
+                else
+                {
+                    currentlyLoadedModels.Add(slotName, modelInstance);
+                }
+
+                // Update the sliderToLoadedModelMap in the InterfaceManager
+                interfaceManager.UpdateSliderLoadedModel(slotName, modelInstance);
             }
 
             string slotJsonFilePath = Path.Combine(path, slotName + ".json");
@@ -905,13 +920,13 @@ namespace doppelganger
         private void ApplyMaterialToRenderer(SkinnedMeshRenderer renderer, string materialName, GameObject modelInstance, List<RttiValue> rttiValues, string slotName, int materialIndex)
         {
             renderer.enabled = true;
-            Debug.Log($"[ApplyMaterialToRenderer] Attempting to apply material {materialName} to renderer {renderer.gameObject.name}, at materialIndex {materialIndex}");
+            //Debug.Log($"[ApplyMaterialToRenderer] Attempting to apply material {materialName} to renderer {renderer.gameObject.name}, at materialIndex {materialIndex}");
             string originalMaterialName = renderer.sharedMaterial != null ? renderer.sharedMaterial.name : "Unknown";
 
             Material loadedMaterial = LoadMaterial(materialName);
             if (loadedMaterial != null)
             {
-                Debug.Log($"[ApplyMaterialToRenderer] Loaded material '{materialName}' for renderer '{renderer.gameObject.name}'. Preparing to apply RTTI values.");
+                //Debug.Log($"[ApplyMaterialToRenderer] Loaded material '{materialName}' for renderer '{renderer.gameObject.name}'. Preparing to apply RTTI values.");
                 Material clonedMaterial = new Material(loadedMaterial);
                 renderer.sharedMaterials = new Material[] { clonedMaterial };
                 variationBuilder.RecordMaterialChange(modelInstance.name.Replace("(Clone)", ""), originalMaterialName, materialName, materialIndex);
@@ -920,7 +935,7 @@ namespace doppelganger
                 {
                     foreach (var rttiValue in rttiValues)
                     {
-                        Debug.Log($"[ApplyMaterialToRenderer] Detected RTTI value for '{materialName}': '{rttiValue.name}' with value '{rttiValue.val_str}' on materialIndex {materialIndex}.");
+                        //Debug.Log($"[ApplyMaterialToRenderer] Detected RTTI value for '{materialName}': '{rttiValue.name}' with value '{rttiValue.val_str}' on materialIndex {materialIndex}.");
                         ApplyTextureToMaterial(modelInstance, clonedMaterial, rttiValue.name, rttiValue.val_str, slotName, materialIndex);
                         
                     }
@@ -967,7 +982,7 @@ namespace doppelganger
 
         private void ApplyTextureToMaterial(GameObject modelInstance, Material material, string rttiValueName, string textureName, string slotName, int modelIndex)
         {
-            Debug.Log($"[ApplyTextureToMaterial] modelInstance '{modelInstance}', material '{material.name}', rttiValueName '{rttiValueName}', textureName '{textureName}', slotName '{slotName}', modelIndex '{modelIndex}'");
+            //Debug.Log($"[ApplyTextureToMaterial] modelInstance '{modelInstance}', material '{material.name}', rttiValueName '{rttiValueName}', textureName '{textureName}', slotName '{slotName}', modelIndex '{modelIndex}'");
             string shaderProperty = GetShaderProperty(rttiValueName);
 
             if (shaderProperty == null)
@@ -980,7 +995,7 @@ namespace doppelganger
 
             if ("null".Equals(textureName, StringComparison.OrdinalIgnoreCase))
             {
-                Debug.Log($"Removing texture from shader property: {shaderProperty} for RTTI: {rttiValueName}.");
+                //Debug.Log($"Removing texture from shader property: {shaderProperty} for RTTI: {rttiValueName}.");
                 variationBuilder.RecordTextureChange(modelInstance.name, material.name.Replace(" (Instance)", ""), rttiValueName, newTextureName, modelIndex);
                 material.SetTexture(shaderProperty, null);
             }
@@ -991,7 +1006,7 @@ namespace doppelganger
 
                 if (texture != null)
                 {
-                    Debug.Log($"Applying texture to shader property: {shaderProperty}. RTTI Value Name: {rttiValueName}, Texture Name: {textureName}.");
+                    //Debug.Log($"Applying texture to shader property: {shaderProperty}. RTTI Value Name: {rttiValueName}, Texture Name: {textureName}.");
                     material.SetTexture(shaderProperty, texture);
                     variationBuilder.RecordTextureChange(modelInstance.name, material.name.Replace(" (Instance)", ""), rttiValueName, newTextureName, modelIndex);
                     ApplyAdditionalSettings(material, rttiValueName, texture);
@@ -1078,6 +1093,7 @@ namespace doppelganger
                 { "rgh_1_tex", "_rgh" },
                 { "ocl_0_tex", "_ocl" },
                 { "ocl_1_tex", "_ocl" },
+                { "ocl_tex", "_ocl" },
                 { "ems_0_tex", "_ems" },
                 { "ems_1_tex", "_ems" },
                 { "dif_1_tex", "_dif_1" },

@@ -35,7 +35,7 @@ public class MaterialVariationEditor : BaseTwoPanelEditorWindow
         "_dirt", "_frs", "_pattern", "ronin"
     };
 
-    [MenuItem("Tools/Material Variation Builder")]
+    [MenuItem("Model Tools/Material Variation Builder")]
     public static void ShowWindow()
     {
         GetWindow<MaterialVariationEditor>("Material Variation Builder");

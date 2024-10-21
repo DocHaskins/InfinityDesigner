@@ -26,7 +26,7 @@ namespace doppelganger
         private void LoadSlotUidLookup()
         {
             // Correcting the path to include the "SlotData" directory
-            string jsonPath = Path.Combine(Application.dataPath, "StreamingAssets/SlotData/SlotUidLookup_Empty.json");
+            string jsonPath = Path.Combine(Application.streamingAssetsPath, "SlotData/SlotUidLookup_Empty.json");
             if (File.Exists(jsonPath))
             {
                 string jsonContent = File.ReadAllText(jsonPath);
@@ -60,14 +60,17 @@ namespace doppelganger
             // Load the model data from JSON input
             string jsonInput = File.ReadAllText(jsonInputPath);
             ModelData modelData = JsonUtility.FromJson<ModelData>(jsonInput);
-
+            if (!modelData.skeletonName.EndsWith(".msh"))
+            {
+                modelData.skeletonName += ".msh";
+            }
 
             List<int> existingSlotUids = modelData.slotPairs.Select(sp => sp.slotData.slotUid).ToList();
 
             // Initialize StringBuilder for JSON output
             StringBuilder sb = new StringBuilder();
 
-            Debug.Log($"skeletonName: {modelData.skeletonName}");
+            //Debug.Log($"skeletonName: {modelData.skeletonName}");
             // Start JSON structure
             sb.AppendLine("{");
             sb.AppendLine("  \"version\": 6,");
@@ -170,7 +173,7 @@ namespace doppelganger
                     sb.AppendLine("            \"selected\": true,");
                     sb.AppendLine("            \"layoutId\": 4,");
                     AppendUserData(sb, userData);
-                    sb.AppendLine("            \"variantType\": \"standard\", ");
+                    //sb.AppendLine("            \"variantType\": \"standard\", ");
                     AppendMaterialsData(sb, model.materialsData);
                     AppendMaterialsResources(sb, model.materialsResources);
                     sb.AppendLine("          }" + (!model.Equals(slotPair.slotData.models.Last()) ? "," : ""));
@@ -228,8 +231,12 @@ namespace doppelganger
             var properties = new List<(string name, string value)>
     {
         ("class", modelData.modelProperties.@class),
+        ("production_state", "prototype"),
         ("race", modelData.modelProperties.race),
         ("sex", modelData.modelProperties.sex),
+        ("size", "normal"),
+        ("type", "character"),
+        ("weight", "normal")
     };
 
             for (int i = 0; i < properties.Count; i++)
@@ -345,7 +352,7 @@ namespace doppelganger
                 int specialUid = specialSlotUids[slotName];
                 if (!existingSlotUids.Contains(specialUid))
                 {
-                    Debug.Log($"Using predefined UID '{specialUid}' for slot '{slotName}' for category 'Player'.");
+                    //Debug.Log($"Using predefined UID '{specialUid}' for slot '{slotName}' for category 'Player'.");
                     return specialUid;
                 }
             }

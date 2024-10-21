@@ -12,7 +12,7 @@ public class ModelMaterialMapper : EditorWindow
     private string updatedMaterialsJsonPath = "Assets/Resources/UpdatedMaterials.json";
     private int modelLimit = 10;
 
-    [MenuItem("Tools/Model Material Mapper")]
+    [MenuItem("Model Tools/Model Material Mapper")]
     public static void ShowWindow()
     {
         GetWindow(typeof(ModelMaterialMapper));
@@ -25,6 +25,21 @@ public class ModelMaterialMapper : EditorWindow
         if (GUILayout.Button("Map Materials to Models"))
         {
             MapMaterialsToModels();
+        }
+
+        if (GUILayout.Button("Pair Textures with Materials"))
+        {
+            PairTexturesWithMaterials();
+        }
+
+        if (GUILayout.Button("Check and fix Materials"))
+        {
+            CheckAndFixMaterials();
+        }
+
+        if (GUILayout.Button("Create Missing Materials And Assign Textures"))
+        {
+            CreateMissingMaterialsAndAssignTextures();
         }
     }
 
@@ -68,7 +83,7 @@ public class ModelMaterialMapper : EditorWindow
                     // Check if the material exists in updatedMaterials.json
                     if (updatedMaterials.ContainsKey(materialNameWithoutExtension))
                     {
-                        string materialFileName = materialName + ".mat";
+                        string materialFileName = materialNameWithoutExtension + ".mat"; // Ensure only one .mat extension
                         string materialFullPath = Path.Combine(materialPath, materialFileName);
 
                         // Check if material has already been processed
@@ -78,13 +93,13 @@ public class ModelMaterialMapper : EditorWindow
                             Material material = AssetDatabase.LoadAssetAtPath<Material>(materialFullPath);
                             if (material == null)
                             {
-                                material = new Material(Shader.Find("Shader Graphs/Skin"));
-                                AssetDatabase.CreateAsset(material, materialFullPath.Replace(".mat", ""));
-                                Debug.Log($"Created new material: {materialName}");
+                                material = new Material(Shader.Find("DoppelGanger/Skin"));
+                                AssetDatabase.CreateAsset(material, materialFullPath);
+                                Debug.Log($"Created new material: {materialNameWithoutExtension}");
                             }
                             else
                             {
-                                Debug.Log($"Found existing material: {materialName}");
+                                Debug.Log($"Found existing material: {materialNameWithoutExtension}");
                             }
 
                             // Set Shader based on material name
@@ -95,10 +110,6 @@ public class ModelMaterialMapper : EditorWindow
 
                             // Add material to processed list
                             processedMaterials[materialFullPath] = material;
-                        }
-                        else
-                        {
-                            Debug.Log($"Material {materialName} has already been processed, skipping reprocessing.");
                         }
                     }
                     else
@@ -119,12 +130,64 @@ public class ModelMaterialMapper : EditorWindow
         AssetDatabase.Refresh();
     }
 
+    private void PairTexturesWithMaterials()
+    {
+        // Load JSON data
+        JObject updatedMaterials = JObject.Parse(File.ReadAllText(updatedMaterialsJsonPath));
+        int totalMaterials = updatedMaterials.Count;
+        Debug.Log($"Total materials found in updated materials JSON: {totalMaterials}");
+
+        // Dictionary to track processed materials
+        Dictionary<string, Material> processedMaterials = new Dictionary<string, Material>();
+
+        // Get all material files
+        string[] materialFiles = Directory.GetFiles(materialPath, "*.mat", SearchOption.AllDirectories);
+
+        foreach (string materialFile in materialFiles)
+        {
+            string materialNameWithoutExtension = Path.GetFileNameWithoutExtension(materialFile);
+
+            // Check if the material exists in updatedMaterials.json
+            if (updatedMaterials.ContainsKey(materialNameWithoutExtension))
+            {
+                string materialFullPath = Path.Combine(materialPath, materialNameWithoutExtension + ".mat");
+
+                // Attempt to load the material
+                Material material = AssetDatabase.LoadAssetAtPath<Material>(materialFullPath);
+                if (material != null)
+                {
+                    Debug.Log($"Found existing material: {materialNameWithoutExtension}");
+
+                    // Set Shader based on material name
+                    SetMaterialShader(material, materialNameWithoutExtension);
+
+                    // Set material properties from UpdatedMaterials.json
+                    SetMaterialProperties(material, (JObject)updatedMaterials[materialNameWithoutExtension]);
+
+                    // Add material to processed list
+                    processedMaterials[materialFullPath] = material;
+                }
+                else
+                {
+                    Debug.LogWarning($"Material {materialNameWithoutExtension} could not be loaded at path: {materialFullPath}");
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"No material properties found for {materialNameWithoutExtension} in the updated materials JSON.");
+            }
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+    }
+
     private void SetMaterialShader(Material material, string materialName)
     {
         if (materialName.Contains("decal") || materialName.Contains("tattoo") || materialName.Contains("tatoo") ||
     materialName.Contains("patch") || materialName.Contains("logo"))
         {
-            material.shader = Shader.Find("Shader Graphs/Decal");
+            material.shader = Shader.Find("DoppelGanger/Decal");
             //Debug.Log($"Assigned Decal shader to material: {material.name}");
         }
         else if (materialName.Contains("hat") || materialName.Contains("cap") || materialName.Contains("headwear") ||
@@ -162,12 +225,12 @@ public class ModelMaterialMapper : EditorWindow
     materialName.Contains("sides") || materialName.Contains("braids") || materialName.Contains("fringe") ||
     materialName.Contains("facial_hair") || materialName.Contains("beard") || materialName.Contains("jaw_"))
         {
-            material.shader = Shader.Find("Shader Graphs/Hair");
+            material.shader = Shader.Find("DoppelGanger/Hair");
             //Debug.Log($"Assigned Hair shader to material: {material.name}");
         }
         else
         {
-            material.shader = Shader.Find("Shader Graphs/Skin");
+            material.shader = Shader.Find("DoppelGanger/Skin");
             //Debug.Log($"Assigned Skin shader to material: {material.name}");
         }
     }
@@ -180,6 +243,8 @@ public class ModelMaterialMapper : EditorWindow
         {
             string rttiValueName = property.Key;
             string textureName = property.Value.ToString();
+            textureName = textureName.Replace(".png", ".jpg");
+            //Debug.Log($"textureName: {textureName}");
 
             string texturePath = Path.Combine("Assets/Resources/Textures", textureName);
 
@@ -256,5 +321,102 @@ public class ModelMaterialMapper : EditorWindow
         {
             Debug.Log($"Textures to be assigned to material {material.name}: {string.Join(", ", texturesToAssign)}");
         }
+    }
+
+    private void CheckAndFixMaterials()
+    {
+        // Get all material files
+        string[] materialFiles = Directory.GetFiles(materialPath, "*.mat", SearchOption.AllDirectories);
+
+        foreach (string materialFile in materialFiles)
+        {
+            // Load the material
+            Material material = AssetDatabase.LoadAssetAtPath<Material>(materialFile);
+            if (material != null)
+            {
+                // Check for internal error
+                if (material.shader.name == "Hidden/InternalErrorShader")
+                {
+                    Debug.Log($"Fixing material: {material.name} with internal error");
+                    material.shader = Shader.Find("DoppelGanger/Cloth");
+                    Debug.Log($"Assigned Cloth shader to material: {material.name}");
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"Material at path {materialFile} could not be loaded.");
+            }
+        }
+
+        // Save changes to the assets
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+    }
+
+    private void CreateMissingMaterialsAndAssignTextures()
+    {
+        // Load JSON data
+        JObject meshMaterialMapping = JObject.Parse(File.ReadAllText(mappingJsonPath));
+        JObject updatedMaterials = JObject.Parse(File.ReadAllText(updatedMaterialsJsonPath));
+
+        // Get all model files
+        string[] modelFiles = Directory.GetFiles(modelPath, "*.fbx", SearchOption.AllDirectories);
+        int processedModels = 0;
+
+        foreach (string modelFile in modelFiles)
+        {
+            if (processedModels >= modelLimit)
+            {
+                Debug.Log($"Processing halted after reaching the limit of {modelLimit} models.");
+                break;
+            }
+
+            string modelName = Path.GetFileNameWithoutExtension(modelFile);
+
+            // Check if the model exists in mesh_material_mapping.json
+            if (meshMaterialMapping.ContainsKey(modelName))
+            {
+                JArray materialArray = (JArray)meshMaterialMapping[modelName];
+
+                foreach (string materialName in materialArray)
+                {
+                    string materialNameWithoutExtension = Path.GetFileNameWithoutExtension(materialName);
+                    string materialFileName = materialNameWithoutExtension + ".mat";
+                    string materialFullPath = Path.Combine(materialPath, materialFileName);
+
+                    // Attempt to load the material
+                    Material material = AssetDatabase.LoadAssetAtPath<Material>(materialFullPath);
+                    if (material == null)
+                    {
+                        // Create a new material if it doesn't exist
+                        material = new Material(Shader.Find("DoppelGanger/Skin"));
+                        AssetDatabase.CreateAsset(material, materialFullPath);
+                        Debug.Log($"Created new material: {materialNameWithoutExtension}");
+                    }
+
+                    // Check if the material exists in updatedMaterials.json to assign textures
+                    if (updatedMaterials.ContainsKey(materialNameWithoutExtension))
+                    {
+                        SetMaterialProperties(material, (JObject)updatedMaterials[materialNameWithoutExtension]);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"No material properties found for {materialNameWithoutExtension} in the updated materials JSON.");
+                    }
+
+                    // Set shader based on material name
+                    SetMaterialShader(material, materialName);
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"No material mapping found for model: {modelName} in mesh_material_mapping.json.");
+            }
+
+            processedModels++;
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
     }
 }

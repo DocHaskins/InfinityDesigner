@@ -90,7 +90,7 @@ namespace doppelganger
             {
                 string filenameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
 
-                if (!filenameWithoutExtension.Contains("_fpp") && !filenameWithoutExtension.StartsWith("db_"))
+                if (!filenameWithoutExtension.StartsWith("db_"))
                 {
                     dropdownOptions.Add(filenameWithoutExtension);
                     displayNameToFileMap[filenameWithoutExtension] = filename;  // Map the display name to the full file name
@@ -124,7 +124,7 @@ namespace doppelganger
 
         public void LoadJsonData()
         {
-            string jsonsFolderPath = Path.Combine(Application.streamingAssetsPath, "Jsons");
+            string jsonsFolderPath = Path.Combine(Application.streamingAssetsPath, "/Jsons");
             if (!Directory.Exists(jsonsFolderPath))
             {
                 Debug.LogError("Jsons folder not found: " + jsonsFolderPath);
@@ -207,7 +207,7 @@ namespace doppelganger
 
         public void LoadModelFromJson(string jsonFileName)
         {
-            string searchDirectory = Path.Combine(Application.streamingAssetsPath, "Jsons");
+            string searchDirectory = Path.Combine(Application.streamingAssetsPath, "/Jsons");
             string[] files = Directory.GetFiles(searchDirectory, jsonFileName, SearchOption.AllDirectories);
 
             if (files.Length == 0)

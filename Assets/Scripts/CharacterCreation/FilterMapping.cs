@@ -40,6 +40,7 @@ namespace doppelganger
                 "ALL_hood",
                 "ALL_mask",
                 "ALL_mask_access",
+                "ALL_hazmat_head",
                 "ALL_glasses",
                 "ALL_necklace",
                 "ALL_earrings",
@@ -91,6 +92,7 @@ namespace doppelganger
                 "ALL_armor_helmet",
                 "ALL_armor_helmet_access",
                 "ALL_armor_torso",
+                "ALL_armor_torso_2",
                 "ALL_armor_torso_access",
                 "ALL_armor_torso_extra",
                 "ALL_armor_torso_upperright",
@@ -112,7 +114,7 @@ namespace doppelganger
                 "ALL_hair_base",
                 "ALL_hair_2",
                 "ALL_hair_3",
-                "ALL_facial_hair"
+                "ALL_facial_hair",
             }
         },
         { "Button_Face_access", new List<string>
@@ -124,13 +126,14 @@ namespace doppelganger
                 "ALL_hood",
                 "ALL_mask",
                 "ALL_mask_access",
+                "ALL_hazmat_head",
                 "ALL_glasses",
                 "ALL_necklace",
                 "ALL_earrings",
-                "ALL_blisters_1",
-                "ALL_blisters_2",
-                "ALL_blisters_3",
-                "ALL_blisters_4"
+                "ALL_blister_1",
+                "ALL_blister_2",
+                "ALL_blister_3",
+                "ALL_blister_4"
             }
         },
         { "Button_UpperBody", new List<string>
@@ -151,6 +154,7 @@ namespace doppelganger
         { "Button_UpperBody_armor", new List<string>
             {
                 "ALL_armor_torso",
+                "ALL_armor_torso_2",
                 "ALL_armor_torso_access",
                 "ALL_armor_torso_extra",
                 "ALL_armor_torso_upperright",
@@ -163,7 +167,7 @@ namespace doppelganger
             {
                 "ALL_cape",
                 "ALL_backpack",
-                "ALL_bumbag",
+                "ALL_bag",
                 "ALL_gastank",
                 "ALL_flashlight",
                 "ALL_weapons",

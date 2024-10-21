@@ -132,9 +132,10 @@ namespace doppelganger
             var filteredFiles = allJsonFiles.Where(file =>
             {
                 string fileNameLower = Path.GetFileName(file).ToLower();
-                bool exclude = fileNameLower.Contains("fpp") ||
-                               (fileNameLower.Contains("skeleton") && fileNameLower != "player_tpp_skeleton.json") ||
-                               fileNameLower.Contains("db_");
+                bool exclude = (fileNameLower.Contains("skeleton") &&
+                   fileNameLower != "player_tpp_skeleton.json" &&
+                   fileNameLower != "player_fpp_skeleton.json") ||
+                   fileNameLower.Contains("db_");
 
                 return !exclude && (string.IsNullOrEmpty(searchFilter) || fileNameLower.Contains(searchFilter));
             }).ToList();
@@ -155,8 +156,7 @@ namespace doppelganger
             var filteredFiles = files.Where(file =>
             {
                 string fileNameLower = Path.GetFileName(file).ToLower();
-                return !fileNameLower.Contains("fpp") &&
-                       !fileNameLower.Contains("skeleton") &&
+                return !fileNameLower.Contains("skeleton") &&
                        !fileNameLower.Contains("db_") &&
                        (string.IsNullOrEmpty(searchFilter) || fileNameLower.Contains(searchFilter));
             }).ToList();

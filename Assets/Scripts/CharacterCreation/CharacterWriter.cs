@@ -62,6 +62,7 @@ namespace doppelganger
         {"ALL_hood", "HEADCOVER"},
         {"ALL_mask", "HEADCOVER"},
         {"ALL_mask_access", "HEADCOVER"},
+        {"ALL_hazmat_head", "HEADCOVER"},
         {"ALL_glasses", "HEAD_PART_1"},
         {"ALL_necklace", "TORSO_PART_1"},
         {"ALL_earrings", "HEAD_PART_1"},
@@ -113,6 +114,7 @@ namespace doppelganger
         {"ALL_armor_helmet", "HEADCOVER"},
         {"ALL_armor_helmet_access", "HEADCOVER"},
         {"ALL_armor_torso", "TORSO_PART_1"},
+        {"ALL_armor_torso_2", "TORSO_PART_1"},
         {"ALL_armor_torso_access", "TORSO_PART_1"},
         {"ALL_armor_torso_extra", "TORSO_PART_1"},
         {"ALL_armor_torso_upperright", "ARMS_PART_1"},
@@ -162,7 +164,7 @@ namespace doppelganger
         private void LoadSlotUidLookup()
         {
             // Correcting the path to include the "SlotData" directory
-            string jsonPath = Path.Combine(Application.dataPath, "StreamingAssets/SlotData/SlotUidLookup_Empty.json");
+            string jsonPath = Path.Combine(Application.streamingAssetsPath, "SlotData/SlotUidLookup_Empty.json");
             if (File.Exists(jsonPath))
             {
                 string jsonContent = File.ReadAllText(jsonPath);
@@ -296,7 +298,7 @@ namespace doppelganger
             string saveNameText = saveName.text;
             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(saveNameText);
             string screenshotFileName = fileNameWithoutExtension;
-            string slotUIDLookupFullPath = Path.Combine(Application.streamingAssetsPath, slotUIDLookupRelativePath);
+            string slotUIDLookupFullPath = Path.Combine(Application.streamingAssetsPath, "", slotUIDLookupRelativePath);
 
             SlotUIDLookup slotUIDLookup = SlotUIDLookup.LoadFromJson(slotUIDLookupFullPath);
             Debug.Log($"saveNameText {saveNameText} found in lookup for {fileNameWithoutExtension}.");
@@ -332,7 +334,7 @@ namespace doppelganger
             string jsonOutputPath = Path.Combine(jsonBaseOutputPath, saveCategory, DateTime.Now.ToString("yyyy_MM_dd"), saveName.text + ".json");
             string screenshotPath = Path.ChangeExtension(jsonOutputPath, ".png");
             string modelOutputPath = Path.Combine(targetPath, fileName + ".model");
-            Debug.Log($"jsonOutputDirectory {jsonOutputDirectory}, screenshotPath {screenshotPath}");
+            //Debug.Log($"jsonOutputDirectory {jsonOutputDirectory}, screenshotPath {screenshotPath}");
 
             var sliderValues = interfaceManager.GetSliderValues();
             var currentlyLoadedModels = characterBuilder.GetCurrentlyLoadedModels();
@@ -343,37 +345,37 @@ namespace doppelganger
 
             foreach (var slider in sliderValues)
             {
-                Debug.Log($"Processing slider: {slider.Key} with value: {slider.Value}");
+                //Debug.Log($"Processing slider: {slider.Key} with value: {slider.Value}");
 
                 if (slider.Value > 0)
                 {
                     if (currentlyLoadedModels.TryGetValue(slider.Key, out GameObject model))
                     {
-                        Debug.Log($"Processing model for slider key: {slider.Key}");
+                        //Debug.Log($"Processing model for slider key: {slider.Key}");
                         if (sliderToSlotMapping.TryGetValue(slider.Key, out string slotKey))
                         {
-                            Debug.Log($"Mapping found: {slider.Key} maps to {slotKey}");
+                            //Debug.Log($"Mapping found: {slider.Key} maps to {slotKey}");
                             string modelName = model.name.Replace("(Clone)", ".msh").ToLower();
                             if (saveCategory != "Player")
                             {
                                 string potentialSkeletonName = skeletonLookup.FindMatchingSkeleton(modelName);
-                                Debug.Log($"{potentialSkeletonName} Skeleton updated to {skeletonName} based on loaded models.");
+                                //Debug.Log($"{potentialSkeletonName} Skeleton updated to {skeletonName} based on loaded models.");
                                 if (!string.IsNullOrEmpty(potentialSkeletonName) && potentialSkeletonName != "player_skeleton.msh" && potentialSkeletonName != skeletonName)
                                 {
                                     skeletonName = potentialSkeletonName;
                                     skeletonUpdated = true;
-                                    Debug.Log($"{potentialSkeletonName} Skeleton updated to {skeletonName} based on loaded models.");
+                                    //Debug.Log($"{potentialSkeletonName} Skeleton updated to {skeletonName} based on loaded models.");
                                 }
                             }
 
                             if (slotUIDLookup.ModelSlots.TryGetValue(modelName, out List<ModelData.SlotInfo> possibleSlots))
                             {
-                                Debug.Log($"Found possible slots for model {modelName}: {possibleSlots.Count}");
+                                //Debug.Log($"Found possible slots for model {modelName}: {possibleSlots.Count}");
                                 ModelData.SlotDataPair slotPair = null; // Declaration moved outside of the loop
 
                                 foreach (var possibleSlot in possibleSlots)
                                 {
-                                    Debug.Log($"Checking possible slot: {possibleSlot.name} with Slot UID: {possibleSlot.slotUid} against used slots and UIDs.");
+                                    //Debug.Log($"Checking possible slot: {possibleSlot.name} with Slot UID: {possibleSlot.slotUid} against used slots and UIDs.");
                                     if (!usedSlotUids.Contains(possibleSlot.slotUid) && !usedSlots.Contains(possibleSlot.name))
                                     {
                                         //Debug.Log($"Creating SlotDataPair for model {modelName} with intended slot {slotKey} and assigning to actual slot {possibleSlot.name}.");
@@ -381,7 +383,7 @@ namespace doppelganger
                                         slotPairs.Add(slotPair);
                                         usedSlotUids.Add(possibleSlot.slotUid);
                                         usedSlots.Add(possibleSlot.name); // Also mark the slot name as used
-                                        Debug.Log($"Assigned {possibleSlot.name} slot for {slider.Key} with Slot UID: {possibleSlot.slotUid}");
+                                        //Debug.Log($"Assigned {possibleSlot.name} slot for {slider.Key} with Slot UID: {possibleSlot.slotUid}");
                                         break; // Break since a slot has been successfully assigned
                                     }
                                 }
@@ -391,22 +393,22 @@ namespace doppelganger
                                     string initialFallbackSlotName = sliderToSlotMapping[slider.Key];
                                     List<string> fallbackOptions = fallbackSlots.TryGetValue(initialFallbackSlotName, out var initialFallbacks) ? initialFallbacks : new List<string>();
 
-                                    Debug.Log($"Fallback options for {initialFallbackSlotName}: {string.Join(", ", fallbackOptions)}");
+                                    //Debug.Log($"Fallback options for {initialFallbackSlotName}: {string.Join(", ", fallbackOptions)}");
 
                                     foreach (var fallbackOption in fallbackOptions)
                                     {
-                                        Debug.Log($"Considering fallback option: {fallbackOption}");
+                                        //Debug.Log($"Considering fallback option: {fallbackOption}");
                                         if (!usedSlots.Contains(fallbackOption))
                                         {
                                             var nextAvailableSlotUid = DetermineNextAvailableSlotUid(fallbackOption, usedSlotUids);
                                             if (nextAvailableSlotUid != -1) // Assuming -1 indicates failure to find an available UID
                                             {
-                                                Debug.Log($"Using next available Slot UID '{nextAvailableSlotUid}' for fallback slot '{fallbackOption}'.");
+                                                //Debug.Log($"Using next available Slot UID '{nextAvailableSlotUid}' for fallback slot '{fallbackOption}'.");
                                                 slotPair = CreateSlotDataPair(model, fallbackOption, nextAvailableSlotUid);
                                                 slotPairs.Add(slotPair);
                                                 usedSlotUids.Add(nextAvailableSlotUid);
                                                 usedSlots.Add(fallbackOption);
-                                                Debug.Log($"Assigned fallback {fallbackOption} slot for {slider.Key} with Slot UID: {nextAvailableSlotUid}");
+                                                //Debug.Log($"Assigned fallback {fallbackOption} slot for {slider.Key} with Slot UID: {nextAvailableSlotUid}");
                                                 break;
                                             }
                                         }
@@ -454,7 +456,7 @@ namespace doppelganger
                 modelProperties = new ModelData.ModelProperties
                 {
                     @class = saveClass.Equals("ALL", StringComparison.OrdinalIgnoreCase) ? "zombie" : saveClass,
-                    race = "Unknown",
+                    race = "caucasian",
                     sex = DetermineCharacterSex(slotPairs)
                 }
             };
@@ -633,7 +635,7 @@ namespace doppelganger
 
         private string DeterminePakFilePath(string directoryPath)
         {
-            Debug.Log($"Scanning directory for .pak files: {directoryPath}");
+            //Debug.Log($"Scanning directory for .pak files: {directoryPath}");
 
             var pakFiles = Directory.GetFiles(directoryPath, "data*.pak")
                             .Where(file => !Path.GetFileNameWithoutExtension(file).StartsWith("data_devtools"))
@@ -647,7 +649,7 @@ namespace doppelganger
                             .OrderBy(file => file.Number.Value)
                             .ToList();
 
-            Debug.Log($"Filtered and processed .pak files: {string.Join(", ", pakFiles.Select(f => $"{f.FileName} => {f.Number}"))}");
+            //Debug.Log($"Filtered and processed .pak files: {string.Join(", ", pakFiles.Select(f => $"{f.FileName} => {f.Number}"))}");
 
             foreach (var pakFile in pakFiles)
             {
@@ -673,7 +675,7 @@ namespace doppelganger
             }
 
             string newPakPath = Path.Combine(directoryPath, $"data{nextAvailableNumber}.pak");
-            Debug.Log($"Preparing new .pak file: {newPakPath}. This considers both placeholders and gaps in numbering.");
+            //Debug.Log($"Preparing new .pak file: {newPakPath}. This considers both placeholders and gaps in numbering.");
 
             return newPakPath;
         }
@@ -839,18 +841,17 @@ namespace doppelganger
                     if (maleMeshes.Contains(modelName))
                     {
                         Debug.Log("Character Sex: Male");
-                        return "Male";
+                        return "male";
                     }
                     else if (femaleMeshes.Contains(modelName))
                     {
                         Debug.Log("Character Sex: Female");
-                        return "Female";
+                        return "female";
                     }
                     break;
                 }
             }
-            Debug.Log("Character Sex: Unknown");
-            return "";
+            return "male";
         }
 
         private ModelData.SlotDataPair CreateSlotDataPair(GameObject model, string slotKey, int slotUid)
@@ -858,10 +859,10 @@ namespace doppelganger
             VariationBuilder variationBuilder = FindObjectOfType<VariationBuilder>();
             string originalSlotKey = slotKey;
             string lookupSlotKey = "ALL_" + slotKey.ToLower();
-            Debug.Log($"Creating SlotDataPair for {model.name} with original slot {originalSlotKey} and lookup slot {lookupSlotKey}");
+            //Debug.Log($"Creating SlotDataPair for {model.name} with original slot {originalSlotKey} and lookup slot {lookupSlotKey}");
 
             string formattedModelName = FormatModelName(model.name);
-            Debug.Log($"Formatted model name: {formattedModelName}");
+            //Debug.Log($"Formatted model name: {formattedModelName}");
 
             var slotData = new ModelData.SlotData
             {
@@ -871,7 +872,7 @@ namespace doppelganger
             };
 
             string materialJsonFilePath = Path.Combine(Application.streamingAssetsPath, "Mesh references", $"{formattedModelName.Replace(".msh", "")}.json");
-            Debug.Log($"Looking for material JSON at: {materialJsonFilePath}");
+            //Debug.Log($"Looking for material JSON at: {materialJsonFilePath}");
 
             var modelInfo = new ModelData.ModelInfo
             {
@@ -888,11 +889,11 @@ namespace doppelganger
             if (variationBuilder.modelSpecificChanges.TryGetValue(formattedModelName.Replace(".msh", ""), out ModelChange modelChanges))
             {
                 modelInfo.materialsResources = GetMaterialsResourcesFromModelChanges(model, modelChanges);
-                Debug.Log($"Using specific materials data and resources for model {formattedModelName}.");
+                //Debug.Log($"Using specific materials data and resources for model {formattedModelName}.");
             }
             else
             {
-                Debug.Log($"No specific model changes found for {formattedModelName}. Copying materials data to materials resources.");
+                //Debug.Log($"No specific model changes found for {formattedModelName}. Copying materials data to materials resources.");
                 modelInfo.materialsResources = modelInfo.materialsData.Select(md => new ModelData.MaterialResource
                 {
                     number = md.number,
@@ -907,12 +908,12 @@ namespace doppelganger
 
         private List<ModelData.MaterialResource> GetMaterialsResourcesFromModelChanges(GameObject model, ModelChange modelChanges)
         {
-            Debug.Log($"[GetMaterialsResourcesFromModelChanges] Starting to retrieve material resources from model changes for '{model.name}'.");
+            //Debug.Log($"[GetMaterialsResourcesFromModelChanges] Starting to retrieve material resources from model changes for '{model.name}'.");
 
             List<ModelData.MaterialResource> materialsResources = new List<ModelData.MaterialResource>();
             var renderers = model.GetComponentsInChildren<SkinnedMeshRenderer>();
 
-            Debug.Log($"[GetMaterialsResourcesFromModelChanges] Found {renderers.Length} SkinnedMeshRenderers in '{model.name}'.");
+            //Debug.Log($"[GetMaterialsResourcesFromModelChanges] Found {renderers.Length} SkinnedMeshRenderers in '{model.name}'.");
 
             for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
             {
@@ -929,14 +930,14 @@ namespace doppelganger
                     resource.name = materialChange.NewName.Replace("(Instance)", "").EndsWith(".mat") ? materialChange.NewName.Replace("(Instance)", "").Replace(" ", "") : $"{materialChange.NewName.Replace("(Instance)", "").Replace(" ", "")}.mat";
                     resource.rttiValues = materialChange.TextureChanges;
 
-                    foreach (var texChange in materialChange.TextureChanges)
-                    {
-                        Debug.Log($"[GetMaterialsResourcesFromModelChanges] Texture change: slot '{texChange.name}' now uses texture '{texChange.val_str}'.");
-                    }
+                    //foreach (var texChange in materialChange.TextureChanges)
+                    //{
+                    //    Debug.Log($"[GetMaterialsResourcesFromModelChanges] Texture change: slot '{texChange.name}' now uses texture '{texChange.val_str}'.");
+                    //}
                 }
                 else
                 {
-                    Debug.Log($"[GetMaterialsResourcesFromModelChanges] No specific material change found for renderer {rendererIndex}. Using default material name: '{resource.name}'.");
+                    //Debug.Log($"[GetMaterialsResourcesFromModelChanges] No specific material change found for renderer {rendererIndex}. Using default material name: '{resource.name}'.");
                 }
 
                 materialsResources.Add(new ModelData.MaterialResource
@@ -946,7 +947,7 @@ namespace doppelganger
                 });
             }
 
-            Debug.Log($"[GetMaterialsResourcesFromModelChanges] Completed creating material resources for model '{model.name}'. Total resources created: {materialsResources.Count}.");
+            //Debug.Log($"[GetMaterialsResourcesFromModelChanges] Completed creating material resources for model '{model.name}'. Total resources created: {materialsResources.Count}.");
             return materialsResources;
         }
 
