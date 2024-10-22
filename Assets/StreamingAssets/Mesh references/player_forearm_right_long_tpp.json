@@ -2,8 +2,86 @@
   "materialsData": [
     {
       "number": 1,
-      "name": "player_hands_tpp_a.mat"
+      "name": "player_hands_fpp_a.mat"
+    },
+    {
+      "number": 2,
+      "name": "player_hands_hair_fpp.mat"
     }
   ],
-  "variations": []
+  "variations": [
+    {
+      "id": "1",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "player_hands_fpp_a.mat"
+        },
+        {
+          "number": 2,
+          "name": "player_hands_hair_fpp.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_hands_fpp_a.mat",
+              "selected": false,
+              "layoutId": 0,
+              "loadFlags": null,
+              "rttiValues": []
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "resources": [
+            {
+              "name": "player_hands_hair_fpp.mat",
+              "selected": false,
+              "layoutId": 0,
+              "loadFlags": null,
+              "rttiValues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "materialsData": [
+        {
+          "number": 1,
+          "name": "player_hands_tpp_a.mat"
+        }
+      ],
+      "materialsResources": [
+        {
+          "number": 1,
+          "resources": [
+            {
+              "name": "player_hands_tpp_a.mat",
+              "selected": true,
+              "layoutId": 4,
+              "loadFlags": "S",
+              "rttiValues": [
+                {
+                  "name": "dif_0_tex",
+                  "type": 7,
+                  "val_str": "man_hands_muscular_black_a_dif.png"
+                },
+                {
+                  "name": "dif_1_tex",
+                  "type": 7,
+                  "val_str": "man_hands_muscular_black_a_dif.png"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }
